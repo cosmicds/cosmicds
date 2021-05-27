@@ -1,0 +1,17 @@
+cosmic-ds Documentation
+-----------------------
+
+This is the documentation for cosmic-ds.
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
