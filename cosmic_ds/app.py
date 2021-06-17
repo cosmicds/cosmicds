@@ -6,7 +6,15 @@ from ipyvuetify import VuetifyTemplate
 
 
 class ApplicationState(State):
-    pass
+    footer_link_items = ListCallbackProperty([
+        'Home',
+        'About Us',
+        'Team',
+        'Services',
+        'Blog',
+        'Contact Us',
+    ])
+    e1 = CallbackProperty(1)
 
 
 class Application(VuetifyTemplate, JupyterApplication):
