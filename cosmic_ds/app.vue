@@ -55,12 +55,11 @@
 
     <v-main id="scrolling-techniques-4" class="overflow-y-auto fill-height">
       <v-container class="fill-height">
-        <v-card
-          class="fill-height overflow-y-auto d-flex flex-column"
-          style="width: 100%"
-        >
-          <v-stepper v-model="state.e1" class="fill-height elevation-0">
-            <v-stepper-header>
+        <v-row class="fill-height" justify="center">
+          <v-col cols="12" xl="8">
+            <v-card class="fill-height d-flex flex-column">
+              <v-stepper v-model="state.over_model" class="elevation-0">
+                <v-stepper-header>
               <v-stepper-step :complete="state.e1 > 1" step="1" editable>
                 Collect Galaxy Data
               </v-stepper-step>
