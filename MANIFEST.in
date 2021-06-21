@@ -4,7 +4,7 @@ include setup.cfg
 include LICENSE.rst
 include pyproject.toml
 
-recursive-include cosmic_ds *.pyx *.c *.pxd *.vue *.csv
+recursive-include cosmic_ds *.pyx *.c *.pxd *.vue *.csv *.ipynb
 recursive-include docs *
 recursive-include licenses *
 recursive-include cextern *
