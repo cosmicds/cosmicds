@@ -67,7 +67,7 @@
                   <v-stepper-content step="1">
                     <jupyter-widget
                       style="height: 300px"
-                      :widget="viewers.profile_viewer"
+                      :widget="viewers.hub_const_viewer"
                     ></jupyter-widget>
 
                     <v-card color="blue lighten-5" class="fill-height" flat>
@@ -103,7 +103,7 @@
                                 <v-col cols="12" md="8">
                                   <jupyter-widget
                                     style="height: 300px"
-                                    :widget="viewers.scatter_viewer"
+                                    :widget="viewers.gal_viewer"
                                   ></jupyter-widget
                                 ></v-col>
                               </v-row>
