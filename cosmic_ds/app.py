@@ -61,15 +61,22 @@ class Application(VuetifyTemplate):
         wwt_viewer = self._application_handler.new_data_viewer(
             WWTJupyterViewer, data=None, show=False)
 
-        image_viewer = self._application_handler.imshow(show=False)
-        image_viewer_layout = vuetify_layout_factory(image_viewer)
+        # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
-        scatter_viewer = self._application_handler.scatter2d(x='Right Ascension', y='Declination', show=False)
-        scatter_viewer_layout = vuetify_layout_factory(scatter_viewer)
+        # Store an internal collection of the glue viewer objects
+        self._viewer_handlers = {
+            'image_viewer': image_viewer, 
+            'gal_viewer': gal_viewer,
+            'hub_const_viewer': hub_const_viewer, 
+            'wwt_viewer': wwt_viewer
+        }
 
+        # Store an front-end accessible collection of renderable ipywidgets
         self.viewers = {
-            'image_viewer': image_viewer_layout, 
-            'profile_viewer': scatter_viewer_layout
+            'image_viewer': image_viewer.figure_widget, 
+            'gal_viewer': gal_viewer.figure_widget, #scatter_viewer_layout,
+            'hub_const_viewer': hub_const_viewer.figure_widget, 
+            'wwt_viewer': wwt_viewer.figure_widget
         }
 
     @property
