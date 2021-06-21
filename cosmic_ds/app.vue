@@ -52,8 +52,8 @@
         </v-tabs>
       </template>
     </v-app-bar>
-    <!-- <v-sheet id="scrolling-techniques-4" class="overflow-y-auto fill-height" style="height:100%"> -->
-    <v-main id="scrolling-techniques-4" class="fill-height">
+
+    <v-main id="scrolling-techniques-4" class="overflow-y-auto fill-height">
       <v-container class="fill-height">
         <v-card
           class="fill-height overflow-y-auto d-flex flex-column"
