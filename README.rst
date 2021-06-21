@@ -1,5 +1,23 @@
-Package to facilitate connections between astronomers who want to tell stories about their data
------------------------------------------------------------------------------------------------
+Cosmic Data Stories
+-------------------
+
+The CosmicDS team, led by Principal Investigator Alyssa Goodman and Science PI 
+Patricia Udomprasert, will facilitate connections between astronomers who want 
+to tell the story of a discovery and inspire learners by letting them 
+interrogate the data behind the story on their own, using easy-to-use but 
+powerful data science and visualization techniques.
+
+Installation
+------------
+
+Install the latest version of the package through `pip` in a local python
+environment::
+
+   $ pip install git+https://github.com/glue-viz/cosmic-ds
+
+Load a data story using the command line::
+
+   $ cosmic-ds hubble
 
 License
 -------
