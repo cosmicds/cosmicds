@@ -1,8 +1,8 @@
 import logging
-import pathlib
 import os
 import sys
 import tempfile
+from pathlib import Path
 
 import click
 from voila.app import Voila
@@ -12,10 +12,14 @@ from cosmic_ds import __version__
 
 CONFIGS_DIR = os.path.join(os.path.dirname(__file__), 'configs')
 
+STORY_PATHS = {
+    'hubble': Path(__file__).parent / "stories" / "Hubble DS.ipynb"
+}
+
 
 @click.version_option(__version__)
 @click.command()
-@click.argument('data-story', nargs=1, type=click.Path(exists=True))
+@click.argument('data_story', nargs=1)
 def main(data_story):
     """
     Start a CosmicDS interactive instance from notebook provided by the
@@ -23,15 +27,15 @@ def main(data_story):
 
     Parameters
     ----------
-    filename : str
-        The path to the data story to be loaded.
+    data_story : str
+        The dictionary key id referencing the notebook path.
     """
     # Tornado Webserver py3.8 compatibility hotfix for windows
     if sys.platform == 'win32':
         import asyncio
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-    filepath = pathlib.Path(data_story).absolute()
+    filepath = STORY_PATHS.get(data_story, '.')
     start_dir = os.path.abspath('.')
 
     try:
