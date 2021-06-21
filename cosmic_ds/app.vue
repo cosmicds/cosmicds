@@ -3,10 +3,7 @@
     <v-app-bar
       color="primary"
       dark
-      shrink-on-scroll
-      prominent
       src="https://cdn.eso.org/images/screen/eso1738b.jpg"
-      fade-img-on-scroll
       scroll-target="#scrolling-techniques-4"
     >
       <template v-slot:img="{ props }">
@@ -29,28 +26,6 @@
       <v-btn icon>
         <v-icon>mdi-heart</v-icon>
       </v-btn>
-
-      <v-menu bottom left>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn icon color="yellow" v-bind="attrs" v-on="on">
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item v-for="(item, i) in items" :key="i">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-      <template v-slot:extension>
-        <v-tabs align-with-title>
-          <v-tab>Collect Galaxy Data</v-tab>
-          <v-tab>Analysis Tools</v-tab>
-          <v-tab>View Results</v-tab>
-        </v-tabs>
-      </template>
     </v-app-bar>
 
     <v-main id="scrolling-techniques-4" class="overflow-y-auto fill-height">
@@ -60,84 +35,228 @@
             <v-card class="fill-height d-flex flex-column">
               <v-stepper v-model="state.over_model" class="elevation-0">
                 <v-stepper-header>
-              <v-stepper-step :complete="state.e1 > 1" step="1" editable>
-                Collect Galaxy Data
-              </v-stepper-step>
+                  <v-stepper-step
+                    :complete="state.over_model > 1"
+                    step="1"
+                    editable
+                  >
+                    Collect Galaxy Data
+                  </v-stepper-step>
 
+                  <v-divider></v-divider>
+
+                  <v-stepper-step
+                    :complete="state.over_model > 2"
+                    step="2"
+                    editable
+                  >
+                    Analysis Tools
+                  </v-stepper-step>
+
+                  <v-divider></v-divider>
+
+                  <v-stepper-step
+                    :complete="state.over_model > 3"
+                    step="3"
+                    editable
+                    >View Results</v-stepper-step
+                  >
+                </v-stepper-header>
+
+                <v-stepper-items class="fill-height">
+                  <v-stepper-content step="1">
+                    <jupyter-widget
+                      style="height: 300px"
+                      :widget="viewers.profile_viewer"
+                    ></jupyter-widget>
+
+                    <v-card color="blue lighten-5" class="fill-height" flat>
+                      <v-tabs
+                        v-model="state.col_tab_model"
+                        grow
+                        background-color="blue lighten-4"
+                      >
+                        <v-tab key="gal-dist"> Estimate Galaxy Distance </v-tab>
+                        <v-tab key="gal-vel"> Measure Galaxy Velocity </v-tab>
+                      </v-tabs>
+
+                      <v-tabs-items
+                        v-model="state.col_tab_model"
+                        style="background-color: transparent"
+                        class="px-3"
+                      >
+                        <v-tab-item key="gal-dist">
+                          <v-window v-model="state.est_model">
+                            <v-window-item key="gal-select">
+                              <v-row>
+                                <v-col cols="12" md="4">
+                                  <v-alert
+                                    border="top"
+                                    colored-border
+                                    type="info"
+                                    elevation="2"
+                                  >
+                                    Pan the sky and select one of the galaxies
+                                    to measure.
+                                  </v-alert>
+                                </v-col>
+                                <v-col cols="12" md="8">
+                                  <jupyter-widget
+                                    style="height: 300px"
+                                    :widget="viewers.scatter_viewer"
+                                  ></jupyter-widget
+                                ></v-col>
+                              </v-row>
+                            </v-window-item>
+                            <v-window-item key="gal-size">
+                              <v-row>
+                                <v-col cols="12" md="4">
+                                  <v-card class="fill-height">
+                                    <v-card-title>Select Galaxy</v-card-title>
+                                    <v-card-text>
+                                      Type: Assumed size: Height of display:
+                                    </v-card-text>
+                                  </v-card>
+                                </v-col>
+                                <v-col cols="12" md="8">
+                                  <jupyter-widget
+                                    style="min-height: 300px"
+                                    :widget="viewers.wwt_viewer"
+                                  ></jupyter-widget
+                                ></v-col>
+                              </v-row>
+                            </v-window-item>
+                          </v-window>
+                          <v-card-actions class="justify-space-between">
+                            <v-btn
+                              text
+                              @click="
+                                this.state.est_model =
+                                  this.state.est_model - 1 < 0
+                                    ? this.length - 1
+                                    : this.state.est_model - 1
+                              "
+                            >
+                              <v-icon>mdi-chevron-left</v-icon>
+                            </v-btn>
+                            <v-item-group
+                              v-model="state.est_model"
+                              class="text-center"
+                              mandatory
+                            >
+                              <v-item
+                                v-for="n in 2"
+                                :key="`btn-${n}`"
+                                v-slot="{ active, toggle }"
+                              >
+                                <v-btn
+                                  :input-value="active"
+                                  icon
+                                  @click="toggle"
+                                >
+                                  <v-icon>mdi-record</v-icon>
+                                </v-btn>
+                              </v-item>
+                            </v-item-group>
+                            <v-btn
+                              text
+                              @click="
+                                this.state.est_model =
+                                  this.state.est_model + 1 === this.length
+                                    ? 0
+                                    : this.state.est_model + 1
+                              "
+                            >
+                              <v-icon>mdi-chevron-right</v-icon>
+                            </v-btn>
+                          </v-card-actions>
+                        </v-tab-item>
+
+                        <v-tab-item key="gal-vel"> </v-tab-item>
+                      </v-tabs-items>
+                    </v-card>
+                  </v-stepper-content>
+
+                  <v-stepper-content step="2">
+                    <v-card
+                      class="fill-height mb-12"
+                      color="grey lighten-1 elevation-0"
+                    ></v-card>
+
+                    <v-btn color="primary" @click="state.over_model = 3">
+                      Continue
+                    </v-btn>
+
+                    <v-btn text> Cancel </v-btn>
+                  </v-stepper-content>
+
+                  <v-stepper-content step="3">
+                    <v-card
+                      class="fill-height mb-12"
+                      color="grey lighten-1 elevation-0"
+                    ></v-card>
+
+                    <v-btn color="primary" @click="state.over_model = 1">
+                      Continue
+                    </v-btn>
+
+                    <v-btn text> Cancel </v-btn>
+                  </v-stepper-content>
+                </v-stepper-items>
+              </v-stepper>
+              <v-spacer></v-spacer>
               <v-divider></v-divider>
+              <v-card-actions>
+                <v-btn
+                  color="primary"
+                  @click="add_data_to_viewer('profile_viewer')"
+                >
+                  (Test) Add Data
+                </v-btn>
+                <v-btn
+                  color="primary"
+                  @click="
+                    state.over_model =
+                      state.over_model > 1
+                        ? state.over_model - 1
+                        : state.over_model
+                  "
+                >
+                  Previous
+                </v-btn>
 
-              <v-stepper-step :complete="state.e1 > 2" step="2" editable>
-                Analysis Tools
-              </v-stepper-step>
-
-              <v-divider></v-divider>
-
-              <v-stepper-step :complete="state.e1 > 2" step="3" editable
-                >View Results</v-stepper-step
-              >
-            </v-stepper-header>
-
-            <v-stepper-items class="fill-height">
-              <v-stepper-content step="1">
-                <v-card
-                  class="fill-height mb-12"
-                  color="grey lighten-1 elevation-0"
-                ></v-card>
-
-                <v-btn color="primary" @click="state.e1 = 2"> Continue </v-btn>
-
-                <v-btn text> Cancel </v-btn>
-              </v-stepper-content>
-
-              <v-stepper-content step="2">
-                <v-card
-                  class="fill-height mb-12"
-                  color="grey lighten-1 elevation-0"
-                ></v-card>
-
-                <v-btn color="primary" @click="state.e1 = 3"> Continue </v-btn>
-
-                <v-btn text> Cancel </v-btn>
-              </v-stepper-content>
-
-              <v-stepper-content step="3">
-                <v-card
-                  class="fill-height mb-12"
-                  color="grey lighten-1 elevation-0"
-                ></v-card>
-
-                <v-btn color="primary" @click="state.e1 = 1"> Continue </v-btn>
-
-                <v-btn text> Cancel </v-btn>
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-          <v-card-actions>
-            <v-btn color="primary" @click="state.e1 = 1"> Continue </v-btn>
-
-            <v-btn text> Cancel </v-btn>
-          </v-card-actions>
-        </v-card>
+                <v-btn
+                  color="primary"
+                  @click="
+                    state.over_model =
+                      state.over_model < 3
+                        ? state.over_model + 1
+                        : state.over_model
+                  "
+                >
+                  Next
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-container>
-    </v-main>
 
-    <v-footer color="primary lighten-1" padless>
-      <v-row justify="center" no-gutters>
-        <v-btn
-          v-for="link in state.footer_link_items"
-          :key="link"
-          color="white"
-          text
-          rounded
-          class="my-2"
-        >
-          {{ link }}
-        </v-btn>
-        <v-col class="primary lighten-2 py-4 text-center white--text" cols="12">
-          {{ new Date().getFullYear() }} — <strong>CosmicDS Project</strong>
-        </v-col>
-      </v-row>
-    </v-footer>
+      <v-footer color="primary lighten-1" padless>
+        <v-row justify="center" no-gutters>
+          <v-btn color="white" text rounded class="my-2"> Home </v-btn>
+          <v-btn color="white" text rounded class="my-2"> About Us </v-btn>
+          <v-btn color="white" text rounded class="my-2"> Team </v-btn>
+          <v-btn color="white" text rounded class="my-2"> Contact Us </v-btn>
+          <v-col
+            class="primary lighten-2 py-4 text-center white--text"
+            cols="12"
+          >
+            {{ new Date().getFullYear() }} — <strong>CosmicDS Project</strong>
+          </v-col>
+        </v-row>
+      </v-footer>
+    </v-main>
   </v-app>
 </template>
 
@@ -174,6 +293,10 @@ body {
   bottom: 0;
 }
 .v-stepper__wrapper {
+  height: 100%;
+}
+
+.bqplot {
   height: 100%;
 }
 </style>
