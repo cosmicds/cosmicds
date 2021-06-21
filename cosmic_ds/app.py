@@ -15,15 +15,9 @@ from glue_jupyter.vuetify_layout import vuetify_layout_factory
 
 
 class ApplicationState(State):
-    footer_link_items = ListCallbackProperty([
-        'Home',
-        'About Us',
-        'Team',
-        'Services',
-        'Blog',
-        'Contact Us',
-    ])
-    e1 = CallbackProperty(1)
+    over_model = CallbackProperty(1)
+    col_tab_model = CallbackProperty(0)
+    est_model = CallbackProperty(0)
 
 
 class Application(VuetifyTemplate):
