@@ -32,7 +32,34 @@ class Application(VuetifyTemplate):
 
         self.state = ApplicationState()
         self._application_handler = JupyterApplication()
-        self._application_handler.load_data("/Users/nmearl/Downloads/w5/w5.fits")
+        
+        # Load the galaxy position data
+        self._application_handler.load_data(
+            str(Path(__file__).parent / "data" / "galaxy_data.csv"), 
+            label='galaxy_data')
+
+        # Instantiate the initial viewers
+        # Image viewer used for the 2D spectrum selection
+        image_viewer = self._application_handler.new_data_viewer(
+            BqplotImageView, data=None, show=False)
+
+        # Scatter viewer used for the display of the measured galaxies
+        hub_const_viewer = self._application_handler.new_data_viewer(
+            BqplotProfileView, data=None, show=False)
+
+        # Scatter viewer used for the galaxy selection
+        gal_viewer = self._application_handler.new_data_viewer(
+            BqplotScatterView, data=self.data_collection['galaxy_data'],
+            show=False)
+
+        # scatter_viewer.add_data(self.data_collection['galaxy_data'])
+        gal_viewer.state.x_att = 'RA_deg'
+        gal_viewer.state.y_att = 'Dec_deg'
+
+        # TODO: Currently, the glue-wwt package requires qt binding even if we
+        # only intend to use the juptyer viewer.
+        wwt_viewer = self._application_handler.new_data_viewer(
+            WWTJupyterViewer, data=None, show=False)
 
         image_viewer = self._application_handler.imshow(show=False)
         image_viewer_layout = vuetify_layout_factory(image_viewer)
