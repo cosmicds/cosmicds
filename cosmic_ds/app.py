@@ -1,17 +1,23 @@
+from pathlib import Path
+from uuid import uuid4
+
+import numpy as np
 from echo import CallbackProperty, DictCallbackProperty, ListCallbackProperty
+from echo.containers import CallbackList
+from glue.core import Data
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
-from glue_jupyter.bqplot import scatter
-from glue_jupyter.state_traitlets_helpers import GlueState
-from ipyvuetify import VuetifyTemplate
-from .utils import load_template
-from traitlets import Dict, Bool, List, Int
-from glue_jupyter.bqplot.profile import BqplotProfileView
 from glue_jupyter.bqplot.image import BqplotImageView
-from ipywidgets import widget_serialization
-import numpy as np
+from glue_jupyter.bqplot.profile import BqplotProfileView
+from glue_jupyter.bqplot.scatter import BqplotScatterView
+from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_jupyter.vuetify_layout import vuetify_layout_factory
+from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
+from ipyvuetify import VuetifyTemplate
+from ipywidgets import widget_serialization
+from traitlets import Bool, Dict, Int, List
 
+from .utils import load_template
 
 
 class ApplicationState(State):
@@ -81,4 +87,23 @@ class Application(VuetifyTemplate):
 
     @property
     def session(self):
+        """
+        Underlying glue-jupyter application session instance.
+        """
         return self._application_handler.session
+
+    @property
+    def data_collection(self):
+        """
+        Underlying glue-jupyter application data collection instance.
+        """
+        return self._application_handler.data_collection
+
+    def vue_add_data_to_viewer(self, viewer_id, component_id=None, data=None):
+        viewer = self._viewer_handlers[viewer_id]
+        data = Data(**{'x': np.arange(10), 
+                 'y': np.random.sample(10), 
+                 'label': str(uuid4())})
+        self.data_collection.append(data)
+        viewer.add_data(data)
+
