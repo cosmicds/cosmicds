@@ -44,6 +44,12 @@ class Application(VuetifyTemplate):
             str(Path(__file__).parent / "data" / "galaxy_data.csv"), 
             label='galaxy_data')
 
+        # Load some random scatter data
+        rand_data = Data(distance=np.random.sample(10) * 2e6,
+                         velocity=np.random.sample(10) * 1000,
+                         label='measurements')
+        self.data_collection.append(rand_data)
+
         # Instantiate the initial viewers
         # Image viewer used for the 2D spectrum selection
         image_viewer = self._application_handler.new_data_viewer(
@@ -51,7 +57,7 @@ class Application(VuetifyTemplate):
 
         # Scatter viewer used for the display of the measured galaxies
         hub_const_viewer = self._application_handler.new_data_viewer(
-            BqplotProfileView, data=None, show=False)
+            BqplotScatterView, data=self.data_collection['measurements'], show=False)
 
         # Scatter viewer used for the galaxy selection
         gal_viewer = self._application_handler.new_data_viewer(
@@ -77,12 +83,14 @@ class Application(VuetifyTemplate):
             'wwt_viewer': wwt_viewer
         }
 
+        # wwt_viewer_layout = vuetify_layout_factory(wwt_viewer)
+
         # Store an front-end accessible collection of renderable ipywidgets
         self.viewers = {
             'image_viewer': image_viewer.figure_widget, 
             'gal_viewer': gal_viewer.figure_widget, #scatter_viewer_layout,
             'hub_const_viewer': hub_const_viewer.figure_widget, 
-            'wwt_viewer': wwt_viewer.figure_widget
+            'wwt_viewer': wwt_viewer.figure_widget  # wwt_viewer_layout
         }
 
     @property
