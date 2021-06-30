@@ -1,7 +1,7 @@
-cosmic-ds Documentation
+cosmicds Documentation
 -----------------------
 
-This is the documentation for cosmic-ds.
+This is the documentation for cosmicds.
 
 .. toctree::
    :maxdepth: 2

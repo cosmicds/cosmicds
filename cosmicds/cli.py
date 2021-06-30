@@ -8,7 +8,7 @@ import click
 from voila.app import Voila
 from voila.configuration import VoilaConfiguration
 
-from cosmic_ds import __version__
+from cosmicds import __version__
 
 CONFIGS_DIR = os.path.join(os.path.dirname(__file__), 'configs')
 
@@ -42,7 +42,7 @@ def main(data_story):
         logging.getLogger('tornado.access').disabled = True
         Voila.notebook_path = filepath
         Voila.tornado_settings = {'headers':{'Content-Security-Policy': 'frame-ancestors self *'}}
-        VoilaConfiguration.template = 'cosmic-ds-default'
+        VoilaConfiguration.template = 'cosmicds-default'
         VoilaConfiguration.enable_nbextensions = True
         VoilaConfiguration.file_whitelist = ['.*']
         sys.exit(Voila().launch_instance(argv=[]))

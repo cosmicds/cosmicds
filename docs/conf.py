@@ -9,12 +9,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'cosmic-ds'
+project = 'cosmicds'
 copyright = '2021, CosmicDS Developers'
 author = 'CosmicDS Developers'
 
 # The full version, including alpha/beta/rc tags
-from cosmic_ds import __version__
+from cosmicds import __version__
 release = __version__
 
 # -- General configuration ---------------------------------------------------

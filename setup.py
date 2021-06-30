@@ -65,8 +65,8 @@ def user_dir():
 
 class DevelopCmd(develop):
     prefix_targets = [
-        ("nbconvert/templates", 'cosmic-ds-default'),
-        ("voila/templates", 'cosmic-ds-default')
+        ("nbconvert/templates", 'cosmicds-default'),
+        ("voila/templates", 'cosmicds-default')
     ]
 
     def run(self):
@@ -105,5 +105,5 @@ for (dirpath, dirnames, filenames) in os.walk('share/jupyter/'):
 
 
 setup(data_files=data_files, cmdclass={'develop': DevelopCmd},
-      use_scm_version={'write_to': os.path.join('cosmic_ds', 'version.py'),
+      use_scm_version={'write_to': os.path.join('cosmicds', 'version.py'),
                        'write_to_template': VERSION_TEMPLATE})
