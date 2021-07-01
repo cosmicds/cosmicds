@@ -131,10 +131,10 @@
                             <v-btn
                               text
                               @click="
-                                this.state.est_model =
-                                  this.state.est_model - 1 < 0
-                                    ? this.length - 1
-                                    : this.state.est_model - 1
+                                state.est_model =
+                                  state.est_model - 1 < 0
+                                    ? 0
+                                    : state.est_model - 1
                               "
                             >
                               <v-icon>mdi-chevron-left</v-icon>
@@ -161,10 +161,10 @@
                             <v-btn
                               text
                               @click="
-                                this.state.est_model =
-                                  this.state.est_model + 1 === this.length
-                                    ? 0
-                                    : this.state.est_model + 1
+                                state.est_model =
+                                  state.est_model + 1 > 1
+                                    ? 1
+                                    : state.est_model + 1
                               "
                             >
                               <v-icon>mdi-chevron-right</v-icon>
