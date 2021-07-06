@@ -34,6 +34,7 @@ except:
 OPTIONS = {
     'output_dir' : "output",
     'n_classes': 50,
+    'decimal_places': 2,
     'n_students': (20, 30),
     'n_per_student': (4, 5),
     'bin_width': 5,
@@ -160,11 +161,12 @@ def simulate_class(options, export=True, show=False):
 
     # Select a random sample, with some noise
     # Pat's update: Use the measured angular size of the galaxies from the catalog. 
+    nd = options['decimal_places']
     arcmin_sample = sample["Ang_maj_amin"]
     arcmin_sample = add_percentage_noise(arcmin_sample, options['arcmin_frac_noise'])
-    distance_sample = [ arcmin_to_distance(x) for x in arcmin_sample ]
+    distance_sample = np.round([ arcmin_to_distance(x) for x in arcmin_sample ], nd)
     redshift_sample = add_fixed_noise(sample["redshift"], options['redshift_sigma'])
-    velocity_sample = [ redshift_to_velocity(x, relativistic=False) for x in redshift_sample ]
+    velocity_sample = np.round([ redshift_to_velocity(x, relativistic=False) for x in redshift_sample ], nd)
 
     # The lambda function just cuts up the list into chunks of size nper
     # Basically just undoing the pd.concat
@@ -173,15 +175,15 @@ def simulate_class(options, export=True, show=False):
     v_binned = binned_by_student(velocity_sample)
 
     fit = fitting.LinearLSQFitter()
-    hubbles = [ fit(new_model(), ds, vs).slope for ds,vs in zip(d_binned, v_binned) ]
-    ages = [ age_in_gyr(H0) for H0 in hubbles ]
+    hubbles = np.round([ fit(new_model(), ds, vs).slope.value for ds,vs in zip(d_binned, v_binned) ], nd)
+    ages = np.round([ age_in_gyr(H0) for H0 in hubbles ], nd)
     bin_width = options['bin_width']
     minh, maxh = min(hubbles), max(hubbles)
     nbins = ceil(maxh/bin_width) - floor(minh/bin_width)
 
     overall_fit = fit(new_model(), distance_sample, velocity_sample)
-    overall_H0 = round(overall_fit.slope.value, 5)
-    overall_age = planck.clone(H0=overall_H0).age(0).value
+    overall_H0 = round(overall_fit.slope.value, nd)
+    overall_age = round(planck.clone(H0=overall_H0).age(0).value, nd)
 
     # Export the data to csv files
     # Maybe we want a different frame?
@@ -284,11 +286,12 @@ def main(options):
     get_class_data = lambda cls_id: student_data[student_data.class_id == cls_id]
 
     # Get the global H0 and age
+    nd = options['decimal_places']
     fit = fitting.LinearLSQFitter()
     distances = measurement_data['distance']
     velocities = measurement_data['velocity']
-    global_H0 = fit(new_model(), distances, velocities).slope
-    global_age = age_in_gyr(global_H0)
+    global_H0 = round(fit(new_model(), distances, velocities).slope.value, nd)
+    global_age = round(age_in_gyr(global_H0), nd)
 
 
     fig, ax = plt.subplots()
@@ -296,7 +299,7 @@ def main(options):
     plt.axvline(global_age, color='k', linestyle='solid', linewidth=3)
     ax.margins(x=0)
 
-    theme_all = { 'color': '#e6e600', 'alpha': 0.5, 'histtype': 'bar', 'fc': 'black', 'linewidth': 1.2 }
+    theme_all = { 'color': '#e6e600', 'alpha': 0.5 }
     theme = { 'color' : "#1f77b4", 'alpha' : 0.5 }
 
     data_all = class_data['age']

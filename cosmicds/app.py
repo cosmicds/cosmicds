@@ -50,11 +50,11 @@ class Application(VuetifyTemplate):
             str(Path(__file__).parent / "data" / "galaxy_data.csv"), 
             label='galaxy_data')
 
-        # Load some random scatter data
-        rand_data = Data(distance=np.random.sample(10) * 2e6,
-                         velocity=np.random.sample(10) * 1000,
-                         label='measurements')
-        self.data_collection.append(rand_data)
+        # Load some example simulated data
+        self._application_handler.load_data(
+            str(Path(__file__).parent / "data" / "hubble_simulation" / "example_student_measurements.csv"),
+            label='student_measurements'
+        )
 
         # Instantiate the initial viewers
         # Image viewer used for the 2D spectrum selection
@@ -63,7 +63,7 @@ class Application(VuetifyTemplate):
 
         # Scatter viewer used for the display of the measured galaxies
         hub_const_viewer = self._application_handler.new_data_viewer(
-            BqplotScatterView, data=self.data_collection['measurements'], show=False)
+            BqplotScatterView, data=self.data_collection['example_student_measurements'], show=False)
 
         # Scatter viewer used for the galaxy selection
         gal_viewer = self._application_handler.new_data_viewer(
@@ -77,7 +77,9 @@ class Application(VuetifyTemplate):
         # TODO: Currently, the glue-wwt package requires qt binding even if we
         # only intend to use the juptyer viewer.
         wwt_viewer = self._application_handler.new_data_viewer(
-            WWTJupyterViewer, data=None, show=False)
+            WWTJupyterViewer, data=self.data_collection['galaxy_data'], show=False)
+        wwt_viewer.state.lon_att = 'RA_deg'
+        wwt_viewer.state.lat_att = 'Dec_deg'
 
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
@@ -113,11 +115,17 @@ class Application(VuetifyTemplate):
         """
         return self._application_handler.data_collection
 
-    def vue_add_data_to_viewer(self, viewer_id, component_id=None, data=None):
-        viewer = self._viewer_handlers[viewer_id]
-        data = Data(**{'x': np.arange(10), 
-                 'y': np.random.sample(10), 
-                 'label': str(uuid4())})
-        self.data_collection.append(data)
-        viewer.add_data(data)
+    def vue_add_data_to_viewers(self, viewer_ids):
+        for viewer_id in viewer_ids:
+            viewer = self._viewer_handlers[viewer_id]
+            if viewer_id == 'hub_const_viewer':
+                data = self.data_collection['example_student_measurements']
+                viewer.add_data(data)
+                viewer.x_att = 'RA_deg'
+                viewer.y_att = 'Dec_deg'
+            elif viewer_id == 'wwt_viewer':
+                data = self.data_collection['galaxy_data']
+                viewer.add_data(data)
+                viewer.lon_att = 'RA_deg'
+                viewer.lat_att = 'Dec_deg'
 
