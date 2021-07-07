@@ -10,6 +10,7 @@ from glue_jupyter.app import JupyterApplication
 from glue_jupyter.bqplot.image import BqplotImageView
 from glue_jupyter.bqplot.profile import BqplotProfileView
 from glue_jupyter.bqplot.scatter import BqplotScatterView
+from glue_jupyter.bqplot.histogram import BqplotHistogramView
 from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_jupyter.vuetify_layout import vuetify_layout_factory
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
@@ -56,6 +57,13 @@ class Application(VuetifyTemplate):
             label='student_measurements'
         )
 
+        # Load some simulated age data
+        self._application_handler.load_data(
+            # Question for team: is there a mechanism to specify which columns we want, so we don't have to construct data file to match exactly?
+            str(Path(__file__).parent / "data" / "hubble_simulation" / "output" / "HubbleSummary_Overall.csv"),
+            label='HubbleSummary_Overall'
+        )
+
         # Instantiate the initial viewers
         # Image viewer used for the 2D spectrum selection
         image_viewer = self._application_handler.new_data_viewer(
@@ -69,6 +77,10 @@ class Application(VuetifyTemplate):
         gal_viewer = self._application_handler.new_data_viewer(
             BqplotScatterView, data=self.data_collection['galaxy_data'],
             show=False)
+
+        # Histogram viewer for age distribution
+        age_distr_viewer = self._application_handler.new_data_viewer(
+            BqplotHistogramView, data=self.data_collection['HubbleSummary_Overall'], show=False)        
 
         # scatter_viewer.add_data(self.data_collection['galaxy_data'])
         gal_viewer.state.x_att = 'RA_deg'
@@ -88,17 +100,20 @@ class Application(VuetifyTemplate):
             'image_viewer': image_viewer, 
             'gal_viewer': gal_viewer,
             'hub_const_viewer': hub_const_viewer, 
-            'wwt_viewer': wwt_viewer
+            'wwt_viewer': wwt_viewer,
+            'age_distr_viewer': age_distr_viewer
         }
 
         # wwt_viewer_layout = vuetify_layout_factory(wwt_viewer)
 
-        # Store an front-end accessible collection of renderable ipywidgets
+        # Store a front-end accessible collection of renderable ipywidgets  
+        # These are the bqplot object itself (.figure_widget)
         self.viewers = {
             'image_viewer': image_viewer.figure_widget, 
             'gal_viewer': gal_viewer.figure_widget, #scatter_viewer_layout,
             'hub_const_viewer': hub_const_viewer.figure_widget, 
-            'wwt_viewer': wwt_viewer.figure_widget  # wwt_viewer_layout
+            'wwt_viewer': wwt_viewer.figure_widget,  # wwt_viewer_layout
+            'age_distr_viewer': age_distr_viewer.figure_widget
         }
 
     @property
@@ -121,11 +136,15 @@ class Application(VuetifyTemplate):
             if viewer_id == 'hub_const_viewer':
                 data = self.data_collection['example_student_measurements']
                 viewer.add_data(data)
-                viewer.x_att = 'RA_deg'
-                viewer.y_att = 'Dec_deg'
+                viewer.x_att = 'Distance'
+                viewer.y_att = 'Velocity'
             elif viewer_id == 'wwt_viewer':
                 data = self.data_collection['galaxy_data']
                 viewer.add_data(data)
                 viewer.lon_att = 'RA_deg'
                 viewer.lat_att = 'Dec_deg'
+            elif viewer_id == 'age_distr_viewer':
+                data = self.data_collection['HubbleSummary_Overall']
+                viewer.add_data(data)
+                viewer.x_att = 'age'
 

@@ -178,6 +178,11 @@
                   </v-stepper-content>
 
                   <v-stepper-content step="2">
+                  <!-- Analysis - this is the data fitting part -->
+                    <jupyter-widget
+                      style="height: 300px"
+                      :widget="viewers.age_distr_viewer">
+                    </jupyter-widget>
                     <v-card
                       class="fill-height mb-12"
                       color="grey lighten-1 elevation-0"
@@ -191,6 +196,7 @@
                   </v-stepper-content>
 
                   <v-stepper-content step="3">
+                  <!-- View Results - this is where they can look at distributions of results -->
                     <v-card
                       class="fill-height mb-12"
                       color="grey lighten-1 elevation-0"
