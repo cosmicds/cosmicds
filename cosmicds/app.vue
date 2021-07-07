@@ -209,7 +209,7 @@
               <v-card-actions>
                 <v-btn
                   color="primary"
-                  @click="add_data_to_viewer('profile_viewer')"
+                  @click="add_data_to_viewers(['hub_const_viewer', 'wwt_viewer'])"
                 >
                   (Test) Add Data
                 </v-btn>

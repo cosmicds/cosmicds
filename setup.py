@@ -2,6 +2,7 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 
 import os
+import sys
 
 from setuptools import setup
 from setuptools.command.develop import develop
