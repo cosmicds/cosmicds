@@ -104,6 +104,12 @@ class Application(VuetifyTemplate):
             'wwt_viewer': wwt_viewer.figure_widget  # wwt_viewer_layout
         }
 
+    def reload(self):
+        """
+        Reload only the UI elements of the application.
+        """
+        self.template = load_template("app.vue", __file__, traitlet=False)
+
     @property
     def session(self):
         """
