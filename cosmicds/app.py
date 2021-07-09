@@ -54,8 +54,8 @@ class Application(VuetifyTemplate):
 
         # Load some example simulated data
         self._application_handler.load_data(
-            str(Path(__file__).parent / "data" / "hubble_simulation" / "example_student_measurements.csv"),
-            label='student_measurements'
+            str(Path(__file__).parent / "data" / "hubble_simulation" / "output" / "HubbleData_ClassSample.csv"),
+            label='HubbleData_ClassSample'
         )
 
         # Load some simulated age data
@@ -69,9 +69,9 @@ class Application(VuetifyTemplate):
         image_viewer = self._application_handler.new_data_viewer(
             BqplotImageView, data=None, show=False)
 
-        # Scatter viewer used for the display of the measured galaxies
+        # Scatter viewer used for the display of the measured galaxy data
         hub_const_viewer = self._application_handler.new_data_viewer(
-            BqplotScatterView, data=self.data_collection['example_student_measurements'], show=False)
+            BqplotScatterView, data=self.data_collection['HubbleData_ClassSample'], show=False)
 
         # Scatter viewer used for the galaxy selection
         gal_viewer = self._application_handler.new_data_viewer(
@@ -82,10 +82,10 @@ class Application(VuetifyTemplate):
         age_distr_viewer = self._application_handler.new_data_viewer(
             BqplotHistogramView, data=self.data_collection['HubbleSummary_Overall'], show=False)        
 
-        # scatter_viewer.add_data(self.data_collection['galaxy_data'])
-        data = self.data_collection['galaxy_data']
-        gal_viewer.state.x_att = data.id['RA_deg']
-        gal_viewer.state.y_att = data.id['Dec_deg']
+        # scatter_viewer.add_data(self.data_collection['HubbleData_ClassSample'])
+        data = self.data_collection['HubbleData_ClassSample']
+        hub_const_viewer.state.x_att = data.id['Distance']
+        hub_const_viewer.state.y_att = data.id['Velocity']
 
         # TODO: Currently, the glue-wwt package requires qt binding even if we
         # only intend to use the juptyer viewer.
@@ -95,6 +95,9 @@ class Application(VuetifyTemplate):
         data = self.data_collection['galaxy_data']
         wwt_viewer.state.lon_att = data.id['RA_deg']
         wwt_viewer.state.lat_att = data.id['Dec_deg']
+
+        data = self.data_collection['HubbleSummary_Overall']
+        age_distr_viewer.state.x_att = data.id['age']
 
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
@@ -143,13 +146,17 @@ class Application(VuetifyTemplate):
         for viewer_id in viewer_ids:
             viewer = self._viewer_handlers[viewer_id]
             if viewer_id == 'hub_const_viewer':
-                data = self.data_collection['example_student_measurements']
+                data = self.data_collection['HubbleData_ClassSample']
                 viewer.add_data(data)
-                viewer.x_att = data.id['RA_deg']
-                viewer.y_att = data.id['Dec_deg']
+                viewer.x_att = data.id['Distance']
+                viewer.y_att = data.id['Velocity']
             elif viewer_id == 'wwt_viewer':
                 data = self.data_collection['galaxy_data']
                 viewer.add_data(data)
                 viewer.lon_att = data.id['RA_deg']
                 viewer.lat_att = data.id['Dec_deg']
+            elif viewer_id == 'age_distr_viewer':
+                data = self.data_collection['HubbleSummary_Overall']
+                viewer.add_data(data)
+                viewer.x_att = data.id['age']
 

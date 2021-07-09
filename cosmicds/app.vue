@@ -156,7 +156,7 @@
 
                               <!-- For loop - this makes 2 unique buttons - btn-1; btn-2-->                           
                               <v-item
-                                v-for="n in 2"
+                                v-for="n in 4"
                                 :key="`btn-${n}`" 
                                 v-slot="{ active, toggle }"
                               >
