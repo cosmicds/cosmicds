@@ -108,7 +108,7 @@
                                 <v-col cols="12" md="8">
                                   <jupyter-widget
                                     style="height: 300px"
-                                    :widget="viewers.gal_viewer"
+                                    :widget="viewers.wwt_viewer"
                                   ></jupyter-widget
                                 ></v-col>
                               </v-row>
@@ -153,9 +153,11 @@
                               class="text-center"
                               mandatory
                             >
+
+                              <!-- For loop - this makes 2 unique buttons - btn-1; btn-2-->                           
                               <v-item
                                 v-for="n in 2"
-                                :key="`btn-${n}`"
+                                :key="`btn-${n}`" 
                                 v-slot="{ active, toggle }"
                               >
                                 <v-btn
@@ -194,14 +196,7 @@
                      * Plotting by galaxy type -->
 
                   <v-stepper-content step="2">
-                    <jupyter-widget
-                      style="height: 300px"
-                      :widget="viewers.age_distr_viewer">
-                    </jupyter-widget>
-                    <v-card
-                      class="fill-height mb-12"
-                      color="grey lighten-1 elevation-0"
-                    ></v-card>
+
 
                     <v-btn color="primary" @click="state.over_model = 3">
                       Continue
@@ -214,6 +209,16 @@
                 <!-- Will need buttons/functionality for choosing different data sets -->
                 <!-- Need to think through whether the hubble plot should also appear on this page or if that would be confusing -->
                   <v-stepper-content step="3">
+                    <v-lazy>
+                      <jupyter-widget
+                        style="height: 300px"
+                        :widget="viewers.age_distr_viewer">
+                      </jupyter-widget>
+                    </v-lazy>
+                    <v-card
+                      class="fill-height mb-12"
+                      color="grey lighten-1 elevation-0"
+                    ></v-card>
                     <v-card
                       class="fill-height mb-12"
                       color="grey lighten-1 elevation-0"

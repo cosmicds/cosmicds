@@ -47,6 +47,7 @@ class Application(VuetifyTemplate):
         self._application_handler = JupyterApplication()
         
         # Load the galaxy position data
+        # This adds the file to the glue data collection at the top level
         self._application_handler.load_data(
             str(Path(__file__).parent / "data" / "galaxy_data.csv"), 
             label='galaxy_data')
@@ -59,7 +60,6 @@ class Application(VuetifyTemplate):
 
         # Load some simulated age data
         self._application_handler.load_data(
-            # Question for team: is there a mechanism to specify which columns we want, so we don't have to construct data file to match exactly?
             str(Path(__file__).parent / "data" / "hubble_simulation" / "output" / "HubbleSummary_Overall.csv"),
             label='HubbleSummary_Overall'
         )
