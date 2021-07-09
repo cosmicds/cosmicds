@@ -71,15 +71,18 @@ class Application(VuetifyTemplate):
             show=False)
 
         # scatter_viewer.add_data(self.data_collection['galaxy_data'])
-        gal_viewer.state.x_att = 'RA_deg'
-        gal_viewer.state.y_att = 'Dec_deg'
+        data = self.data_collection['galaxy_data']
+        gal_viewer.state.x_att = data.id['RA_deg']
+        gal_viewer.state.y_att = data.id['Dec_deg']
 
         # TODO: Currently, the glue-wwt package requires qt binding even if we
         # only intend to use the juptyer viewer.
         wwt_viewer = self._application_handler.new_data_viewer(
             WWTJupyterViewer, data=self.data_collection['galaxy_data'], show=False)
-        wwt_viewer.state.lon_att = 'RA_deg'
-        wwt_viewer.state.lat_att = 'Dec_deg'
+
+        data = self.data_collection['galaxy_data']
+        wwt_viewer.state.lon_att = data.id['RA_deg']
+        wwt_viewer.state.lat_att = data.id['Dec_deg']
 
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
@@ -101,6 +104,12 @@ class Application(VuetifyTemplate):
             'wwt_viewer': wwt_viewer.figure_widget  # wwt_viewer_layout
         }
 
+    def reload(self):
+        """
+        Reload only the UI elements of the application.
+        """
+        self.template = load_template("app.vue", __file__, traitlet=False)
+
     @property
     def session(self):
         """
@@ -121,11 +130,11 @@ class Application(VuetifyTemplate):
             if viewer_id == 'hub_const_viewer':
                 data = self.data_collection['example_student_measurements']
                 viewer.add_data(data)
-                viewer.x_att = 'RA_deg'
-                viewer.y_att = 'Dec_deg'
+                viewer.x_att = data.id['RA_deg']
+                viewer.y_att = data.id['Dec_deg']
             elif viewer_id == 'wwt_viewer':
                 data = self.data_collection['galaxy_data']
                 viewer.add_data(data)
-                viewer.lon_att = 'RA_deg'
-                viewer.lat_att = 'Dec_deg'
+                viewer.lon_att = data.id['RA_deg']
+                viewer.lat_att = data.id['Dec_deg']
 
