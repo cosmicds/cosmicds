@@ -10,6 +10,7 @@ from glue_jupyter.app import JupyterApplication
 from glue_jupyter.bqplot.image import BqplotImageView
 from glue_jupyter.bqplot.profile import BqplotProfileView
 from glue_jupyter.bqplot.scatter import BqplotScatterView
+from glue_jupyter.bqplot.histogram import BqplotHistogramView
 from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_jupyter.vuetify_layout import vuetify_layout_factory
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
@@ -46,14 +47,21 @@ class Application(VuetifyTemplate):
         self._application_handler = JupyterApplication()
         
         # Load the galaxy position data
+        # This adds the file to the glue data collection at the top level
         self._application_handler.load_data(
             str(Path(__file__).parent / "data" / "galaxy_data.csv"), 
             label='galaxy_data')
 
         # Load some example simulated data
         self._application_handler.load_data(
-            str(Path(__file__).parent / "data" / "hubble_simulation" / "example_student_measurements.csv"),
-            label='student_measurements'
+            str(Path(__file__).parent / "data" / "hubble_simulation" / "output" / "HubbleData_ClassSample.csv"),
+            label='HubbleData_ClassSample'
+        )
+
+        # Load some simulated age data
+        self._application_handler.load_data(
+            str(Path(__file__).parent / "data" / "hubble_simulation" / "output" / "HubbleSummary_Overall.csv"),
+            label='HubbleSummary_Overall'
         )
 
         # Instantiate the initial viewers
@@ -61,19 +69,23 @@ class Application(VuetifyTemplate):
         image_viewer = self._application_handler.new_data_viewer(
             BqplotImageView, data=None, show=False)
 
-        # Scatter viewer used for the display of the measured galaxies
+        # Scatter viewer used for the display of the measured galaxy data
         hub_const_viewer = self._application_handler.new_data_viewer(
-            BqplotScatterView, data=self.data_collection['example_student_measurements'], show=False)
+            BqplotScatterView, data=self.data_collection['HubbleData_ClassSample'], show=False)
 
         # Scatter viewer used for the galaxy selection
         gal_viewer = self._application_handler.new_data_viewer(
             BqplotScatterView, data=self.data_collection['galaxy_data'],
             show=False)
 
-        # scatter_viewer.add_data(self.data_collection['galaxy_data'])
-        data = self.data_collection['galaxy_data']
-        gal_viewer.state.x_att = data.id['RA_deg']
-        gal_viewer.state.y_att = data.id['Dec_deg']
+        # Histogram viewer for age distribution
+        age_distr_viewer = self._application_handler.new_data_viewer(
+            BqplotHistogramView, data=self.data_collection['HubbleSummary_Overall'], show=False)        
+
+        # scatter_viewer.add_data(self.data_collection['HubbleData_ClassSample'])
+        data = self.data_collection['HubbleData_ClassSample']
+        hub_const_viewer.state.x_att = data.id['Distance']
+        hub_const_viewer.state.y_att = data.id['Velocity']
 
         # TODO: Currently, the glue-wwt package requires qt binding even if we
         # only intend to use the juptyer viewer.
@@ -84,6 +96,9 @@ class Application(VuetifyTemplate):
         wwt_viewer.state.lon_att = data.id['RA_deg']
         wwt_viewer.state.lat_att = data.id['Dec_deg']
 
+        data = self.data_collection['HubbleSummary_Overall']
+        age_distr_viewer.state.x_att = data.id['age']
+
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
         # Store an internal collection of the glue viewer objects
@@ -91,17 +106,20 @@ class Application(VuetifyTemplate):
             'image_viewer': image_viewer, 
             'gal_viewer': gal_viewer,
             'hub_const_viewer': hub_const_viewer, 
-            'wwt_viewer': wwt_viewer
+            'wwt_viewer': wwt_viewer,
+            'age_distr_viewer': age_distr_viewer
         }
 
         # wwt_viewer_layout = vuetify_layout_factory(wwt_viewer)
 
-        # Store an front-end accessible collection of renderable ipywidgets
+        # Store a front-end accessible collection of renderable ipywidgets  
+        # These are the bqplot object itself (.figure_widget)
         self.viewers = {
             'image_viewer': image_viewer.figure_widget, 
             'gal_viewer': gal_viewer.figure_widget, #scatter_viewer_layout,
             'hub_const_viewer': hub_const_viewer.figure_widget, 
-            'wwt_viewer': wwt_viewer.figure_widget  # wwt_viewer_layout
+            'wwt_viewer': wwt_viewer.figure_widget,  # wwt_viewer_layout
+            'age_distr_viewer': age_distr_viewer.figure_widget
         }
 
     def reload(self):
@@ -128,13 +146,17 @@ class Application(VuetifyTemplate):
         for viewer_id in viewer_ids:
             viewer = self._viewer_handlers[viewer_id]
             if viewer_id == 'hub_const_viewer':
-                data = self.data_collection['example_student_measurements']
+                data = self.data_collection['HubbleData_ClassSample']
                 viewer.add_data(data)
-                viewer.x_att = data.id['RA_deg']
-                viewer.y_att = data.id['Dec_deg']
+                viewer.x_att = data.id['Distance']
+                viewer.y_att = data.id['Velocity']
             elif viewer_id == 'wwt_viewer':
                 data = self.data_collection['galaxy_data']
                 viewer.add_data(data)
                 viewer.lon_att = data.id['RA_deg']
                 viewer.lat_att = data.id['Dec_deg']
+            elif viewer_id == 'age_distr_viewer':
+                data = self.data_collection['HubbleSummary_Overall']
+                viewer.add_data(data)
+                viewer.x_att = data.id['age']
 

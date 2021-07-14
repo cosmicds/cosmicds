@@ -33,6 +33,8 @@
         <v-row justify="center">
           <v-col cols="12" xl="8">
             <v-card class="d-flex flex-column">
+
+            <!-- This sets up the 3 step sections across the top -->
               <v-stepper v-model="state.over_model" class="elevation-0">
                 <v-stepper-header>
                   <v-stepper-step
@@ -59,10 +61,11 @@
                     :complete="state.over_model > 3"
                     step="3"
                     editable
-                    >View Results</v-stepper-step
-                  >
+                    >View Results
+                  </v-stepper-step>
                 </v-stepper-header>
 
+              <!-- This sets up the screen for the galaxy selection/measurement step -->
                 <v-stepper-items class="">
                   <v-stepper-content step="1">
                     <jupyter-widget
@@ -100,10 +103,12 @@
                                     to measure.
                                   </v-alert>
                                 </v-col>
+
+                            <!-- This should be a WWT viewer with available galaxy positions plotted by RA/Dec-->
                                 <v-col cols="12" md="8">
                                   <jupyter-widget
                                     style="height: 300px"
-                                    :widget="viewers.gal_viewer"
+                                    :widget="viewers.wwt_viewer"
                                   ></jupyter-widget
                                 ></v-col>
                               </v-row>
@@ -118,6 +123,8 @@
                                     </v-card-text>
                                   </v-card>
                                 </v-col>
+
+                            <!-- This zoom in within WWT viewer to chosen galaxy & put measurement controls/instructions on screen -->
                                 <v-col cols="12" md="8">
                                   <jupyter-widget
                                     style="min-height: 300px"
@@ -137,6 +144,8 @@
                                     : state.est_model - 1
                               "
                             >
+
+<!-- I'm not sure if this is the code that corresponds to the blue dots/arrows to advance between steps, but if it is, I'm assuming @nmearl is giving us examples of multiple ways to let students advance. We don't need both the center dots and the arrows, so Harry, decide which you prefer and plan to use only 1. -->                            
                               <v-icon>mdi-chevron-left</v-icon>
                             </v-btn>
                             <v-item-group
@@ -144,9 +153,11 @@
                               class="text-center"
                               mandatory
                             >
+
+                              <!-- For loop - this makes 2 unique buttons - btn-1; btn-2-->                           
                               <v-item
-                                v-for="n in 2"
-                                :key="`btn-${n}`"
+                                v-for="n in 4"
+                                :key="`btn-${n}`" 
                                 v-slot="{ active, toggle }"
                               >
                                 <v-btn
@@ -177,11 +188,15 @@
                     </v-card>
                   </v-stepper-content>
 
+                <!-- This sets up the screen for the Analysis/data fitting step -->
+
+                <!-- Will need buttons/functionality for:
+                     * drawing by eye/calculating/plotting best fit lines
+                     * Choosing different data sets - student/class/all
+                     * Plotting by galaxy type -->
+
                   <v-stepper-content step="2">
-                    <v-card
-                      class="fill-height mb-12"
-                      color="grey lighten-1 elevation-0"
-                    ></v-card>
+
 
                     <v-btn color="primary" @click="state.over_model = 3">
                       Continue
@@ -190,7 +205,20 @@
                     <v-btn text> Cancel </v-btn>
                   </v-stepper-content>
 
+                <!-- This sets up the screen for the View Results step where they can look at distributions -->
+                <!-- Will need buttons/functionality for choosing different data sets -->
+                <!-- Need to think through whether the hubble plot should also appear on this page or if that would be confusing -->
                   <v-stepper-content step="3">
+                    <v-lazy>
+                      <jupyter-widget
+                        style="height: 300px"
+                        :widget="viewers.age_distr_viewer">
+                      </jupyter-widget>
+                    </v-lazy>
+                    <v-card
+                      class="fill-height mb-12"
+                      color="grey lighten-1 elevation-0"
+                    ></v-card>
                     <v-card
                       class="fill-height mb-12"
                       color="grey lighten-1 elevation-0"
