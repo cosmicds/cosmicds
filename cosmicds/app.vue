@@ -24,7 +24,7 @@
       </v-btn>
 
       <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
+        <v-icon>mdi-account-circle</v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -60,7 +60,6 @@
                   <v-stepper-step
                     :complete="state.over_model > 3"
                     step="3"
-                    editable
                     >View Results
                   </v-stepper-step>
                 </v-stepper-header>
@@ -73,118 +72,53 @@
                       :widget="viewers.hub_const_viewer"
                     ></jupyter-widget>
 
-                    <v-card color="blue lighten-5" class="" flat>
+                    <v-card color="blue lighten-5" class="" outlined>
                       <v-tabs
+                        vertical
                         v-model="state.col_tab_model"
-                        grow
-                        background-color="blue lighten-4"
                       >
-                        <v-tab key="gal-dist"> Estimate Galaxy Distance </v-tab>
-                        <v-tab key="gal-vel"> Measure Galaxy Velocity </v-tab>
-                      </v-tabs>
-
-                      <v-tabs-items
-                        v-model="state.col_tab_model"
-                        style="background-color: transparent"
-                        class="px-3"
-                      >
+                        <v-tab key="gal-dist"> Estimate Distance </v-tab>
+                        <v-tab key="gal-vel"> Measure Velocity </v-tab>
                         <v-tab-item key="gal-dist">
-                          <v-window v-model="state.est_model">
-                            <v-window-item key="gal-select">
+                          <v-container>
                               <v-row>
-                                <v-col cols="12" md="4">
-                                  <v-alert
-                                    border="top"
-                                    colored-border
-                                    type="info"
-                                    elevation="2"
-                                  >
-                                    Pan the sky and select one of the galaxies
-                                    to measure.
-                                  </v-alert>
-                                </v-col>
 
-                            <!-- This should be a WWT viewer with available galaxy positions plotted by RA/Dec-->
-                                <v-col cols="12" md="8">
-                                  <jupyter-widget
-                                    style="height: 300px"
-                                    :widget="viewers.wwt_viewer"
-                                  ></jupyter-widget
-                                ></v-col>
-                              </v-row>
-                            </v-window-item>
-                            <v-window-item key="gal-size">
-                              <v-row>
-                                <v-col cols="12" md="4">
-                                  <v-card class="fill-height">
-                                    <v-card-title>Select Galaxy</v-card-title>
-                                    <v-card-text>
-                                      Type: Assumed size: Height of display:
-                                    </v-card-text>
-                                  </v-card>
-                                </v-col>
-
-                            <!-- This zoom in within WWT viewer to chosen galaxy & put measurement controls/instructions on screen -->
+                                <!-- This WWT viewer widget allows user to select a galaxy; galaxy positions plotted by RA/Dec.
+                                It will zoom in to chosen galaxy & put controls/instructions on screen. -->
                                 <v-col cols="12" md="8">
                                   <jupyter-widget
                                     style="min-height: 300px"
                                     :widget="viewers.wwt_viewer"
                                   ></jupyter-widget
                                 ></v-col>
+
+                                <!-- Callout to select galaxy / info about selected galaxy -->
+                                <v-col cols="12" md="4">
+                                  <v-alert
+                                    border="left"
+                                    colored-border
+                                    color="indigo"
+                                    elevation="2"
+                                  >
+                                    Pan the sky and select one of the galaxies
+                                    to measure.
+                                  </v-alert>
+                                  <v-card>
+                                    <v-card-title>Select Galaxy</v-card-title>
+                                    <v-card-text>
+                                      Type:<br>
+                                      Assumed size:<br>
+                                      Height of display:
+                                    </v-card-text>
+                                  </v-card>
+                                </v-col>
                               </v-row>
-                            </v-window-item>
-                          </v-window>
-                          <v-card-actions class="justify-space-between">
-                            <v-btn
-                              text
-                              @click="
-                                state.est_model =
-                                  state.est_model - 1 < 0
-                                    ? 0
-                                    : state.est_model - 1
-                              "
-                            >
-
-<!-- I'm not sure if this is the code that corresponds to the blue dots/arrows to advance between steps, but if it is, I'm assuming @nmearl is giving us examples of multiple ways to let students advance. We don't need both the center dots and the arrows, so Harry, decide which you prefer and plan to use only 1. -->                            
-                              <v-icon>mdi-chevron-left</v-icon>
-                            </v-btn>
-                            <v-item-group
-                              v-model="state.est_model"
-                              class="text-center"
-                              mandatory
-                            >
-
-                              <!-- For loop - this makes 2 unique buttons - btn-1; btn-2-->                           
-                              <v-item
-                                v-for="n in 4"
-                                :key="`btn-${n}`" 
-                                v-slot="{ active, toggle }"
-                              >
-                                <v-btn
-                                  :input-value="active"
-                                  icon
-                                  @click="toggle"
-                                >
-                                  <v-icon>mdi-record</v-icon>
-                                </v-btn>
-                              </v-item>
-                            </v-item-group>
-                            <v-btn
-                              text
-                              @click="
-                                state.est_model =
-                                  state.est_model + 1 > 1
-                                    ? 1
-                                    : state.est_model + 1
-                              "
-                            >
-                              <v-icon>mdi-chevron-right</v-icon>
-                            </v-btn>
-                          </v-card-actions>
+                          </v-container>
                         </v-tab-item>
 
                         <v-tab-item key="gal-vel"> </v-tab-item>
-                      </v-tabs-items>
+                      </v-tabs>
+
                     </v-card>
                   </v-stepper-content>
 
@@ -313,4 +247,13 @@ body {
 .bqplot {
   height: 100%;
 }
+
+.v-stepper__content {
+  min-height: 500px;
+}
+
+.v-tabs-items {
+  min-height: 300px;
+}
+
 </style>
