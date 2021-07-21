@@ -198,6 +198,26 @@
                 >
                   Next
                 </v-btn>
+
+                <v-btn
+                  dark
+                  @click="state.snackbar = 1">
+                  Open Snackbar
+                </v-btn>
+
+                <v-snackbar
+                  v-model="state.snackbar"
+                  style="position: absolute"
+                  color="orange"
+                  >
+               Woohoo!
+                  <v-btn 
+                    color="cyan"
+                    @click="state.snackbar=0">
+                      Close
+                  </v-btn>
+                </v-snackbar>   
+
               </v-card-actions>
             </v-card>
           </v-col>
@@ -205,7 +225,7 @@
         <c-footer />
       </v-container>
     </v-main>
-  </v-app>
+  </v-app>  
 </template>
 
 <style id="cosmicds-app">

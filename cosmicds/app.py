@@ -26,6 +26,7 @@ class ApplicationState(State):
     over_model = CallbackProperty(1)
     col_tab_model = CallbackProperty(0)
     est_model = CallbackProperty(0)
+    snackbar = CallbackProperty(0) #I think this initializes it in vue.app with a value=0. When I tried CallbackProperty(1), the app initializes with the snackbar already open.
 
 
 class Application(VuetifyTemplate):
@@ -159,4 +160,5 @@ class Application(VuetifyTemplate):
                 data = self.data_collection['HubbleSummary_Overall']
                 viewer.add_data(data)
                 viewer.x_att = data.id['age']
+            
 
