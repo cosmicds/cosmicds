@@ -20,15 +20,19 @@ from traitlets import Bool, Dict, Int, List
 
 from .utils import load_template
 from .components.footer import Footer
+# When we have multiple components, change above to
+# from .components import *
 
-
+# Within ipywidgets - update calls only happen in certain instances. 
+# Tom added this glue state to allow 2-way binding and force communication that we want explicitly controlled between front end and back end.
 class ApplicationState(State):
     over_model = CallbackProperty(1)
     col_tab_model = CallbackProperty(0)
     est_model = CallbackProperty(0)
     snackbar = CallbackProperty(0) #I think this initializes it in vue.app with a value=0. When I tried CallbackProperty(1), the app initializes with the snackbar already open.
+    # Another example: welcome_message = CallbackProperty("Welcome <could update to username>")
 
-
+# Everything in this class is exposed directly to the app.vue.
 class Application(VuetifyTemplate):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
     state = GlueState().tag(sync=True)
