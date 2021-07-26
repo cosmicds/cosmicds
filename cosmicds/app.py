@@ -13,6 +13,7 @@ from ipywidgets import widget_serialization
 from traitlets import Dict, List
 
 from .components.footer import Footer
+from .components.viewer_layout import ViewerLayout
 from .utils import load_template, update_figure_css
 
 
@@ -51,15 +52,13 @@ class Application(VuetifyTemplate):
         self._application_handler.load_data(
             str(Path(__file__).parent / "data" / "hubble_simulation" /
                 "output" / "HubbleData_ClassSample.csv"),
-            label='HubbleData_ClassSample'
-        )
+            label='HubbleData_ClassSample')
 
         # Load some simulated age data
         self._application_handler.load_data(
             str(Path(__file__).parent / "data" / "hubble_simulation" /
                 "output" / "HubbleSummary_Overall.csv"),
-            label='HubbleSummary_Overall'
-        )
+            label='HubbleSummary_Overall')
 
         # Instantiate the initial viewers
         # Image viewer used for the 2D spectrum selection
@@ -90,7 +89,7 @@ class Application(VuetifyTemplate):
         hub_const_viewer.state.y_att = data.id['Velocity']
 
         # TODO: Currently, the glue-wwt package requires qt binding even if we
-        # only intend to use the juptyer viewer.
+        #  only intend to use the juptyer viewer.
         wwt_viewer = self._application_handler.new_data_viewer(
             WWTJupyterViewer, data=self.data_collection['galaxy_data'], show=False)
 
@@ -112,16 +111,13 @@ class Application(VuetifyTemplate):
             'age_distr_viewer': age_distr_viewer
         }
 
-        # wwt_viewer_layout = vuetify_layout_factory(wwt_viewer)
-
-        # Store a front-end accessible collection of renderable ipywidgets  
-        # These are the bqplot object itself (.figure_widget)
+        # Store a front-end accessible collection of renderable ipywidgets
         self.viewers = {
-            'image_viewer': image_viewer.figure_widget, 
-            'gal_viewer': gal_viewer.figure_widget, #scatter_viewer_layout,
-            'hub_const_viewer': hub_const_viewer.figure_widget, 
-            'wwt_viewer': wwt_viewer.figure_widget,  # wwt_viewer_layout
-            'age_distr_viewer': age_distr_viewer.figure_widget
+            'image_viewer': ViewerLayout(image_viewer),
+            'gal_viewer': ViewerLayout(gal_viewer),
+            'hub_const_viewer': ViewerLayout(hub_const_viewer),
+            'wwt_viewer': ViewerLayout(wwt_viewer),
+            'age_distr_viewer': ViewerLayout(age_distr_viewer)
         }
 
     def reload(self):

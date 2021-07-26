@@ -68,7 +68,6 @@
                 <v-stepper-items class="">
                   <v-stepper-content step="1">
                     <jupyter-widget
-                      style="height: 300px"
                       :widget="viewers.hub_const_viewer"
                     ></jupyter-widget>
 

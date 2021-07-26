@@ -2,7 +2,7 @@ import os
 from traitlets import Unicode
 import json
 
-__all__ = ['load_template']
+__all__ = ['load_template', 'update_figure_css']
 
 
 def load_template(file_name, path=None, traitlet=True):
@@ -74,4 +74,3 @@ def update_figure_css(viewer, style_dict=None, style_path=None):
         for k, v in viewer_styles.get(prop, {}).items():
             viewer_prop = getattr(viewer.layers[0], prop)
             setattr(viewer_prop, k, v)
-
