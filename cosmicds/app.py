@@ -20,6 +20,7 @@ from traitlets import Bool, Dict, Int, List
 
 from .utils import load_template
 from .components.footer import Footer
+from .components.dialog import Dialog
 
 
 class ApplicationState(State):
@@ -35,6 +36,7 @@ class Application(VuetifyTemplate):
     template = load_template("app.vue", __file__).tag(sync=True)
     viewers = Dict().tag(sync=True, **widget_serialization)
     items = List().tag(sync=True)
+    vue_components = Dict().tag(sync=True, **widget_serialization)
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,7 +44,19 @@ class Application(VuetifyTemplate):
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a 
         # key-value pair to the components dictionary.
-        self.components = {'c-footer': Footer(self)}
+        self.components = {'c-footer': Footer(self),
+                           'c-dialog-test1': Dialog(
+                               self,
+                               launch_button_text="Test 1",
+                               title_text="Test 1 Dialog",
+                               content_text="This is some random text.",
+                               accept_button_text="Accept"),
+                           'c-dialog-test2': Dialog(
+                               self,
+                               launch_button_text="Test 2",
+                               title_text="Test 2 Dialog",
+                               content_text="This is some more random text.",
+                               accept_button_text="Accept")}
 
         self.state = ApplicationState()
         self._application_handler = JupyterApplication()
