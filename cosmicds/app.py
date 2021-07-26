@@ -1,25 +1,19 @@
 from pathlib import Path
-from uuid import uuid4
 
-import numpy as np
-from echo import CallbackProperty, DictCallbackProperty, ListCallbackProperty
-from echo.containers import CallbackList
-from glue.core import Data
+from echo import CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
-from glue_jupyter.bqplot.image import BqplotImageView
-from glue_jupyter.bqplot.profile import BqplotProfileView
-from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
+from glue_jupyter.bqplot.image import BqplotImageView
+from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.state_traitlets_helpers import GlueState
-from glue_jupyter.vuetify_layout import vuetify_layout_factory
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from traitlets import Bool, Dict, Int, List
+from traitlets import Dict, List
 
-from .utils import load_template
 from .components.footer import Footer
+from .utils import load_template, update_figure_css
 
 
 class ApplicationState(State):
@@ -55,13 +49,15 @@ class Application(VuetifyTemplate):
 
         # Load some example simulated data
         self._application_handler.load_data(
-            str(Path(__file__).parent / "data" / "hubble_simulation" / "output" / "HubbleData_ClassSample.csv"),
+            str(Path(__file__).parent / "data" / "hubble_simulation" /
+                "output" / "HubbleData_ClassSample.csv"),
             label='HubbleData_ClassSample'
         )
 
         # Load some simulated age data
         self._application_handler.load_data(
-            str(Path(__file__).parent / "data" / "hubble_simulation" / "output" / "HubbleSummary_Overall.csv"),
+            str(Path(__file__).parent / "data" / "hubble_simulation" /
+                "output" / "HubbleSummary_Overall.csv"),
             label='HubbleSummary_Overall'
         )
 
@@ -73,6 +69,11 @@ class Application(VuetifyTemplate):
         # Scatter viewer used for the display of the measured galaxy data
         hub_const_viewer = self._application_handler.new_data_viewer(
             BqplotScatterView, data=self.data_collection['HubbleData_ClassSample'], show=False)
+
+        # Update the Hubble constant viewer CSS
+        update_figure_css(hub_const_viewer,
+                          style_path=Path(__file__).parent / "data" /
+                                     "styles" / "default_scatter.json")
 
         # Scatter viewer used for the galaxy selection
         gal_viewer = self._application_handler.new_data_viewer(
