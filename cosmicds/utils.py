@@ -1,6 +1,8 @@
-import os
-from traitlets import Unicode
 import json
+import os
+
+import numpy as np
+from traitlets import Unicode
 
 __all__ = ['load_template', 'update_figure_css']
 
@@ -62,9 +64,15 @@ def update_figure_css(viewer, style_dict=None, style_path=None):
         # Update axes styles
         if k == 'axes':
             for ak, av in fig_styles.get('axes')[0].items():
+                if ak == 'tick_values':
+                    av = np.array(av)
+
                 setattr(figure.axes[0], ak, av)
 
             for ak, av in fig_styles.get('axes')[1].items():
+                if ak == 'tick_values':
+                    av = np.array(av)
+
                 setattr(figure.axes[1], ak, av)
         else:
             setattr(figure, k, v)
