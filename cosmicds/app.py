@@ -1,25 +1,20 @@
 from pathlib import Path
-from uuid import uuid4
 
-import numpy as np
-from echo import CallbackProperty, DictCallbackProperty, ListCallbackProperty
-from echo.containers import CallbackList
-from glue.core import Data
+from echo import CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
-from glue_jupyter.bqplot.image import BqplotImageView
-from glue_jupyter.bqplot.profile import BqplotProfileView
-from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
+from glue_jupyter.bqplot.image import BqplotImageView
+from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.state_traitlets_helpers import GlueState
-from glue_jupyter.vuetify_layout import vuetify_layout_factory
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from traitlets import Bool, Dict, Int, List
+from traitlets import Dict, List
 
-from .utils import load_template
 from .components.footer import Footer
+from .components.viewer_layout import ViewerLayout
+from .utils import load_template, update_figure_css
 
 
 class ApplicationState(State):
@@ -55,15 +50,15 @@ class Application(VuetifyTemplate):
 
         # Load some example simulated data
         self._application_handler.load_data(
-            str(Path(__file__).parent / "data" / "hubble_simulation" / "output" / "HubbleData_ClassSample.csv"),
-            label='HubbleData_ClassSample'
-        )
+            str(Path(__file__).parent / "data" / "hubble_simulation" /
+                "output" / "HubbleData_ClassSample.csv"),
+            label='HubbleData_ClassSample')
 
         # Load some simulated age data
         self._application_handler.load_data(
-            str(Path(__file__).parent / "data" / "hubble_simulation" / "output" / "HubbleSummary_Overall.csv"),
-            label='HubbleSummary_Overall'
-        )
+            str(Path(__file__).parent / "data" / "hubble_simulation" /
+                "output" / "HubbleSummary_Overall.csv"),
+            label='HubbleSummary_Overall')
 
         # Instantiate the initial viewers
         # Image viewer used for the 2D spectrum selection
@@ -74,6 +69,15 @@ class Application(VuetifyTemplate):
         hub_const_viewer = self._application_handler.new_data_viewer(
             BqplotScatterView, data=self.data_collection['HubbleData_ClassSample'], show=False)
 
+        data = self.data_collection['HubbleData_ClassSample']
+        hub_const_viewer.state.x_att = data.id['Distance']
+        hub_const_viewer.state.y_att = data.id['Velocity']
+
+        # Update the Hubble constant viewer CSS
+        update_figure_css(hub_const_viewer,
+                          style_path=Path(__file__).parent / "data" /
+                                     "styles" / "default_scatter.json")
+
         # Scatter viewer used for the galaxy selection
         gal_viewer = self._application_handler.new_data_viewer(
             BqplotScatterView, data=self.data_collection['galaxy_data'],
@@ -81,15 +85,10 @@ class Application(VuetifyTemplate):
 
         # Histogram viewer for age distribution
         age_distr_viewer = self._application_handler.new_data_viewer(
-            BqplotHistogramView, data=self.data_collection['HubbleSummary_Overall'], show=False)        
-
-        # scatter_viewer.add_data(self.data_collection['HubbleData_ClassSample'])
-        data = self.data_collection['HubbleData_ClassSample']
-        hub_const_viewer.state.x_att = data.id['Distance']
-        hub_const_viewer.state.y_att = data.id['Velocity']
+            BqplotHistogramView, data=self.data_collection['HubbleSummary_Overall'], show=False)
 
         # TODO: Currently, the glue-wwt package requires qt binding even if we
-        # only intend to use the juptyer viewer.
+        #  only intend to use the juptyer viewer.
         wwt_viewer = self._application_handler.new_data_viewer(
             WWTJupyterViewer, data=self.data_collection['galaxy_data'], show=False)
 
@@ -111,16 +110,13 @@ class Application(VuetifyTemplate):
             'age_distr_viewer': age_distr_viewer
         }
 
-        # wwt_viewer_layout = vuetify_layout_factory(wwt_viewer)
-
-        # Store a front-end accessible collection of renderable ipywidgets  
-        # These are the bqplot object itself (.figure_widget)
+        # Store a front-end accessible collection of renderable ipywidgets
         self.viewers = {
-            'image_viewer': image_viewer.figure_widget, 
-            'gal_viewer': gal_viewer.figure_widget, #scatter_viewer_layout,
-            'hub_const_viewer': hub_const_viewer.figure_widget, 
-            'wwt_viewer': wwt_viewer.figure_widget,  # wwt_viewer_layout
-            'age_distr_viewer': age_distr_viewer.figure_widget
+            'image_viewer': ViewerLayout(image_viewer),
+            'gal_viewer': ViewerLayout(gal_viewer),
+            'hub_const_viewer': ViewerLayout(hub_const_viewer),
+            'wwt_viewer': ViewerLayout(wwt_viewer),
+            'age_distr_viewer': ViewerLayout(age_distr_viewer)
         }
 
     def reload(self):
