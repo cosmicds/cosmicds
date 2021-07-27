@@ -69,6 +69,10 @@ class Application(VuetifyTemplate):
         hub_const_viewer = self._application_handler.new_data_viewer(
             BqplotScatterView, data=self.data_collection['HubbleData_ClassSample'], show=False)
 
+        data = self.data_collection['HubbleData_ClassSample']
+        hub_const_viewer.state.x_att = data.id['Distance']
+        hub_const_viewer.state.y_att = data.id['Velocity']
+
         # Update the Hubble constant viewer CSS
         update_figure_css(hub_const_viewer,
                           style_path=Path(__file__).parent / "data" /
@@ -81,12 +85,7 @@ class Application(VuetifyTemplate):
 
         # Histogram viewer for age distribution
         age_distr_viewer = self._application_handler.new_data_viewer(
-            BqplotHistogramView, data=self.data_collection['HubbleSummary_Overall'], show=False)        
-
-        # scatter_viewer.add_data(self.data_collection['HubbleData_ClassSample'])
-        data = self.data_collection['HubbleData_ClassSample']
-        hub_const_viewer.state.x_att = data.id['Distance']
-        hub_const_viewer.state.y_att = data.id['Velocity']
+            BqplotHistogramView, data=self.data_collection['HubbleSummary_Overall'], show=False)
 
         # TODO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
