@@ -1,0 +1,44 @@
+{
+  "figure": {
+    "background_style": {
+      "fill": "#FCFFB8"
+    },
+    "fig_margin": {
+      "left": 100,
+      "bottom": 60,
+      "top": 10,
+      "right": 10
+    },
+    "axes": [
+      {
+        "grid_color": "#FF5733",
+        "grid_lines": "dashed",
+        "tick_style": {
+          "font-family": "Courier New"
+        },
+        "label": "Overwrite the label text"
+      },
+      {
+        "tick_format": ",.2f",
+        "tick_style": {
+          "font-family": "Times New Roman",
+          "font-size": 18
+        },
+        "label_offset": "75px",
+        "grid_lines": "solid",
+        "label_style": {
+          "font-family": "Times New Roman"
+        }
+      }
+    ]
+  },
+  "viewer": {
+    "scatter": {
+      "marker": "cross"
+    },
+    "state": {
+      "size": 8,
+      "color": "#00D387"
+    }
+  }
+}
