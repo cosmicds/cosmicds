@@ -40,18 +40,18 @@ class Application(VuetifyTemplate):
         # html tag we want and an instance of the component class as a 
         # key-value pair to the components dictionary.
         self.components = {'c-footer': Footer(self),
-                           'c-dialog-test1': Dialog(
+                           'c-dialog-vel': Dialog(
                                self,
-                               launch_button_text="Test 1",
-                               title_text="Test 1 Dialog",
-                               content_text="This is some random text.",
-                               accept_button_text="Accept"),
-                           'c-dialog-test2': Dialog(
+                               launch_button_text="Learn more",
+                               title_text="How do we measure galaxy velocity?",
+                               content_text="Verbiage about comparing observed & rest wavelengths of absorption/emission lines",
+                               accept_button_text="Close"),
+                           'c-dialog-age': Dialog(
                                self,
-                               launch_button_text="Test 2",
-                               title_text="Test 2 Dialog",
-                               content_text="This is some more random text.",
-                               accept_button_text="Accept")}
+                               launch_button_text="Learn more",
+                               title_text="How do we estimate age of the universe?",
+                               content_text="Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.",
+                               accept_button_text="Close")}
 
         self.state = ApplicationState()
         self._application_handler = JupyterApplication()
