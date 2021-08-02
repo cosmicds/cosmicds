@@ -109,7 +109,12 @@
                                       Assumed size:<br>
                                       Height of display:
                                     </v-card-text>
+
+                                    <v-card-actions>
+                                      <c-dialog-test2></c-dialog-test2>
+                                    </v-card-actions>
                                   </v-card>
+
                                 </v-col>
                               </v-row>
                           </v-container>
@@ -204,18 +209,20 @@
                   Open Snackbar
                 </v-btn>
 
+                <c-dialog-test1></c-dialog-test1>
+
                 <v-snackbar
                   v-model="state.snackbar"
                   style="position: absolute"
                   color="orange"
                   >
                Woohoo!
-                  <v-btn 
+                  <v-btn
                     color="cyan"
                     @click="state.snackbar=0">
                       Close
                   </v-btn>
-                </v-snackbar>   
+                </v-snackbar>
 
               </v-card-actions>
             </v-card>
@@ -224,7 +231,7 @@
         <c-footer />
       </v-container>
     </v-main>
-  </v-app>  
+  </v-app>
 </template>
 
 <style id="cosmicds-app">
