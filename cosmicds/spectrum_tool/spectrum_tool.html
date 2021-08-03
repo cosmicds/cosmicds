@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Spectrum Tool</title>
+<!--Based of 23_8  And 24_8-->
+<meta charset="utf-8">
+<meta name="author" content=" Science Education Department at the Harvard-Smithsonian Center for Astrophysics">
+<meta name="author" content="Alaalden Ibrahim">
+<meta content="DIY planet search,planet search,planets search,exoplanet, super earth, extrasolar planet, nasa, kepler, alien planet, another earth, new planet, planets outside our solar system, planetquest, hot jupiter, alien earth" http-equiv="keywords">
+<meta content="NASA's portal for planet hunters to search for new Planets and Earths, and more." name="description">
+<!--****************************************--> 
+<!--****************************************-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--****************************************--> 
+<!--****************************************-->
+<link rel="stylesheet" href="https://waps.cfa.harvard.edu/microobservatory/spectrum/includes/AI_common/Bootstrap/4.5.0/css/bootstrap.min.css">
+<script src="https://waps.cfa.harvard.edu/microobservatory/spectrum/includes/AI_common/js/jquery/3.5.1/jquery.min.js"></script> 
+<script src="https://waps.cfa.harvard.edu/microobservatory/spectrum/includes/AI_common/Bootstrap/4.5.0/js/popper.min.js"></script> 
+<script src="https://waps.cfa.harvard.edu/microobservatory/spectrum/includes/AI_common/Bootstrap/4.5.0/js/bootstrap.min.js"></script> 
+<!--****************************************-->
+<link type="text/css" rel="stylesheet" href="https://waps.cfa.harvard.edu/microobservatory/spectrum/includes/AI_common/css/spectrum_styles_playground_v1.css">
+<!--****************************************-->
+<link href="https://waps.cfa.harvard.edu/microobservatory/spectrum/includes/AI_common/css/fontawesome/all.css" rel="stylesheet">
+<!--load all styles --> 
+<!--****************************************--> 
+</head>
+<!--****************************************-->
+<body>
+<!--****************************************--> 
+<!--****************************************-->
+
+<div class="container-fluid position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light" style="min-height: 850px;"> 
+  <!--***********************************--> 
+  <!--***********************************--> 
+  <!--***********************************-->
+  <!--***********************************--> 
+  <!--***********************************-->
+  
+    <!--*****************col-md-4 themed-grid-col******************-->
+    <div class="col-sm-12 col-md-12 col-lg-9 col-xl-9 themed-grid-col">
+        <!--****************************************--> 
+        <!--***** The Tools Code Starts Here    ****--> 
+        <!--****************************************-->
+        <div class="row"  id="UpperGraphRow">
+            
+              <!--***********************************-->
+              <div class="col-md-12 mt-4 themed-grid-col3_9"> 
+                <!--***********************************--> 
+                <!--***********************************-->
+                <div class="row mb-1 UploadFiles"> 
+                  <!--****************************************-->
+                  <div class="col-md-3 themed-grid-col">
+                    <label for="input-Tfile">Choose Data File to upload (txt, csv)</label>
+                    <input type="file" id="input-Tfile" name="input-Tfile" accept=".csv , .txt" multiple="" style="opacity: 0;">
+                  </div>
+                  <!--****************************************-->
+                  <div class="col-md-2 themed-grid-col">
+                    <button  id="read-Tfile">Display File</button>
+                  </div>
+                  <!--****************************************--> 
+                </div>
+                <!--***********************************--> 
+              </div>
+            <!--***********************************--> 
+          <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8  themed-grid-col3_1" id="UpperToolleft">
+            <!--***********************************-->
+            <div class="UpperCanvasDiv"> 
+              <!--***********************************-->
+              <div id="UpperRainbowActiveDiv" class="Tutorial_activeSection"></div>
+              <!--***********************************-->
+              <canvas class="UpperCanvasRainbow" id="UpperCanvasRainbow" style="position: absolute;top: 10px;left: 40px; z-index: 1; display: block;"  width="610" height="60"></canvas>
+              <!--***********************************-->
+              <canvas id="U_D_CRH" class="TopDrawCanvasRainbowHue" style="position: absolute;top: 10px;left: 40px; z-index: 4; display: block;"  width="610" height="60"></canvas>
+              <!--***********************************-->
+              <canvas id="U_R_I" class="UpperRainbowrIndicator" style="position: absolute;top: 10px;left: 40px; z-index: 4; display: block;"  width="610" height="20"></canvas>
+              <!--***********************************--> 
+              <!--***********************************-->
+              <canvas id="UpperIndicatorCanvas" width="610" height="150"  style="position: absolute;top: 70px;left: 40px; z-index: 7;" onmousemove="updateLine(event,UIC_ctx)"></canvas>
+              <!--***********************************-->
+              <div id="UpperGraphActiveDiv" class="Tutorial_activeSection"></div>
+              
+              <!--***********************************-->
+              <canvas id="UpperCanvasGraph" width="610" height="150"  style="position: absolute;top: 70px;left: 40px; z-index: 5;"> </canvas>
+              <!--***********************************--> 
+              
+              <!--***********************************-->
+              <canvas id="myDrawCanvas" width="610" height="150"  style="position: absolute;top: 70px;left: 40px; z-index: 5;" onmousedown="dragStart(event)" onmouseup="dragStop(event)" onmousemove="drawCurve(event)" onmouseout="leavingCanvas(event)"> </canvas>
+              <!--***********************************-->
+              <canvas id="UpperCanvasXAxis" width="630" height="30"  style="position: absolute;top: 210px;left: 20px; z-index: 5;"> </canvas>
+              <!--***********************************-->
+              <canvas id="UpperCanvasYAxis" width="30" height="150"  style="position: absolute;top: 70px;left: 10px; z-index: 5;"> </canvas>
+              <!--***********************************-->
+              <p class="text-center" left="-35px" id="More_Light_Upper_Div"> Intensity</p>
+              <p class="text-center" id="Wavelength_Upper_Div"> Wavelength (Microns) </p>
+              <!--***********************************--> 
+            </div>
+            <!--****************************************--> 
+            <!--End of UpperCanvasDiv--> 
+            <!--****************************************--> 
+          </div>
+              <!--***********************************-->
+            <!--***********************************--> 
+        </div>
+        <!--****************************************--> 
+        <!--****************************************--> 
+        <!--End of UpperCanvas Row--> 
+        <!--****************************************--> 
+        <!--****************************************-->
+        <div class="row mb-3" style="margin-bottom: 0.2rem!important; max-width: 1300px;">
+            <!--***********************************-->
+
+            <!--***********************************--> 
+          
+          <!--****************************************--> 
+          <!--****************************************--> 
+        </div>
+        <!--****************************************--> 
+        <!--****************************************--> 
+        <!--End of Middle Tools Row--> 
+        <!--****************************************--> 
+        <!--****************************************-->
+
+
+        <!--****************************************--> 
+        <!--****************************************--> 
+        <!--End of Lower Canvas Row--> 
+        <!--****************************************--> 
+        <!--****************************************--> 
+      <!--****************************************--> 
+      <!--****************************************--> 
+      
+      <!--****************************************--> 
+      <!--*****     The Tools Code Ends Here  ****--> 
+      <!--****************************************--> 
+      <img src="https://waps.cfa.harvard.edu/microobservatory/spectrum/includes/AI_common/images/Blue_and_Red_Stars.png" id="Challenge1_Image_session1" alt="Blue and Red Stars">
+      
+      </div>
+    <!--*****************col-md-8 themed-grid-col******************--> 
+  </div>
+  <!--****************************************--> 
+  <!--****************************************--> 
+      <!--End of All_Tools_And_Controls Row--> 
+  <!--**********        row mb-3    **********--> 
+  <!--****************************************--> 
+  <!--****************************************-->
+  <div class="row mb-3" style="margin-bottom: 0.2rem!important; display: none;"> 
+    <!--******************************************-->
+    <div class="col-md-3 themed-grid-col2_0"> Spectrum Type 
+      <!--***********************************-->
+      <select class="custom-select mr-sm-2" id="SelectSpectrumType" onChange="initSpectrum() ">
+        <option id="continuous_line_spectrum" value="Continuous">Continuous Line Spectrum</option>
+        <option id="continuous_spectrum" value="Continuous">Continuous Spectrum</option>
+        <option id="line_spectrum" value="Line">Line Spectrum</option>
+      </select>
+      <!--***********************************--> 
+    </div>
+    
+    <!--***********************************-->
+    <div class="col-md-2 themed-grid-col2_0"> Alpha_Range_Val
+      <input type="range" min="1" max="100" value="97" class="slider" id="Alpha_Range">
+      <p>Alpha Slider: <span id="Alpha_Range_Val"></span> </p>
+    </div>
+    <div class="col-md-2 themed-grid-col2_0"> X slider
+        <input type="range" min="1" max="100" value="50" class="slider" id="XAxis_Range">
+    </div>
+
+
+    <!--***********************************--> 
+    <!--******************************************-->
+    <div class="col-md-2 themed-grid-col2_0"> 
+      <!--***********************************-->
+      <div class="YAxis_Slidecontainer">
+        <input type="range" min="1" max="100" value="1" class="YAxis_slider" id="YAxis_Range">
+      </div>
+      <div class="YAxis_Slide_Value"> <span id="Y_Axis_Slider"></span> </div>
+      <!--***********************************--> 
+    </div>
+    <!--******************************************--> 
+    
+  </div>
+  <!--***********************************--> 
+  
+  <!--***********************************--> 
+  <!--***********************************-->
+  <div style="display: none;"> 
+    <!--***********************************-->
+    <div style="display: none;"> <img id="rainbow" alt="" src="https://waps.cfa.harvard.edu/microobservatory/spectrum/includes/AI_common/images/Visible_Spectrum_1.png"> <img id="rainbow2" alt="" src="https://waps.cfa.harvard.edu/microobservatory/spectrum/includes/AI_common/images/Visible_Spectrum_1.png"> <img id="Triangle" alt="" src="https://waps.cfa.harvard.edu/microobservatory/spectrum/includes/AI_common/images/play-button_2.png"> </div>
+    <!--***********************************-->
+    <p> <span id="demo3"></span> </p>
+    <p> <span id="demo"></span> </p>
+    <!--***********************************-->
+    <div id="alphax"></div>
+    <br>
+    <div id="deltaX"></div>
+    <p>drawIndicatorMousePos: <span id="drawIndicatorMousePos"></span> </p>
+    <!--***********************************--> 
+    <!--***********************************--> 
+    <!--***********************************-->
+    <hr>
+    <!--***********************************-->
+    <hr>
+    <div id="MouseLocation"></div>
+    <br>
+    <p>X-Axis Slider: <span id="X_Axis_Slider_Val"></span> </p>
+    <p>Y-Axis Slider: <span id="Y_Axis_Slider_Val"></span> </p>
+    <!--***********************************--> 
+  </div>
+  <!--***********************************--> 
+  <!--***********************************-->
+  <!--***********************************--> 
+</div>
+<!--***********************************--> 
+<!--***********************************--> 
+<!--****************************--> 
+<!--***********************************-->
+
+<!--****************************************--> 
+<script src="spectrum_tool.js"></script> 
+<!--****************************************--> 
+<script>
+  </script> 
+<script>
+/*************************************/
+/*************************************/
+$(document).ready(function(){
+  $('[data-toggle="tooltip"]').tooltip();
+});
+/*************************************/ 
+    var classList ='fas fa-search';
+/*************************************/    
+$(document).ready(function()
+{
+    
+});
+/*************************************/
+</script>
+</body>
+</html>
