@@ -1,6 +1,9 @@
 from pathlib import Path
 
+from astropy.modeling import models, fitting
+from bqplot_image_gl import LinesGL
 from echo import CallbackProperty
+from glue.core.data import Subset
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
@@ -14,7 +17,7 @@ from traitlets import Dict, List
 
 from .components.footer import Footer
 from .components.viewer_layout import ViewerLayout
-from .utils import load_template, update_figure_css
+from .utils import component_value_subsets, load_template, update_figure_css
 from .components.dialog import Dialog
 
 
@@ -81,16 +84,28 @@ class Application(VuetifyTemplate):
 
         # Scatter viewer used for the display of the measured galaxy data
         hub_const_viewer = self._application_handler.new_data_viewer(
-            BqplotScatterView, data=self.data_collection['HubbleData_ClassSample'], show=False)
+            BqplotScatterView, data=None, show=False)
+        hub_fit_viewer = self._application_handler.new_data_viewer(
+            BqplotScatterView, data=None, show=False)
 
-        data = self.data_collection['HubbleData_ClassSample']
-        hub_const_viewer.state.x_att = data.id['Distance']
-        hub_const_viewer.state.y_att = data.id['Velocity']
+        # Create a subset for each student
+        student_data = self.data_collection['HubbleData_ClassSample']
+        student_subsets = component_value_subsets(student_data, "StudentNum", lambda x: "Student %d" % x)
 
-        # Update the Hubble constant viewer CSS
-        update_figure_css(hub_const_viewer,
-                          style_path=Path(__file__).parent / "data" /
-                                     "styles" / "default_scatter.json")
+        # Set up the scatter viewers
+        style_path = str(Path(__file__).parent / "data" /
+                                        "styles" / "default_scatter.json")
+        for viewer in [hub_const_viewer, hub_fit_viewer]:
+
+            # Add the data from the first student
+            viewer.add_subset(student_subsets[0])
+
+            # Set the x and y attributes of the viewer
+            viewer.state.x_att = student_data.id['Distance']
+            viewer.state.y_att = student_data.id['Velocity']
+
+            # Update the viewer CSS
+            update_figure_css(viewer, style_path=style_path)
 
         # Scatter viewer used for the galaxy selection
         gal_viewer = self._application_handler.new_data_viewer(
@@ -113,13 +128,19 @@ class Application(VuetifyTemplate):
         data = self.data_collection['HubbleSummary_Overall']
         age_distr_viewer.state.x_att = data.id['age']
 
+        # Any lines that we've obtained from fitting
+        # The lines will be keyed by uuid
+        self.fit_lines = {}
+        self.fit_slopes = {}
+
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
         # Store an internal collection of the glue viewer objects
         self._viewer_handlers = {
             'image_viewer': image_viewer, 
             'gal_viewer': gal_viewer,
-            'hub_const_viewer': hub_const_viewer, 
+            'hub_const_viewer': hub_const_viewer,
+            'hub_fit_viewer': hub_fit_viewer,
             'wwt_viewer': wwt_viewer,
             'age_distr_viewer': age_distr_viewer
         }
@@ -129,6 +150,7 @@ class Application(VuetifyTemplate):
             'image_viewer': ViewerLayout(image_viewer),
             'gal_viewer': ViewerLayout(gal_viewer),
             'hub_const_viewer': ViewerLayout(hub_const_viewer),
+            'hub_fit_viewer': ViewerLayout(hub_fit_viewer),
             'wwt_viewer': ViewerLayout(wwt_viewer),
             'age_distr_viewer': ViewerLayout(age_distr_viewer)
         }
@@ -152,6 +174,49 @@ class Application(VuetifyTemplate):
         Underlying glue-jupyter application data collection instance.
         """
         return self._application_handler.data_collection
+
+    def vue_fit_lines(self, viewer_id):
+        viewer = self._viewer_handlers[viewer_id]
+        figure = self.viewers[viewer_id].figure
+        for layer in viewer.layers:
+
+            # Get the data
+            # We want to distinguish whether this layer corresponds
+            # to a Subset or not
+            data = layer.state.layer
+            if isinstance(data, Subset):
+                subset = data
+                data = subset.data
+            else:
+                subset = None
+            subset_layer = subset is not None
+
+            # Do the line fit
+            values = subset if subset_layer else data
+            x_arr = values[viewer.state.x_att]
+            y_arr = values[viewer.state.y_att]
+            fit = fitting.LinearLSQFitter()
+            line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
+            fitted_line = fit(line_init, x_arr, y_arr)
+            x = sorted(list(x_arr))
+            x = [0] + x + [2*x[-1]] # For now, the line spans from 0 to twice the maximum value of x
+            y = fitted_line(x)
+
+            # Since the glupyter viewer doesn't have an option for lines
+            # we just draw the fit line directly onto the bqplot figure
+            # If we already drew a line for this Data/Subset, remove it first
+            line = LinesGL(x=list(x), y=list(y), scales=layer.image.scales, colors=[layer.state.color], labels_visibility='label')
+            uuid = subset.uuid if subset_layer else data.uuid
+            old_line = self.fit_lines.get(uuid, None)
+            if old_line:
+                index = figure.marks.index(old_line)
+                if index >= 0:
+                    figure.marks.pop(index)
+            figure.marks = figure.marks + [line]
+
+            # Keep track of the line that we drew
+            self.fit_lines[uuid] = line
+            self.fit_slopes[uuid] = fitted_line.slope.value
 
     def vue_add_data_to_viewers(self, viewer_ids):
         for viewer_id in viewer_ids:

@@ -190,21 +190,18 @@
                       <v-row>
                         <v-col 
                           cols="3"
-                        ><v-alert
-                            class="pa-5"
-                            height="300px"
-                            border="left"
-                            colored-border
-                            color="indigo"
-                            elevation="3"
+                        >
+                          <v-btn
+                            color="primary"
+                            @click="fit_lines('hub_fit_viewer')"
                           >
-                            Buttons to draw (unless this is prohibitively complicated..) and then plot calculated best fit line to students' data. (Display should include 4-5 data points.)
-                          </v-alert>
+                            Fit Line
+                          </v-btn>
                         </v-col>
                         <v-col>
                           <v-lazy>      
                             <jupyter-widget
-                              :widget="viewers.hub_const_viewer"
+                              :widget="viewers.hub_fit_viewer"
                             ></jupyter-widget>
                           </v-lazy>
                         </v-col>
