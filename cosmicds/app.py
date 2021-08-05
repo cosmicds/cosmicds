@@ -26,6 +26,7 @@ class ApplicationState(State):
     gal_snackbar = CallbackProperty(0)
     dist_snackbar = CallbackProperty(0)
     vel_snackbar = CallbackProperty(0)
+    data_ready_snackbar = CallbackProperty(0)
 
     gal_selected = CallbackProperty(0)
     dist_measured = CallbackProperty(0)
@@ -35,6 +36,7 @@ class ApplicationState(State):
     next1_disabled = CallbackProperty(1)
 
     haro_on = CallbackProperty("d-none")
+    galaxy_dist = CallbackProperty("")
 
 
 class Application(VuetifyTemplate):

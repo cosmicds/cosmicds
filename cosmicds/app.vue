@@ -16,7 +16,7 @@
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
       <v-toolbar-title>
-        Hubble Data Story
+        Cosmic Data Stories | Hubble's Law
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -181,21 +181,38 @@
                                           <v-list-item-subtitle>height of display</v-list-item-subtitle>
                                         </v-list-item-content>
                                       </v-list>
+                                      <v-divider></v-divider>
+                                      <v-text-field
+                                        :value="state.galaxy_dist"
+                                        label="Estimated Distance"
+                                        hint="click button below"
+                                        persistent-hint
+                                        color="purple darken-2"
+                                        class="mt-8 mb-4"
+                                        suffix="Mpc"
+                                        outlined
+                                        readonly
+                                        dense
+                                      ></v-text-field>
                                       <v-btn
                                         block
                                         color="purple darken-2"
                                         dark
                                         class="px-auto"
+                                        max-width="100%"
                                         @click="
-                                          state.dist_snackbar = 1;
                                           state.dist_measured = 1;
+                                          state.vel_measured == 1
+                                            ? state.data_ready_snackbar = 1
+                                            : state.dist_snackbar = 1;
                                           state.adddata_disabled =
                                             state.vel_measured == 1
                                               ? false
-                                              : true
+                                              : true;
+                                          state.galaxy_dist = Math.floor(Math.random() * 450) + 50
                                         "
                                       >
-                                        Estimate Distance
+                                        estimate
                                       </v-btn>
                                     </v-card-text>
                                   </v-card>
@@ -237,8 +254,11 @@
                                   class="white--text mb-12"
                                   color="purple darken-2"
                                   @click="
-                                    state.vel_snackbar = 1;
+
                                     state.vel_measured = 1;
+                                    state.dist_measured == 1
+                                      ? state.data_ready_snackbar = 1
+                                      : state.vel_snackbar = 1;
                                     state.adddata_disabled =
                                       state.dist_measured == 1
                                         ? false
@@ -471,9 +491,10 @@
                   </v-icon>
                   Add Data
                 </v-btn>
-<!-- TO DO: change this to "Finish" or something on last page-->
+                <!-- for TESTING, use the following -- :disabled="false" -->
+                <!-- for FINAL, use the following -- :disabled="state.over_model == 4 ? true : state.next1_disabled" -->
                 <v-btn
-                  :disabled="state.over_model == 4 ? true : state.next1_disabled"
+                  :disabled="false"
                   color="primary"
                   @click="
                     state.over_model =
@@ -482,7 +503,7 @@
                         : state.over_model
                   "
                 >
-                  Next
+                  {{ state.over_model == 4 ? 'Finish' : 'Next' }}
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -542,6 +563,25 @@
         "
       >
           Go to Estimate Distance
+      </v-btn>
+    </v-snackbar>
+
+    <v-snackbar
+      v-model="state.data_ready_snackbar"
+      style="position: absolute"
+      color="green"
+    >
+      Great! You've estimated both distance and velocity for your galaxy. Now you can add these measurements to your dataset.
+      <v-btn
+        text
+        @click="
+          state.data_ready_snackbar = 0;
+        "
+        icon
+        large
+        dark
+      >
+          <v-icon>mdi-plus</v-icon>
       </v-btn>
     </v-snackbar>
   </v-app>  
