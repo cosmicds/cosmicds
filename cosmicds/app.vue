@@ -107,7 +107,11 @@
                         </v-col>
                       </v-row>
                     </v-container>
-                    <v-card color="blue lighten-5" class="" outlined>
+                    <v-card
+                      color="blue lighten-5"
+                      class=""
+                      outlined
+                    >
                       <v-tabs
                         vertical
                         v-model="state.col_tab_model"
@@ -128,34 +132,34 @@
 
                               <!-- Callout to select galaxy / info about selected galaxy -->
                               <v-col cols="12" md="4">
-                              <v-alert
-                                border="left"
-                                colored-border
-                                color="indigo"
-                                elevation="2"
-                              >
-                                Pan the sky and select one of the galaxies
-                                to measure.
-                                <div class="text-center mt-4">
-                                  <v-btn
-                                    class="white--text"
-                                    color="purple darken-2"
-                                    @click="
-                                      state.gal_snackbar = 1;
-                                      state.gal_selected = 1;
-                                      state.haro_on = 'd-block'
-                                    "
-                                  >
-                                    Select Galaxy
-                                  </v-btn>
-                                </div>
-                              </v-alert>
+                                <v-alert
+                                  class="mb-12"
+                                  border="left"
+                                  colored-border
+                                  color="indigo"
+                                  elevation="2"
+                                >
+                                  Pan the sky and select one of the galaxies
+                                  to measure.
+                                  <div class="text-center mt-4">
+                                    <v-btn
+                                      class="white--text"
+                                      color="purple darken-2"
+                                      @click="
+                                        state.gal_snackbar = 1;
+                                        state.gal_selected = 1;
+                                        state.haro_on = 'd-block'
+                                      "
+                                    >
+                                      Select Galaxy
+                                    </v-btn>
+                                  </div>
+                                </v-alert>
                                 <div
                                   :class="state.haro_on"
                                 >
                                   <v-card
                                     v-model="state.haro_on"
-                                    class="mb-12 elevation=0"
                                     color="indigo lighten-5"
                                   >
                                     <v-card-title>Haro 11</v-card-title>
@@ -177,24 +181,24 @@
                                           <v-list-item-subtitle>height of display</v-list-item-subtitle>
                                         </v-list-item-content>
                                       </v-list>
+                                      <v-btn
+                                        block
+                                        color="purple darken-2"
+                                        dark
+                                        class="px-auto"
+                                        @click="
+                                          state.dist_snackbar = 1;
+                                          state.dist_measured = 1;
+                                          state.adddata_disabled =
+                                            state.vel_measured == 1
+                                              ? false
+                                              : true
+                                        "
+                                      >
+                                        Estimate Distance
+                                      </v-btn>
                                     </v-card-text>
                                   </v-card>
-                                  <v-btn
-                                    block
-                                    color="purple"
-                                    dark
-                                    class="px-auto"
-                                    @click="
-                                      state.dist_snackbar = 1;
-                                      state.dist_measured = 1;
-                                      state.adddata_disabled =
-                                        state.vel_measured == 1
-                                          ? 0
-                                          : 1
-                                    "
-                                  >
-                                    Estimate Distance
-                                  </v-btn>
                                 </div>
                               </v-col>
                             </v-row>
@@ -204,12 +208,16 @@
                         <v-tab-item key="gal-vel"> 
                           <v-container>
                             <v-row>
-                              <v-col cols="12" md="7">
+                              <v-col
+                                cols="12" md="7"
+                                class="align-stretch"
+                              >
                                 <v-card
-                                  height="300px"
+                                  min-height="300px"
                                   class="pa-5"
                                 >
-                                  TO DO: learn how to import Spectrum Lab js code here.
+                                  TO DO: learn how to import
+                                  Spectrum Lab .js code here.
                                 </v-card>
                               </v-col>
                               <v-col cols="12" md="5">
@@ -218,38 +226,39 @@
                                   colored-border
                                   color="indigo"
                                   elevation="2"
+                                  clas="mb-4"
                                 >
-                                  Drag across the spectrum to measure the H-&#x3B1; wavelength.
-                                  <div class="text-center mt-4">
-                                    <v-btn
-                                      class="white--text"
-                                      color="purple darken-2"
-                                      @click="
-                                        state.vel_snackbar = 1;
-                                        state.vel_measured = 1;
-                                        state.adddata_disabled =
-                                          state.dist_measured == 1
-                                            ? 0
-                                            : 1;
-                                        state.next1_disabled = 0;
-                                      "
-                                    >
-                                      Calculate Velocity
-                                    </v-btn>
-                                  </div>
+                                  Drag across the spectrum to
+                                  measure the H-&#x3B1; wavelength.
                                 </v-alert>
-                                <v-alert
-                                  class="pa-5"
-                                  border="left"
-                                  colored-border
-                                  color="indigo"
-                                  elevation="3"
+
+                                <v-btn
+                                  block
+                                  class="white--text mb-12"
+                                  color="purple darken-2"
+                                  @click="
+                                    state.vel_snackbar = 1;
+                                    state.vel_measured = 1;
+                                    state.adddata_disabled =
+                                      state.dist_measured == 1
+                                        ? false
+                                        : true
+                                  "
                                 >
-                                  Instructions for measuring emission/absorption line wavelength and velocity.
+                                  Calculate Velocity
+                                </v-btn>
+                                <v-card
+                                  outlined
+                                  class="pa-5"
+                                  color="amber lighten-5"
+                                  elevation="0"
+                                >
+                                  Instructions for measuring
+                                  emission/absorption line wavelength and velocity.
                                   <div class="text-center mt-4">
                                     <c-dialog-vel class="mt-4"></c-dialog-vel>
                                   </div>
-                                </v-alert>
+                                </v-card>
                               </v-col>
                             </v-row>
                           </v-container>
@@ -268,9 +277,11 @@
                   <v-stepper-content step="2">
                     <v-container>
                       <v-row>
-                        <v-col 
+                        <v-col
                           cols="3"
-                        ><v-alert
+                          class="align-stretch"
+                        >
+                          <v-alert
                             class="pa-5"
                             height="300px"
                             border="left"
@@ -278,7 +289,7 @@
                             color="indigo"
                             elevation="3"
                           >
-                            Buttons to draw (unless this is prohibitively complicated..)
+                            Buttons to draw (unless this is prohibitively complicated.)
                             and then plot calculated best fit line to students' data.
                             (Display should include 4-5 data points.)
                           </v-alert>
@@ -291,17 +302,19 @@
                           </v-lazy>
                         </v-col>
                       </v-row>
-                      <v-row>
+                      <v-row
+
+                      >
                         <v-card
-                          class="pa-8"
-                          elevation="3"
-                          width="100%"
+                          class="pa-8 mx-auto"
                         >
                           Buttons to call up explanation of why inverting H0 gives you
                           the age of the universe and to calculate age of universe from H0 value.
-                          <c-dialog-age></c-dialog-age>
+                          <div class="text-center mt-4">
+                            <c-dialog-age></c-dialog-age>
+                          </div>
                         </v-card>
-                     </v-row>
+                      </v-row>
                     </v-container>
 <!-- Disabling for now
                     <v-btn color="primary" @click="state.over_model = 3">
@@ -328,7 +341,8 @@
                             color="indigo"
                             elevation="3"
                           >
-                            Now give options to view all data from class, fit a line, and calculate H0/age values for full class data set.
+                            Now give options to view all data from class, fit a
+                            line, and calculate H0/age values for full class data set.
                           </v-alert>
                         </v-col>
                         <v-col>
@@ -432,6 +446,7 @@
               <v-divider></v-divider>
               <v-card-actions>
                 <v-btn
+                  :disabled="state.over_model == 1 ? true : false"
                   color="primary"
                   @click="
                     state.over_model =
@@ -446,6 +461,7 @@
                 
                 <v-btn
                   :disabled="state.adddata_disabled"
+                  @click="state.next1_disabled = false"
                 >
                   <v-icon
                     left
@@ -457,7 +473,7 @@
                 </v-btn>
 <!-- TO DO: change this to "Finish" or something on last page-->
                 <v-btn
-                  :disabled="state.next1_disabled"
+                  :disabled="state.over_model == 4 ? true : state.next1_disabled"
                   color="primary"
                   @click="
                     state.over_model =
