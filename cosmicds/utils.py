@@ -4,31 +4,7 @@ import os
 import numpy as np
 from traitlets import Unicode
 
-__all__ = ['component_value_subsets', 'load_template', 'update_figure_css']
-
-def component_value_subsets(data, component_name, labeler=None):
-    """
-    This function creates a subset for entries with each value
-    of a given component, and returns a list of these subsets.
-    
-    Parameters
-    ----------
-    data : glue.core.data.Data
-        The glue data object for which subsets will be created.
-    component_name : str
-        The name of the component along which we want to partition
-        the data into subsets.
-    labeler: (any) -> str:
-        A function to create a label for each subset, based on the
-        value used to create it.
-
-    Returns
-    -------
-    List[glue.core.data.Data]
-        A list of the created subsets.
-    """
-    return [data.new_subset(data.id[component_name] == x, label=labeler(x)) for x in np.unique(data[component_name])]
-
+__all__ = ['load_template', 'update_figure_css']
 
 def load_template(file_name, path=None, traitlet=True):
     """

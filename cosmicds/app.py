@@ -13,11 +13,12 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
+from numpy import unique
 from traitlets import Dict, List
 
 from .components.footer import Footer
 from .components.viewer_layout import ViewerLayout
-from .utils import component_value_subsets, load_template, update_figure_css
+from .utils import load_template, update_figure_css
 from .components.dialog import Dialog
 
 
@@ -90,7 +91,7 @@ class Application(VuetifyTemplate):
 
         # Create a subset for each student
         student_data = self.data_collection['HubbleData_ClassSample']
-        student_subsets = component_value_subsets(student_data, "StudentNum", lambda x: "Student %d" % x)
+        student_subsets = [student_data.new_subset(student_data.id["StudentNum"] == x, label="Student %d" % x) for x in unique(student_data["StudentNum"])]
 
         # Set up the scatter viewers
         style_path = str(Path(__file__).parent / "data" /
@@ -128,10 +129,9 @@ class Application(VuetifyTemplate):
         data = self.data_collection['HubbleSummary_Overall']
         age_distr_viewer.state.x_att = data.id['age']
 
-        # Any lines that we've obtained from fitting
-        # The lines will be keyed by uuid
-        self.fit_lines = {}
-        self.fit_slopes = {}
+        # Any lines that we've obtained from fitting, and their slopes
+        # This is keyed by viewer id
+        self.fit_info = {}
 
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
@@ -178,6 +178,8 @@ class Application(VuetifyTemplate):
     def vue_fit_lines(self, viewer_id):
         viewer = self._viewer_handlers[viewer_id]
         figure = self.viewers[viewer_id].figure
+
+        lines, slopes = [], []
         for layer in viewer.layers:
 
             # Get the data
@@ -202,21 +204,21 @@ class Application(VuetifyTemplate):
             x = [0] + x + [2*x[-1]] # For now, the line spans from 0 to twice the maximum value of x
             y = fitted_line(x)
 
-            # Since the glupyter viewer doesn't have an option for lines
-            # we just draw the fit line directly onto the bqplot figure
-            # If we already drew a line for this Data/Subset, remove it first
+            # Create the fit line object
+            # Keep track of this line and its slope
             line = LinesGL(x=list(x), y=list(y), scales=layer.image.scales, colors=[layer.state.color], labels_visibility='label')
-            uuid = subset.uuid if subset_layer else data.uuid
-            old_line = self.fit_lines.get(uuid, None)
-            if old_line:
-                index = figure.marks.index(old_line)
-                if index >= 0:
-                    figure.marks.pop(index)
-            figure.marks = figure.marks + [line]
+            lines.append(line)
+            slopes.append(fitted_line.slope.value)
 
-            # Keep track of the line that we drew
-            self.fit_lines[uuid] = line
-            self.fit_slopes[uuid] = fitted_line.slope.value
+        # Since the glupyter viewer doesn't have an option for lines
+        # we just draw the fit line directly onto the bqplot figure
+        # If we previously drew any lines in this viewer, remove them
+        old_viewer_marks = [x[0] for x in self.fit_info.get(viewer_id, [])]
+        marks_to_keep = [x for x in figure.marks if x not in old_viewer_marks]
+        figure.marks = marks_to_keep + [line]
+
+        # Add the lines and slopes to the app dictionaries
+        self.fit_info[viewer_id] = list(zip(lines, slopes))
 
     def vue_add_data_to_viewers(self, viewer_ids):
         for viewer_id in viewer_ids:
