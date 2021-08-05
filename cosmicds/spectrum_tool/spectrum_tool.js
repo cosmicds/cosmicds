@@ -121,6 +121,7 @@ function initialLineHdf(CanvasObj)
         ////////////////////////////////
         if(CanvasObj==='Category1' || CanvasObj==='Both')
             {
+                document.getElementById("Target_Name").innerHTML ="";
                 ////////////////////////////////
                 //Build Upper Canvas Graph Area
                 ////////////////////////////////
@@ -1186,6 +1187,9 @@ function readTFile(file)
             loaded1X = loadedDataArray[0].split(",");
             loaded1Y = loadedDataArray[1].split(",");
             //Target_Name
+            Target_Name=file.name;
+            Target_Name_c=Target_Name.split(".")
+            document.getElementById('Target_Name').innerHTML=Target_Name_c[0];
             if(typeof loaded1X !== 'undefined')
                 {
                     $("#UpperCanvasGraph").show();
