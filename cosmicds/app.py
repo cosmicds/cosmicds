@@ -182,6 +182,10 @@ class Application(VuetifyTemplate):
         lines, slopes = [], []
         for layer in viewer.layers:
 
+            # Only draw lines for visible layers
+            if not layer.state.visible:
+                continue
+
             # Get the data
             # We want to distinguish whether this layer corresponds
             # to a Subset or not
@@ -215,7 +219,7 @@ class Application(VuetifyTemplate):
         # If we previously drew any lines in this viewer, remove them
         old_viewer_marks = [x[0] for x in self.fit_info.get(viewer_id, [])]
         marks_to_keep = [x for x in figure.marks if x not in old_viewer_marks]
-        figure.marks = marks_to_keep + [line]
+        figure.marks = marks_to_keep + lines
 
         # Add the lines and slopes to the app dictionaries
         self.fit_info[viewer_id] = list(zip(lines, slopes))
