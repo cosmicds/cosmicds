@@ -263,6 +263,17 @@
                           width="100%"
                         >
                           Buttons to calculate age of universe from H0 value.<br>
+
+                          <help-dialog 
+                            button-text="Click Me!" 
+                            title-text="Testing!" 
+                            accept-text="Okay" 
+                            cancel-text="Cancel" 
+                            @accept="console.log('Button was clicked.')"
+                          >
+                            This is a test of a pure Vue dialog with a custom event.
+                          </help-dialog>
+
                         </v-card>
                      </v-row>
                     </v-container>
