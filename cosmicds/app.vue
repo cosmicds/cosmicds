@@ -57,6 +57,7 @@
                   <v-stepper-step
                     :complete="state.over_model > 2"
                     step="2"
+                    editable
                   >
                     Estimate Age of Universe
                   </v-stepper-step>
