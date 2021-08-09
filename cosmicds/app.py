@@ -17,6 +17,7 @@ from .components.footer import Footer
 # from .components import *
 from .components.viewer_layout import ViewerLayout
 from .utils import load_template, update_figure_css
+from .components.dialog import Dialog
 
 # Within ipywidgets - update calls only happen in certain instances. 
 # Tom added this glue state to allow 2-way binding and force communication that we want explicitly controlled between front end and back end.
@@ -24,8 +25,21 @@ class ApplicationState(State):
     over_model = CallbackProperty(1)
     col_tab_model = CallbackProperty(0)
     est_model = CallbackProperty(0)
-    snackbar = CallbackProperty(0) #I think this initializes it in vue.app with a value=0. When I tried CallbackProperty(1), the app initializes with the snackbar already open.
-    # Another example: welcome_message = CallbackProperty("Welcome <could update to username>")
+
+    gal_snackbar = CallbackProperty(0)
+    dist_snackbar = CallbackProperty(0)
+    vel_snackbar = CallbackProperty(0)
+    data_ready_snackbar = CallbackProperty(0)
+
+    gal_selected = CallbackProperty(0)
+    dist_measured = CallbackProperty(0)
+    vel_measured = CallbackProperty(0)
+    prev1_disabled = CallbackProperty(1)
+    adddata_disabled = CallbackProperty(1)
+    next1_disabled = CallbackProperty(1)
+
+    haro_on = CallbackProperty("d-none")
+    galaxy_dist = CallbackProperty("")
 
 # Everything in this class is exposed directly to the app.vue.
 class Application(VuetifyTemplate):
@@ -34,6 +48,7 @@ class Application(VuetifyTemplate):
     template = load_template("app.vue", __file__).tag(sync=True)
     viewers = Dict().tag(sync=True, **widget_serialization)
     items = List().tag(sync=True)
+    vue_components = Dict().tag(sync=True, **widget_serialization)
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -41,7 +56,19 @@ class Application(VuetifyTemplate):
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a 
         # key-value pair to the components dictionary.
-        self.components = {'c-footer': Footer(self)}
+        self.components = {'c-footer': Footer(self),
+                           'c-dialog-vel': Dialog(
+                               self,
+                               launch_button_text="Learn more",
+                               title_text="How do we measure galaxy velocity?",
+                               content_text="Verbiage about comparing observed & rest wavelengths of absorption/emission lines",
+                               accept_button_text="Close"),
+                           'c-dialog-age': Dialog(
+                               self,
+                               launch_button_text="Learn more",
+                               title_text="How do we estimate age of the universe?",
+                               content_text="Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.",
+                               accept_button_text="Close")}
 
         self.state = ApplicationState()
         self._application_handler = JupyterApplication()
@@ -91,7 +118,7 @@ class Application(VuetifyTemplate):
         age_distr_viewer = self._application_handler.new_data_viewer(
             BqplotHistogramView, data=self.data_collection['HubbleSummary_Overall'], show=False)
 
-        # TODO: Currently, the glue-wwt package requires qt binding even if we
+        # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
         wwt_viewer = self._application_handler.new_data_viewer(
             WWTJupyterViewer, data=self.data_collection['galaxy_data'], show=False)
