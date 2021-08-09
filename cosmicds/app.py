@@ -22,7 +22,21 @@ class ApplicationState(State):
     over_model = CallbackProperty(1)
     col_tab_model = CallbackProperty(0)
     est_model = CallbackProperty(0)
-    snackbar = CallbackProperty(0) #I think this initializes it in vue.app with a value=0. When I tried CallbackProperty(1), the app initializes with the snackbar already open.
+
+    gal_snackbar = CallbackProperty(0)
+    dist_snackbar = CallbackProperty(0)
+    vel_snackbar = CallbackProperty(0)
+    data_ready_snackbar = CallbackProperty(0)
+
+    gal_selected = CallbackProperty(0)
+    dist_measured = CallbackProperty(0)
+    vel_measured = CallbackProperty(0)
+    prev1_disabled = CallbackProperty(1)
+    adddata_disabled = CallbackProperty(1)
+    next1_disabled = CallbackProperty(1)
+
+    haro_on = CallbackProperty("d-none")
+    galaxy_dist = CallbackProperty("")
 
 
 class Application(VuetifyTemplate):
@@ -101,7 +115,7 @@ class Application(VuetifyTemplate):
         age_distr_viewer = self._application_handler.new_data_viewer(
             BqplotHistogramView, data=self.data_collection['HubbleSummary_Overall'], show=False)
 
-        # TODO: Currently, the glue-wwt package requires qt binding even if we
+        # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
         wwt_viewer = self._application_handler.new_data_viewer(
             WWTJupyterViewer, data=self.data_collection['galaxy_data'], show=False)
