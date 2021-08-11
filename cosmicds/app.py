@@ -3,7 +3,6 @@ from pathlib import Path
 from astropy.modeling import models, fitting
 from bqplot_image_gl import LinesGL
 from echo import CallbackProperty
-from glue.core.data import Subset
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
@@ -36,12 +35,12 @@ class Application(VuetifyTemplate):
     viewers = Dict().tag(sync=True, **widget_serialization)
     items = List().tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Load the vue components through the ipyvuetify machinery. We add the
-        # html tag we want and an instance of the component class as a 
+        # html tag we want and an instance of the component class as a
         # key-value pair to the components dictionary.
         self.components = {'c-footer': Footer(self),
                            'c-dialog-vel': Dialog(
@@ -59,7 +58,7 @@ class Application(VuetifyTemplate):
 
         self.state = ApplicationState()
         self._application_handler = JupyterApplication()
-        
+
         # Load the galaxy position data
         # This adds the file to the glue data collection at the top level
         self._application_handler.load_data(
@@ -175,32 +174,36 @@ class Application(VuetifyTemplate):
         """
         return self._application_handler.data_collection
 
-    def vue_fit_lines(self, viewer_id):
+    def vue_fit_lines(self, viewer_id, data_ids=None):
+        """
+        This function will do a line fit to each of the specified layer(s).
+
+        Parameters
+        ----------
+        viewer_id : str
+            The identifier for the viewer to use.
+        data_ids : List[str]
+            A list of the UUID values (`data.uuid`) of the data in the desired layers.
+            If not specified, a line is fit for every layer present in the viewer.
+        """
         viewer = self._viewer_handlers[viewer_id]
         figure = self.viewers[viewer_id].figure
 
+        if data_ids:
+            layers = [layer for layer in viewer.layers if layer.state.visible and layer.state.layer.uuid in data_ids]
+        else:
+            layers = [layer for layer in viewer.layers if layer.state.visible]
+
         lines, slopes = [], []
-        for layer in viewer.layers:
+        for layer in layers:
 
-            # Only draw lines for visible layers
-            if not layer.state.visible:
-                continue
-
-            # Get the data
-            # We want to distinguish whether this layer corresponds
-            # to a Subset or not
+            # Get the data (which may actually be a Data object,
+            # or represent a subset
             data = layer.state.layer
-            if isinstance(data, Subset):
-                subset = data
-                data = subset.data
-            else:
-                subset = None
-            subset_layer = subset is not None
 
             # Do the line fit
-            values = subset if subset_layer else data
-            x_arr = values[viewer.state.x_att]
-            y_arr = values[viewer.state.y_att]
+            x_arr = data[viewer.state.x_att]
+            y_arr = data[viewer.state.y_att]
             fit = fitting.LinearLSQFitter()
             line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
             fitted_line = fit(line_init, x_arr, y_arr)
@@ -241,5 +244,4 @@ class Application(VuetifyTemplate):
                 data = self.data_collection['HubbleSummary_Overall']
                 viewer.add_data(data)
                 viewer.x_att = data.id['age']
-            
 
