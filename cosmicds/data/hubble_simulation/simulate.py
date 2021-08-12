@@ -1,10 +1,10 @@
 from math import floor, ceil
+from pathlib import Path
 from random import randint
 from astropy.utils.shapes import IncompatibleShapeError
 from matplotlib.widgets import Slider
 
 import os
-import csv
 import numpy as np
 import pandas as pd
 
@@ -32,7 +32,7 @@ except:
 
 # Tuple options are (min, max)
 OPTIONS = {
-    'output_dir' : "output",
+    'output_dir' : os.path.join(str(Path(__file__).parent), "output"),
     'n_classes': 50,
     'decimal_places': 2,
     'n_students': (20, 30),
@@ -42,7 +42,7 @@ OPTIONS = {
     'redshift_sigma': 0.0004,  #From pg 7: https://home.strw.leidenuniv.nl/~franx/technicalresearchinformation/AstronomicalSpectroscopy.pdf  Assuming "moderate" resolution (R=lambda/delta lambda=2500)
 }
 
-DATAFILE = os.path.join("..", "galaxy_data.csv")
+DATAFILE = os.path.join(str(Path(__file__).parent.parent), "galaxy_data.csv")
 
 # Constants
 # L_MW = (100000 * u.lightyear).to(u.Mpc)
@@ -106,45 +106,15 @@ def append_to_dict(d, keys, values):
     for k, v in zip(keys, values):
         d[k].append(v)
 
-def export_class_summary(filepath, hubbles, ages):
-    if len(hubbles) != len(ages):
-        raise ValueError("Hubble constant and age arrays do not have the same length")
-    
-    ns = len(hubbles)
-    with open(filepath, 'w') as f:
-        writer = csv.writer(f, delimiter=",")
-        writer.writerow(["StudentNum", "StudentH0 (km/s/Mpc)", "StudentAge (Gyr)"]) # Headers
-        for i in range(ns):
-            writer.writerow([i+1, hubbles[i], ages[i]])
+def bin_data(data, binning_column):
+    binned = data.groupby([binning_column])
+    return binned
 
-def export_class_data(filepath, vel_binned, dist_binned):
-
-    if len(vel_binned) != len(dist_binned):
-        raise ValueError("Overall distance and velocity arrays do not have the same length")
-
-    ns = len(vel_binned)
-    with open(filepath, 'w') as f:
-        writer = csv.writer(f, delimiter=",")
-        writer.writerow(["StudentNum", "Velocity", "Distance"]) # Headers
-        for i in range(ns):
-            vs = vel_binned[i]
-            ds = dist_binned[i]
-            if len(vs) != len(ds):
-                raise ValueError("Distance and velocity arrays at index %d do not have the same length" % i)
-            np = len(vs)
-            for j in range(np):
-                writer.writerow([i+1, vs[j], ds[j]])
-
-def export_overall_summary(filepath, classes_data):
-
-    keys = ['class_id', 'H0', 'age', 'n_students']
-    with open(filepath, 'w') as f:
-        writer = csv.writer(f, delimiter=",")
-        writer.writerow(keys) # Headers
-        for tpl in zip(*[classes_data[k] for k in keys]):
-            writer.writerow(tpl)
-
-
+def export_data(data, filepath):
+    data.to_csv(filepath,
+        sep=",",
+        header=list(data.columns),
+        index=False)
 
 def simulate_class(options, export=True, show=False):
     galaxy_data = options['galaxy_data']
@@ -152,6 +122,9 @@ def simulate_class(options, export=True, show=False):
     # Number of students, and values per student
     ns = options['n_students']
     nper = options['n_per_student']
+
+    # The first student ID #
+    first_id = options.get('last_student_id', 0) + 1
 
     # Sample the data
     # It's obviously fine if multiple students look at the same galaxy
@@ -168,14 +141,22 @@ def simulate_class(options, export=True, show=False):
     redshift_sample = add_fixed_noise(sample["redshift"], options['redshift_sigma'])
     velocity_sample = np.round([ redshift_to_velocity(x, relativistic=False) for x in redshift_sample ], nd)
 
-    # The lambda function just cuts up the list into chunks of size nper
-    # Basically just undoing the pd.concat
-    binned_by_student = lambda lst: [ lst[nper*i:nper*(i+1)] for i in range(ns) ]
-    d_binned = binned_by_student(distance_sample)
-    v_binned = binned_by_student(velocity_sample)
+    # Put the students' data into a DataFrame
+    # and bin by student number
+    student_range = list(range(first_id, first_id+ns))
+    student_data = pd.DataFrame({
+        'student_id' : sum([[i]*nper for i in student_range], []),
+        'velocity' : velocity_sample,
+        'distance' : distance_sample,
+        'type' : sample["typ"],
+    })
+    binned = bin_data(student_data, 'student_id')
 
     fit = fitting.LinearLSQFitter()
-    hubbles = np.round([ fit(new_model(), ds, vs).slope.value for ds,vs in zip(d_binned, v_binned) ], nd)
+    hubbles = []
+    for i in student_range:
+        d = binned.get_group(i)
+        hubbles.append(np.round(fit(new_model(), d['distance'], d['velocity']).slope.value, nd))
     ages = np.round([ age_in_gyr(H0) for H0 in hubbles ], nd)
     bin_width = options['bin_width']
     minh, maxh = min(hubbles), max(hubbles)
@@ -190,8 +171,14 @@ def simulate_class(options, export=True, show=False):
     if export:
         output_dir = options['output_dir']
         class_id = options['class_id']
-        export_class_summary(os.path.join(output_dir, "HubbleSummary_Class_%d.csv" % class_id), hubbles, ages)
-        export_class_data(os.path.join(output_dir, "HubbleData_Class_%d.csv" % class_id), v_binned, d_binned)
+        class_summary = pd.DataFrame({
+            "student_id" : [i for i in student_range],
+            "class_id": [class_id] * ns,
+            "H0" : hubbles,
+            "age" : ages,
+        })
+        export_data(class_summary, os.path.join(output_dir, "HubbleSummary_Class_%d.csv" % class_id))
+        export_data(student_data, os.path.join(output_dir, "HubbleData_Class_%d.csv" % class_id))
 
     if show:
         gs = gridspec.GridSpec(4,4, hspace=2, wspace=2)
@@ -220,7 +207,7 @@ def simulate_class(options, export=True, show=False):
 
         plt.show()
 
-    return d_binned, v_binned, hubbles, ages, overall_H0, overall_age
+    return student_data, class_summary, overall_H0, overall_age
     
 
 def main(options):
@@ -238,16 +225,15 @@ def main(options):
     measurement_columns = ['student_id', 'distance', 'velocity']
     student_columns = ['student_id', 'class_id', 'H0', 'age', 'n_measurements']
     class_columns = ['class_id', 'H0', 'age', 'n_students']
-    empty_container = lambda lst: {x: [] for x in lst}
 
     # Containers for data
     # This is vaguely what I imagine the data setup will look like
     # Basically, three levels - individual measurements, student summary, and class summary
     # With the IDs allowing us to connect these in whatever way makes most sense
     # based on the database type
-    measurement_data = empty_container(measurement_columns)
-    student_data = empty_container(student_columns)
-    class_data = empty_container(class_columns)
+    measurement_data = pd.DataFrame(columns=measurement_columns)
+    student_data = pd.DataFrame(columns=student_columns)
+    class_data = pd.DataFrame(columns=class_columns)
 
     # Global options
     n_classes = options['n_classes']
@@ -258,32 +244,26 @@ def main(options):
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
-    student_id = 0
     class_options = options.copy()
-    for class_id in range(1,n_classes+1):
+    class_options['last_student_id'] = 0
+    for class_id in range(1, n_classes+1):
         ns = randint(ns_min, ns_max)
         nper = randint(nper_min, nper_max)
         class_options['n_students'] = ns
         class_options['n_per_student'] = nper
         class_options['class_id'] = class_id
-        db, vb, hubbles, ages, class_H0, class_age = simulate_class(class_options, export=True, show=False)
+        measurements, student_summary, class_H0, class_age = simulate_class(class_options, export=True, show=False)
+        class_options['last_student_id'] += ns
 
-        for dists, vels, hub, age in zip(db, vb, hubbles, ages):
-            student_id += 1
-            for d, v in zip(dists, vels):
-                append_to_dict(measurement_data, ['student_id', 'distance', 'velocity'], [student_id, d, v])
+        measurement_data = pd.concat([measurement_data, measurements])
+        student_data = pd.concat([student_data, student_summary])
+        class_data = class_data.append({'class_id': class_id, 'H0' : class_H0, 'age': class_age, 'n_students' : ns}, ignore_index=True)
 
-            append_to_dict(student_data, ['student_id', 'class_id', 'H0', 'age', 'n_measurements'], [student_id, class_id, hub, age, nper])
-        
-        append_to_dict(class_data, ['class_id', 'H0', 'age', 'n_students'],[class_id, class_H0, class_age, ns])
+    class_data['class_id'] = class_data['class_id'].astype(int)
+    export_data(measurement_data, os.path.join(output_dir, "HubbleData_All.csv"))
+    export_data(class_data, os.path.join(output_dir, "HubbleSummary_Overall.csv"))
 
-    export_overall_summary(os.path.join(output_dir, "HubbleSummary_Overall.csv"), class_data)
-
-    measurement_data = pd.DataFrame(measurement_data)
-    student_data = pd.DataFrame(student_data)
-    class_data = pd.DataFrame(class_data)
-
-    get_class_data = lambda cls_id: student_data[student_data.class_id == cls_id]
+    students_by_class = student_data.groupby(['class_id'])
 
     # Get the global H0 and age
     nd = options['decimal_places']
@@ -292,7 +272,6 @@ def main(options):
     velocities = measurement_data['velocity']
     global_H0 = round(fit(new_model(), distances, velocities).slope.value, nd)
     global_age = round(age_in_gyr(global_H0), nd)
-
 
     fig, ax = plt.subplots()
     plt.subplots_adjust(left=0.25, bottom=0.25)
@@ -306,7 +285,7 @@ def main(options):
     n = ceil((data_all.max() - data_all.min()) / options['bin_width'])
     ax.hist(class_data['age'], bins=n, **theme_all)
 
-    data = get_class_data(1)['age']
+    data = students_by_class.get_group(1)['age']
     n = ceil((data.max() - data.min()) / options['bin_width'])
     *_, patches = ax.hist(data, bins=n, **theme)
     ax.set_xlabel("Age (Gyr)")
@@ -325,7 +304,7 @@ def main(options):
         nonlocal patches
         for p in patches:
             p.remove()
-        data = get_class_data(class_id)['age']
+        data = students_by_class.get_group(class_id)['age']
         n = ceil((data.max() - data.min()) / options['bin_width'])
         *_, patches = ax.hist(data, bins=n, **theme)
         fig.canvas.draw_idle()
