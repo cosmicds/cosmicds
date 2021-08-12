@@ -183,7 +183,7 @@ def simulate_class(options, export=True, show=False):
 
     overall_fit = fit(new_model(), distance_sample, velocity_sample)
     overall_H0 = round(overall_fit.slope.value, nd)
-    overall_age = round(planck.clone(H0=overall_H0).age(0).value, nd)
+    overall_age = round(age_in_gyr(overall_H0), nd)
 
     # Export the data to csv files
     # Maybe we want a different frame?
@@ -266,7 +266,7 @@ def main(options):
         class_options['n_students'] = ns
         class_options['n_per_student'] = nper
         class_options['class_id'] = class_id
-        db, vb, hubbles, ages, H0, age = simulate_class(class_options, export=True, show=False)
+        db, vb, hubbles, ages, class_H0, class_age = simulate_class(class_options, export=True, show=False)
 
         for dists, vels, hub, age in zip(db, vb, hubbles, ages):
             student_id += 1
@@ -275,7 +275,7 @@ def main(options):
 
             append_to_dict(student_data, ['student_id', 'class_id', 'H0', 'age', 'n_measurements'], [student_id, class_id, hub, age, nper])
         
-        append_to_dict(class_data, ['class_id', 'H0', 'age', 'n_students'],[class_id, H0, age, ns])
+        append_to_dict(class_data, ['class_id', 'H0', 'age', 'n_students'],[class_id, class_H0, class_age, ns])
 
     export_overall_summary(os.path.join(output_dir, "HubbleSummary_Overall.csv"), class_data)
 
