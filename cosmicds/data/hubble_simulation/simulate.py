@@ -102,10 +102,6 @@ def age_in_gyr(H0):
      unit = age.unit
      return age.value * unit.to(u.Gyr)
 
-def append_to_dict(d, keys, values):
-    for k, v in zip(keys, values):
-        d[k].append(v)
-
 def bin_data(data, binning_column):
     binned = data.groupby([binning_column])
     return binned
@@ -261,7 +257,7 @@ def main(options):
 
     class_data['class_id'] = class_data['class_id'].astype(int)
     export_data(measurement_data, os.path.join(output_dir, "HubbleData_All.csv"))
-    export_data(class_data, os.path.join(output_dir, "HubbleSummary_Overall.csv"))
+    export_data(class_data, os.path.join(output_dir, "HubbleSummary_All.csv"))
 
     students_by_class = student_data.groupby(['class_id'])
 
