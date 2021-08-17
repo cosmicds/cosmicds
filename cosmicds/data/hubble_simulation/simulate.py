@@ -7,6 +7,7 @@ from matplotlib.widgets import Slider
 import os
 import numpy as np
 import pandas as pd
+from shutil import copy
 
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -37,7 +38,7 @@ OPTIONS = {
     'decimal_places': 2,
     'n_students': (20, 30),
     'n_per_student': (4, 5),
-    'bin_width': 5,
+    'bin_width': 1,
     'arcmin_frac_noise': 0.1,
     'redshift_sigma': 0.0004,  #From pg 7: https://home.strw.leidenuniv.nl/~franx/technicalresearchinformation/AstronomicalSpectroscopy.pdf  Assuming "moderate" resolution (R=lambda/delta lambda=2500)
 }
@@ -144,7 +145,7 @@ def simulate_class(options, export=True, show=False):
         'student_id' : sum([[i]*nper for i in student_range], []),
         'velocity' : velocity_sample,
         'distance' : distance_sample,
-        'type' : sample["typ"],
+        'type' : sample["typ"]
     })
     binned = bin_data(student_data, 'student_id')
 
@@ -168,10 +169,11 @@ def simulate_class(options, export=True, show=False):
         output_dir = options['output_dir']
         class_id = options['class_id']
         class_summary = pd.DataFrame({
-            "student_id" : [i for i in student_range],
+            "student_id" : student_range,
             "class_id": [class_id] * ns,
             "H0" : hubbles,
             "age" : ages,
+            "n_measurements": [nper] * ns,
         })
         export_data(class_summary, os.path.join(output_dir, "HubbleSummary_Class_%d.csv" % class_id))
         export_data(student_data, os.path.join(output_dir, "HubbleData_Class_%d.csv" % class_id))
@@ -255,9 +257,12 @@ def main(options):
         student_data = pd.concat([student_data, student_summary])
         class_data = class_data.append({'class_id': class_id, 'H0' : class_H0, 'age': class_age, 'n_students' : ns}, ignore_index=True)
 
+    copy(os.path.join(output_dir, "HubbleData_Class_1.csv"), os.path.join(output_dir, "HubbleData_ClassSample.csv"))
+
     class_data['class_id'] = class_data['class_id'].astype(int)
     export_data(measurement_data, os.path.join(output_dir, "HubbleData_All.csv"))
-    export_data(class_data, os.path.join(output_dir, "HubbleSummary_All.csv"))
+    export_data(student_data, os.path.join(output_dir, "HubbleSummary_Students.csv"))
+    export_data(class_data, os.path.join(output_dir, "HubbleSummary_Classes.csv"))
 
     students_by_class = student_data.groupby(['class_id'])
 
