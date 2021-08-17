@@ -13,18 +13,36 @@ from ipywidgets import widget_serialization
 from traitlets import Dict, List
 
 from .components.footer import Footer
+# When we have multiple components, change above to
+# from .components import *
 from .components.viewer_layout import ViewerLayout
 from .utils import load_template, update_figure_css
 from .components.dialog import Dialog
 
-
+# Within ipywidgets - update calls only happen in certain instances.
+# Tom added this glue state to allow 2-way binding and force communication that we want explicitly controlled between front end and back end.
 class ApplicationState(State):
     over_model = CallbackProperty(1)
     col_tab_model = CallbackProperty(0)
     est_model = CallbackProperty(0)
-    snackbar = CallbackProperty(0) #I think this initializes it in vue.app with a value=0. When I tried CallbackProperty(1), the app initializes with the snackbar already open.
+
+    gal_snackbar = CallbackProperty(0)
+    dist_snackbar = CallbackProperty(0)
+    vel_snackbar = CallbackProperty(0)
+    data_ready_snackbar = CallbackProperty(0)
+
+    gal_selected = CallbackProperty(0)
+    dist_measured = CallbackProperty(0)
+    vel_measured = CallbackProperty(0)
+    prev1_disabled = CallbackProperty(1)
+    adddata_disabled = CallbackProperty(1)
+    next1_disabled = CallbackProperty(1)
+
+    haro_on = CallbackProperty("d-none")
+    galaxy_dist = CallbackProperty("")
 
 
+# Everything in this class is exposed directly to the app.vue.
 class Application(VuetifyTemplate):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
     state = GlueState().tag(sync=True)
@@ -32,7 +50,7 @@ class Application(VuetifyTemplate):
     viewers = Dict().tag(sync=True, **widget_serialization)
     items = List().tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -71,8 +89,8 @@ class Application(VuetifyTemplate):
         # Load some simulated age data
         self._application_handler.load_data(
             str(Path(__file__).parent / "data" / "hubble_simulation" /
-                "output" / "HubbleSummary_Overall.csv"),
-            label='HubbleSummary_Overall')
+                "output" / "HubbleSummary_Classes.csv"),
+            label='HubbleSummary_Classes')
 
         # Instantiate the initial viewers
         # Image viewer used for the 2D spectrum selection
@@ -84,8 +102,8 @@ class Application(VuetifyTemplate):
             BqplotScatterView, data=self.data_collection['HubbleData_ClassSample'], show=False)
 
         data = self.data_collection['HubbleData_ClassSample']
-        hub_const_viewer.state.x_att = data.id['Distance']
-        hub_const_viewer.state.y_att = data.id['Velocity']
+        hub_const_viewer.state.x_att = data.id['distance']
+        hub_const_viewer.state.y_att = data.id['velocity']
 
         # Update the Hubble constant viewer CSS
         update_figure_css(hub_const_viewer,
@@ -99,9 +117,9 @@ class Application(VuetifyTemplate):
 
         # Histogram viewer for age distribution
         age_distr_viewer = self._application_handler.new_data_viewer(
-            BqplotHistogramView, data=self.data_collection['HubbleSummary_Overall'], show=False)
+            BqplotHistogramView, data=self.data_collection['HubbleSummary_Classes'], show=False)
 
-        # TODO: Currently, the glue-wwt package requires qt binding even if we
+        # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
         wwt_viewer = self._application_handler.new_data_viewer(
             WWTJupyterViewer, data=self.data_collection['galaxy_data'], show=False)
@@ -110,7 +128,7 @@ class Application(VuetifyTemplate):
         wwt_viewer.state.lon_att = data.id['RA_deg']
         wwt_viewer.state.lat_att = data.id['Dec_deg']
 
-        data = self.data_collection['HubbleSummary_Overall']
+        data = self.data_collection['HubbleSummary_Classes']
         age_distr_viewer.state.x_att = data.id['age']
 
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
@@ -171,4 +189,3 @@ class Application(VuetifyTemplate):
                 viewer.add_data(data)
                 viewer.x_att = data.id['age']
             
-

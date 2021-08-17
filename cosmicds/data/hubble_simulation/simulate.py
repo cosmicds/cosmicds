@@ -258,6 +258,7 @@ def main(options):
         class_data = class_data.append({'class_id': class_id, 'H0' : class_H0, 'age': class_age, 'n_students' : ns}, ignore_index=True)
 
     copy(os.path.join(output_dir, "HubbleData_Class_1.csv"), os.path.join(output_dir, "HubbleData_ClassSample.csv"))
+    copy(os.path.join(output_dir, "HubbleSummary_Class_1.csv"), os.path.join(output_dir, "HubbleSummary_ClassSample.csv"))
 
     class_data['class_id'] = class_data['class_id'].astype(int)
     export_data(measurement_data, os.path.join(output_dir, "HubbleData_All.csv"))
