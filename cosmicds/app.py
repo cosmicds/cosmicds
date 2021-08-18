@@ -128,9 +128,14 @@ class Application(VuetifyTemplate):
         data = self.data_collection['HubbleSummary_Overall']
         age_distr_viewer.state.x_att = data.id['age']
 
-        # Any lines that we've obtained from fitting, and their slopes
-        # This is keyed by viewer id
-        self.fit_info = {}
+        # Any lines that we've obtained from fitting
+        # Entries have the form (line, data UUID)
+        # These are keyed by viewer id
+        self._fit_lines = {}
+
+        # The slopes that we've fit to any data sets
+        # This is keyed by the UUID of the data
+        self._fit_slopes = {}
 
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
@@ -174,7 +179,7 @@ class Application(VuetifyTemplate):
         """
         return self._application_handler.data_collection
 
-    def vue_fit_lines(self, viewer_id, data_ids=None):
+    def vue_fit_lines(self, viewer_id, data_ids=None, clear_others=False):
         """
         This function will do a line fit to each of the specified layer(s).
 
@@ -183,18 +188,22 @@ class Application(VuetifyTemplate):
         viewer_id : str
             The identifier for the viewer to use.
         data_ids : List[str]
-            A list of the UUID values (`data.uuid`) of the data in the desired layers.
-            If not specified, a line is fit for every layer present in the viewer.
+            A list of the UUID values (`data.uuid`) of the data in the layers 
+            that should be fit to. If not specified, a line is fit for every 
+            layer present in the viewer.
+        clear_others: bool
+            If true, all old lines present on this viewer will be cleared.
+            Otherwise, only old lines for the selected data ids will be cleared;
+            lines for other layers will be left as they are.
         """
         viewer = self._viewer_handlers[viewer_id]
         figure = self.viewers[viewer_id].figure
 
-        if data_ids:
-            layers = [layer for layer in viewer.layers if layer.state.visible and layer.state.layer.uuid in data_ids]
-        else:
-            layers = [layer for layer in viewer.layers if layer.state.visible]
+        if data_ids is None:
+            data_ids = [layer.state.layer.uuid for layer in viewer.layers]
+        layers = [layer for layer in viewer.layers if layer.state.visible and layer.state.layer.uuid in data_ids]
 
-        lines, slopes = [], []
+        lines, ids = [], []
         for layer in layers:
 
             # Get the data (which may actually be a Data object,
@@ -207,25 +216,32 @@ class Application(VuetifyTemplate):
             fit = fitting.LinearLSQFitter()
             line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
             fitted_line = fit(line_init, x_arr, y_arr)
-            x = sorted(list(x_arr))
-            x = [0] + x + [2*x[-1]] # For now, the line spans from 0 to twice the maximum value of x
+            x = [0, 2*max(x_arr)] # For now, the line spans from 0 to twice the maximum value of x
             y = fitted_line(x)
 
             # Create the fit line object
             # Keep track of this line and its slope
             line = LinesGL(x=list(x), y=list(y), scales=layer.image.scales, colors=[layer.state.color], labels_visibility='label')
             lines.append(line)
-            slopes.append(fitted_line.slope.value)
+            ids.append(data.uuid)
+            
+            # Keep track of this slope for later use
+            self._fit_slopes[data.uuid] = fitted_line.slope.value
 
         # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit line directly onto the bqplot figure
         # If we previously drew any lines in this viewer, remove them
-        old_viewer_marks = [x[0] for x in self.fit_info.get(viewer_id, [])]
-        marks_to_keep = [x for x in figure.marks if x not in old_viewer_marks]
+        old_items = self._fit_lines.get(viewer_id, [])
+        to_clear, to_keep = [], []
+        for item in old_items:
+            if clear_others or (item[1] in data_ids):
+                to_clear.append(item)
+            else:
+                to_keep.append(item)
+        marks_to_clear = [x[0] for x in to_clear]
+        marks_to_keep = [x for x in figure.marks if x not in marks_to_clear]
         figure.marks = marks_to_keep + lines
-
-        # Add the lines and slopes to the app dictionaries
-        self.fit_info[viewer_id] = list(zip(lines, slopes))
+        self._fit_lines[viewer_id] = to_keep + list(zip(lines, ids))
 
     def vue_add_data_to_viewers(self, viewer_ids):
         for viewer_id in viewer_ids:
