@@ -15,7 +15,9 @@
 
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Hubble Data Story</v-toolbar-title>
+      <v-toolbar-title>
+        Cosmic Data Stories | Hubble's Law
+      </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -38,12 +40,12 @@
             <!-- v-model is a 2-way token that controls the state of something in the app-->
               <v-stepper v-model="state.over_model" class="elevation-0">
                 <v-stepper-header>
-                  <!--:complete="state.over_model > 1"   
+                  <!--:complete="state.over_model > 1"
                         : is a binding - binds state of "complete" to the thing in the "".  If over_model is > 1, then we have gone past step 1.
                   therefore, consider step 1 complete. -->
                   <!-- Another example could be something like :disabled = "state.continue_button_disabled=1"-->
                   <v-stepper-step
-                    :complete="state.over_model > 1" 
+                    :complete="state.over_model > 1"
                     step="1"
                     editable
                   >
@@ -84,7 +86,7 @@
                   <v-stepper-content step="1">
                     <v-container>
                       <v-row>
-                        <v-col 
+                        <v-col
                           cols="3"
                         ><v-alert
                             class="pa-5"
@@ -98,7 +100,7 @@
                           </v-alert>
                         </v-col>
                         <v-col>
-                          <v-lazy>      
+                          <v-lazy>
                             <jupyter-widget
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
@@ -106,7 +108,11 @@
                         </v-col>
                       </v-row>
                     </v-container>
-                    <v-card color="blue lighten-5" class="" outlined>
+                    <v-card
+                      color="blue lighten-5"
+                      class=""
+                      outlined
+                    >
                       <v-tabs
                         vertical
                         v-model="state.col_tab_model"
@@ -115,61 +121,165 @@
                         <v-tab key="gal-vel"> Measure Velocity </v-tab>
                         <v-tab-item key="gal-dist">
                           <v-container>
-                              <v-row>
-                                <!-- This WWT viewer widget allows user to select a galaxy; galaxy positions plotted by RA/Dec.
-                                It will zoom in to chosen galaxy & put controls/instructions on screen. -->
-                                <!-- viewers.wwt_viewer doesn't need to be prepended with "state" because it comes from "Application" in app.py, not "ApplicationState"-->
-                                <v-col cols="12" md="8">
-                                  <jupyter-widget
-                                    :widget="viewers.wwt_viewer"
-                                  ></jupyter-widget
-                                ></v-col>
-
-                                <!-- Callout to select galaxy / info about selected galaxy -->
-                                <v-col cols="12" md="4">
-                                  <v-alert
-                                    border="left"
-                                    colored-border
-                                    color="indigo"
-                                    elevation="2"
-                                  >
-                                    Pan the sky and select one of the galaxies
-                                    to measure.
-                                  </v-alert>
-                                  <v-card>
-                                    <v-card-title>Select Galaxy</v-card-title>
-                                    <v-card-text>
-                                      Type:<br>
-                                      Height of display:
-                                    </v-card-text>
-                                  </v-card>
-                                </v-col>
-                              </v-row>
-                          </v-container>
-                        </v-tab-item>
-
-                        <v-tab-item key="gal-vel"> 
-                          <v-container>
                             <v-row>
-                              <v-col cols="8">
-                                <v-card
-                                  height="300px"
-                                  class="pa-5"
-                                >
-                                  TO DO: learn how to import Spectrum Lab js code here.
-                                </v-card>
+                              <!-- This WWT viewer widget allows user to select a galaxy; galaxy positions plotted by RA/Dec.
+                              It will zoom in to chosen galaxy & put controls/instructions on screen. -->
+                              <!-- viewers.wwt_viewer doesn't need to be prepended with "state" because it comes from "Application" in app.py, not "ApplicationState"-->
+                              <v-col cols="12" md="8">
+                                <jupyter-widget
+                                  :widget="viewers.wwt_viewer"
+                                ></jupyter-widget>
                               </v-col>
-                              <v-col>
+
+                              <!-- Callout to select galaxy / info about selected galaxy -->
+                              <v-col cols="12" md="4">
                                 <v-alert
-                                  class="pa-5"
+                                  class="mb-12"
                                   border="left"
                                   colored-border
                                   color="indigo"
-                                  elevation="3"
+                                  elevation="2"
                                 >
-                                  Instructions for measuring emission/absorption line wavelength and velocity.<br>
-                                  <c-dialog-vel></c-dialog-vel>
+                                  Pan the sky and select one of the galaxies
+                                  to measure.
+                                  <div class="text-center mt-4">
+                                    <v-btn
+                                      class="white--text"
+                                      color="purple darken-2"
+                                      @click="
+                                        state.gal_snackbar = 1;
+                                        state.gal_selected = 1;
+                                        state.haro_on = 'd-block'
+                                      "
+                                    >
+                                      Select Galaxy
+                                    </v-btn>
+                                  </div>
                                 </v-alert>
+                                <div
+                                  :class="state.haro_on"
+                                >
+                                  <v-card
+                                    v-model="state.haro_on"
+                                    color="indigo lighten-5"
+                                  >
+                                    <v-card-title>Haro 11</v-card-title>
+                                    <v-card-text>
+                                      <v-divider></v-divider>
+                                      <v-list
+                                        color="indigo lighten-5"
+                                      >
+                                        <v-list-item-content>
+                                          <v-list-item-title>Irregular galaxy</v-list-item-title>
+                                          <v-list-item-subtitle>type</v-list-item-subtitle>
+                                        </v-list-item-content>
+                                        <v-list-item-content>
+                                          <v-list-item-title>100,000 light years</v-list-item-title>
+                                          <v-list-item-subtitle>assumed size</v-list-item-subtitle>
+                                        </v-list-item-content>
+                                        <v-list-item-content>
+                                          <v-list-item-title>568 pixels</v-list-item-title>
+                                          <v-list-item-subtitle>height of display</v-list-item-subtitle>
+                                        </v-list-item-content>
+                                      </v-list>
+                                      <v-divider></v-divider>
+                                      <v-text-field
+                                        :value="state.galaxy_dist"
+                                        label="Estimated Distance"
+                                        hint="click button below"
+                                        persistent-hint
+                                        color="purple darken-2"
+                                        class="mt-8 mb-4"
+                                        suffix="Mpc"
+                                        outlined
+                                        readonly
+                                        dense
+                                      ></v-text-field>
+                                      <v-btn
+                                        block
+                                        color="purple darken-2"
+                                        dark
+                                        class="px-auto"
+                                        max-width="100%"
+                                        @click="
+                                          state.dist_measured = 1;
+                                          state.vel_measured == 1
+                                            ? state.data_ready_snackbar = 1
+                                            : state.dist_snackbar = 1;
+                                          state.adddata_disabled =
+                                            state.vel_measured == 1
+                                              ? false
+                                              : true;
+                                          state.galaxy_dist = Math.floor(Math.random() * 450) + 50
+                                        "
+                                      >
+                                        estimate
+                                      </v-btn>
+                                    </v-card-text>
+                                  </v-card>
+                                </div>
+                              </v-col>
+                            </v-row>
+                          </v-container>
+                        </v-tab-item>
+
+                        <v-tab-item key="gal-vel">
+                          <v-container>
+                            <v-row>
+                              <v-col
+                                cols="12" md="7"
+                                class="align-stretch"
+                              >
+                                <v-card
+                                  min-height="300px"
+                                  class="pa-5"
+                                >
+                                  TO DO: learn how to import
+                                  Spectrum Lab .js code here.
+                                </v-card>
+                              </v-col>
+                              <v-col cols="12" md="5">
+                                <v-alert
+                                  border="left"
+                                  colored-border
+                                  color="indigo"
+                                  elevation="2"
+                                  clas="mb-4"
+                                >
+                                  Drag across the spectrum to
+                                  measure the H-&#x3B1; wavelength.
+                                </v-alert>
+
+                                <v-btn
+                                  block
+                                  class="white--text mb-12"
+                                  color="purple darken-2"
+                                  @click="
+
+                                    state.vel_measured = 1;
+                                    state.dist_measured == 1
+                                      ? state.data_ready_snackbar = 1
+                                      : state.vel_snackbar = 1;
+                                    state.adddata_disabled =
+                                      state.dist_measured == 1
+                                        ? false
+                                        : true
+                                  "
+                                >
+                                  Calculate Velocity
+                                </v-btn>
+                                <v-card
+                                  outlined
+                                  class="pa-5"
+                                  color="amber lighten-5"
+                                  elevation="0"
+                                >
+                                  Instructions for measuring
+                                  emission/absorption line wavelength and velocity.
+                                  <div class="text-center mt-4">
+                                    <c-dialog-vel class="mt-4"></c-dialog-vel>
+                                  </div>
+                                </v-card>
                               </v-col>
                             </v-row>
                           </v-container>
@@ -188,34 +298,44 @@
                   <v-stepper-content step="2">
                     <v-container>
                       <v-row>
-                        <v-col 
+                        <v-col
                           cols="3"
+                          class="align-stretch"
                         >
-                          <v-btn
-                            color="primary"
-                            @click="fit_lines('hub_fit_viewer')"
+                          <v-alert
+                            class="pa-5"
+                            height="300px"
+                            border="left"
+                            colored-border
+                            color="indigo"
+                            elevation="3"
                           >
-                            Fit Line
-                          </v-btn>
+                            Buttons to draw (unless this is prohibitively complicated.)
+                            and then plot calculated best fit line to students' data.
+                            (Display should include 4-5 data points.)
+                          </v-alert>
                         </v-col>
                         <v-col>
-                          <v-lazy>      
+                          <v-lazy>
                             <jupyter-widget
                               :widget="viewers.hub_fit_viewer"
                             ></jupyter-widget>
                           </v-lazy>
                         </v-col>
                       </v-row>
-                      <v-row>
+                      <v-row
+
+                      >
                         <v-card
-                          class="pa-8"
-                          elevation="3"
-                          width="100%"
+                          class="pa-8 mx-auto"
                         >
-                          Buttons to call up explanation of why inverting H0 gives you the age of the universe and to calculate age of universe from H0 value.<br>
-                          <c-dialog-age></c-dialog-age>
+                          Buttons to call up explanation of why inverting H0 gives you
+                          the age of the universe and to calculate age of universe from H0 value.
+                          <div class="text-center mt-4">
+                            <c-dialog-age></c-dialog-age>
+                          </div>
                         </v-card>
-                     </v-row>
+                      </v-row>
                     </v-container>
 <!-- Disabling for now
                     <v-btn color="primary" @click="state.over_model = 3">
@@ -232,7 +352,7 @@
                   <v-stepper-content step="3">
                     <v-container>
                       <v-row>
-                        <v-col 
+                        <v-col
                           cols="3"
                         ><v-alert
                             class="pa-5"
@@ -242,11 +362,12 @@
                             color="indigo"
                             elevation="3"
                           >
-                            Now give options to view all data from class, fit a line, and calculate H0/age values for full class data set.
+                            Now give options to view all data from class, fit a
+                            line, and calculate H0/age values for full class data set.
                           </v-alert>
                         </v-col>
                         <v-col>
-                          <v-lazy>      
+                          <v-lazy>
                             <jupyter-widget
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
@@ -259,7 +380,19 @@
                           elevation="3"
                           width="100%"
                         >
+
                           Buttons to calculate age of universe from H0 value.<br>
+
+                          <help-dialog
+                            button-text="Click Me!"
+                            title-text="Testing!"
+                            accept-text="Okay"
+                            cancel-text="Cancel"
+                            @accept="console.log('Button was clicked.')"
+                          >
+                            This is a test of a pure Vue dialog with a custom event.
+                          </help-dialog>
+
                         </v-card>
                      </v-row>
                     </v-container>
@@ -269,7 +402,7 @@
                   <v-stepper-content step="4">
                     <v-container>
                       <v-row>
-                        <v-col 
+                        <v-col
                           cols="3"
                         ><v-alert
                             class="pa-5"
@@ -279,11 +412,12 @@
                             color="indigo"
                             elevation="3"
                           >
-                            Give options to look at galaxies & distribution of age values for individual students within class or for unique classes within full data set.
+                            Give options to look at galaxies &amp; distribution of age values for
+                            individual students within class or for unique classes within full data set.
                           </v-alert>
                         </v-col>
-                        <v-col> 
-                          <v-lazy>     
+                        <v-col>
+                          <v-lazy>
                             <jupyter-widget
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
@@ -303,7 +437,9 @@
                               color="indigo"
                               elevation="3"
                             >
-                              Regular histogram to start. Give option to turn into stacked histogram with legend that provides option to select specific students or classes and highlight in top plot galaxies used to get that age estimate.
+                              Regular histogram to start. Give option to turn into stacked histogram
+                              with legend that provides option to select specific students or classes
+                              and highlight in top plot galaxies used to get that age estimate.
                             </v-alert>
                           </v-col>
                           <v-col>
@@ -332,7 +468,9 @@
                     </v-btn>
                     <v-btn text> Cancel </v-btn>
 -->
-<!-- Curly braces indicate text to be replaced by content in the variable, like {{state.dialog_text}}  (For example, in app.py file, you can collect student userID and display it here via something like "Hello <student userID>".) -->
+                  <!-- Curly braces indicate text to be replaced by content in the variable,
+                  like {{state.dialog_text}}  (For example, in app.py file, you can collect
+                  student userID and display it here via something like "Hello <student userID>".) -->
                   </v-stepper-content>
 
                 </v-stepper-items>
@@ -342,13 +480,7 @@
               <v-card-actions>
                 <!-- Turning this off for now since it doesn't do anything yet.
                 <v-btn
-                  color="primary"
-                  @click="add_data_to_viewers(['hub_const_viewer', 'wwt_viewer'])"
-                >
-                  (Test) Add Data
-                </v-btn>
-                -->
-                <v-btn
+                  :disabled="state.over_model == 1 ? true : false"
                   color="primary"
                   @click="
                     state.over_model =
@@ -359,8 +491,24 @@
                 >
                   Previous
                 </v-btn>
-<!-- TO DO: change this to "Finish" or something on last page-->
+                <v-spacer></v-spacer>
+
                 <v-btn
+                  :disabled="state.adddata_disabled"
+                  @click="state.next1_disabled = false"
+                >
+                  <v-icon
+                    left
+                    dark
+                  >
+                    mdi-plus
+                  </v-icon>
+                  Add Data
+                </v-btn>
+                <!-- for TESTING, use the following -- :disabled="false" -->
+                <!-- for FINAL, use the following -- :disabled="state.over_model == 4 ? true : state.next1_disabled" -->
+                <v-btn
+                  :disabled="false"
                   color="primary"
                   @click="
                     state.over_model =
@@ -369,28 +517,8 @@
                         : state.over_model
                   "
                 >
-                  Next
+                  {{ state.over_model == 4 ? 'Finish' : 'Next' }}
                 </v-btn>
-
-<!-- Hiding for now since we aren't actually using it
-                <v-btn
-                  dark
-                  @click="state.snackbar = 1">
-                  Open Snackbar
-                </v-btn>
-                <v-snackbar
-                  v-model="state.snackbar"
-                  style="position: absolute"
-                  color="orange"
-                  >
-               Woohoo!
-                  <v-btn 
-                    color="cyan"
-                    @click="state.snackbar=0">
-                      Close
-                  </v-btn>
-                </v-snackbar>   
--->
               </v-card-actions>
             </v-card>
           </v-col>
@@ -398,6 +526,78 @@
         <c-footer />
       </v-container>
     </v-main>
+
+    <v-snackbar
+      v-model="state.gal_snackbar"
+      style="position: absolute"
+      color="green"
+    >
+      Galaxy selected.
+      <v-btn
+        dark
+        text
+        @click="
+          state.gal_snackbar = 0;
+        "
+      >
+          Close
+      </v-btn>
+    </v-snackbar>
+
+    <v-snackbar
+      v-model="state.dist_snackbar"
+      style="position: absolute"
+      color="green"
+    >
+      Distance measured.
+      <v-btn
+        dark
+        text
+        @click="
+          state.dist_snackbar = 0;
+          state.col_tab_model = 1
+        "
+      >
+          Go to Measure Velocity
+      </v-btn>
+    </v-snackbar>
+
+    <v-snackbar
+      v-model="state.vel_snackbar"
+      style="position: absolute"
+      color="green"
+    >
+      Velocity measured.
+      <v-btn
+        dark
+        text
+        @click="
+          state.vel_snackbar = 0;
+          state.col_tab_model = 0
+        "
+      >
+          Go to Estimate Distance
+      </v-btn>
+    </v-snackbar>
+
+    <v-snackbar
+      v-model="state.data_ready_snackbar"
+      style="position: absolute"
+      color="green"
+    >
+      Great! You've estimated both distance and velocity for your galaxy. Now you can add these measurements to your dataset.
+      <v-btn
+        text
+        @click="
+          state.data_ready_snackbar = 0;
+        "
+        icon
+        large
+        dark
+      >
+          <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </v-snackbar>
   </v-app>  
 </template>
 

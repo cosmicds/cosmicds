@@ -1,0 +1,277 @@
+<?xml version="1.0"?>
+<Folder MSRCommunityId="0" MSRComponentId="0" Permission="0" Name="BUAC_Hubble" Group="Explorer" Searchable="False" Type="Earth">
+  <VersionDependent>false</VersionDependent>
+
+  <Place Name="NGC 6052" RA="16.0869" Dec="20.54" ZoomLevel="0.0901394594873344" DataSetType="Sky" Opacity="100" Thumbnail="https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-potw1909a.jpg" Constellation="" Modified="Sun Mar 17 2019" Top="47%" Left="47%" PopupIndex="One" Length="100000" Index="1">
+    <Target>galaxya</Target>
+    <ForegroundImageSet>
+      <ImageSet DataSetType="Sky" Name="NGC 6052" BandPass="Visible" Url="https://wwtfiles.blob.core.windows.net/vamp/Hubble-potw1909aL{1}X{2}Y{3}.png" TileLevels="3" WidthFactor="1" Rotation="-45.02" Projection="Tan" FileType=".png" CenterY="20.5417849563" CenterX="241.302222113" BottomsUp="False" OffsetX="0" OffsetY="0" BaseTileLevel="0" BaseDegreesPerTile="0.0225348648718336" FOV="0.08">
+        <Credits>ESA/Hubble &amp; NASA, A. Adamo et a; Located in the constellation of Hercules, about 230 million light-years away, NGC 6052 is a pair of colliding galaxies. They wer...</Credits>
+        <CreditsUrl>https://www.spacetelescope.org/images/potw1909a/</CreditsUrl>
+        <ThumbnailUrl>https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-potw1909a.jpg</ThumbnailUrl>
+      </ImageSet>
+    </ForegroundImageSet>
+    <Description Title="NGC 6052">
+      <div class="Thumbnail">
+        NGC 6052
+      </div>
+      <div class="Name">
+        <h3>NGC 6052 <span class="galaxy_type">colliding&#160;spiral&#160;galaxies</span></h3>
+      </div>
+      <div class="What">
+        <h4>What is it?</h4>
+        <p>
+          How many galaxies do you see here? When NGC 6052 was discovered in the late 1700s, it was classified as an irregular galaxy because of its unusual shape. The Hubble Space Telescope image here gives us a clearer picture of what is happening. NGC 6052 is actually two spiral galaxies in the process of crashing into each other.
+        </p>
+        <p>NGC 6052 gives us a preview of our future. In about 4 billion years, our galaxy, the Milky Way, will collide with our neighbor Andromeda.
+        </p>
+      </div>
+      <div class="Data">
+        <h4>Data</h4>
+        <ul>
+          <li><strong><a href="#">Galaxy spectrum</a></strong></li>
+          <li>Galaxy size assumed in distance estimation: 100,000 light-years</li>
+        </ul>
+      </div>
+    </Description>
+  </Place>
+ 
+
+  <Place Name="Haro 11" RA="0.614611045857333" Dec="-33.5541945798" ZoomLevel="0.05681114176512" DataSetType="Sky" Opacity="100" Thumbnail="https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-potw1016a.jpg" Constellation="" Modified="Sat Nov 10 2018" Top="53%" Left="50%" PopupIndex="Two" Length="30000" Index="2">
+    <Target>galaxyb</Target>
+    <ForegroundImageSet>
+      <ImageSet DataSetType="Sky" Name="Haro 11" BandPass="Visible" Url="https://wwtfiles.blob.core.windows.net/vamp/Hubble-potw1016aL{1}X{2}Y{3}.png" TileLevels="3" WidthFactor="1" Rotation="10.1" Projection="Tan" FileType=".png" CenterY="-33.5541945798" CenterX="9.21916568786" BottomsUp="False" OffsetX="0" OffsetY="0" BaseTileLevel="0" BaseDegreesPerTile="0.01420278544128" FOV="0.03">
+        <Credits>ESA/Hubble/ESO and NASA; Haro 11 appears to shine gently amid clouds of gas and dust, but this placid facade belies the monumental rate of star formation...</Credits>
+        <CreditsUrl>http://www.spacetelescope.org/images/potw1016a/</CreditsUrl>
+        <ThumbnailUrl>https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-potw1016a.jpg</ThumbnailUrl>
+      </ImageSet>
+    </ForegroundImageSet>
+    <Description Title="Haro 11">
+      <div class="Thumbnail">
+        Haro 11
+      </div>
+      <div class="Name">
+        <h3>Haro 11 <span class="galaxy_type">irregular&#160;starburst&#160;galaxy</span></h3>
+      </div>
+      <div class="What">
+        <h4>What is it?</h4>
+        <p>
+          Haro 11 is a "starburst" galaxy that is producing new stars at a rate that is 20 times higher than in our own Milky Way galaxy. The many massive newborn stars give Haro 11 its bluish color. Astronomers believe that Haro 11 formed when two smaller galaxies merged.
+        </p>
+      </div>
+      <div class="Data">
+        <h4>Data</h4>
+        <ul>
+          <li><strong><a href="#">Galaxy spectrum</a></strong></li>
+          <li>Galaxy size assumed in distance estimation: 30,000 light-years</li>
+        </ul>
+      </div>
+    </Description>
+  </Place>
+
+
+  <Place Name="SDSS_J143450.62+033842.5" RA="14.5807298760667" Dec="3.645" ZoomLevel="0.113680722092032" DataSetType="Sky" Opacity="100" Thumbnail="https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-potw1726a.jpg" Constellation="" Modified="Thu Nov 08 2018" Top="44%" Left="43%" PopupIndex="Three" Length="100000" Index="3">
+  <Target>galaxyc</Target>
+    <ForegroundImageSet>
+      <ImageSet DataSetType="Sky" Name="SDSS_J143450.62+033842.5" BandPass="Visible" Url="https://wwtfiles.blob.core.windows.net/vamp/Hubble-potw1726aL{1}X{2}Y{3}.png" TileLevels="3" WidthFactor="1" Rotation="-98.38" Projection="Tan" FileType=".png" CenterY="3.64544619847" CenterX="218.710948141" BottomsUp="False" OffsetX="0" OffsetY="0" BaseTileLevel="0" BaseDegreesPerTile="0.028420180523008" FOV="0.03">
+        <Credits>ESA/Hubble &amp; NASA;   Not all galaxies have the luxury of possessing a simple moniker or quirky nickname. The subject of this NASA/ESA Hubble Space ...</Credits>
+        <CreditsUrl>https://www.spacetelescope.org/images/potw1726a/</CreditsUrl>
+        <ThumbnailUrl>https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-potw1726a.jpg</ThumbnailUrl>
+      </ImageSet>
+    </ForegroundImageSet>
+    <Description Title="SDSS_J143450.62+033842.5">
+      <div class="Thumbnail">
+        SDSS_J143450.62+033842.5
+      </div>
+      <div class="Name">
+        <h3>SDSS J143450.62+033842.5 <span class="galaxy_type">spiral&#160;galaxy</span></h3>
+      </div>
+      <div class="What">
+        <h4>What is it?</h4>
+        <p>
+          What kind of a name is SDSS J143450.62+033842.5? There are so many galaxies in the cosmos that it is difficult to name them all. Most distant galaxies are named by their right ascension and declination, coordinates for finding astronomical objects in the sky (similar to longitude and latitude on Earth). The letters indicate that it was identified by the Sloan Digital Sky Survey (SDSS).
+        </p>
+      </div>
+      <div class="Data">
+        <h4>Data</h4>
+        <ul>
+          <li><strong><a href="#">Galaxy spectrum</a></strong></li>
+          <li>Galaxy size assumed in distance estimation: 100,000 light-years</li>
+        </ul>
+      </div>
+    </Description>
+  </Place>
+
+
+  <Place Name="UGC 2369" RA="2.90060095017333" Dec="14.9741613569" ZoomLevel="0.159164517445798" DataSetType="Sky" Opacity="100" Thumbnail="https://astropix.ipac.caltech.edu/archive/esahubble/potw1931a/esahubble_potw1931a_100.jpg" Constellation="" Top="55%" Left="55%" PopupIndex="Four" Length="100000" Index="4">
+    <Target>galaxyd</Target>
+    <ForegroundImageSet>
+      <ImageSet DataSetType="Sky" Name="UGC 2369" BandPass="Visible" Url="https://astropix.ipac.caltech.edu/archive/esahubble/potw1931a/esahubble_potw1931a_1600.jpg" TileLevels="0" WidthFactor="2" Rotation="-107.2" Projection="SkyImage" FileType=".tif" CenterY="14.9741613569" CenterX="43.5090142526" BottomsUp="False" OffsetX="800" OffsetY="540.330188679245" BaseTileLevel="0" BaseDegreesPerTile="2.9456898907472E-05" FOV="0.05">
+        <Credits></Credits>
+        <CreditsUrl></CreditsUrl>
+      </ImageSet>
+    </ForegroundImageSet>
+    <Description Title="UGC 2369">
+      <div class="Thumbnail">
+        UGC 2369
+      </div>
+      <div class="Name">
+        <h3>UGC 2369 <span class="galaxy_type">colliding&#160;spiral&#160;galaxies</span></h3>
+      </div>
+      <div class="What">
+        <h4>What is it?</h4>
+        <p>
+          Most galaxies in the cosmos are moving apart from each other. However, if galaxies are close enough to each other (like the two galaxies in UGC 2369), gravity can pull them together, causing them to collide and eventually merge. 
+        </p>
+      </div>
+      <div class="Data">
+        <h4>Data</h4>
+        <ul>
+          <li><strong><a href="#">Galaxy spectrum</a></strong></li>
+          <li>Galaxy size assumed in distance estimation: 100,000 light-years</li>
+        </ul>
+      </div>
+    </Description>
+  </Place>
+
+
+  <Place Name="4C 73.08" RA="9.8333" Dec="73.2365" ZoomLevel="0.182228417744599" DataSetType="Sky" Opacity="100" Thumbnail="http://www.spacetelescope.org/static/archives/images/thumbs/potw1246a.jpg" Constellation="" Top="42%" Left="55%" PopupIndex="Five" Length="100000" Index="5">
+    <Target>galaxye</Target>
+    <ForegroundImageSet>
+      <ImageSet DataSetType="Sky" Name="4C 73.08" BandPass="Visible" Url="https://www.spacetelescope.org/static/archives/images/screen/potw1246a.jpg" TileLevels="0" WidthFactor="2" Rotation="-61.96" Projection="SkyImage" FileType=".tif" CenterY="73.2360951224" CenterX="147.455829031" BottomsUp="False" OffsetX="639.823837049" OffsetY="581.690063309" BaseTileLevel="0" BaseDegreesPerTile="3.13274077105556E-05" FOV="0.05">
+        <Credits></Credits>
+        <CreditsUrl>http://www.spacetelescope.org/images/potw1246a/</CreditsUrl>
+      </ImageSet>
+    </ForegroundImageSet>
+    <Description Title="J095000+731408">
+      <div class="Thumbnail">
+        J095000+731408
+      </div>
+      <div class="Name">
+        <h3>J095000+731408 <span class="galaxy_type">spiral&#160;galaxy</span></h3>
+      </div>
+      <div class="What">
+        <h4>What is it?</h4>
+        <p>
+          J095000+731408 is another distant galaxy that is named for its position in the sky. It is part of a small group of nine galaxies associated with a bright radio source, 4C 73.08, which likely harbors a supermassive black hole. You can see the other galaxies in this group by panning around this image taken with the Hubble Space Telescope.
+        </p>
+      </div>
+      <div class="Data">
+        <h4>Data</h4>
+        <ul>
+          <li><strong><a href="#">Galaxy spectrum</a></strong></li>
+          <li>Galaxy size assumed in distance estimation: 100,000 light-years</li>
+        </ul>
+      </div>
+    </Description>
+  </Place>
+
+
+  <Place Name="GOODS North Field" RA="12.62267" Dec="62.213" ZoomLevel="0.546617051201536" DataSetType="Sky" Opacity="100" Thumbnail="https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-potw1834a.jpg" Constellation="" Modified="Thu Nov 08 2018" Top="33%" Left="47%" PopupIndex="Six" Length="100000" Index="6">
+    <Target>galaxyf</Target>
+    <ForegroundImageSet>
+      <ImageSet DataSetType="Sky" Name="GOODS North Field" BandPass="Visible" Url="https://wwtfiles.blob.core.windows.net/vamp/Hubble-potw1834aL{1}X{2}Y{3}.png" TileLevels="5" WidthFactor="1" Rotation="-19.7" Projection="Tan" FileType=".png" CenterY="62.243952347" CenterX="189.226412195" BottomsUp="False" OffsetX="0" OffsetY="0" BaseTileLevel="0" BaseDegreesPerTile="0.136654262800384" FOV="0.2">
+        <Credits>ESA/Hubble &amp; NASA; The Hubble Deep Field from 1995 allowed astronomers a first glimpse into the early Universe. This first picture was followed lat...</Credits>
+        <CreditsUrl>https://www.spacetelescope.org/images/potw1834/</CreditsUrl>
+        <ThumbnailUrl>https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-potw1834a.jpg</ThumbnailUrl>
+      </ImageSet>
+    </ForegroundImageSet>
+    <Description Title="Galaxy in GOODS North">
+      <div class="Thumbnail">
+        Galaxy in GOODS North
+      </div>
+      <div class="Name">
+        <h3>Galaxy in GOODS North <span class="galaxy_type">spiral&#160;galaxy</span></h3>
+      </div>
+      <div class="What">
+        <h4>What is it?</h4>
+        <p>
+        This galaxy is one of the closest in a region of sky known as the "GOODS North" field. The Great Observatories Origins Deep Survey (GOODS) included detailed observations of two regions of sky (one northern and one southern) by NASA's Hubble, Spitzer, and Chandra Telescopes and the European Space Agency's Herschel and XMM-Newton Telescopes. This image shows the GOODS North field as observed by the Hubble Space Telescope. 
+        </p>
+        <p>
+        After you have estimated the distance to the nearby galaxy, pan around the image to see other galaxies that are much farther away. Astronomers have measured distances to almost 3,000 galaxies in this region. How many of them can you spot in the image?
+        </p>
+      </div>
+      <div class="Data">
+        <h4>Data</h4>
+        <ul>
+          <li><strong><a href="#">Galaxy spectrum</a></strong></li>
+          <li>Galaxy size assumed in distance estimation: 100,000 light-years</li>
+        </ul>
+      </div>
+    </Description>
+  </Place>
+    
+
+  <Place Name="Hercules A" RA="16.8522692206" Dec="4.99292628183" ZoomLevel="0.18247041024" DataSetType="Sky" Opacity="100" Thumbnail="https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-opo1247a.jpg" Constellation="" Modified="Fri Nov 09 2018" Top="41%" Left="21%" PopupIndex="Seven" Length="200000" Index="7">
+    <Target>galaxyg</Target>
+    <ForegroundImageSet>
+      <ImageSet DataSetType="Sky" Name="Hercules A" BandPass="Visible" Url="https://wwtfiles.blob.core.windows.net/vamp/Hubble-opo1247aL{1}X{2}Y{3}.png" TileLevels="4" WidthFactor="1" Rotation="35.9876208852" Projection="Tan" FileType=".png" CenterY="4.99292628183" CenterX="252.784038309" BottomsUp="False" OffsetX="0" OffsetY="0" BaseTileLevel="0" BaseDegreesPerTile="0.04561760256" FOV="0.15">
+        <Credits>NASA, ESA, S. Baum and C. O'Dea ; Spectacular jets powered by the gravitational energy of a supermassive black hole in the core of the elliptical galaxy Hercules ...</Credits>
+        <CreditsUrl>http://www.spacetelescope.org/images/opo1247a/</CreditsUrl>
+        <ThumbnailUrl>https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-opo1247a.jpg</ThumbnailUrl>
+      </ImageSet>
+    </ForegroundImageSet>
+    <Description Title="Hercules A">
+      <div class="Thumbnail">
+        Hercules A is a 
+      </div>
+      <div class="Name">
+        <h3>Hercules A <span class="galaxy_type">elliptical&#160;galaxy (and&#160;radio&#160;galaxy)</span></h3>
+      </div>
+      <div class="What">
+        <p>
+        <h5>Note: When estimating the distance to Hercules A, only include the central yellowish elliptical galaxy in the viewport. Do not include the large radio jets, or your distance estimate will be very inaccurate!</h5>
+        </p>
+        <h4>What is it?</h4>
+        <p>
+          Hercules A is a very large elliptical galaxy with a mass that is roughly 1,000 times that of our Milky Way galaxy. This image combines observations from the Hubble Space Telescope and the Jansky Very Large Array radio telescope. The radio observations (shown in pink in false color) show enormous jets that are powered by a supermassive black hole at the center of the galaxy. The jets consist of high-energy plasma that has been blasted almost a million light-years away from the galaxy center, directed by magnetic fields. 
+        </p>
+      </div>
+      <div class="Data">
+        <h4>Data</h4>
+        <ul>
+          <li><strong><a href="#">Galaxy spectrum</a></strong></li>
+          <li>Galaxy size assumed in distance estimation: 200,000 light-years</li>
+        </ul>
+      </div>
+    </Description>
+  </Place>
+
+
+  <Place Name="Abell 370" RA="2.66494" Dec="-1.59464" ZoomLevel="0.273109051054162" DataSetType="Sky" Opacity="100" Thumbnail="https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-heic1711a.jpg" Constellation="" Modified="Thu Nov 08 2018" Top="88%" Left="82%" PopupIndex="Eight" Length="30000" Index="8">
+    <Target>galaxyh</Target>
+    <ForegroundImageSet>
+      <ImageSet DataSetType="Sky" Name="Abell 370" BandPass="Visible" Url="https://wwtfiles.blob.core.windows.net/vamp/Hubble-heic1711aL{1}X{2}Y{3}.png" TileLevels="5" WidthFactor="1" Rotation="27.94" Projection="Tan" FileType=".png" CenterY="-1.57683079556" CenterX="39.9702863319" BottomsUp="False" OffsetX="0" OffsetY="0" BaseTileLevel="0" BaseDegreesPerTile="0.0682772627635405" FOV="0.1">
+        <Credits>NASA, ESA/Hubble, HST Frontier F; With the final observation of the distant galaxy cluster Abell 370 — some five billion light-years away — the Frontier Fields pr...</Credits>
+        <CreditsUrl>https://www.spacetelescope.org/images/heic1711a/</CreditsUrl>
+        <ThumbnailUrl>https://wwtfiles.blob.core.windows.net/vamp/thumb-Hubble-heic1711a.jpg</ThumbnailUrl>
+      </ImageSet>
+    </ForegroundImageSet>
+    <Description Title="Galaxy in Abell 370">
+      <div class="Thumbnail">
+        Galaxy in Abell 370
+      </div>
+      <div class="Name">
+        <h3>Galaxy in Abell 370 <span class="galaxy_type">irregular&#160;galaxy</span></h3>
+      </div>
+      <div class="What">
+        <h4>What is it?</h4>
+        <p>
+          Abell 370 is a galaxy cluster and contains several hundred galaxies bound together by gravity. All types of galaxies are represented in this cluster, including spirals and ellipticals and the small blue irregular galaxy whose distance you will estimate.
+        </p>
+        <p>
+          Note that there are also several long arcs that appear streaked between the galaxies. These are images of far more distant galaxies behind the cluster that have been magnified and distorted by the immense mass of the cluster in a phenomenon known as <em>gravitational lensing</em>.
+        </p>
+      </div>
+      <div class="Data">
+        <h4>Data</h4>
+        <ul>
+          <li><strong><a href="#">Galaxy spectrum</a></strong></li>
+          <li>Galaxy size assumed in distance estimation: 30,000 light-years</li>
+        </ul>
+      </div>
+    </Description>
+  </Place>
+
+</Folder>
