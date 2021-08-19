@@ -61,19 +61,21 @@ class Application(VuetifyTemplate):
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a 
         # key-value pair to the components dictionary.
-        self.components = {'c-footer': Footer(self),
-                           'c-dialog-vel': Dialog(
-                               self,
-                               launch_button_text="Learn more",
-                               title_text="How do we measure galaxy velocity?",
-                               content_text="Verbiage about comparing observed & rest wavelengths of absorption/emission lines",
-                               accept_button_text="Close"),
-                           'c-dialog-age': Dialog(
-                               self,
-                               launch_button_text="Learn more",
-                               title_text="How do we estimate age of the universe?",
-                               content_text="Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.",
-                               accept_button_text="Close")}
+        self.components = {'c-footer': Footer(self)
+                        # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
+                        #    'c-dialog-vel': Dialog(
+                        #        self,
+                        #        launch_button_text="Learn more",
+                        #        title_text="How do we measure galaxy velocity?",
+                        #        content_text="Verbiage about comparing observed & rest wavelengths of absorption/emission lines",
+                        #        accept_button_text="Close"),
+                        #    'c-dialog-age': Dialog(
+                        #        self,
+                        #        launch_button_text="Learn more",
+                        #        title_text="How do we estimate age of the universe?",
+                        #        content_text="Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.",
+                        #        accept_button_text="Close")
+        }
 
         self.state = ApplicationState()
         self._application_handler = JupyterApplication()

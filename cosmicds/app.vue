@@ -384,8 +384,16 @@
                                   Watch this video for instructions on measuring
                                   wavelengths and velocities based on emission
                                   and absorption lines.
+
                                   <div class="text-center mt-4">
-                                    <c-dialog-vel class="mt-4"></c-dialog-vel>
+                                    <video-dialog
+                                      button-text="learn more"
+                                      title-text="How do we measure galaxy velocity?"
+                                      close-text="close"
+                                      @close="console.log('Close button was clicked.')"
+                                    >
+                                      Verbiage about comparing observed and rest wavelengths of absorption/emission lines
+                                    </video-dialog>
                                   </div>
                                 </v-card>
                               </v-col>
@@ -459,10 +467,17 @@
                         <v-card
                           class="pa-8 mx-auto"
                         >
-                          Buttons to call up explanation of why inverting H0 gives you
-                          the age of the universe and to calculate age of universe from H0 value.
+                          Watch this video for an explanation how and why we can calculate
+                          the age of universe by inverting our <em>H</em><sub>0</sub> value.
                           <div class="text-center mt-4">
-                            <c-dialog-age></c-dialog-age>
+                            <video-dialog
+                              button-text="learn more"
+                              title-text="How do we estimate age of the universe?"
+                              close-text="close"
+                              @close="console.log('Close button was clicked.')"
+                            >
+                              Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.
+                            </video-dialog>
                           </div>
                         </v-card>
                       </v-row>
@@ -608,7 +623,6 @@
               <v-spacer></v-spacer>
               <v-divider></v-divider>
               <v-card-actions>
-                <!-- Turning this off for now since it doesn't do anything yet.
                 <v-btn
                   :disabled="state.over_model == 1 ? true : false"
                   color="primary"
