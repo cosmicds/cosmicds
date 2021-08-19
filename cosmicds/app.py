@@ -197,9 +197,10 @@ class Application(VuetifyTemplate):
         """
         return self._application_handler.data_collection
 
-    def vue_fit_lines(self, viewer_id, data_ids=None, clear_others=False):
+    def vue_fit_lines(self, viewer_id, data_ids=None, clear_others=False, aggregate=False):
         """
-        This function will do a line fit to each of the specified layer(s).
+        This function handles line fitting, with the specifics of the fitting
+        controlled by the arguments.
 
         Parameters
         ----------
@@ -212,14 +213,26 @@ class Application(VuetifyTemplate):
         clear_others: bool
             If true, all old lines present on this viewer will be cleared.
             Otherwise, only old lines for the selected data ids will be cleared;
-            lines for other layers will be left as they are.
+            lines for other layers will be left as they are. Default is False.
+        aggregate: bool
+            If true, the data for all specified layers is concatenated and a
+            single fit is done for the combined data. Otherwise, a separate fit
+            is done for each layer. Default is False.
         """
         viewer = self._viewer_handlers[viewer_id]
-        figure = self.viewers[viewer_id].figure
 
         if data_ids is None:
             data_ids = [layer.state.layer.uuid for layer in viewer.layers]
         layers = [layer for layer in viewer.layers if layer.state.visible and layer.state.layer.uuid in data_ids]
+
+        if aggregate:
+            self._fit_lines_aggregate(viewer_id, layers, clear_others)
+        else:
+            self._fit_lines_layers(viewer_id, data_ids, layers, clear_others)
+
+    def _fit_lines_layers(self, viewer_id, data_ids, layers, clear_others=False):
+        viewer = self._viewer_handlers[viewer_id]
+        figure = viewer.figure
 
         lines, ids = [], []
         for layer in layers:
@@ -234,7 +247,7 @@ class Application(VuetifyTemplate):
             fit = fitting.LinearLSQFitter()
             line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
             fitted_line = fit(line_init, x_arr, y_arr)
-            x = [0, 2*max(x_arr)] # For now, the line spans from 0 to twice the maximum value of x
+            x = [0, 2*viewer.state.x_max] # For now, the line spans from 0 to twice the edge of the viewer
             y = fitted_line(x)
 
             # Create the fit line object
@@ -247,7 +260,7 @@ class Application(VuetifyTemplate):
             self._fit_slopes[data.uuid] = fitted_line.slope.value
 
         # Since the glupyter viewer doesn't have an option for lines
-        # we just draw the fit line directly onto the bqplot figure
+        # we just draw the fit lines directly onto the bqplot figure
         # If we previously drew any lines in this viewer, remove them
         old_items = self._fit_lines.get(viewer_id, [])
         to_clear, to_keep = [], []
@@ -260,6 +273,49 @@ class Application(VuetifyTemplate):
         marks_to_keep = [x for x in figure.marks if x not in marks_to_clear]
         figure.marks = marks_to_keep + lines
         self._fit_lines[viewer_id] = to_keep + list(zip(lines, ids))
+
+    def _fit_lines_aggregate(self, viewer_id, layers, clear_others=False):
+        viewer = self._viewer_handlers[viewer_id]
+        figure = viewer.figure
+
+        x, y = [], []
+        for layer in layers:
+
+            # Get the data (which may actually be a Data object,
+            # or represent a subset
+            data = layer.state.layer
+
+            # Do the line fit
+            x_arr = data[viewer.state.x_att]
+            y_arr = data[viewer.state.y_att]
+            x.extend(list(x_arr))
+            y.extend(list(y_arr))
+
+        fit = fitting.LinearLSQFitter()
+        line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
+        fitted_line = fit(line_init, x, y)
+        x = [0, 2*viewer.state.x_max] # For now, the line spans from 0 to twice the edge of the viewer
+        y = fitted_line(x)
+
+        # Create the fit line object
+        # Keep track of this line and its slope
+        line = LinesGL(x=list(x), y=list(y), scales=layers[0].image.scales, colors=['black'], labels_visibility='label')
+        self._fit_slopes['aggregate_%s' % viewer_id] = fitted_line.slope.value
+
+         # Since the glupyter viewer doesn't have an option for lines
+        # we just draw the fit line directly onto the bqplot figure
+        # If we previously drew any lines in this viewer, remove them
+        old_items = self._fit_lines.get(viewer_id, [])
+        to_clear, to_keep = [], []
+        for item in old_items:
+            if clear_others or (item[1] == 'aggregate'):
+                to_clear.append(item)
+            else:
+                to_keep.append(item)
+        marks_to_clear = [x[0] for x in to_clear]
+        marks_to_keep = [x for x in figure.marks if x not in marks_to_clear]
+        figure.marks = marks_to_keep + [line]
+        self._fit_lines[viewer_id] = to_keep + [(line, 'aggregate')]
 
     def vue_add_data_to_viewers(self, viewer_ids):
         for viewer_id in viewer_ids:
