@@ -116,7 +116,8 @@ class Application(VuetifyTemplate):
         for viewer in [hub_const_viewer, hub_fit_viewer]:
 
             # Add the data from the first student
-            viewer.add_subset(student_subsets[0])
+            for i in range(4):
+                viewer.add_subset(student_subsets[i])
 
             # Set the x and y attributes of the viewer
             viewer.state.x_att = student_data.id['Distance']
@@ -197,42 +198,53 @@ class Application(VuetifyTemplate):
         """
         return self._application_handler.data_collection
 
-    def vue_fit_lines(self, viewer_id, data_ids=None, clear_others=False, aggregate=False):
+    #def vue_fit_lines(self, viewer_id, data_ids=None, clear_others=False, aggregate=False):
+    def vue_fit_lines(self, args):
         """
         This function handles line fitting, with the specifics of the fitting
         controlled by the arguments.
 
         Parameters
         ----------
+        args: dict
+            A dictionary of arguments, with following entries:
+
         viewer_id : str
             The identifier for the viewer to use.
-        data_ids : List[str]
-            A list of the UUID values (`data.uuid`) of the data in the layers 
-            that should be fit to. If not specified, a line is fit for every 
-            layer present in the viewer.
+        layer_indices : List[int]
+            (Optional) A list of the indices of the layers that should be fit to. 
+            If not specified, a line is fit for every layer present in 
+            the viewer.
         clear_others: bool
-            If true, all old lines present on this viewer will be cleared.
+            (Optional) If true, all old lines present on this viewer will be cleared.
             Otherwise, only old lines for the selected data ids will be cleared;
             lines for other layers will be left as they are. Default is False.
         aggregate: bool
-            If true, the data for all specified layers is concatenated and a
+            (Optional) If true, the data for all specified layers is concatenated and a
             single fit is done for the combined data. Otherwise, a separate fit
             is done for each layer. Default is False.
         """
+
+        viewer_id = args['viewer_id']
+        layer_indices = args.get('layers')
+        clear_others = args.get('clear_others') or False
+        aggregate = args.get('aggregate') or False
         viewer = self._viewer_handlers[viewer_id]
 
-        if data_ids is None:
-            data_ids = [layer.state.layer.uuid for layer in viewer.layers]
-        layers = [layer for layer in viewer.layers if layer.state.visible and layer.state.layer.uuid in data_ids]
-
+        if layer_indices is None:
+            layer_indices = list(range(len(viewer.layers)))
+        layers = [layer for index, layer in enumerate(viewer.layers) if layer.state.visible and index in layer_indices]
+        
         if aggregate:
             self._fit_lines_aggregate(viewer_id, layers, clear_others)
         else:
-            self._fit_lines_layers(viewer_id, data_ids, layers, clear_others)
+            self._fit_lines_layers(viewer_id, layers, clear_others)
 
-    def _fit_lines_layers(self, viewer_id, data_ids, layers, clear_others=False):
+    def _fit_lines_layers(self, viewer_id, layers, clear_others=False):
         viewer = self._viewer_handlers[viewer_id]
         figure = viewer.figure
+
+        data_ids = [layer.state.layer.uuid for layer in layers]
 
         lines, ids = [], []
         for layer in layers:
