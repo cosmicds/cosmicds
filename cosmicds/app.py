@@ -317,6 +317,19 @@ class Application(VuetifyTemplate):
         figure.marks = marks_to_keep + [line]
         self._fit_lines[viewer_id] = to_keep + [(line, 'aggregate')]
 
+    def vue_clear_lines(self, viewer_id):
+        """
+        "Clears all fit lines for the given viewer.
+        """
+        viewer = self._viewer_handlers[viewer_id]
+        figure = viewer.figure
+
+        old_items = self._fit_lines.get(viewer_id, [])
+        old_marks = [x[0] for x in old_items]
+
+        figure.marks = [mark for mark in figure.marks if mark not in old_marks]
+        self._fit_lines[viewer_id] = []
+
     def vue_add_data_to_viewers(self, viewer_ids):
         for viewer_id in viewer_ids:
             viewer = self._viewer_handlers[viewer_id]
