@@ -13,11 +13,14 @@ from ipywidgets import widget_serialization
 from traitlets import Dict, List
 
 from .components.footer import Footer
+# When we have multiple components, change above to
+# from .components import *
 from .components.viewer_layout import ViewerLayout
 from .utils import load_template, update_figure_css
 from .components.dialog import Dialog
 
-
+# Within ipywidgets - update calls only happen in certain instances.
+# Tom added this glue state to allow 2-way binding and force communication that we want explicitly controlled between front end and back end.
 class ApplicationState(State):
     over_model = CallbackProperty(1)
     col_tab_model = CallbackProperty(0)
@@ -43,6 +46,7 @@ class ApplicationState(State):
     galaxy_vel = CallbackProperty("")
 
 
+# Everything in this class is exposed directly to the app.vue.
 class Application(VuetifyTemplate):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
     state = GlueState().tag(sync=True)
@@ -50,7 +54,7 @@ class Application(VuetifyTemplate):
     viewers = Dict().tag(sync=True, **widget_serialization)
     items = List().tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

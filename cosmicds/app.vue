@@ -57,7 +57,7 @@
                   therefore, consider step 1 complete. -->
                   <!-- Another example could be something like :disabled = "state.continue_button_disabled==1" -->
                   <v-stepper-step
-                    :complete="state.over_model > 1" 
+                    :complete="state.over_model > 1"
                     step="1"
                     editable
                   >
@@ -100,7 +100,7 @@
                   <v-stepper-content step="1">
                     <v-container>
                       <v-row>
-                        <v-col 
+                        <v-col
                           cols="3"
                         >
                           <v-btn
@@ -127,7 +127,7 @@
                           </div>
                         </v-col>
                         <v-col>
-                          <v-lazy>      
+                          <v-lazy>
                             <jupyter-widget
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
@@ -280,7 +280,7 @@
                           </v-container>
                         </v-tab-item>
 
-                        <v-tab-item key="gal-vel"> 
+                        <v-tab-item key="gal-vel">
                           <v-container>
                             <v-row>
                               <v-col
@@ -446,7 +446,7 @@
                           </v-alert>
                         </v-col>
                         <v-col>
-                          <v-lazy>      
+                          <v-lazy>
                             <jupyter-widget
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
@@ -482,7 +482,7 @@
                   <v-stepper-content step="3">
                     <v-container>
                       <v-row>
-                        <v-col 
+                        <v-col
                           cols="3"
                         ><v-alert
                             class="pa-5"
@@ -497,7 +497,7 @@
                           </v-alert>
                         </v-col>
                         <v-col>
-                          <v-lazy>      
+                          <v-lazy>
                             <jupyter-widget
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
@@ -510,14 +510,14 @@
                           elevation="3"
                           width="100%"
                         >
-                        
+
                           Buttons to calculate age of universe from H0 value.<br>
 
-                          <help-dialog 
-                            button-text="Click Me!" 
-                            title-text="Testing!" 
-                            accept-text="Okay" 
-                            cancel-text="Cancel" 
+                          <help-dialog
+                            button-text="Click Me!"
+                            title-text="Testing!"
+                            accept-text="Okay"
+                            cancel-text="Cancel"
                             @accept="console.log('Button was clicked.')"
                           >
                             This is a test of a pure Vue dialog with a custom event.
@@ -532,7 +532,7 @@
                   <v-stepper-content step="4">
                     <v-container>
                       <v-row>
-                        <v-col 
+                        <v-col
                           cols="3"
                         ><v-alert
                             class="pa-5"
@@ -546,8 +546,8 @@
                             individual students within class or for unique classes within full data set.
                           </v-alert>
                         </v-col>
-                        <v-col> 
-                          <v-lazy>     
+                        <v-col>
+                          <v-lazy>
                             <jupyter-widget
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
@@ -608,6 +608,7 @@
               <v-spacer></v-spacer>
               <v-divider></v-divider>
               <v-card-actions>
+                <!-- Turning this off for now since it doesn't do anything yet.
                 <v-btn
                   :disabled="state.over_model == 1 ? true : false"
                   color="primary"
