@@ -1,9 +1,14 @@
 <template>
   <v-btn
-      color="primary"
+      color="warning"
       dark
       @click.stop="dialog = true"
   >
+    <v-icon
+      class="mr-4"
+    >
+      mdi-video
+    </v-icon>
     {{ launch_button_text }}
 
     <v-dialog
