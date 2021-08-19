@@ -308,70 +308,7 @@
                               })"
                             color="primary"
                           >
-                          Each Student
-                          </v-btn>
-                          <v-btn
-                            @click="fit_lines({
-                              'viewer_id': 'hub_fit_viewer',
-                              'aggregate': true
-                              })"
-                            color="primary"
-                          >
-                          Aggregate (keep others)
-                          </v-btn>
-                          <v-btn
-                            @click="fit_lines({
-                              'viewer_id': 'hub_fit_viewer',
-                              'aggregate': true,
-                              'clear_others': true
-                              })"
-                            color="primary"
-                          >
-                          Aggregate (clear others)
-                          </v-btn>
-                          <v-btn
-                            @click="fit_lines({
-                              'viewer_id': 'hub_fit_viewer',
-                              'layers': [0]
-                              })"
-                            color="primary"
-                          >
-                          Orange (keep others)
-                          </v-btn>
-                          <v-btn
-                            @click="fit_lines({
-                              'viewer_id': 'hub_fit_viewer',
-                              'layers': [0],
-                              'clear_others': true
-                              })"
-                            color="primary"
-                          >
-                          Orange (clear others)
-                          </v-btn>
-                          <v-btn
-                            @click="fit_lines({
-                              'viewer_id': 'hub_fit_viewer',
-                              'layers': [1,2]
-                              })"
-                            color="primary"
-                          >
-                          Green & blue (keep)
-                          </v-btn>
-                          <v-btn
-                            @click="fit_lines({
-                              'viewer_id': 'hub_fit_viewer',
-                              'layers': [1,2],
-                              'clear_others': true
-                              })"
-                            color="primary"
-                          >
-                          Green & blue (clear)
-                          </v-btn>
-                          <v-btn
-                            @click="clear_lines('hub_fit_viewer')"
-                            color="primary"
-                          >
-                          Clear lines
+                          Fit Line
                           </v-btn>
                         </v-col>
                         <v-col>
