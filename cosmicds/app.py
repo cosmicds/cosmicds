@@ -49,7 +49,7 @@ class Application(VuetifyTemplate):
     viewers = Dict().tag(sync=True, **widget_serialization)
     items = List().tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
