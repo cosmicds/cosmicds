@@ -432,6 +432,9 @@
                             block
                             color="purple darken-2"
                             class="mb-4 white--text"
+                            @click="fit_lines({
+                              'viewer_id': 'hub_fit_viewer'
+                              })"
                           >
                             generate best fit line
                           </v-btn>
