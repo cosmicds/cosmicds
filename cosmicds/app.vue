@@ -439,7 +439,7 @@
                         <v-col>
                           <v-lazy>
                             <jupyter-widget
-                              :widget="viewers.hub_const_viewer"
+                              :widget="viewers.hub_fit_viewer"
                             ></jupyter-widget>
                           </v-lazy>
                           <todo-alert>
