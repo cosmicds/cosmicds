@@ -6,7 +6,6 @@ from traitlets import Unicode
 
 __all__ = ['load_template', 'update_figure_css']
 
-
 def load_template(file_name, path=None, traitlet=True):
     """
     Load a vue template file and instantiate the appropriate traitlet object.
