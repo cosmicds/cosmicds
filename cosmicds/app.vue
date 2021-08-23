@@ -132,17 +132,11 @@
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
                           </v-lazy>
-                          <v-alert
-                            text
-                            prominent
-                            type="error"
-                            icon="mdi-wrench-outline"
-                            class="pa-5 my-2 text-body-2"
-                          >
+                          <todo-alert>
                             When students add velocity and distance measurements, they
                             will be plotted here. (No data will be displayed to start.
                             Points populate the plot as students measure and commit them.)
-                          </v-alert>
+                          </todo-alert>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -392,7 +386,8 @@
                                       close-text="close"
                                       @close="console.log('Close button was clicked.')"
                                     >
-                                      Verbiage about comparing observed and rest wavelengths of absorption/emission lines
+                                      Verbiage about comparing observed and
+                                      rest wavelengths of absorption/emission lines
                                     </video-dialog>
                                   </div>
                                 </v-card>
@@ -440,18 +435,6 @@
                           >
                             generate best fit line
                           </v-btn>
-                          <v-alert
-                            class="pa-5"
-                            height="300px"
-                            border="left"
-                            colored-border
-                            color="indigo"
-                            elevation="3"
-                          >
-                            Buttons to draw (unless this is prohibitively complicated.)
-                            and then plot calculated best fit line to students' data.
-                            (Display should include 4-5 data points.)
-                          </v-alert>
                         </v-col>
                         <v-col>
                           <v-lazy>
@@ -459,6 +442,12 @@
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
                           </v-lazy>
+                          <todo-alert>
+                            Enable a button to draw your own fit line (unless this is
+                            prohibitively complicated). Plot drawn and calculated best
+                            fit lines. Display should include only this student's
+                            4-5 data points. 
+                          </todo-alert>
                         </v-col>
                       </v-row>
                       <v-row
@@ -499,17 +488,7 @@
                       <v-row>
                         <v-col
                           cols="3"
-                        ><v-alert
-                            class="pa-5"
-                            height="300px"
-                            border="left"
-                            colored-border
-                            color="indigo"
-                            elevation="3"
-                          >
-                            Now give options to view all data from class, fit a
-                            line, and calculate H0/age values for full class data set.
-                          </v-alert>
+                        >
                         </v-col>
                         <v-col>
                           <v-lazy>
@@ -517,6 +496,11 @@
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
                           </v-lazy>
+                          <todo-alert>
+                            Give options to view all data from class, fit a
+                            line, and calculate <em>H</em><sub>0</sub> and
+                            age values for full class data set.
+                          </todo-alert>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -547,19 +531,7 @@
                   <v-stepper-content step="4">
                     <v-container>
                       <v-row>
-                        <v-col
-                          cols="3"
-                        ><v-alert
-                            class="pa-5"
-                            height="100%"
-                            border="left"
-                            colored-border
-                            color="indigo"
-                            elevation="3"
-                          >
-                            Give options to look at galaxies &amp; distribution of age values for
-                            individual students within class or for unique classes within full data set.
-                          </v-alert>
+                        <v-col cols="3">
                         </v-col>
                         <v-col>
                           <v-lazy>
@@ -567,6 +539,11 @@
                               :widget="viewers.hub_const_viewer"
                             ></jupyter-widget>
                           </v-lazy>
+                          <todo-alert>
+                            Give options to look at galaxies &amp; distribution
+                            of age values for individual students within class
+                            or for unique classes within full data set.
+                          </todo-alert>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -574,18 +551,6 @@
                     <v-lazy>
                       <v-row>
                           <v-col cols="3">
-                            <v-alert
-                              class="pa-5"
-                              height="100%"
-                              border="left"
-                              colored-border
-                              color="indigo"
-                              elevation="3"
-                            >
-                              Regular histogram to start. Give option to turn into stacked histogram
-                              with legend that provides option to select specific students or classes
-                              and highlight in top plot galaxies used to get that age estimate.
-                            </v-alert>
                           </v-col>
                           <v-col>
                             <v-lazy>
@@ -594,6 +559,13 @@
                                 :widget="viewers.age_distr_viewer">
                               </jupyter-widget>
                             </v-lazy>
+                            <todo-alert>
+                              Regular histogram to start. Give option to turn
+                              into stacked histogram with legend that provide
+                              option to select specific students or classes and
+                              highlight in top plot galaxies used to get that
+                              age estimate.
+                            </todo-alert>
                           </v-col>
 
                       </v-row>
