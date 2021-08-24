@@ -416,28 +416,45 @@
                           <div
                             class="d-flex mb-4"
                           >
-                            <v-icon
-                              class="px-4"
-                            >
-                              mdi-draw
-                            </v-icon>
                             <v-btn
-                              color="purple darken-2"
+                              :outlined="state.draw_on"
+                              color="orange"
                               class="flex-grow-1 white--text"
+                              @click="state.draw_on = !state.draw_on"
                             >
                               draw a fit line
+                              <v-spacer></v-spacer>
+                              <v-icon
+                                right
+                                dark
+                                class="px-4"
+                              >
+                                mdi-draw
+                              </v-icon>
                             </v-btn>
                           </div>
-                          <v-btn
-                            block
-                            color="purple darken-2"
-                            class="mb-4 white--text"
-                            @click="fit_lines({
-                              'viewer_id': 'hub_fit_viewer'
-                              })"
+                          <div
+                            class="d-flex mb-4"
                           >
-                            generate best fit line
-                          </v-btn>
+                            <v-btn
+                              color="green lighten-1"
+                              class="flex-grow-1 white--text"
+                              @click="fit_lines({
+                                'viewer_id': 'hub_fit_viewer'
+                                });
+                                state.bestfit_on = 1"
+                            >
+                              generate best fit
+                              <v-spacer></v-spacer>
+                              <v-icon
+                                right
+                                dark
+                                class="px-4"
+                              >
+                                mdi-calculator
+                              </v-icon>
+                            </v-btn>
+                          </div>
                         </v-col>
                         <v-col>
                           <v-lazy>

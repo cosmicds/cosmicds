@@ -48,6 +48,9 @@ class ApplicationState(State):
     galaxy_dist = CallbackProperty("")
     galaxy_vel = CallbackProperty("")
 
+    draw_on = CallbackProperty(0)
+    bestfit_on = CallbackProperty(0)
+
 
 # Everything in this class is exposed directly to the app.vue.
 class Application(VuetifyTemplate):
