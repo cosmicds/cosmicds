@@ -82,7 +82,12 @@
                   </v-stepper-step>
                 </v-stepper-header>
               <!-- This sets up the screen for the galaxy selection/measurement step -->
-                <v-stepper-items class="">
+                <v-stepper-items
+                  class=""
+                >
+                  <!-- --- ---------- --- -->
+                  <!-- --- FIRST PAGE --- -->
+                  <!-- --- ---------- --- -->
                   <v-stepper-content step="1">
                     <v-container>
                       <v-row>
@@ -284,8 +289,21 @@
                             </v-row>
                           </v-container>
                         </v-tab-item>
-
                     </v-card>
+
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
                   </v-stepper-content>
 
                 <!-- This sets up the screen for the Analysis/data fitting step -->
@@ -295,6 +313,9 @@
                      * Choosing different data sets - student/class/all
                      * Plotting by galaxy type -->
 
+                  <!-- --- ----------- --- -->
+                  <!-- --- SECOND PAGE --- -->
+                  <!-- --- ----------- --- -->
                   <v-stepper-content step="2">
                     <v-container>
                       <v-row>
@@ -333,6 +354,20 @@
                         </v-card>
                       </v-row>
                     </v-container>
+                    
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
 <!-- Disabling for now
                     <v-btn color="primary" @click="state.over_model = 3">
                       Continue
@@ -345,6 +380,9 @@
                 <!-- Will need buttons/functionality for choosing different data sets -->
                 <!-- Need to think through whether the hubble plot should also appear on this page or if that would be confusing -->
 
+                  <!-- --- ---------- --- -->
+                  <!-- --- THIRD PAGE --- -->
+                  <!-- --- ---------- --- -->
                   <v-stepper-content step="3">
                     <v-container>
                       <v-row>
@@ -392,9 +430,26 @@
                         </v-card>
                      </v-row>
                     </v-container>
+                    
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
 
                   </v-stepper-content>
 
+                  <!-- --- ----------- --- -->
+                  <!-- --- FOURTH PAGE --- -->
+                  <!-- --- ----------- --- -->
                   <v-stepper-content step="4">
                     <v-container>
                       <v-row>
@@ -458,6 +513,21 @@
                       class="fill-height mb-12"
                       color="grey lighten-1 elevation-0"
                     ></v-card>
+                    
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
+                    
 <!-- disabling this because it's redundant with previous/next
                     <v-btn color="primary" @click="state.over_model = 1">
                       Continue
