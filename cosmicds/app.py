@@ -469,7 +469,6 @@ class Application(VuetifyTemplate):
 
         layer_mapping = layer_mapping or { x : x for x in range(len(viewer.layers)) }
         for index, layer in enumerate(viewer.layers):
-            print(index, layer_mapping[index])
             layer.state.visible = layer_mapping[index] in selections
 
         lines = []
