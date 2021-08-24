@@ -350,22 +350,47 @@
                       <v-row>
                         <v-col
                           cols="3"
-                        ><v-alert
-                            class="pa-5"
-                            height="300px"
-                            border="left"
-                            colored-border
-                            color="indigo"
-                            elevation="3"
+                        ><v-btn
+                            color="primary"
+                            @click="fit_lines({
+                              'viewer_id': 'hub_comparison_viewer'
+                            })"
                           >
-                            Now give options to view all data from class, fit a
-                            line, and calculate H0/age values for full class data set.
-                          </v-alert>
+                            Fit Lines
+                          </v-btn>
+                          <v-list
+                            style="max-height: 300px"
+                            class="overflow-y-auto"
+                          >
+                            <v-list-item-group
+                              multiple
+                              v-model="state.hubble_comparison_selections"
+                            >
+                              <v-list-item
+                                v-for="(option, index) in ['My data', 'Class data', 'All data']"
+                                :key="index"
+                                :value="index"
+                              >
+                                <template v-slot:default="{ active }">
+                                  <v-list-item-content>
+                                    {{option}}
+                                  </v-list-item-content>
+
+                                  <v-list-item-action>
+                                    <v-checkbox
+                                      :input-value="active"
+                                      :color="['orange', 'green', 'red'][index]"
+                                    ></v-checkbox>
+                                  </v-list-item-action>
+                                </template>
+                              </v-list-item>
+                            </v-list-item-group>
+                          </v-list>
                         </v-col>
                         <v-col>
                           <v-lazy>
                             <jupyter-widget
-                              :widget="viewers.hub_const_viewer"
+                              :widget="viewers.hub_comparison_viewer"
                             ></jupyter-widget>
                           </v-lazy>
                         </v-col>
@@ -424,31 +449,144 @@
                     <v-container>
                     <v-lazy>
                       <v-row>
-                          <v-col cols="3">
-                            <v-alert
-                              class="pa-5"
-                              height="100%"
-                              border="left"
-                              colored-border
-                              color="indigo"
-                              elevation="3"
-                            >
-                              Regular histogram to start. Give option to turn into stacked histogram
-                              with legend that provides option to select specific students or classes
-                              and highlight in top plot galaxies used to get that age estimate.
-                            </v-alert>
-                          </v-col>
-                          <v-col>
-                            <v-lazy>
-                              <jupyter-widget
-                                style="height: 300px"
-                                :widget="viewers.age_distr_viewer">
-                              </jupyter-widget>
-                            </v-lazy>
-                          </v-col>
+                        <v-col>
+                          <v-tabs>
+                            <v-tab key="hist_class">My class</v-tab>
+                            <v-tab key="hist_prob">All data</v-tab>
+                            <v-tab key="hist_sandbox">Sandbox</v-tab>
+                            <v-tab-item key="hist_class">
+                              <v-container>
+                                <v-row>
+                                  <v-col cols="3">
+                                    <v-list
+                                      style="max-height: 300px"
+                                      class="overflow-y-auto"
+                                    >
+                                      <v-list-item-group
+                                        multiple
+                                        v-model="state.class_histogram_selections"
+                                      >
+                                        <v-list-item
+                                          v-for="(option, index) in ['Individual students', 'My value', 'Class value']"
+                                          :key="index"
+                                          :value="index"
+                                        >
+                                          <template v-slot:default="{ active }">
+                                            <v-list-item-content>
+                                              {{option}}
+                                            </v-list-item-content>
 
+                                            <v-list-item-action>
+                                              <v-checkbox
+                                                :input-value="active"
+                                                :color="['orange', 'red', 'blue'][index]"
+                                              ></v-checkbox>
+                                            </v-list-item-action>
+                                          </template>
+                                        </v-list-item>
+                                      </v-list-item-group>
+                                    </v-list>
+                                  </v-col>
+                                  <v-col>
+                                    <v-lazy>
+                                      <jupyter-widget
+                                        style="height: 300px"
+                                        :widget="viewers.class_distr_viewer">
+                                      </jupyter-widget>
+                                    </v-lazy>
+                                  </v-col>
+                                </v-row>
+                              </v-container>
+                            </v-tab-item>
+                            <v-tab-item key="hist_prob">
+                              <v-container>
+                                <v-row>
+                                  <v-col cols="3">
+                                    <v-list
+                                      style="max-height: 300px"
+                                      class="overflow-y-auto"
+                                    >
+                                      <v-list-item-group
+                                        multiple
+                                        v-model="state.alldata_histogram_selections"
+                                      >
+                                        <v-list-item
+                                          v-for="(option, index) in ['Students','Classes']"
+                                          :key="index"
+                                          :value="index"
+                                        >
+                                          <template v-slot:default="{ active }">
+                                            <v-list-item-content>
+                                              {{option}}
+                                            </v-list-item-content>
+
+                                            <v-list-item-action>
+                                              <v-checkbox
+                                                :input-value="active"
+                                                :color="['blue', 'red'][index]"
+                                              ></v-checkbox>
+                                            </v-list-item-action>
+                                          </template>
+                                        </v-list-item>
+                                      </v-list-item-group>
+                                    </v-list>
+                                  </v-col>
+                                  <v-col>
+                                    <v-lazy>
+                                      <jupyter-widget
+                                        style="height: 300px"
+                                        :widget="viewers.all_distr_viewer">
+                                      </jupyter-widget>
+                                    </v-lazy>
+                                  </v-col>
+                              </v-container>
+                            </v-tab-item>
+                            <v-tab-item key="hist_sandbox">
+                              <v-container>
+                                <v-row>
+                                  <v-col cols="3">
+                                    <v-list
+                                      style="max-height: 300px"
+                                      class="overflow-y-auto"
+                                    >
+                                      <v-list-item-group
+                                        multiple
+                                        v-model="state.sandbox_histogram_selections"
+                                      >
+                                        <v-list-item
+                                          v-for="(option, index) in ['Students in my class', 'All students', 'All classes', 'My class', 'All data', 'My value']"
+                                          :key="index"
+                                          :value="index"
+                                        >
+                                          <template v-slot:default="{ active }">
+                                            <v-list-item-content>
+                                              {{option}}
+                                            </v-list-item-content>
+
+                                            <v-list-item-action>
+                                              <v-checkbox
+                                                :input-value="active"
+                                                :color="['orange', 'blue', 'red', 'purple', 'green', 'black'][index]"
+                                              ></v-checkbox>
+                                            </v-list-item-action>
+                                          </template>
+                                        </v-list-item>
+                                      </v-list-item-group>
+                                    </v-list>
+                                  </v-col>
+                                  <v-col>
+                                    <v-lazy>
+                                      <jupyter-widget
+                                        style="height: 300px"
+                                        :widget="viewers.sandbox_distr_viewer">
+                                      </jupyter-widget>
+                                    </v-lazy>
+                                  </v-col>
+                              </v-container>
+                            </v-tab-item>
+                          </v-tabs>
+                        </v-col>
                       </v-row>
-                    </v-container
                     </v-lazy>
                     <v-card
                       class="fill-height mb-12"
