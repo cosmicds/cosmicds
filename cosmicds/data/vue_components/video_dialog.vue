@@ -9,7 +9,7 @@
     >
       mdi-video
     </v-icon>
-    {{ launch_button_text }}
+    {{ buttonText }}
 
     <v-dialog
         v-model="dialog"
@@ -17,11 +17,11 @@
     >
       <v-card>
         <v-card-title class="text-h5">
-          {{ title_text }}
+          {{ titleText }}
         </v-card-title>
 
         <v-card-text>
-          {{ content_text }}
+          <slot></slot>
         </v-card-text>
 
         <v-card-actions>
@@ -30,12 +30,23 @@
           <v-btn
               color="green darken-1"
               text
-              @click="accept_button_clicked"
+              @click="() => { $emit('close'); dialog = false } "
           >
-            {{ accept_button_text }}
+            {{ closeText }}
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-btn>
 </template>
+
+<script>
+module.exports = {
+  props: ["buttonText", "titleText", "closeText"],
+  data: function () {
+    return {
+      dialog: false,
+    };
+  },
+};
+</script>

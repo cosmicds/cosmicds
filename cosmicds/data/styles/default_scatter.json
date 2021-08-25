@@ -1,7 +1,7 @@
 {
   "figure": {
     "background_style": {
-      "fill": "#e3f2f4"
+      "fill": "#fffef5"
     },
     "fig_margin": {
       "left": 100,
@@ -12,7 +12,8 @@
     "axes": [
       {
         "tick_style": {
-          "font-family": "Gill Sans"
+          "font-family": "Gill Sans",
+          "font-size": 14
         },
         "label_offset": "50px",
         "label": "Distance (Mpc)"
@@ -21,7 +22,7 @@
         "tick_format": ",.0f",
         "tick_style": {
           "font-family": "Gill Sans",
-          "font-size": 18
+          "font-size": 14
         },
         "label_offset": "75px",
         "label_style": {
@@ -33,11 +34,13 @@
   },
   "viewer": {
     "scatter": {
-      "marker": "circle"
+      "marker": "circle",
+      "stroke": "#004d26",
+      "enable_hover": true
     },
     "state": {
       "size": 5,
-      "color": "#e69600"
+      "color": ["#e69600", "#5ac18e", "#da251c", "#00eb75"]
     }
   }
 }
