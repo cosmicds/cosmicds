@@ -39,8 +39,8 @@
       "enable_hover": true
     },
     "state": {
-      "size": 4,
-      "color": "#00eb75"
+      "size": 5,
+      "color": ["#e69600", "#5ac18e", "#da251c", "#00eb75"]
     }
   }
 }

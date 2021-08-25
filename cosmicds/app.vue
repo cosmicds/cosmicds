@@ -95,8 +95,11 @@
 
               <!-- This sets up the screen for the galaxy selection/measurement step -->
                 <v-stepper-items
-                  class="no-transition"
+                  class=""
                 >
+                  <!-- --- ---------- --- -->
+                  <!-- --- FIRST PAGE --- -->
+                  <!-- --- ---------- --- -->
                   <v-stepper-content step="1">
                     <v-container>
                       <v-row>
@@ -224,7 +227,7 @@
                                           <v-list-item-subtitle>assumed size</v-list-item-subtitle>
                                         </v-list-item-content>
                                         <v-list-item-content>
-                                          <v-list-item-title>568 pixels</v-list-item-title>
+                                          <v-list-item-title>568 pixels</v-list-item-title>  
                                           <v-list-item-subtitle>height of display</v-list-item-subtitle>
                                         </v-list-item-content>
                                       </v-list>
@@ -395,8 +398,21 @@
                             </v-row>
                           </v-container>
                         </v-tab-item>
-
                     </v-card>
+
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
                   </v-stepper-content>
 
                 <!-- This sets up the screen for the Analysis/data fitting step -->
@@ -406,6 +422,9 @@
                      * Choosing different data sets - student/class/all
                      * Plotting by galaxy type -->
 
+                  <!-- --- ----------- --- -->
+                  <!-- --- SECOND PAGE --- -->
+                  <!-- --- ----------- --- -->
                   <v-stepper-content step="2">
                     <v-container>
                       <v-row>
@@ -491,6 +510,20 @@
                         </v-card>
                       </v-row>
                     </v-container>
+                    
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
 <!-- Disabling for now
                     <v-btn color="primary" @click="state.over_model = 3">
                       Continue
@@ -503,17 +536,55 @@
                 <!-- Will need buttons/functionality for choosing different data sets -->
                 <!-- Need to think through whether the hubble plot should also appear on this page or if that would be confusing -->
 
+                  <!-- --- ---------- --- -->
+                  <!-- --- THIRD PAGE --- -->
+                  <!-- --- ---------- --- -->
                   <v-stepper-content step="3">
                     <v-container>
                       <v-row>
                         <v-col
                           cols="3"
-                        >
+                        ><v-btn
+                            color="primary"
+                            @click="fit_lines({
+                              'viewer_id': 'hub_comparison_viewer'
+                            })"
+                          >
+                            Fit Lines
+                          </v-btn>
+                          <v-list
+                            style="max-height: 300px"
+                            class="overflow-y-auto"
+                          >
+                            <v-list-item-group
+                              multiple
+                              v-model="state.hubble_comparison_selections"
+                            >
+                              <v-list-item
+                                v-for="(option, index) in ['My data', 'Class data', 'All data']"
+                                :key="index"
+                                :value="index"
+                              >
+                                <template v-slot:default="{ active }">
+                                  <v-list-item-content>
+                                    {{option}}
+                                  </v-list-item-content>
+
+                                  <v-list-item-action>
+                                    <v-checkbox
+                                      :input-value="active"
+                                      :color="['orange', 'green', 'red'][index]"
+                                    ></v-checkbox>
+                                  </v-list-item-action>
+                                </template>
+                              </v-list-item>
+                            </v-list-item-group>
+                          </v-list>
                         </v-col>
                         <v-col>
                           <v-lazy>
                             <jupyter-widget
-                              :widget="viewers.hub_const_viewer"
+                              :widget="viewers.hub_comparison_viewer"
                             ></jupyter-widget>
                           </v-lazy>
                           <todo-alert>
@@ -545,9 +616,26 @@
                         </v-card>
                      </v-row>
                     </v-container>
+                    
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
 
                   </v-stepper-content>
 
+                  <!-- --- ----------- --- -->
+                  <!-- --- FOURTH PAGE --- -->
+                  <!-- --- ----------- --- -->
                   <v-stepper-content step="4">
                     <v-container>
                       <v-row>
@@ -570,26 +658,144 @@
                     <v-container>
                     <v-lazy>
                       <v-row>
-                          <v-col cols="3">
-                          </v-col>
-                          <v-col>
-                            <v-lazy>
-                              <jupyter-widget
-                                style="height: 300px"
-                                :widget="viewers.age_distr_viewer">
-                              </jupyter-widget>
-                            </v-lazy>
-                            <todo-alert>
-                              Regular histogram to start. Give option to turn
-                              into stacked histogram with legend that provide
-                              option to select specific students or classes and
-                              highlight in top plot galaxies used to get that
-                              age estimate.
-                            </todo-alert>
-                          </v-col>
+                        <v-col>
+                          <v-tabs>
+                            <v-tab key="hist_class">My class</v-tab>
+                            <v-tab key="hist_prob">All data</v-tab>
+                            <v-tab key="hist_sandbox">Sandbox</v-tab>
+                            <v-tab-item key="hist_class">
+                              <v-container>
+                                <v-row>
+                                  <v-col cols="3">
+                                    <v-list
+                                      style="max-height: 300px"
+                                      class="overflow-y-auto"
+                                    >
+                                      <v-list-item-group
+                                        multiple
+                                        v-model="state.class_histogram_selections"
+                                      >
+                                        <v-list-item
+                                          v-for="(option, index) in ['Individual students', 'My value', 'Class value']"
+                                          :key="index"
+                                          :value="index"
+                                        >
+                                          <template v-slot:default="{ active }">
+                                            <v-list-item-content>
+                                              {{option}}
+                                            </v-list-item-content>
 
+                                            <v-list-item-action>
+                                              <v-checkbox
+                                                :input-value="active"
+                                                :color="['orange', 'red', 'blue'][index]"
+                                              ></v-checkbox>
+                                            </v-list-item-action>
+                                          </template>
+                                        </v-list-item>
+                                      </v-list-item-group>
+                                    </v-list>
+                                  </v-col>
+                                  <v-col>
+                                    <v-lazy>
+                                      <jupyter-widget
+                                        style="height: 300px"
+                                        :widget="viewers.class_distr_viewer">
+                                      </jupyter-widget>
+                                    </v-lazy>
+                                  </v-col>
+                                </v-row>
+                              </v-container>
+                            </v-tab-item>
+                            <v-tab-item key="hist_prob">
+                              <v-container>
+                                <v-row>
+                                  <v-col cols="3">
+                                    <v-list
+                                      style="max-height: 300px"
+                                      class="overflow-y-auto"
+                                    >
+                                      <v-list-item-group
+                                        multiple
+                                        v-model="state.alldata_histogram_selections"
+                                      >
+                                        <v-list-item
+                                          v-for="(option, index) in ['Students','Classes']"
+                                          :key="index"
+                                          :value="index"
+                                        >
+                                          <template v-slot:default="{ active }">
+                                            <v-list-item-content>
+                                              {{option}}
+                                            </v-list-item-content>
+
+                                            <v-list-item-action>
+                                              <v-checkbox
+                                                :input-value="active"
+                                                :color="['blue', 'red'][index]"
+                                              ></v-checkbox>
+                                            </v-list-item-action>
+                                          </template>
+                                        </v-list-item>
+                                      </v-list-item-group>
+                                    </v-list>
+                                  </v-col>
+                                  <v-col>
+                                    <v-lazy>
+                                      <jupyter-widget
+                                        style="height: 300px"
+                                        :widget="viewers.all_distr_viewer">
+                                      </jupyter-widget>
+                                    </v-lazy>
+                                  </v-col>
+                              </v-container>
+                            </v-tab-item>
+                            <v-tab-item key="hist_sandbox">
+                              <v-container>
+                                <v-row>
+                                  <v-col cols="3">
+                                    <v-list
+                                      style="max-height: 300px"
+                                      class="overflow-y-auto"
+                                    >
+                                      <v-list-item-group
+                                        multiple
+                                        v-model="state.sandbox_histogram_selections"
+                                      >
+                                        <v-list-item
+                                          v-for="(option, index) in ['Students in my class', 'All students', 'All classes', 'My class', 'All data', 'My value']"
+                                          :key="index"
+                                          :value="index"
+                                        >
+                                          <template v-slot:default="{ active }">
+                                            <v-list-item-content>
+                                              {{option}}
+                                            </v-list-item-content>
+
+                                            <v-list-item-action>
+                                              <v-checkbox
+                                                :input-value="active"
+                                                :color="['orange', 'blue', 'red', 'purple', 'green', 'black'][index]"
+                                              ></v-checkbox>
+                                            </v-list-item-action>
+                                          </template>
+                                        </v-list-item>
+                                      </v-list-item-group>
+                                    </v-list>
+                                  </v-col>
+                                  <v-col>
+                                    <v-lazy>
+                                      <jupyter-widget
+                                        style="height: 300px"
+                                        :widget="viewers.sandbox_distr_viewer">
+                                      </jupyter-widget>
+                                    </v-lazy>
+                                  </v-col>
+                              </v-container>
+                            </v-tab-item>
+                          </v-tabs>
+                        </v-col>
                       </v-row>
-                    </v-container
                     </v-lazy>
                     <v-card
                       class="fill-height mb-12"
@@ -599,6 +805,21 @@
                       class="fill-height mb-12"
                       color="grey lighten-1 elevation-0"
                     ></v-card>
+                    
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
+                    
 <!-- disabling this because it's redundant with previous/next
                     <v-btn color="primary" @click="state.over_model = 1">
                       Continue
