@@ -117,7 +117,6 @@ class Application(VuetifyTemplate):
         for dataset in datasets:
             self._application_handler.load_data(join(output_dir, f"{dataset}.csv"), label=dataset)
 
-
         # Instantiate the initial viewers
         # Image viewer used for the 2D spectrum selection
         image_viewer = self._application_handler.new_data_viewer(
