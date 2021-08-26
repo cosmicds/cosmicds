@@ -2,7 +2,6 @@ import json
 import os
 
 from astropy import units as u
-from bqplot.scales import LinearScale
 from bqplot_image_gl import LinesGL
 from glue_jupyter.bqplot.scatter.layer_artist import BqplotScatterLayerArtist
 import numpy as np
@@ -135,15 +134,9 @@ def line_mark(layer, start_x, start_y, end_x, end_y, color):
         The desired color of the line, represented as a hex string.
     """
     if isinstance(layer, BqplotScatterLayerArtist):
-        layer_scales = layer.image.scales
+        scales = layer.image.scales
     else:
-        layer_scales = layer.view.scales
-    layer_x = layer_scales['x']
-    layer_y = layer_scales['y']
-    scales = {
-        'x': LinearScale(min=layer_x.min, max=layer_x.max, allow_padding=layer_x.allow_padding),
-        'y': LinearScale(min=layer_y.min, max=layer_y.max, allow_padding=layer_y.allow_padding),
-    }
+        scales = layer.view.scales
     return LinesGL(x=[start_x, end_x],
                    y=[start_y, end_y],
                    scales=scales,
