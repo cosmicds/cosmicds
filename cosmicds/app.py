@@ -509,7 +509,7 @@ class Application(VuetifyTemplate):
         # Observe interaction changes so that we can modify when necessary
         # We want to remove any observers that we have previously set
         figure.interaction.unobserve_all(name='next')
-        figure.interaction.observe(lambda changed: self.panzoom_interaction_update(changed, viewer_id), names=['next'])
+        figure.interaction.observe(lambda changed: self._panzoom_interaction_update(changed, viewer_id), names=['next'])
 
     def _class_histogram_selection_update(self, selections):
         """
@@ -564,7 +564,7 @@ class Application(VuetifyTemplate):
         ]
         self._histogram_selection_update(selections, 'sandbox_distr_viewer', line_options=line_options)
 
-    def panzoom_interaction_update(self, change, viewer_id):
+    def _panzoom_interaction_update(self, change, viewer_id):
 
             viewer = self._viewer_handlers[viewer_id]
             figure = viewer.figure
