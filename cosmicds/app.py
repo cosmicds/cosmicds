@@ -2,7 +2,7 @@ from os.path import join
 from pathlib import Path
 
 from astropy.modeling import models, fitting
-from bqplot_image_gl import LinesGL
+from bqplot import PanZoom
 from echo import CallbackProperty
 from echo.core import add_callback
 from glue.core.state_objects import State
@@ -490,7 +490,27 @@ class Application(VuetifyTemplate):
         old_lines = self._histogram_lines.get(viewer_id, [])
         figure.marks = [mark for mark in figure.marks if not mark in old_lines] + lines
         self._histogram_lines[viewer_id] = lines
-            
+
+        # We need to do a bit of a hack for the histogram viewer lines
+        # Using the same scale object as the viewer image modifies the y-axis for some reason
+        # so to get around that, these marks have new scales which mimic the view scales
+        # and thus we need to add them to the viewer's PanZoom interaction
+        line_scales = [line.scales for line in lines]
+        x_scales = [scale['x'] for scale in line_scales]
+        y_scales = [scale['y'] for scale in line_scales]
+
+        # If the PanZoom is currently open, we need to update this right now
+        if isinstance(figure.interaction.next, PanZoom):
+            figure.interaction.next = PanZoom(scales={
+                'x': [viewer.scale_x] + x_scales,
+                'y': [viewer.scale_y] + y_scales,
+            })
+
+        # Observe interaction changes so that we can modify when necessary
+        # We want to remove any observers that we have previously set
+        figure.interaction.unobserve_all(name='next')
+        figure.interaction.observe(lambda changed: self.panzoom_interaction_update(changed, viewer_id), names=['next'])
+
     def _class_histogram_selection_update(self, selections):
         """
         Specialization of _histogram_selection_update for the case of the class histogram.
@@ -543,6 +563,33 @@ class Application(VuetifyTemplate):
             (5, self.student_slope, 'black')
         ]
         self._histogram_selection_update(selections, 'sandbox_distr_viewer', line_options=line_options)
+
+    def panzoom_interaction_update(self, change, viewer_id):
+
+            viewer = self._viewer_handlers[viewer_id]
+            figure = viewer.figure
+
+            # If the new interaction isn't a PanZoom, no need to do anything
+            if not isinstance(change['new'], PanZoom):
+                return
+            pan_zoom = change['new']
+
+            # No need to update if the scales are exactly the same as those in the PanZoom
+            # This also avoids infinite setting loops
+            lines = self._histogram_lines.get(viewer_id, [])
+            line_scales = [line.scales for line in lines]
+            x_scales = [scale['x'] for scale in line_scales]
+            y_scales = [scale['y'] for scale in line_scales]
+            x_needs_update = not all(scale in pan_zoom.scales['x'] for scale in x_scales)
+            y_needs_update = not all(scale in pan_zoom.scales['y'] for scale in y_scales)
+            if not (x_needs_update or y_needs_update):
+                return
+
+            # Update the interaction
+            figure.interaction.next = PanZoom(scales={
+                'x': [viewer.scale_x] + x_scales,
+                'y': [viewer.scale_y] + y_scales,
+            })
 
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data
