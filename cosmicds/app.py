@@ -2,7 +2,6 @@ from os.path import join
 from pathlib import Path
 
 from astropy.modeling import models, fitting
-from bqplot_image_gl import LinesGL
 from echo import CallbackProperty
 from echo.core import add_callback
 from glue.core.state_objects import State
@@ -14,13 +13,13 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from numpy import unique
 from traitlets import Dict, List
 
 from .components.footer import Footer
 # When we have multiple components, change above to
 # from .components import *
 from .components.viewer_layout import ViewerLayout
+from .histogram_listener import HistogramListener
 from .utils import age_in_gyr, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
 
@@ -123,8 +122,8 @@ class Application(VuetifyTemplate):
             BqplotImageView, data=None, show=False)
 
         # Scatter viewers used for the display of the measured galaxy data
-        hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(3)]
-        hub_const_viewer, hub_fit_viewer, hub_comparison_viewer = hub_viewers
+        hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(4)]
+        hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer = hub_viewers
 
         # Create a subset for the student
         class_data = self.data_collection['HubbleData_ClassSample']
@@ -133,7 +132,7 @@ class Application(VuetifyTemplate):
         # Set up the scatter viewers
         style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "default_scatter.json")
-        for viewer in hub_viewers:
+        for viewer in hub_viewers[:-1]:
 
             # Add the data from the first student
             viewer.add_subset(student_subset)
@@ -144,6 +143,13 @@ class Application(VuetifyTemplate):
 
             # Update the viewer CSS
             update_figure_css(viewer, style_path=style_path)
+
+        
+        # Set up the viewer that will listen to the histogram
+        hub_students_viewer.add_data(class_data)
+        hub_students_viewer.state.x_att = class_data.id['distance']
+        hub_students_viewer.state.y_att = class_data.id['velocity']
+        update_figure_css(hub_students_viewer, style_path=style_path)
 
         # The Hubble comparison viewer should get the class and all public data as well
         all_data = self.data_collection['HubbleData_All']
@@ -200,6 +206,15 @@ class Application(VuetifyTemplate):
         all_distr_viewer.state.x_att = self.data_collection["HubbleSummary_Students"].id['age']
         sandbox_distr_viewer.state.x_att = self.data_collection["HubbleSummary_Students"].id['age']
 
+        # Set up the listener to sync the histogram <--> scatter viewers
+        meas_data = self.data_collection["HubbleData_ClassSample"]
+        summ_data = self.data_collection["HubbleSummary_ClassSample"]
+        students_scatter_subset = meas_data.new_subset(label="Scatter students")
+        self._application_handler.set_subset_mode('replace')
+        
+        hub_students_viewer.add_subset(students_scatter_subset)
+        self._histogram_listener = HistogramListener(self, students_scatter_subset, summ_data)
+
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
         wwt_viewer = self._application_handler.new_data_viewer(
@@ -230,6 +245,7 @@ class Application(VuetifyTemplate):
             'gal_viewer': gal_viewer,
             'hub_const_viewer': hub_const_viewer,
             'hub_comparison_viewer': hub_comparison_viewer,
+            'hub_students_viewer': hub_students_viewer,
             'hub_fit_viewer': hub_fit_viewer,
             'wwt_viewer': wwt_viewer,
             'class_distr_viewer': class_distr_viewer,
@@ -477,7 +493,7 @@ class Application(VuetifyTemplate):
 
         layer_mapping = layer_mapping or { x : x for x in range(len(viewer.layers)) }
         for index, layer in enumerate(viewer.layers):
-            layer.state.visible = layer_mapping[index] in selections
+            layer.state.visible = layer_mapping.get(index, -1) in selections
 
         lines = []
         for index, slope, color in line_options:
@@ -504,10 +520,12 @@ class Application(VuetifyTemplate):
             * 2: Class's value (line mark)
         """
         line_options = [
-            (1, self.student_slope, 'red'),
-            (2, self.class_slope, 'blue')
+            (1, self.student_slope, 'blue'),
+            (2, self.class_slope, 'green')
         ]
-        self._histogram_selection_update(selections, 'class_distr_viewer', line_options=line_options)
+        layer_mapping = { 0 : 0, 1 : 0 } # We hide a selected subset if the glue layer is hidden
+        self._histogram_selection_update(selections, 'class_distr_viewer',
+            layer_mapping=layer_mapping, line_options=line_options)
     
     def _alldata_histogram_selection_update(self, selections):
         """
@@ -543,6 +561,7 @@ class Application(VuetifyTemplate):
             (5, self.student_slope, 'black')
         ]
         self._histogram_selection_update(selections, 'sandbox_distr_viewer', line_options=line_options)
+
 
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data

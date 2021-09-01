@@ -644,7 +644,7 @@
                         <v-col>
                           <v-lazy>
                             <jupyter-widget
-                              :widget="viewers.hub_const_viewer"
+                              :widget="viewers.hub_students_viewer"
                             ></jupyter-widget>
                           </v-lazy>
                           <todo-alert>
@@ -688,7 +688,7 @@
                                             <v-list-item-action>
                                               <v-checkbox
                                                 :input-value="active"
-                                                :color="['orange', 'red', 'blue'][index]"
+                                                :color="['orange', 'blue', 'green'][index]"
                                               ></v-checkbox>
                                             </v-list-item-action>
                                           </template>
