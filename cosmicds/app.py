@@ -149,9 +149,7 @@ class Application(VuetifyTemplate):
         hub_students_viewer.add_data(class_data)
         hub_students_viewer.state.x_att = class_data.id['distance']
         hub_students_viewer.state.y_att = class_data.id['velocity']
-        students_style_path = str(Path(__file__).parent / "data" /
-                                        "styles" / "students_scatter.json")
-        update_figure_css(hub_students_viewer, style_path=students_style_path)
+        update_figure_css(hub_students_viewer, style_path=style_path)
 
         # The Hubble comparison viewer should get the class and all public data as well
         all_data = self.data_collection['HubbleData_All']
