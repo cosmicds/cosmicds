@@ -20,7 +20,7 @@ from .components.footer import Footer
 # from .components import *
 from .components.viewer_layout import ViewerLayout
 from .histogram_listener import HistogramListener
-from .utils import age_in_gyr, line_mark, load_template, update_figure_css, vertical_line_mark
+from .utils import age_in_gyr, extend_tool, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
 
 # Within ipywidgets - update calls only happen in certain instances.
@@ -149,7 +149,9 @@ class Application(VuetifyTemplate):
         hub_students_viewer.add_data(class_data)
         hub_students_viewer.state.x_att = class_data.id['distance']
         hub_students_viewer.state.y_att = class_data.id['velocity']
-        update_figure_css(hub_students_viewer, style_path=style_path)
+        students_style_path = str(Path(__file__).parent / "data" /
+                                        "styles" / "students_scatter.json")
+        update_figure_css(hub_students_viewer, style_path=students_style_path)
 
         # The Hubble comparison viewer should get the class and all public data as well
         all_data = self.data_collection['HubbleData_All']
@@ -199,7 +201,7 @@ class Application(VuetifyTemplate):
             viewer.state.normalize = True
             viewer.state.y_min = 0
             viewer.state.y_max = 1
-            viewer.state.hist_n_bin = 20
+            viewer.state.hist_n_bin = 30
 
         # Set all of the histogram viewers to use age as the distribution attribute
         class_distr_viewer.state.x_att = self.data_collection["HubbleSummary_ClassSample"].id['age']
@@ -210,10 +212,27 @@ class Application(VuetifyTemplate):
         meas_data = self.data_collection["HubbleData_ClassSample"]
         summ_data = self.data_collection["HubbleSummary_ClassSample"]
         students_scatter_subset = meas_data.new_subset(label="Scatter students")
-        self._application_handler.set_subset_mode('replace')
         
-        hub_students_viewer.add_subset(students_scatter_subset)
-        self._histogram_listener = HistogramListener(self, students_scatter_subset, summ_data)
+        # Set up the functionality for the histogram <---> scatter sync
+        # We add a listener for when a subset is modified/created on 
+        # the histogram viewer as well as extend the xrange tool for the 
+        # histogram to always affect this subset
+        hub_students_viewer.layers[-1].state.color = "#ff0000"
+        self._histogram_listener = HistogramListener(self,
+                                                     summ_data,
+                                                     students_scatter_subset,
+                                                     ['class_distr_viewer'],
+                                                     ['hub_students_viewer'],
+                                                     listen=False)
+
+        def hist_selection_activate():
+            if self._histogram_listener.source is not None:
+                self.session.edit_subset_mode.edit_subset = [self._histogram_listener.source.group]
+            self._histogram_listener.listen()
+        def hist_selection_deactivate():
+            self.session.edit_subset_mode.edit_subset = []
+            self._histogram_listener.ignore()
+        extend_tool(class_distr_viewer, 'bqplot:xrange', hist_selection_activate, hist_selection_deactivate)
 
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
@@ -260,6 +279,8 @@ class Application(VuetifyTemplate):
         self._class_histogram_selection_update(self.state.class_histogram_selections)
         self._alldata_histogram_selection_update(self.state.alldata_histogram_selections)
         self._sandbox_histogram_selection_update(self.state.sandbox_histogram_selections)
+
+        self._application_handler.set_subset_mode('replace')
 
     def reload(self):
         """

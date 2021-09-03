@@ -13,7 +13,10 @@ try:
 except ImportError:
     from astropy.cosmology import Planck15 as planck
 
-__all__ = ['age_in_gyr', 'load_template', 'update_figure_css', 'line_mark', 'vertical_line_mark']
+__all__ = [
+    'age_in_gyr', 'load_template', 'update_figure_css',
+    'extend_tool', 'line_mark', 'vertical_line_mark'
+]
 
 
 def age_in_gyr(H0):
@@ -62,7 +65,6 @@ def load_template(file_name, path=None, traitlet=True):
         return Unicode(TEMPLATE)
 
     return TEMPLATE
-
 
 def update_figure_css(viewer, style_dict=None, style_path=None):
     """
@@ -113,6 +115,45 @@ def update_figure_css(viewer, style_dict=None, style_path=None):
                 viewer_prop = getattr(layer, prop)
                 val = v[index % len(v)] if is_list else v
                 setattr(viewer_prop, k, val)
+
+def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
+    """
+    This function extends the functionality of a tool on a viewer toolbar
+    by adding callbacks that are activate upon tool item activation
+    and deactivation.
+
+    Parameters
+    ----------
+    viewer: `~glue.viewers.common.viewer.Viewer`
+        The glue viewer whose tool we want to modify.
+    tool_id: str
+        The id of the tool that we want to modify - e.g. 'bqplot:xrange'
+    activate_cb:
+        The callback to be executed before the tool's `activate` method. Takes no arguments.
+    deactivate_cb:
+        The callback to be executed after the tool's `deactivate` method. Takes no arguments.
+
+    """
+
+    tool = viewer.toolbar.tools.get(tool_id, None)
+    if not tool:
+        return None
+    
+    activate = tool.activate
+    deactivate = tool.deactivate
+
+    def extended_activate():
+        if activate_cb:
+            activate_cb()
+        activate()
+
+    def extended_deactivate():
+        deactivate()
+        if deactivate_cb:
+            deactivate_cb()
+    
+    tool.activate = extended_activate
+    tool.deactivate = extended_deactivate
 
 def line_mark(layer, start_x, start_y, end_x, end_y, color):
     """
