@@ -2,7 +2,6 @@ from os.path import join
 from pathlib import Path
 
 from astropy.modeling import models, fitting
-from bqplot import PanZoom
 from echo import CallbackProperty
 from echo.core import add_callback
 from glue.core.state_objects import State
@@ -243,12 +242,12 @@ class Application(VuetifyTemplate):
         wwt_viewer.state.lat_att = data.id['Dec_deg']
 
         # Any lines that we've obtained from fitting
-        # Entries have the form (line, data UUID)
+        # Entries have the form (line, data label)
         # These are keyed by viewer id
         self._fit_lines = {}
 
         # The slopes that we've fit to any data sets
-        # This is keyed by the UUID of the data
+        # This is keyed by the label of the data
         self._fit_slopes = {}
 
         # Any vertical line marks on histograms
@@ -314,7 +313,7 @@ class Application(VuetifyTemplate):
 
         viewer_id : str
             The identifier for the viewer to use.
-        layer_indices : List[int]
+        layers : List[int]
             (Optional) A list of the indices of the layers that should be fit to. 
             If not specified, a line is fit for every layer present in 
             the viewer.
@@ -347,9 +346,9 @@ class Application(VuetifyTemplate):
         viewer = self._viewer_handlers[viewer_id]
         figure = viewer.figure
 
-        data_ids = [layer.state.layer.uuid for layer in layers]
+        data_labels = [layer.state.layer.label for layer in layers]
 
-        lines, ids = [], []
+        lines, labels = [], []
         for layer in layers:
 
             # Get the data (which may actually be a Data object,
@@ -371,10 +370,10 @@ class Application(VuetifyTemplate):
             start_y, end_y = y
             line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color)
             lines.append(line)
-            ids.append(data.uuid)
+            labels.append(data.label)
             
             # Keep track of this slope for later use
-            self._fit_slopes[data.uuid] = fitted_line.slope.value
+            self._fit_slopes[data.label] = fitted_line.slope.value
 
         # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit lines directly onto the bqplot figure
@@ -382,14 +381,14 @@ class Application(VuetifyTemplate):
         old_items = self._fit_lines.get(viewer_id, [])
         to_clear, to_keep = [], []
         for item in old_items:
-            if clear_others or (item[1] in data_ids):
+            if clear_others or (item[1] in data_labels):
                 to_clear.append(item)
             else:
                 to_keep.append(item)
         marks_to_clear = [x[0] for x in to_clear]
         marks_to_keep = [x for x in figure.marks if x not in marks_to_clear]
         figure.marks = marks_to_keep + lines
-        self._fit_lines[viewer_id] = to_keep + list(zip(lines, ids))
+        self._fit_lines[viewer_id] = to_keep + list(zip(lines, labels))
 
     def _fit_lines_aggregate(self, viewer_id, layers, clear_others=False):
         viewer = self._viewer_handlers[viewer_id]
@@ -526,27 +525,7 @@ class Application(VuetifyTemplate):
         old_lines = self._histogram_lines.get(viewer_id, [])
         figure.marks = [mark for mark in figure.marks if not mark in old_lines] + lines
         self._histogram_lines[viewer_id] = lines
-
-        # We need to do a bit of a hack for the histogram viewer lines
-        # Using the same scale object as the viewer image modifies the y-axis for some reason
-        # so to get around that, these marks have new scales which mimic the view scales
-        # and thus we need to add them to the viewer's PanZoom interaction
-        line_scales = [line.scales for line in lines]
-        x_scales = [scale['x'] for scale in line_scales]
-        y_scales = [scale['y'] for scale in line_scales]
-
-        # If the PanZoom is currently open, we need to update this right now
-        if isinstance(figure.interaction.next, PanZoom):
-            figure.interaction.next = PanZoom(scales={
-                'x': [viewer.scale_x] + x_scales,
-                'y': [viewer.scale_y] + y_scales,
-            })
-
-        # Observe interaction changes so that we can modify when necessary
-        # We want to remove any observers that we have previously set
-        figure.interaction.unobserve_all(name='next')
-        figure.interaction.observe(lambda changed: self._panzoom_interaction_update(changed, viewer_id), names=['next'])
-
+            
     def _class_histogram_selection_update(self, selections):
         """
         Specialization of _histogram_selection_update for the case of the class histogram.
@@ -602,32 +581,6 @@ class Application(VuetifyTemplate):
         ]
         self._histogram_selection_update(selections, 'sandbox_distr_viewer', line_options=line_options)
 
-    def _panzoom_interaction_update(self, change, viewer_id):
-
-            viewer = self._viewer_handlers[viewer_id]
-            figure = viewer.figure
-
-            # If the new interaction isn't a PanZoom, no need to do anything
-            if not isinstance(change['new'], PanZoom):
-                return
-            pan_zoom = change['new']
-
-            # No need to update if the scales are exactly the same as those in the PanZoom
-            # This also avoids infinite setting loops
-            lines = self._histogram_lines.get(viewer_id, [])
-            line_scales = [line.scales for line in lines]
-            x_scales = [scale['x'] for scale in line_scales]
-            y_scales = [scale['y'] for scale in line_scales]
-            x_needs_update = not all(scale in pan_zoom.scales['x'] for scale in x_scales)
-            y_needs_update = not all(scale in pan_zoom.scales['y'] for scale in y_scales)
-            if not (x_needs_update or y_needs_update):
-                return
-
-            # Update the interaction
-            figure.interaction.next = PanZoom(scales={
-                'x': [viewer.scale_x] + x_scales,
-                'y': [viewer.scale_y] + y_scales,
-            })
 
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data

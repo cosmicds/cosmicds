@@ -21,3 +21,28 @@ class HistogramListener(SubsetModifierListener):
 
         return subset_mask
 
+    def _handle_message(self, message):
+
+        super()._handle_message(message)
+
+        # Add a fit line if the subset has a nonzero number of data points
+        # Otherwise, clear lines
+        if self._modify.size > 0:
+            viewer = self._app._viewer_handlers['hub_students_viewer']
+            layer_index = -1
+            for index, layer in enumerate(viewer.layers):
+                if layer.state.layer.label == self._modify.label:
+                    layer_index = index
+            
+            if layer_index < 0:
+                return
+
+            self._app.vue_fit_lines({
+                'viewer_id': 'hub_students_viewer',
+                'layers': [layer_index],
+                'clear_others': True,
+                'aggregate': False
+            })
+
+        else:
+            self._app.vue_clear_lines('hub_students_viewer')
