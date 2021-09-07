@@ -695,6 +695,12 @@
                                         </v-list-item>
                                       </v-list-item-group>
                                     </v-list>
+                                    <v-btn
+                                      color="primary"
+                                      @click="clear_histogram_selection()"
+                                    >
+                                    Clear selection
+                                    </v-btn>
                                   </v-col>
                                   <v-col>
                                     <v-lazy>

@@ -2,7 +2,7 @@ from glue.core import HubListener
 from glue.core.data import Data
 from glue.core.message import SubsetMessage, SubsetCreateMessage, SubsetDeleteMessage, SubsetUpdateMessage
 from glue.core.subset import Subset
-from glue.core.subset_group import SubsetGroup
+from glue.core.subset_group import SubsetGroup, GroupedSubset
 
 from numpy import array, isin, unique
 
@@ -32,6 +32,23 @@ class SubsetModifierListener(HubListener):
     def ignore(self):
         self._hub.unsubscribe(self, SubsetMessage)
 
+    def clear_subset(self):
+        if self._source is None:
+            return
+
+        data_collection = self._app.data_collection
+        if isinstance(self._source, SubsetGroup):
+            subset_group = self._source
+            data_collection.remove_subset_group(subset_group)
+        elif isinstance(self._source, GroupedSubset):
+            subset_group = self._source.group
+            data_collection.remove_subset_group(subset_group)
+        elif isinstance(self._source, Subset):
+            self._source.data.remove_subset(self._source)
+        message = SubsetDeleteMessage(self._source, "subset_modifier_delete")
+        self._handle_message(message)
+        self._source = None
+
     def _should_listen(self, message):
         """
         This method checks that a message is of the right type (SubsetMessage)
@@ -50,9 +67,13 @@ class SubsetModifierListener(HubListener):
 
     def _handle_message(self, message):
 
+        print("Got message")
+
         # Do we care about this message?
         if not self._should_listen(message):
             return
+
+        print("Should listen")
 
         # If we don't have a source yet, it's the subset from this message
         if self._source is None and isinstance(message, SubsetCreateMessage):
@@ -78,7 +99,7 @@ class SubsetModifierListener(HubListener):
                 # But it will have the same label
                 for layer in viewer.layers:
                     if layer.state.layer.label == self._source.label:
-                        layer.state.visible = False # Calling viewer.remove_layer(layer) doesn't work for some reason
+                        layer.state.visible = False
  
             # We also may want to control where the modified subset appears
             if key not in self._modify_viewer_ids:
