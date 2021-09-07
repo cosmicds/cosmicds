@@ -583,9 +583,7 @@ class Application(VuetifyTemplate):
 
     def vue_clear_histogram_selection(self, _args):
         toolbar = self._viewer_handlers['class_distr_viewer'].toolbar
-        if toolbar._default_mouse_mode:
-            toolbar._default_mouse_mode.deactivate()
-        toolbar.tools['bqplot:xrange'].deactivate()
+        toolbar.active_tool = None
         self._histogram_listener.clear_subset()
 
     # These three properties provide convenient access to the slopes of the the fit lines

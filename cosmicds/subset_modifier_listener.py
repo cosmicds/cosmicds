@@ -1,10 +1,8 @@
 from glue.core import HubListener
 from glue.core.data import Data
-from glue.core.message import SubsetMessage, SubsetCreateMessage, SubsetDeleteMessage, SubsetUpdateMessage
+from glue.core.message import SubsetMessage, SubsetCreateMessage, SubsetDeleteMessage
 from glue.core.subset import Subset
 from glue.core.subset_group import SubsetGroup, GroupedSubset
-
-from numpy import array, isin, unique
 
 class SubsetModifierListener(HubListener):
 
@@ -67,13 +65,9 @@ class SubsetModifierListener(HubListener):
 
     def _handle_message(self, message):
 
-        print("Got message")
-
         # Do we care about this message?
         if not self._should_listen(message):
             return
-
-        print("Should listen")
 
         # If we don't have a source yet, it's the subset from this message
         if self._source is None and isinstance(message, SubsetCreateMessage):
