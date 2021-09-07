@@ -474,10 +474,10 @@ class Application(VuetifyTemplate):
         viewer_id = 'hub_comparison_viewer'
         viewer = self._viewer_handlers[viewer_id]
         data = [self._student_data, self._class_data, self._all_data]
-        uuids = [x.uuid for (i,x) in enumerate(data) if i in selections]
+        labels = [x.label for (i,x) in enumerate(data) if i in selections]
 
         for layer in viewer.layers:
-            layer.state.visible = layer.state.layer.uuid in uuids
+            layer.state.visible = layer.state.layer.label in labels
         
         # We only want to show lines for the layers that are visible
         line_info = self._fit_lines.get(viewer_id, [])
@@ -485,7 +485,7 @@ class Application(VuetifyTemplate):
         
         figure = viewer.figure
         not_lines = [mark for mark in figure.marks if mark not in all_lines]
-        lines = [x[0] for x in line_info if x[1] in uuids]
+        lines = [x[0] for x in line_info if x[1] in labels]
         figure.marks = not_lines + lines
 
     def _histogram_selection_update(self, selections, viewer_id, line_options=[], layer_mapping=None):
@@ -535,14 +535,17 @@ class Application(VuetifyTemplate):
         selections : List[int]
             The indices of the selected options. The indices in this case represent:
             * 0: Individual students (glue layer)
-            * 1: Student's value (line mark)
-            * 2: Class's value (line mark)
+            * 1: Student's selected subset (glue layer) - only if student has made selection
+            * 1 or 2: Student's value (line mark)
+            * 2 or 3: Class's value (line mark)
         """
+
         line_options = [
             (1, self.student_slope, 'blue'),
             (2, self.class_slope, 'green')
         ]
         layer_mapping = { 0 : 0, 1 : 0 } # We hide a selected subset if the glue layer is hidden
+        print(selections)
         self._histogram_selection_update(selections, 'class_distr_viewer',
             layer_mapping=layer_mapping, line_options=line_options)
     
@@ -590,12 +593,12 @@ class Application(VuetifyTemplate):
     # for the student's data, the class's data, and all of the data
     @property
     def student_slope(self):
-        return self._fit_slopes.get(self._student_data.uuid)
+        return self._fit_slopes.get(self._student_data.label)
 
     @property
     def class_slope(self):
-        return self._fit_slopes.get(self._class_data.uuid)
+        return self._fit_slopes.get(self._class_data.label)
 
     @property
     def all_slope(self):
-        return self._fit_slopes.get(self._all_data.uuid)
+        return self._fit_slopes.get(self._all_data.label)
