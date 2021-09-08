@@ -56,12 +56,13 @@
                         : is a binding - binds state of "complete" to the thing in the "".  If over_model is > 1, then we have gone past step 1.
                   therefore, consider step 1 complete. -->
                   <!-- Another example could be something like :disabled = "state.continue_button_disabled==1" -->
+                  
                   <v-stepper-step
                     :complete="state.over_model > 1"
                     step="1"
                     editable
                   >
-                    Collect Galaxy Data
+                    Collect<br>Velocity Data
                   </v-stepper-step>
 
                   <v-divider></v-divider>
@@ -71,7 +72,7 @@
                     step="2"
                     editable
                   >
-                    Estimate Age of Universe
+                    Collect<br>Distance Data
                   </v-stepper-step>
 
                   <v-divider></v-divider>
@@ -80,7 +81,8 @@
                     :complete="state.over_model > 3"
                     step="3"
                     editable
-                    >Explore Class Data
+                  >
+                    Estimate<br>Age
                   </v-stepper-step>
 
                   <v-divider></v-divider>
@@ -89,7 +91,31 @@
                     :complete="state.over_model > 4"
                     step="4"
                     editable
-                    >View Distributions
+                    >Explore<br>Class Data
+                  </v-stepper-step>
+
+                  <v-divider></v-divider>
+
+                  <v-stepper-step
+                    :complete="state.over_model > 5"
+                    step="5"
+                    editable
+                    >View<br>Distributions
+                  </v-stepper-step>
+                  <v-divider></v-divider>
+
+                <v-stepper-step
+                    :complete="state.over_model > 6"
+                    step="6"
+                    editable
+                    >Galaxy<br>Morphology
+                  </v-stepper-step>
+                  <v-divider></v-divider>
+                <v-stepper-step
+                    :complete="state.over_model > 7"
+                    step="7"
+                    editable
+                    >Professional<br>Science Data
                   </v-stepper-step>
                 </v-stepper-header>
 
@@ -98,9 +124,9 @@
                   class=""
                 >
                   <!-- --- ---------- --- -->
-                  <!-- --- FIRST PAGE --- -->
+                  <!-- --- SECOND PAGE --- -->
                   <!-- --- ---------- --- -->
-                  <v-stepper-content step="1">
+                  <v-stepper-content step="2">
                     <v-container>
                       <v-row>
                         <v-col
@@ -423,9 +449,9 @@
                      * Plotting by galaxy type -->
 
                   <!-- --- ----------- --- -->
-                  <!-- --- SECOND PAGE --- -->
+                  <!-- --- THIRD PAGE --- -->
                   <!-- --- ----------- --- -->
-                  <v-stepper-content step="2">
+                  <v-stepper-content step="3">
                     <v-container>
                       <v-row>
                         <v-col
@@ -537,9 +563,9 @@
                 <!-- Need to think through whether the hubble plot should also appear on this page or if that would be confusing -->
 
                   <!-- --- ---------- --- -->
-                  <!-- --- THIRD PAGE --- -->
+                  <!-- --- FOURTH PAGE --- -->
                   <!-- --- ---------- --- -->
-                  <v-stepper-content step="3">
+                  <v-stepper-content step="4">
                     <v-container>
                       <v-row>
                         <v-col
@@ -634,9 +660,9 @@
                   </v-stepper-content>
 
                   <!-- --- ----------- --- -->
-                  <!-- --- FOURTH PAGE --- -->
+                  <!-- --- FIFTH PAGE --- -->
                   <!-- --- ----------- --- -->
-                  <v-stepper-content step="4">
+                  <v-stepper-content step="5">
                     <v-container>
                       <v-row>
                         <v-col cols="3">
@@ -858,12 +884,12 @@
                   dark
                   @click="
                     state.over_model =
-                      state.over_model < 4
+                      state.over_model < 7
                         ? state.over_model + 1
                         : state.over_model
                   "
                 >
-                  {{ state.over_model == 4 ? 'Finish' : 'Next' }}
+                  {{ state.over_model == 7 ? 'Finish' : 'Next' }}
                 </v-btn>
               </v-card-actions>
             </v-card>
