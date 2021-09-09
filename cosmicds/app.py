@@ -45,7 +45,7 @@ class ApplicationState(State):
     prev1_disabled = CallbackProperty(1)
     next1_disabled = CallbackProperty(1)
 
-    haro_on = CallbackProperty("d-none")
+    haro_on = CallbackProperty("d-flex")
     marker_on = CallbackProperty("d-none")
     galaxy_dist = CallbackProperty("")
     galaxy_vel = CallbackProperty("")
