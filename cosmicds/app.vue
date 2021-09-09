@@ -370,6 +370,7 @@
                             </v-row>
                           </v-container>
                         </v-tab-item>
+                      </v-tabs>
                     </v-card>
 
                     <!-- WIREFRAME for learning objectives/experience on First Page -->
@@ -439,109 +440,104 @@
                       class=""
                       outlined
                     >
-                      <v-tabs
-                        v-model="state.col_tab_model"
-                        centered
-                      >
-                        <v-tab key="gal-dist">
-                          <v-icon left>
-                            mdi-ruler
-                          </v-icon>
-                          Estimate Distance
-                        </v-tab>
-                        <v-tab-item key="gal-dist">
-                          <v-container>
-                            <v-row>
-                              <!-- This WWT viewer widget allows user to select a galaxy; galaxy positions plotted by RA/Dec.
-                              It will zoom in to chosen galaxy & put controls/instructions on screen. -->
-                              <!-- viewers.wwt_viewer doesn't need to be prepended with "state" because it comes from "Application" in app.py, not "ApplicationState"-->
-                              <v-col cols="12" md="7">
-                                <jupyter-widget
-                                  :widget="viewers.wwt_viewer"
-                                ></jupyter-widget>
-                              </v-col>
 
-                              <!-- Callout to select galaxy / info about selected galaxy -->
-                              <v-col cols="12" md="5">
-                                <v-alert
-                                  class="mb-4"
-                                  border="left"
-                                  colored-border
-                                  color="indigo"
-                                  elevation="2"
-                                >
-                                  This will be text explaining how to use the distance measuring tool
-                                </v-alert>
-                                <div
-                                  :class="state.haro_on"
-                                >
-                                  <v-card
+
+                    <v-icon left>
+                      mdi-ruler
+                    </v-icon>
+                    Estimate Distance
+
+                      <v-container>
+                        <v-row>
+                          <!-- This WWT viewer widget allows user to select a galaxy; galaxy positions plotted by RA/Dec.
+                          It will zoom in to chosen galaxy & put controls/instructions on screen. -->
+                          <!-- viewers.wwt_viewer doesn't need to be prepended with "state" because it comes from "Application" in app.py, not "ApplicationState"-->
+                          <v-col cols="12" md="7">
+                            <jupyter-widget
+                              :widget="viewers.wwt_viewer"
+                            ></jupyter-widget>
+                          </v-col>
+
+                          <!-- Callout to select galaxy / info about selected galaxy -->
+                          <v-col cols="12" md="5">
+                            <v-alert
+                              class="mb-4"
+                              border="left"
+                              colored-border
+                              color="indigo"
+                              elevation="2"
+                            >
+                              This will be text explaining how to use the distance measuring tool
+                            </v-alert>
+                            <div
+                              :class="state.haro_on"
+                            >
+                              <v-card
+                                color="indigo lighten-5"
+                              >
+                                <v-card-title>Haro 11</v-card-title>
+                                <v-card-text>
+                                  <v-divider></v-divider>
+                                  <v-list
                                     color="indigo lighten-5"
                                   >
-                                    <v-card-title>Haro 11</v-card-title>
-                                    <v-card-text>
-                                      <v-divider></v-divider>
-                                      <v-list
-                                        color="indigo lighten-5"
-                                      >
-                                        <v-list-item-content>
-                                          <v-list-item-title>Irregular galaxy</v-list-item-title>
-                                          <v-list-item-subtitle>type</v-list-item-subtitle>
-                                        </v-list-item-content>
-                                        <v-list-item-content>
-                                          <v-list-item-title>100,000 light years</v-list-item-title>
-                                          <v-list-item-subtitle>assumed size</v-list-item-subtitle>
-                                        </v-list-item-content>
-                                        <v-list-item-content>
-                                          <v-list-item-title>568 pixels</v-list-item-title>  
-                                          <v-list-item-subtitle>height of display</v-list-item-subtitle>
-                                        </v-list-item-content>
-                                      </v-list>
-                                      <v-divider></v-divider>
-                                      <v-text-field
-                                        :value="state.galaxy_dist"
-                                        label="Estimated Distance"
-                                        hint="click button below"
-                                        persistent-hint
-                                        color="purple darken-2"
-                                        class="mt-8 mb-4"
-                                        suffix="Mpc"
-                                        outlined
-                                        readonly
-                                        dense
-                                      ></v-text-field>
-                                      <v-btn
-                                        block
-                                        color="purple darken-2"
-                                        dark
-                                        class="px-auto"
-                                        max-width="100%"
-                                        @click="
-                                          state.dist_measured = 1;
-                                          state.gal_snackbar = 0;
-                                          state.dist_snackbar = 0;
-                                          state.marker_snackbar = 0;
-                                          state.vel_snackbar = 0;
-                                          state.data_ready_snackbar = 0;
-                                          state.vel_measured == 1
-                                            ? state.data_ready_snackbar = 1
-                                            : state.dist_snackbar = 1;
-                                          state.adddata_disabled =
-                                            state.vel_measured == 1
-                                              ? false
-                                              : true;
-                                          state.galaxy_dist = Math.floor(Math.random() * 450) + 50
-                                        "
-                                      >
-                                        estimate
-                                      </v-btn>
-                                    </v-card-text>
-                                  </v-card>
-                                </div>
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                        </v-tab-item>
+                                    <v-list-item-content>
+                                      <v-list-item-title>Irregular galaxy</v-list-item-title>
+                                      <v-list-item-subtitle>type</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                    <v-list-item-content>
+                                      <v-list-item-title>100,000 light years</v-list-item-title>
+                                      <v-list-item-subtitle>assumed size</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                    <v-list-item-content>
+                                      <v-list-item-title>568 pixels</v-list-item-title>  
+                                      <v-list-item-subtitle>height of display</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                  </v-list>
+                                  <v-divider></v-divider>
+                                  <v-text-field
+                                    :value="state.galaxy_dist"
+                                    label="Estimated Distance"
+                                    hint="click button below"
+                                    persistent-hint
+                                    color="purple darken-2"
+                                    class="mt-8 mb-4"
+                                    suffix="Mpc"
+                                    outlined
+                                    readonly
+                                    dense
+                                  ></v-text-field>
+                                  <v-btn
+                                    block
+                                    color="purple darken-2"
+                                    dark
+                                    class="px-auto"
+                                    max-width="100%"
+                                    @click="
+                                      state.dist_measured = 1;
+                                      state.gal_snackbar = 0;
+                                      state.dist_snackbar = 0;
+                                      state.marker_snackbar = 0;
+                                      state.vel_snackbar = 0;
+                                      state.data_ready_snackbar = 0;
+                                      state.vel_measured == 1
+                                        ? state.data_ready_snackbar = 1
+                                        : state.dist_snackbar = 1;
+                                      state.adddata_disabled =
+                                        state.vel_measured == 1
+                                          ? false
+                                          : true;
+                                      state.galaxy_dist = Math.floor(Math.random() * 450) + 50
+                                    "
+                                  >
+                                    estimate
+                                  </v-btn>
+                                </v-card-text>
+                              </v-card>
+                            </div>
+                          </v-col>
+                        </v-row>
+                      </v-container>
                     </v-card>
 
                     <!-- WIREFRAME for learning objectives/experience on First Page -->
@@ -978,10 +974,209 @@
                   <!-- ---------------- ----------------------------- ---------------- -->
                   <!-- ---------------- SIXTH PAGE: GALAXY MORPHOLOGY ---------------- -->
                   <!-- ---------------- ----------------------------- ---------------- -->
+                  <v-stepper-content step="6">
+                    <v-container>
+                      <v-row>
+                        <v-col
+                          cols="3"
+                        ><v-btn
+                            color="primary"
+                            @click="fit_lines({
+                              'viewer_id': 'hub_comparison_viewer'
+                            })"
+                          >
+                            Fit Lines
+                          </v-btn>
+                          <v-list
+                            style="max-height: 300px"
+                            class="overflow-y-auto"
+                          >
+                            <v-list-item-group
+                              multiple
+                              v-model="state.hubble_comparison_selections"
+                            >
+                            <!--
+                              <v-list-item
+                                v-for="(option, index) in ['My data', 'Class data', 'All data']"
+                                :key="index"
+                                :value="index"
+                              >
+                              -->
+                              <v-list-item
+                                v-for="(option, index) in ['Elliptical', 'Spiral', 'Irregular']"
+                                :key="index"
+                                :value="index"
+                              >
+                                <template v-slot:default="{ active }">
+                                  <v-list-item-content>
+                                    {{option}}
+                                  </v-list-item-content>
+
+                                  <v-list-item-action>
+                                    <v-checkbox
+                                      :input-value="active"
+                                      :color="['orange', 'green', 'red'][index]"
+                                    ></v-checkbox>
+                                  </v-list-item-action>
+                                </template>
+                              </v-list-item>
+                            </v-list-item-group>
+                          </v-list>
+                        </v-col>
+                        <v-col>
+                          <v-lazy>
+                            <jupyter-widget
+                              :widget="viewers.hub_comparison_viewer"
+                            ></jupyter-widget>
+                          </v-lazy>
+                          <todo-alert>
+                            Right now the check boxes are still tied to "My data", "Class data", and "All data". Need to replace those with Elliptical, Spiral, and Irregular subsets.
+                          </todo-alert>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-card
+                          class="pa-8"
+                          elevation="3"
+                          width="100%"
+                        >
+
+                          Buttons to calculate age of universe from H0 value.<br>
+
+                          <help-dialog
+                            button-text="Click Me!"
+                            title-text="Testing!"
+                            accept-text="Okay"
+                            cancel-text="Cancel"
+                            @accept="console.log('Button was clicked.')"
+                          >
+                            This is a test of a pure Vue dialog with a custom event.
+                          </help-dialog>
+
+                        </v-card>
+                     </v-row>
+                    </v-container>
+                    
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
+
+                  </v-stepper-content>
+
+
 
                   <!-- ---------------- -------------------------------- ---------------- -->
                   <!-- ---------------- SEVENTH PAGE: PRO ASTRONOMY DATA ---------------- -->
                   <!-- ---------------- -------------------------------- ---------------- -->
+
+                  <v-stepper-content step="7">
+                    <v-container>
+                      <v-row>
+                        <v-col
+                          cols="3"
+                        ><v-btn
+                            color="primary"
+                            @click="fit_lines({
+                              'viewer_id': 'hub_comparison_viewer'
+                            })"
+                          >
+                            Fit Lines
+                          </v-btn>
+                          <v-list
+                            style="max-height: 300px"
+                            class="overflow-y-auto"
+                          >
+                            <v-list-item-group
+                              multiple
+                              v-model="state.hubble_comparison_selections"
+                            >
+                            <!--
+                              <v-list-item
+                                v-for="(option, index) in ['My data', 'Class data', 'All data']"
+                                :key="index"
+                                :value="index"
+                              >
+                              -->
+                              <v-list-item
+                                v-for="(option, index) in ['Hubble (1929)', 'HST Key Project (2001)', 'Supernova Ia (2004)']"
+                                :key="index"
+                                :value="index"
+                              >
+                                <template v-slot:default="{ active }">
+                                  <v-list-item-content>
+                                    {{option}}
+                                  </v-list-item-content>
+
+                                  <v-list-item-action>
+                                    <v-checkbox
+                                      :input-value="active"
+                                      :color="['orange', 'green', 'red'][index]"
+                                    ></v-checkbox>
+                                  </v-list-item-action>
+                                </template>
+                              </v-list-item>
+                            </v-list-item-group>
+                          </v-list>
+                        </v-col>
+                        <v-col>
+                          <v-lazy>
+                            <jupyter-widget
+                              :widget="viewers.hub_comparison_viewer"
+                            ></jupyter-widget>
+                          </v-lazy>
+                          <todo-alert>
+                            Right now the check boxes are still tied to "My data", "Class data", and "All data". Need to replace those with links to the real scientific data.
+                          </todo-alert>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-card
+                          class="pa-8"
+                          elevation="3"
+                          width="100%"
+                        >
+
+                          Buttons to calculate age of universe from H0 value.<br>
+
+                          <help-dialog
+                            button-text="Click Me!"
+                            title-text="Testing!"
+                            accept-text="Okay"
+                            cancel-text="Cancel"
+                            @accept="console.log('Button was clicked.')"
+                          >
+                            This is a test of a pure Vue dialog with a custom event.
+                          </help-dialog>
+
+                        </v-card>
+                     </v-row>
+                    </v-container>
+                    
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
+
+                  </v-stepper-content>
 
                 </v-stepper-items>
               </v-stepper>
