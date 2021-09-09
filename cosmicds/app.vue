@@ -124,9 +124,9 @@
                   class=""
                 >
 
-                  <!-- --- ---------- --- -->
-                  <!-- --- FIRST PAGE --- -->
-                  <!-- --- ---------- --- -->
+                  <!-- ---------------- -------------------------------- ---------------- -->
+                  <!-- ---------------- FIRST PAGE: VELOCITY MEASUREMENT ---------------- -->
+                  <!-- ---------------- -------------------------------- ---------------- -->
                   <v-stepper-content step="1">
                     <v-container>
                       <v-row>
@@ -386,9 +386,9 @@
                       This is for worksheet form pop-ups
                     </responsedialog-alert>
                   </v-stepper-content>                
-                  <!-- --- ---------- --- -->
-                  <!-- --- SECOND PAGE --- -->
-                  <!-- --- ---------- --- -->
+                  <!-- ---------------- --------------------------------- ---------------- -->
+                  <!-- ---------------- SECOND PAGE: DISTANCE MEASUREMENT ---------------- -->
+                  <!-- ---------------- --------------------------------- ---------------- -->
                   <v-stepper-content step="2">
                     <v-container>
                       <v-row>
@@ -566,9 +566,9 @@
                      * Choosing different data sets - student/class/all
                      * Plotting by galaxy type -->
 
-                  <!-- --- ----------- --- -->
-                  <!-- --- THIRD PAGE --- -->
-                  <!-- --- ----------- --- -->
+                  <!-- ---------------- ------------------------------------ ---------------- -->
+                  <!-- ---------------- THIRD PAGE: ESTIMATE AGE OF UNIVERSE ---------------- -->
+                  <!-- ---------------- ------------------------------------ ---------------- -->
                   <v-stepper-content step="3">
                     <v-container>
                       <v-row>
@@ -680,9 +680,9 @@
                 <!-- Will need buttons/functionality for choosing different data sets -->
                 <!-- Need to think through whether the hubble plot should also appear on this page or if that would be confusing -->
 
-                  <!-- --- ---------- --- -->
-                  <!-- --- FOURTH PAGE --- -->
-                  <!-- --- ---------- --- -->
+                  <!-- ---------------- ------------------------------- ---------------- -->
+                  <!-- ---------------- FOURTH PAGE: EXPLORE CLASS DATA ---------------- -->
+                  <!-- ---------------- ------------------------------- ---------------- -->
                   <v-stepper-content step="4">
                     <v-container>
                       <v-row>
@@ -777,9 +777,9 @@
 
                   </v-stepper-content>
 
-                  <!-- --- ----------- --- -->
-                  <!-- --- FIFTH PAGE --- -->
-                  <!-- --- ----------- --- -->
+                  <!-- ---------------- ------------------------------ ---------------- -->
+                  <!-- ---------------- FIFTH PAGE: VIEW DISTRIBUTIONS ---------------- -->
+                  <!-- ---------------- ------------------------------ ---------------- -->
                   <v-stepper-content step="5">
                     <v-container>
                       <v-row>
@@ -974,6 +974,14 @@
                   like {{state.dialog_text}}  (For example, in app.py file, you can collect
                   student userID and display it here via something like "Hello <student userID>".) -->
                   </v-stepper-content>
+
+                  <!-- ---------------- ----------------------------- ---------------- -->
+                  <!-- ---------------- SIXTH PAGE: GALAXY MORPHOLOGY ---------------- -->
+                  <!-- ---------------- ----------------------------- ---------------- -->
+
+                  <!-- ---------------- -------------------------------- ---------------- -->
+                  <!-- ---------------- SEVENTH PAGE: PRO ASTRONOMY DATA ---------------- -->
+                  <!-- ---------------- -------------------------------- ---------------- -->
 
                 </v-stepper-items>
               </v-stepper>
