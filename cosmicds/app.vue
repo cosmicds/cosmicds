@@ -373,6 +373,29 @@
                       </v-tabs>
                     </v-card>
 
+                    <infodialog-alert>
+                      This window provides a view of the "night sky". Left click and drag to pan around within the view. Roll your mouse wheel forward and backward to zoom in and out. (we can recycle instructions from the WWT interactives) <br>
+                      The (colored) dots mark the locations of galaxies you can collect data for. Left click on one of these dots to select that galaxy. (is it going to be an issue if left click is "pan" and they accidentally click on one of the dots while trying to pan?) <br>
+                    </infodialog-alert>
+                    <infodialog-alert>                    
+                      Notice that the table now has a row for your selected galaxy.
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Great! Now let's take a look at your galaxy's spectrum. Recall that a spectrograph separates light from a source into its distinct colors. The spectrum graph shows how bright the light from the galaxy is at each color. Notice that the spectrum has one or more upward spiky lines that are very bright (emission lines) or downward dips that are faint (absorption lines). These lines are caused by specific atoms and molecules in the galaxy emitting or absorbing light at those particular colors. Look for one of the lines labeled as Hydrogen (H), Calcium (Ca), or Potassium (K).<br>
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Left click on the vertical measuring tool and drag it to line up with the labeled line. Click again to record the observed wavelength of that line. 
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Notice your measurement is now recorded in the table.
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Click on the H, Ca, or K label next to the line to record the rest wavelength of the line in the table.
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Repeat this process for four more galaxies (or however many your instructor would like you to collect data for).
+                    </infodialog-alert>
+
                     <!-- WIREFRAME for learning objectives/experience on First Page -->
                     <hinttext-alert>
                       This is for marginal hint text
