@@ -1,11 +1,11 @@
-from glue_jupyter.bqplot.profile import BqplotProfileView
+from glue_jupyter.bqplot.scatter import BqplotScatterView
 from bqplot.marks import Lines
 from bqplot import Label
 
 __all__ = ['SpectrumView']
 
 
-class SpectrumView(BqplotProfileView):
+class SpectrumView(BqplotScatterView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
