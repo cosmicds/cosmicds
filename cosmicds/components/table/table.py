@@ -1,13 +1,17 @@
-from ipyvuetify import VuetifyTemplate
-from traitlets import Unicode, Bool, List
+from glue.core.hub import Hub
 import numpy as np
+from glue.core.message import (DataCollectionAddMessage,
+                               DataCollectionDeleteMessage)
+from glue.core import HubListener
+from ipyvuetify import VuetifyTemplate
+from traitlets import Bool, List, Unicode
 
 from ...utils import load_template
 
 __all__ = ['Table']
 
 
-class Table(VuetifyTemplate):
+class Table(VuetifyTemplate, HubListener):
     template = load_template("table.vue", __file__).tag(sync=True)
     headers = List([
         {
@@ -37,7 +41,16 @@ class Table(VuetifyTemplate):
 
         self._session = session
         self._subset_group = None
-        self._populate_items()
+
+        # Populate the table with the current data in the collection
+        self._on_data_collection_updated()
+
+        # Subscribe to change events that alter the data collection so that
+        # the table can be updated accordingly
+        self.hub.subscribe(self, DataCollectionAddMessage,
+                           handler=self._on_data_collection_updated)
+        self.hub.subscribe(self, DataCollectionDeleteMessage,
+                           handler=self._on_data_collection_updated)
 
         # Listen for changes to selected rows
         self.observe(self.on_selected_changed, names=['selected'])
@@ -46,7 +59,11 @@ class Table(VuetifyTemplate):
     def data_collection(self):
         return self._session.data_collection
 
-    def _populate_items(self):
+    @property
+    def hub(self):
+        return self._session.hub
+
+    def _on_data_collection_updated(self):
         df = self.data_collection['random_data0'].to_dataframe()
         self.items = [
             {
