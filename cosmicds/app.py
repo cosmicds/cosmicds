@@ -13,6 +13,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
+from numpy import bitwise_or
 from traitlets import Dict, List
 
 from .components.footer import Footer
@@ -57,6 +58,8 @@ class ApplicationState(State):
     alldata_histogram_selections = CallbackProperty([0,1])
     sandbox_histogram_selections = CallbackProperty([0])
 
+    morphology_selections = CallbackProperty([0,1,2])
+
 
 # Everything in this class is exposed directly to the app.vue.
 class Application(VuetifyTemplate):
@@ -97,6 +100,7 @@ class Application(VuetifyTemplate):
         add_callback(self.state, 'class_histogram_selections', self._class_histogram_selection_update)
         add_callback(self.state, 'alldata_histogram_selections', self._alldata_histogram_selection_update)
         add_callback(self.state, 'sandbox_histogram_selections', self._sandbox_histogram_selection_update)
+        add_callback(self.state, 'morphology_selections', self._morphology_selection_update)
 
         # Load the galaxy position data
         # This adds the file to the glue data collection at the top level
@@ -122,8 +126,8 @@ class Application(VuetifyTemplate):
             BqplotImageView, data=None, show=False)
 
         # Scatter viewers used for the display of the measured galaxy data
-        hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(4)]
-        hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer = hub_viewers
+        hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(5)]
+        hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer = hub_viewers
 
         # Create a subset for the student
         class_data = self.data_collection['HubbleData_ClassSample']
@@ -206,6 +210,15 @@ class Application(VuetifyTemplate):
         all_distr_viewer.state.x_att = self.data_collection["HubbleSummary_Students"].id['age']
         sandbox_distr_viewer.state.x_att = self.data_collection["HubbleSummary_Students"].id['age']
 
+        # Set up the subsets in the morphology viewer
+        galaxy_data = self.data_collection['galaxy_data']
+        elliptical_subset = galaxy_data.new_subset(galaxy_data.id['MorphType'] == 'E', label='Elliptical', color='orange')
+        spiral_subset = galaxy_data.new_subset(bitwise_or.reduce([galaxy_data.id["MorphType"] == x for x in ['Sa', 'Sb']]), label='Spiral', color='green')
+        irregular_subset = galaxy_data.new_subset(galaxy_data.id["MorphType"] == 'Ir', label='Irregular', color='red')
+        morphology_subsets = [elliptical_subset, spiral_subset, irregular_subset]
+        for subset in morphology_subsets:
+            hub_morphology_viewer.add_subset(subset)
+
         # Set up the listener to sync the histogram <--> scatter viewers
         meas_data = self.data_collection["HubbleData_ClassSample"]
         summ_data = self.data_collection["HubbleSummary_ClassSample"]
@@ -264,6 +277,7 @@ class Application(VuetifyTemplate):
             'hub_comparison_viewer': hub_comparison_viewer,
             'hub_students_viewer': hub_students_viewer,
             'hub_fit_viewer': hub_fit_viewer,
+            'hub_morphology_viewer': hub_morphology_viewer,
             'wwt_viewer': wwt_viewer,
             'class_distr_viewer': class_distr_viewer,
             'all_distr_viewer': all_distr_viewer,
@@ -487,6 +501,12 @@ class Application(VuetifyTemplate):
         not_lines = [mark for mark in figure.marks if mark not in all_lines]
         lines = [x[0] for x in line_info if x[1] in labels]
         figure.marks = not_lines + lines
+
+    def _morphology_selection_update(self, selections):
+        viewer_id = 'hub_morphology_viewer'
+        viewer = self._viewer_handlers[viewer_id]
+        for index, layer in enumerate(viewer.layers):
+            layer.state.visible = index in selections
 
     def _histogram_selection_update(self, selections, viewer_id, line_options=[], layer_mapping=None):
         """
