@@ -136,7 +136,7 @@ class Application(VuetifyTemplate):
         # Set up the scatter viewers
         style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "default_scatter.json")
-        for viewer in hub_viewers[:-1]:
+        for viewer in hub_viewers[:-2]:
 
             # Add the data from the first student
             viewer.add_subset(student_subset)
@@ -218,6 +218,9 @@ class Application(VuetifyTemplate):
         morphology_subsets = [elliptical_subset, spiral_subset, irregular_subset]
         for subset in morphology_subsets:
             hub_morphology_viewer.add_subset(subset)
+        hub_morphology_viewer.state.x_att = self.data_collection['galaxy_data'].id['EstDist_Mpc']
+        hub_morphology_viewer.state.y_att = self.data_collection['galaxy_data'].id['velocity_km_s']
+        update_figure_css(hub_morphology_viewer, style_path=style_path)
 
         # Set up the listener to sync the histogram <--> scatter viewers
         meas_data = self.data_collection["HubbleData_ClassSample"]
