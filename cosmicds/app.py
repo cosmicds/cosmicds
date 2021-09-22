@@ -147,6 +147,10 @@ class Application(VuetifyTemplate):
             # Update the viewer CSS
             update_figure_css(viewer, style_path=style_path)
 
+        for viewer in hub_viewers:
+            # Set the bottom-left corner of the plot to be zero
+            viewer.state.x_min = 0
+            viewer.state.y_min = 0
         
         # Set up the viewer that will listen to the histogram
         hub_students_viewer.add_data(class_data)
