@@ -2,6 +2,8 @@ from os.path import join
 from pathlib import Path
 
 from astropy.modeling import models, fitting
+from bqplot_image_gl.interacts import MouseInteraction, mouse_events
+from bqplot_image_gl import LinesGL
 from echo import CallbackProperty
 from echo.core import add_callback
 from glue.core.state_objects import State
@@ -97,6 +99,7 @@ class Application(VuetifyTemplate):
         add_callback(self.state, 'class_histogram_selections', self._class_histogram_selection_update)
         add_callback(self.state, 'alldata_histogram_selections', self._alldata_histogram_selection_update)
         add_callback(self.state, 'sandbox_histogram_selections', self._sandbox_histogram_selection_update)
+        add_callback(self.state, 'draw_on', self._draw_on_changed)
 
         # Load the galaxy position data
         # This adds the file to the glue data collection at the top level
@@ -253,6 +256,10 @@ class Application(VuetifyTemplate):
         # Any vertical line marks on histograms
         # keyed by viewer id
         self._histogram_lines = {}
+
+        # For letting the student draw a line
+        self._drawn_line = None
+        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
@@ -588,6 +595,35 @@ class Application(VuetifyTemplate):
         toolbar = self._viewer_handlers['class_distr_viewer'].toolbar
         toolbar.active_tool = None
         self._histogram_listener.clear_subset()
+
+    def _draw_on_changed(self, draw_on):
+        viewer_id = 'hub_fit_viewer'
+        viewer = self._viewer_handlers[viewer_id]
+        figure = viewer.figure
+        if draw_on:
+            image = figure.marks[0]
+            scales_image = image.scales
+            interaction = MouseInteraction(x_scale=scales_image['x'], y_scale=scales_image['y'], move_throttle=70, next=None,
+                                events=mouse_events)
+            figure.interaction = interaction
+
+            def msg_handler(interaction, data, buffers):
+                if data['event'] == 'mousemove':
+                    domain_x = data['domain']['x']
+                    domain_y = data['domain']['y']
+                    normalized_x = (domain_x - image.x[0]) / (image.x[1] - image.x[0])
+                    normalized_y = (domain_y - image.y[0]) / (image.y[1] - image.y[0])
+                    if self._drawn_line is None:
+                        self._drawn_line = LinesGL(x=[0, viewer.state.x_max], y=[0,0], scales=scales_image, colors=['black'])
+                        figure.marks = figure.marks + [self._drawn_line]
+                    self._drawn_line.x = [0, normalized_x]
+                    self._drawn_line.y = [0, normalized_y]
+                elif data['event'] == 'click':
+                    self.state.draw_on = False
+
+            interaction.on_msg(msg_handler)
+        else:
+            figure.interaction = self._original_hub_fit_interaction
 
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data
