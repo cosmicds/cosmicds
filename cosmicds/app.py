@@ -22,6 +22,7 @@ from .components.footer import Footer
 # from .components import *
 from .components.viewer_layout import ViewerLayout
 from .histogram_listener import HistogramListener
+from .line_draw_handler import LineDrawHandler
 from .utils import age_in_gyr, extend_tool, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
 
@@ -262,7 +263,9 @@ class Application(VuetifyTemplate):
         self._histogram_lines = {}
 
         # For letting the student draw a line
-        self._drawn_line = None
+        def turn_off_draw():
+            self.state.draw_on = False
+        self._line_draw_handler = LineDrawHandler(hub_fit_viewer, turn_off_draw)
         self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
@@ -610,22 +613,7 @@ class Application(VuetifyTemplate):
             interaction = MouseInteraction(x_scale=scales_image['x'], y_scale=scales_image['y'], move_throttle=70, next=None,
                                 events=mouse_events)
             figure.interaction = interaction
-
-            def msg_handler(interaction, data, buffers):
-                if data['event'] == 'mousemove':
-                    domain_x = data['domain']['x']
-                    domain_y = data['domain']['y']
-                    normalized_x = (domain_x - image.x[0]) / (image.x[1] - image.x[0])
-                    normalized_y = (domain_y - image.y[0]) / (image.y[1] - image.y[0])
-                    if self._drawn_line is None:
-                        self._drawn_line = LinesGL(x=[0, viewer.state.x_max], y=[0,0], scales=scales_image, colors=['black'])
-                        figure.marks = figure.marks + [self._drawn_line]
-                    self._drawn_line.x = [0, normalized_x]
-                    self._drawn_line.y = [0, normalized_y]
-                elif data['event'] == 'click':
-                    self.state.draw_on = False
-
-            interaction.on_msg(msg_handler)
+            interaction.on_msg(self._line_draw_handler.message_handler)
         else:
             figure.interaction = self._original_hub_fit_interaction
 
