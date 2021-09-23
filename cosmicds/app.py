@@ -2,7 +2,6 @@ from os.path import join
 from pathlib import Path
 
 from astropy.modeling import models, fitting
-from bqplot_image_gl import LinesGL
 from echo import CallbackProperty
 from echo.core import add_callback
 from glue.core.state_objects import State
