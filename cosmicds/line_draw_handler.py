@@ -78,6 +78,7 @@ class LineDrawHandler(object):
                               interactions = {'click':'select'}
                             )
             endpt.on_drag(self._on_endpt_drag)
+            endpt.on_drag_end(self._on_endpt_drag_end)
             endpt.opacities = [0]
             figure.marks = figure.marks + [endpt]
             self._endpt = endpt
@@ -85,6 +86,9 @@ class LineDrawHandler(object):
             # End drawing
             self._follow_cursor = False
             self._done_editing()
+
+    def _on_endpt_drag_end(self, element, event):
+        self._done_editing()
 
     def _on_endpt_drag(self, element, event):
         point = event["point"]
