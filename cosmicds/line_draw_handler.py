@@ -95,10 +95,16 @@ class LineDrawHandler(object):
         self._endpt.opacities = [0]
 
     def _draw_on_changed(self, draw_on):
+
+        have_endpt = self._endpt is not None
+
+        if have_endpt:
+            self._endpt.opacities = [int(draw_on)]
+            self._endpt.hovered_style = {'cursor' : 'pointer'} if draw_on else {}
+
         if draw_on:
-            if self._endpt is not None:
+            if have_endpt:
                 self._viewer.figure.interaction = None
-                self._endpt.opacities = [1]
             else:
                 self._viewer.figure.interaction = self._interaction
         else:
