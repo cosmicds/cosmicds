@@ -77,6 +77,7 @@ class LineDrawHandler(object):
                               scales = {'x': image.scales['x'], 'y': image.scales['y']},
                               interactions = {'click':'select'}
                             )
+            endpt.on_drag_start(self._on_endpt_drag_start)
             endpt.on_drag(self._on_endpt_drag)
             endpt.on_drag_end(self._on_endpt_drag_end)
             endpt.opacities = [0]
@@ -86,6 +87,9 @@ class LineDrawHandler(object):
             # End drawing
             self._follow_cursor = False
             self._done_editing()
+
+    def _on_endpt_drag_start(self, element, event):
+        self._endpt.hovered_style = {'cursor' : 'grabbing'}
 
     def _on_endpt_drag_end(self, element, event):
         self._done_editing()
@@ -102,7 +106,7 @@ class LineDrawHandler(object):
 
         if have_endpt:
             self._endpt.opacities = [int(draw_on)]
-            self._endpt.hovered_style = {'cursor' : 'pointer'} if draw_on else {}
+            self._endpt.hovered_style = {'cursor' : 'grab'} if draw_on else {}
             self._endpt.enable_move = draw_on
 
         if draw_on:
