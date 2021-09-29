@@ -22,6 +22,7 @@ from .components.viewer_layout import ViewerLayout
 from .histogram_listener import HistogramListener
 from .utils import age_in_gyr, extend_tool, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
+from .viewers.spectrum_view import SpectrumView
 
 # Within ipywidgets - update calls only happen in certain instances.
 # Tom added this glue state to allow 2-way binding and force communication that we want explicitly controlled between front end and back end.
@@ -100,9 +101,9 @@ class Application(VuetifyTemplate):
 
         # Load the galaxy position data
         # This adds the file to the glue data collection at the top level
-        data_dir = str(Path(__file__).parent / "data")
-        output_dir = join(data_dir, "hubble_simulation", "output")
-        self._application_handler.load_data(join(data_dir, "galaxy_data.csv"), 
+        data_dir = Path(__file__).parent / "data"
+        output_dir = data_dir / "hubble_simulation" / "output"
+        self._application_handler.load_data(str(data_dir / "galaxy_data.csv"), 
             label='galaxy_data')
 
         # Load some simulated measurements as summary data
@@ -117,9 +118,17 @@ class Application(VuetifyTemplate):
             self._application_handler.load_data(join(output_dir, f"{dataset}.csv"), label=dataset)
 
         # Instantiate the initial viewers
-        # Image viewer used for the 2D spectrum selection
-        image_viewer = self._application_handler.new_data_viewer(
-            BqplotImageView, data=None, show=False)
+        spectrum_viewer = self._application_handler.new_data_viewer(
+            SpectrumView, data=None, show=False)
+
+        self._application_handler.load_data(str(data_dir / "spectra" / 
+            "SDSS_J143450.62+033842.5_S.ecsv"))
+
+        spectrum_viewer.add_data("SDSS_J143450.62+033842.5_S")
+
+        data = self.data_collection['SDSS_J143450.62+033842.5_S']
+        # spectrum_viewer.state.x_att = data.id['wavelength']
+        spectrum_viewer.layers[0].state.attribute = data.id['flux']
 
         # Scatter viewers used for the display of the measured galaxy data
         hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(4)]
@@ -258,7 +267,7 @@ class Application(VuetifyTemplate):
 
         # Store an internal collection of the glue viewer objects
         self._viewer_handlers = {
-            'image_viewer': image_viewer, 
+            'spectrum_viewer': spectrum_viewer, 
             'gal_viewer': gal_viewer,
             'hub_const_viewer': hub_const_viewer,
             'hub_comparison_viewer': hub_comparison_viewer,

@@ -56,7 +56,7 @@
                         : is a binding - binds state of "complete" to the thing in the "".  If over_model is > 1, then we have gone past step 1.
                   therefore, consider step 1 complete. -->
                   <!-- Another example could be something like :disabled = "state.continue_button_disabled==1" -->
-                  
+
                   <v-stepper-step
                     :complete="state.over_model > 1"
                     step="1"
@@ -215,7 +215,7 @@
                                   color="indigo"
                                   elevation="2"
                                 >
-                                  Pan the sky and click one of the markers to 
+                                  Pan the sky and click one of the markers to
                                   select a galaxy to measure.
                                   <!-- This can go because the "select" action will be on the galaxy marker within the WWT window
                                   <div class="text-center mt-4">
@@ -255,7 +255,8 @@
                                   height="100%"
                                   class="pa-5"
                                 >
-                                  TO DO: New spectrum viewer code here.
+                                  <jupyter-widget :widget="viewers.spectrum_viewer" >
+                                  </jupyter-widget>
                                 </v-card>
                               </v-col>
                               <v-col cols="12" md="4">
@@ -377,14 +378,14 @@
                       This window provides a view of the "night sky". Left click and drag to pan around within the view. Roll your mouse wheel forward and backward to zoom in and out. (we can recycle instructions from the WWT interactives) <br>
                       The (colored) dots mark the locations of galaxies you can collect data for. Left click on one of these dots to select that galaxy. (is it going to be an issue if left click is "pan" and they accidentally click on one of the dots while trying to pan?) <br>
                     </infodialog-alert>
-                    <infodialog-alert>                    
+                    <infodialog-alert>
                       Notice that the table now has a row for your selected galaxy.
                     </infodialog-alert>
                     <infodialog-alert>
                       Great! Now let's take a look at your galaxy's spectrum. Recall that a spectrograph separates light from a source into its distinct colors. The spectrum graph shows how bright the light from the galaxy is at each color. Notice that the spectrum has one or more upward spiky lines that are very bright (emission lines) or downward dips that are faint (absorption lines). These lines are caused by specific atoms and molecules in the galaxy emitting or absorbing light at those particular colors. Look for one of the lines labeled as Hydrogen (H), Calcium (Ca), or Potassium (K).<br>
                     </infodialog-alert>
                     <infodialog-alert>
-                      Left click on the vertical measuring tool and drag it to line up with the labeled line. Click again to record the observed wavelength of that line. 
+                      Left click on the vertical measuring tool and drag it to line up with the labeled line. Click again to record the observed wavelength of that line.
                     </infodialog-alert>
                     <infodialog-alert>
                       Notice your measurement is now recorded in the table.
@@ -409,7 +410,7 @@
                     <responsedialog-alert>
                       This is for worksheet form pop-ups
                     </responsedialog-alert>
-                  </v-stepper-content>                
+                  </v-stepper-content>
                   <!-- ---------------- --------------------------------- ---------------- -->
                   <!-- ---------------- SECOND PAGE: DISTANCE MEASUREMENT ---------------- -->
                   <!-- ---------------- --------------------------------- ---------------- -->
@@ -438,7 +439,7 @@
                             color="green"
                             class="text-body-2"
                           >
-                            Click on a row in your table to select a galaxy and estimate its distance. As you complete the distance measurements, you can add them to the table. 
+                            Click on a row in your table to select a galaxy and estimate its distance. As you complete the distance measurements, you can add them to the table.
                           </div>
                         </v-col>
                         <v-col>
@@ -449,9 +450,9 @@
                           </v-lazy>
                           <todo-alert>
                             <ul>
-                              <li>The distance measurements will be added to the table as students complete them. 
+                              <li>The distance measurements will be added to the table as students complete them.
                               <li>When students click on a row of the table to choose their galaxy, the WWT window will display that galaxy with the measurement tools (so this won't need to have both a "Select galaxy" and "Estimate Distance" tab. It can be consolidated to just an Estimate Distance header.)
-                              <li>As on pg 1, the scatterplot should be replaced by a table. 
+                              <li>As on pg 1, the scatterplot should be replaced by a table.
                               <li>Under the table, there should be a button that says "graph data points." - I think this probably wants to take them straight to page 3, where the graph will be displayed.
                             </ul>
                           </todo-alert>
@@ -513,7 +514,7 @@
                                       <v-list-item-subtitle>assumed size</v-list-item-subtitle>
                                     </v-list-item-content>
                                     <v-list-item-content>
-                                      <v-list-item-title>568 pixels</v-list-item-title>  
+                                      <v-list-item-title>568 pixels</v-list-item-title>
                                       <v-list-item-subtitle>height of display</v-list-item-subtitle>
                                     </v-list-item-content>
                                   </v-list>
@@ -1085,7 +1086,7 @@
                         </v-card>
                      </v-row>
                     </v-container>
-                    
+
                     <!-- WIREFRAME for learning objectives/experience on First Page -->
                     <hinttext-alert>
                       This is for marginal hint text
@@ -1190,7 +1191,7 @@
                         </v-card>
                      </v-row>
                     </v-container>
-                    
+
                     <!-- WIREFRAME for learning objectives/experience on First Page -->
                     <hinttext-alert>
                       This is for marginal hint text
