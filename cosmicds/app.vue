@@ -357,80 +357,28 @@
                   <!-- ---------------- SECOND PAGE: DISTANCE MEASUREMENT ---------------- -->
                   <!-- ---------------- --------------------------------- ---------------- -->
                   <v-stepper-content step="2">
+
                     <v-container>
                       <v-row>
-                        <v-col
-                          cols="3"
-                        >
-                          <v-btn
-                            block
-                            class="mb-4"
-                            :disabled="state.adddata_disabled"
-                            @click="state.next1_disabled = false"
-                            color="primary"
-                          >
-                            <v-icon
-                              left
-                              dark
-                            >
-                              mdi-plus
-                            </v-icon>
-                            Add Data
-                          </v-btn>
-                          <div
-                            color="green"
-                            class="text-body-2"
-                          >
-                            Click on a row in your table to select a galaxy and estimate its distance. As you complete the distance measurements, you can add them to the table. 
-                          </div>
-                        </v-col>
-                        <v-col>
-                          <v-lazy>
-                            <jupyter-widget
-                              :widget="viewers.hub_const_viewer"
-                            ></jupyter-widget>
-                          </v-lazy>
-                          <todo-alert>
-                            <ul>
-                              <li>The distance measurements will be added to the table as students complete them. 
-                              <li>When students click on a row of the table to choose their galaxy, the WWT window will display that galaxy with the measurement tools (so this won't need to have both a "Select galaxy" and "Estimate Distance" tab. It can be consolidated to just an Estimate Distance header.)
-                              <li>As on pg 1, the scatterplot should be replaced by a table. 
-                              <li>Under the table, there should be a button that says "graph data points." - I think this probably wants to take them straight to page 3, where the graph will be displayed.
-                            </ul>
-                          </todo-alert>
-                        </v-col>
+                        <h2>
+                          <v-icon left>
+                            mdi-ruler
+                          </v-icon>
+                          Estimate Distance
+                        </h2>
                       </v-row>
-                    </v-container>
-
-                    <h2>
-                      <v-icon left>
-                        mdi-ruler
-                      </v-icon>
-                      Estimate Distance
-                    </h2>
-
-                    <v-container>
                       <v-row>
                         <!-- This WWT viewer widget allows user to select a galaxy; galaxy positions plotted by RA/Dec.
                         It will zoom in to chosen galaxy & put controls/instructions on screen. -->
                         <!-- viewers.wwt_viewer doesn't need to be prepended with "state" because it comes from "Application" in app.py, not "ApplicationState"-->
-                        <v-col cols="12" md="7">
+                        <v-col cols="12" md="8">
                           <jupyter-widget
                             :widget="viewers.wwt_viewer"
                           ></jupyter-widget>
                         </v-col>
 
                         <!-- Callout to select galaxy / info about selected galaxy -->
-                        <v-col cols="12" md="5">
-                          <v-alert
-                            class="mb-4"
-                            border="left"
-                            colored-border
-                            color="indigo"
-                            elevation="2"
-                          >
-                            This will be text explaining how to use the distance measuring tool
-                          </v-alert>
+                        <v-col cols="12" md="4">
                           <div
                             :class="state.haro_on"
                           >
@@ -497,6 +445,46 @@
                               </v-card-text>
                             </v-card>
                           </div>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col
+                          cols="3"
+                        >
+                          <v-alert
+                            class="mb-4"
+                            border="left"
+                            colored-border
+                            color="indigo"
+                            elevation="2"
+                          >
+                            This will be text explaining how to use the distance measuring tool
+                          </v-alert>
+                          <v-btn
+                            block
+                            class="mb-4"
+                            :disabled="state.adddata_disabled"
+                            @click="state.next1_disabled = false"
+                            color="primary"
+                          >
+                            <v-icon
+                              left
+                              dark
+                            >
+                              mdi-chart-scatter-plot
+                            </v-icon>
+                            graph data
+                          </v-btn>
+                        </v-col>
+                        <v-col>
+                          <dist-table>
+                          </dist-table>
+                          <todo-alert>
+                            <ul>
+                              <li>When students click on a row of the table to choose their galaxy, the WWT window will display that galaxy with the measurement tools (so this won't need to have both a "Select galaxy" and "Estimate Distance" tab. It can be consolidated to just an Estimate Distance header.)
+                              <li>The button "graph data points" probably wants to take them straight to page 3, where the graph will be displayed.
+                            </ul>
+                          </todo-alert>
                         </v-col>
                       </v-row>
                     </v-container>

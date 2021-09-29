@@ -35,6 +35,7 @@ module.exports = {
         { text: 'Rest Wavelength (nm)', value: 'restwave' },
         { text: 'Measured Wavelength (nm)', value: 'measwave' },
         { text: 'Velocity (km/s)', value: 'velocity' },
+        { text: 'Distance (Mpc)', value: 'distance' },
       ],
       galaxies: [
         {
@@ -42,8 +43,9 @@ module.exports = {
           type: "irregular",
           element: "H-alpha",
           restwave: 656.3,
-          measwave: "",
+          measwave: 669.7,
           velocity: "",
+          distance: "",
         },
         {
           name: "Hercules A",
@@ -52,6 +54,7 @@ module.exports = {
           restwave: 123.4,
           measwave: 234.5,
           velocity: "",
+          distance: 66,
         },
         {
           name: "GOODS North",
@@ -60,6 +63,7 @@ module.exports = {
           restwave: 656.3,
           measwave: 725.6,
           velocity: "",
+          distance: 277,
         },
         {
           name: "NGC 6052",
@@ -67,6 +71,8 @@ module.exports = {
           element: "H-alpha",
           restwave: 656.3,
           measwave: 666.6,
+          velocity: "",
+          distance: 139,
         },
         {
           name: "UGC 2369",
@@ -75,6 +81,7 @@ module.exports = {
           restwave: 656.3,
           measwave: 676.8,
           velocity: "",
+          distance: 187,
         },
         {
           name: "Abell 370",
@@ -83,6 +90,7 @@ module.exports = {
           restwave: 656.3,
           measwave: 903.0,
           velocity: "",
+          distance: 1648,
         },
       ],
     };
