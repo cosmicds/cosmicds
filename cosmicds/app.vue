@@ -56,12 +56,13 @@
                         : is a binding - binds state of "complete" to the thing in the "".  If over_model is > 1, then we have gone past step 1.
                   therefore, consider step 1 complete. -->
                   <!-- Another example could be something like :disabled = "state.continue_button_disabled==1" -->
+
                   <v-stepper-step
                     :complete="state.over_model > 1"
                     step="1"
                     editable
                   >
-                    Collect Galaxy Data
+                    Collect<br>Velocity Data
                   </v-stepper-step>
 
                   <v-divider></v-divider>
@@ -71,7 +72,7 @@
                     step="2"
                     editable
                   >
-                    Estimate Age of Universe
+                    Collect<br>Distance Data
                   </v-stepper-step>
 
                   <v-divider></v-divider>
@@ -80,7 +81,8 @@
                     :complete="state.over_model > 3"
                     step="3"
                     editable
-                    >Explore Class Data
+                  >
+                    Estimate<br>Age
                   </v-stepper-step>
 
                   <v-divider></v-divider>
@@ -89,7 +91,31 @@
                     :complete="state.over_model > 4"
                     step="4"
                     editable
-                    >View Distributions
+                    >Explore<br>Class Data
+                  </v-stepper-step>
+
+                  <v-divider></v-divider>
+
+                  <v-stepper-step
+                    :complete="state.over_model > 5"
+                    step="5"
+                    editable
+                    >View<br>Distributions
+                  </v-stepper-step>
+                  <v-divider></v-divider>
+
+                <v-stepper-step
+                    :complete="state.over_model > 6"
+                    step="6"
+                    editable
+                    >Galaxy<br>Morphology
+                  </v-stepper-step>
+                  <v-divider></v-divider>
+                <v-stepper-step
+                    :complete="state.over_model > 7"
+                    step="7"
+                    editable
+                    >Professional<br>Science Data
                   </v-stepper-step>
                 </v-stepper-header>
 
@@ -97,9 +123,10 @@
                 <v-stepper-items
                   class=""
                 >
-                  <!-- --- ---------- --- -->
-                  <!-- --- FIRST PAGE --- -->
-                  <!-- --- ---------- --- -->
+
+                  <!-- ---------------- -------------------------------- ---------------- -->
+                  <!-- ---------------- FIRST PAGE: VELOCITY MEASUREMENT ---------------- -->
+                  <!-- ---------------- -------------------------------- ---------------- -->
                   <v-stepper-content step="1">
                     <v-container>
                       <v-row>
@@ -125,8 +152,8 @@
                             color="green"
                             class="text-body-2"
                           >
-                            You can add your data to the plot after you select a galaxy below,
-                            and then estimate the distance and measure the velocity of that galaxy.
+                          Choose a galaxy in the "sky" view below and use emission or absorption lines in its spectrum to measure the galaxy's velocity.
+                            </ul>
                           </div>
                         </v-col>
                         <v-col>
@@ -136,9 +163,12 @@
                             ></jupyter-widget>
                           </v-lazy>
                           <todo-alert>
-                            When students add velocity and distance measurements, they
-                            will be plotted here. (No data will be displayed to start.
-                            Points populate the plot as students measure and commit them.)
+                            The scatterplot here is going to be replaced with a table. Likely columns (to be named with improved clarity) are:
+                            <ul>
+                              <li>Galaxy name
+                              <li>Line element (I learned from our SME that elliptical galaxies likely won't have H-alpha lines, so we will have to use Ca or K lines instead for those galaxies)
+                              <li>Rest wavelength of line
+                              <li>Measured wavelength of line
                           </todo-alert>
                         </v-col>
                       </v-row>
@@ -152,11 +182,11 @@
                         v-model="state.col_tab_model"
                         centered
                       >
-                        <v-tab key="gal-dist">
+                        <v-tab key="gal-select">
                           <v-icon left>
-                            mdi-ruler
+                            mdi-magnify
                           </v-icon>
-                          Estimate Distance
+                          Select Galaxy
                         </v-tab>
                         <v-tab key="gal-vel">
                           <v-icon left>
@@ -164,7 +194,7 @@
                           </v-icon>
                           Measure Velocity
                         </v-tab>
-                        <v-tab-item key="gal-dist">
+                        <v-tab-item key="gal-select">
                           <v-container>
                             <v-row>
                               <!-- This WWT viewer widget allows user to select a galaxy; galaxy positions plotted by RA/Dec.
@@ -185,8 +215,9 @@
                                   color="indigo"
                                   elevation="2"
                                 >
-                                  Pan the sky and select one of the galaxies
-                                  to measure.
+                                  Pan the sky and click one of the markers to
+                                  select a galaxy to measure.
+                                  <!-- This can go because the "select" action will be on the galaxy marker within the WWT window
                                   <div class="text-center mt-4">
                                     <v-btn
                                       class="white--text"
@@ -205,73 +236,8 @@
                                       select galaxy
                                     </v-btn>
                                   </div>
+                                -->
                                 </v-alert>
-                                <div
-                                  :class="state.haro_on"
-                                >
-                                  <v-card
-                                    color="indigo lighten-5"
-                                  >
-                                    <v-card-title>Haro 11</v-card-title>
-                                    <v-card-text>
-                                      <v-divider></v-divider>
-                                      <v-list
-                                        color="indigo lighten-5"
-                                      >
-                                        <v-list-item-content>
-                                          <v-list-item-title>Irregular galaxy</v-list-item-title>
-                                          <v-list-item-subtitle>type</v-list-item-subtitle>
-                                        </v-list-item-content>
-                                        <v-list-item-content>
-                                          <v-list-item-title>100,000 light years</v-list-item-title>
-                                          <v-list-item-subtitle>assumed size</v-list-item-subtitle>
-                                        </v-list-item-content>
-                                        <v-list-item-content>
-                                          <v-list-item-title>568 pixels</v-list-item-title>  
-                                          <v-list-item-subtitle>height of display</v-list-item-subtitle>
-                                        </v-list-item-content>
-                                      </v-list>
-                                      <v-divider></v-divider>
-                                      <v-text-field
-                                        :value="state.galaxy_dist"
-                                        label="Estimated Distance"
-                                        hint="click button below"
-                                        persistent-hint
-                                        color="purple darken-2"
-                                        class="mt-8 mb-4"
-                                        suffix="Mpc"
-                                        outlined
-                                        readonly
-                                        dense
-                                      ></v-text-field>
-                                      <v-btn
-                                        block
-                                        color="purple darken-2"
-                                        dark
-                                        class="px-auto"
-                                        max-width="100%"
-                                        @click="
-                                          state.dist_measured = 1;
-                                          state.gal_snackbar = 0;
-                                          state.dist_snackbar = 0;
-                                          state.marker_snackbar = 0;
-                                          state.vel_snackbar = 0;
-                                          state.data_ready_snackbar = 0;
-                                          state.vel_measured == 1
-                                            ? state.data_ready_snackbar = 1
-                                            : state.dist_snackbar = 1;
-                                          state.adddata_disabled =
-                                            state.vel_measured == 1
-                                              ? false
-                                              : true;
-                                          state.galaxy_dist = Math.floor(Math.random() * 450) + 50
-                                        "
-                                      >
-                                        estimate
-                                      </v-btn>
-                                    </v-card-text>
-                                  </v-card>
-                                </div>
                               </v-col>
                             </v-row>
                           </v-container>
@@ -289,8 +255,8 @@
                                   height="100%"
                                   class="pa-5"
                                 >
-                                  TO DO: learn how to import
-                                  Spectrum Lab .js code here.
+                                  <jupyter-widget :widget="viewers.spectrum_viewer" >
+                                  </jupyter-widget>
                                 </v-card>
                               </v-col>
                               <v-col cols="12" md="4">
@@ -301,8 +267,14 @@
                                   elevation="2"
                                   clas="mb-12"
                                 >
-                                  Drag the marker across the spectrum to
-                                  measure the H-&#x3B1; wavelength.
+                                <!-- Our SME told me that E galaxies aren't likely to have H-alpha lines, so we will need to give
+                                options for measuring other types of lines too, like Ca or K lines. We can figure this out once
+                                we have the data set to look at.-->
+                                  Use the mouse to drag the vertical wavelength marker
+                                  until it lines up with the labeled absorption or emission line. Left-click
+                                  to record the element and wavelength of the line.
+
+                                  <!-- Again, I think the click action will be on the spectrum itself, so we can remove this
                                   <div class="text-center mt-4">
                                     <v-btn
                                       :disabled="!state.gal_selected"
@@ -322,6 +294,7 @@
                                       set marker
                                     </v-btn>
                                   </div>
+                                  -->
                                 </v-alert>
 
                                 <div
@@ -398,6 +371,197 @@
                             </v-row>
                           </v-container>
                         </v-tab-item>
+                      </v-tabs>
+                    </v-card>
+
+                    <infodialog-alert>
+                      This window provides a view of the "night sky". Left click and drag to pan around within the view. Roll your mouse wheel forward and backward to zoom in and out. (we can recycle instructions from the WWT interactives) <br>
+                      The (colored) dots mark the locations of galaxies you can collect data for. Left click on one of these dots to select that galaxy. (is it going to be an issue if left click is "pan" and they accidentally click on one of the dots while trying to pan?) <br>
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Notice that the table now has a row for your selected galaxy.
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Great! Now let's take a look at your galaxy's spectrum. Recall that a spectrograph separates light from a source into its distinct colors. The spectrum graph shows how bright the light from the galaxy is at each color. Notice that the spectrum has one or more upward spiky lines that are very bright (emission lines) or downward dips that are faint (absorption lines). These lines are caused by specific atoms and molecules in the galaxy emitting or absorbing light at those particular colors. Look for one of the lines labeled as Hydrogen (H), Calcium (Ca), or Potassium (K).<br>
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Left click on the vertical measuring tool and drag it to line up with the labeled line. Click again to record the observed wavelength of that line.
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Notice your measurement is now recorded in the table.
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Click on the H, Ca, or K label next to the line to record the rest wavelength of the line in the table.
+                    </infodialog-alert>
+                    <infodialog-alert>
+                      Repeat this process for four more galaxies (or however many your instructor would like you to collect data for).
+                    </infodialog-alert>
+
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
+                  </v-stepper-content>
+                  <!-- ---------------- --------------------------------- ---------------- -->
+                  <!-- ---------------- SECOND PAGE: DISTANCE MEASUREMENT ---------------- -->
+                  <!-- ---------------- --------------------------------- ---------------- -->
+                  <v-stepper-content step="2">
+                    <v-container>
+                      <v-row>
+                        <v-col
+                          cols="3"
+                        >
+                          <v-btn
+                            block
+                            class="mb-4"
+                            :disabled="state.adddata_disabled"
+                            @click="state.next1_disabled = false"
+                            color="primary"
+                          >
+                            <v-icon
+                              left
+                              dark
+                            >
+                              mdi-plus
+                            </v-icon>
+                            Add Data
+                          </v-btn>
+                          <div
+                            color="green"
+                            class="text-body-2"
+                          >
+                            Click on a row in your table to select a galaxy and estimate its distance. As you complete the distance measurements, you can add them to the table.
+                          </div>
+                        </v-col>
+                        <v-col>
+                          <v-lazy>
+                            <jupyter-widget
+                              :widget="viewers.hub_const_viewer"
+                            ></jupyter-widget>
+                          </v-lazy>
+                          <todo-alert>
+                            <ul>
+                              <li>The distance measurements will be added to the table as students complete them.
+                              <li>When students click on a row of the table to choose their galaxy, the WWT window will display that galaxy with the measurement tools (so this won't need to have both a "Select galaxy" and "Estimate Distance" tab. It can be consolidated to just an Estimate Distance header.)
+                              <li>As on pg 1, the scatterplot should be replaced by a table.
+                              <li>Under the table, there should be a button that says "graph data points." - I think this probably wants to take them straight to page 3, where the graph will be displayed.
+                            </ul>
+                          </todo-alert>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                    <v-card
+                      color="blue lighten-5"
+                      class=""
+                      outlined
+                    >
+
+
+                    <v-icon left>
+                      mdi-ruler
+                    </v-icon>
+                    Estimate Distance
+
+                      <v-container>
+                        <v-row>
+                          <!-- This WWT viewer widget allows user to select a galaxy; galaxy positions plotted by RA/Dec.
+                          It will zoom in to chosen galaxy & put controls/instructions on screen. -->
+                          <!-- viewers.wwt_viewer doesn't need to be prepended with "state" because it comes from "Application" in app.py, not "ApplicationState"-->
+                          <v-col cols="12" md="7">
+                            <jupyter-widget
+                              :widget="viewers.wwt_viewer"
+                            ></jupyter-widget>
+                          </v-col>
+
+                          <!-- Callout to select galaxy / info about selected galaxy -->
+                          <v-col cols="12" md="5">
+                            <v-alert
+                              class="mb-4"
+                              border="left"
+                              colored-border
+                              color="indigo"
+                              elevation="2"
+                            >
+                              This will be text explaining how to use the distance measuring tool
+                            </v-alert>
+                            <div
+                              :class="state.haro_on"
+                            >
+                              <v-card
+                                color="indigo lighten-5"
+                              >
+                                <v-card-title>Haro 11</v-card-title>
+                                <v-card-text>
+                                  <v-divider></v-divider>
+                                  <v-list
+                                    color="indigo lighten-5"
+                                  >
+                                    <v-list-item-content>
+                                      <v-list-item-title>Irregular galaxy</v-list-item-title>
+                                      <v-list-item-subtitle>type</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                    <v-list-item-content>
+                                      <v-list-item-title>100,000 light years</v-list-item-title>
+                                      <v-list-item-subtitle>assumed size</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                    <v-list-item-content>
+                                      <v-list-item-title>568 pixels</v-list-item-title>
+                                      <v-list-item-subtitle>height of display</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                  </v-list>
+                                  <v-divider></v-divider>
+                                  <v-text-field
+                                    :value="state.galaxy_dist"
+                                    label="Estimated Distance"
+                                    hint="click button below"
+                                    persistent-hint
+                                    color="purple darken-2"
+                                    class="mt-8 mb-4"
+                                    suffix="Mpc"
+                                    outlined
+                                    readonly
+                                    dense
+                                  ></v-text-field>
+                                  <v-btn
+                                    block
+                                    color="purple darken-2"
+                                    dark
+                                    class="px-auto"
+                                    max-width="100%"
+                                    @click="
+                                      state.dist_measured = 1;
+                                      state.gal_snackbar = 0;
+                                      state.dist_snackbar = 0;
+                                      state.marker_snackbar = 0;
+                                      state.vel_snackbar = 0;
+                                      state.data_ready_snackbar = 0;
+                                      state.vel_measured == 1
+                                        ? state.data_ready_snackbar = 1
+                                        : state.dist_snackbar = 1;
+                                      state.adddata_disabled =
+                                        state.vel_measured == 1
+                                          ? false
+                                          : true;
+                                      state.galaxy_dist = Math.floor(Math.random() * 450) + 50
+                                    "
+                                  >
+                                    estimate
+                                  </v-btn>
+                                </v-card-text>
+                              </v-card>
+                            </div>
+                          </v-col>
+                        </v-row>
+                      </v-container>
                     </v-card>
 
                     <!-- WIREFRAME for learning objectives/experience on First Page -->
@@ -422,10 +586,10 @@
                      * Choosing different data sets - student/class/all
                      * Plotting by galaxy type -->
 
-                  <!-- --- ----------- --- -->
-                  <!-- --- SECOND PAGE --- -->
-                  <!-- --- ----------- --- -->
-                  <v-stepper-content step="2">
+                  <!-- ---------------- ------------------------------------ ---------------- -->
+                  <!-- ---------------- THIRD PAGE: ESTIMATE AGE OF UNIVERSE ---------------- -->
+                  <!-- ---------------- ------------------------------------ ---------------- -->
+                  <v-stepper-content step="3">
                     <v-container>
                       <v-row>
                         <v-col
@@ -536,10 +700,10 @@
                 <!-- Will need buttons/functionality for choosing different data sets -->
                 <!-- Need to think through whether the hubble plot should also appear on this page or if that would be confusing -->
 
-                  <!-- --- ---------- --- -->
-                  <!-- --- THIRD PAGE --- -->
-                  <!-- --- ---------- --- -->
-                  <v-stepper-content step="3">
+                  <!-- ---------------- ------------------------------- ---------------- -->
+                  <!-- ---------------- FOURTH PAGE: EXPLORE CLASS DATA ---------------- -->
+                  <!-- ---------------- ------------------------------- ---------------- -->
+                  <v-stepper-content step="4">
                     <v-container>
                       <v-row>
                         <v-col
@@ -633,10 +797,10 @@
 
                   </v-stepper-content>
 
-                  <!-- --- ----------- --- -->
-                  <!-- --- FOURTH PAGE --- -->
-                  <!-- --- ----------- --- -->
-                  <v-stepper-content step="4">
+                  <!-- ---------------- ------------------------------ ---------------- -->
+                  <!-- ---------------- FIFTH PAGE: VIEW DISTRIBUTIONS ---------------- -->
+                  <!-- ---------------- ------------------------------ ---------------- -->
+                  <v-stepper-content step="5">
                     <v-container>
                       <v-row>
                         <v-col cols="3">
@@ -644,7 +808,7 @@
                         <v-col>
                           <v-lazy>
                             <jupyter-widget
-                              :widget="viewers.hub_const_viewer"
+                              :widget="viewers.hub_students_viewer"
                             ></jupyter-widget>
                           </v-lazy>
                           <todo-alert>
@@ -688,13 +852,19 @@
                                             <v-list-item-action>
                                               <v-checkbox
                                                 :input-value="active"
-                                                :color="['orange', 'red', 'blue'][index]"
+                                                :color="['orange', 'blue', 'green'][index]"
                                               ></v-checkbox>
                                             </v-list-item-action>
                                           </template>
                                         </v-list-item>
                                       </v-list-item-group>
                                     </v-list>
+                                    <v-btn
+                                      color="primary"
+                                      @click="clear_histogram_selection()"
+                                    >
+                                    Clear selection
+                                    </v-btn>
                                   </v-col>
                                   <v-col>
                                     <v-lazy>
@@ -831,6 +1001,213 @@
                   student userID and display it here via something like "Hello <student userID>".) -->
                   </v-stepper-content>
 
+                  <!-- ---------------- ----------------------------- ---------------- -->
+                  <!-- ---------------- SIXTH PAGE: GALAXY MORPHOLOGY ---------------- -->
+                  <!-- ---------------- ----------------------------- ---------------- -->
+                  <v-stepper-content step="6">
+                    <v-container>
+                      <v-row>
+                        <v-col
+                          cols="3"
+                        ><v-btn
+                            color="primary"
+                            @click="fit_lines({
+                              'viewer_id': 'hub_comparison_viewer'
+                            })"
+                          >
+                            Fit Lines
+                          </v-btn>
+                          <v-list
+                            style="max-height: 300px"
+                            class="overflow-y-auto"
+                          >
+                            <v-list-item-group
+                              multiple
+                              v-model="state.hubble_comparison_selections"
+                            >
+                            <!--
+                              <v-list-item
+                                v-for="(option, index) in ['My data', 'Class data', 'All data']"
+                                :key="index"
+                                :value="index"
+                              >
+                              -->
+                              <v-list-item
+                                v-for="(option, index) in ['Elliptical', 'Spiral', 'Irregular']"
+                                :key="index"
+                                :value="index"
+                              >
+                                <template v-slot:default="{ active }">
+                                  <v-list-item-content>
+                                    {{option}}
+                                  </v-list-item-content>
+
+                                  <v-list-item-action>
+                                    <v-checkbox
+                                      :input-value="active"
+                                      :color="['orange', 'green', 'red'][index]"
+                                    ></v-checkbox>
+                                  </v-list-item-action>
+                                </template>
+                              </v-list-item>
+                            </v-list-item-group>
+                          </v-list>
+                        </v-col>
+                        <v-col>
+                          <v-lazy>
+                            <jupyter-widget
+                              :widget="viewers.hub_comparison_viewer"
+                            ></jupyter-widget>
+                          </v-lazy>
+                          <todo-alert>
+                            Right now the check boxes are still tied to "My data", "Class data", and "All data". Need to replace those with Elliptical, Spiral, and Irregular subsets.
+                          </todo-alert>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-card
+                          class="pa-8"
+                          elevation="3"
+                          width="100%"
+                        >
+
+                          Buttons to calculate age of universe from H0 value.<br>
+
+                          <help-dialog
+                            button-text="Click Me!"
+                            title-text="Testing!"
+                            accept-text="Okay"
+                            cancel-text="Cancel"
+                            @accept="console.log('Button was clicked.')"
+                          >
+                            This is a test of a pure Vue dialog with a custom event.
+                          </help-dialog>
+
+                        </v-card>
+                     </v-row>
+                    </v-container>
+
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
+
+                  </v-stepper-content>
+
+
+
+                  <!-- ---------------- -------------------------------- ---------------- -->
+                  <!-- ---------------- SEVENTH PAGE: PRO ASTRONOMY DATA ---------------- -->
+                  <!-- ---------------- -------------------------------- ---------------- -->
+
+                  <v-stepper-content step="7">
+                    <v-container>
+                      <v-row>
+                        <v-col
+                          cols="3"
+                        ><v-btn
+                            color="primary"
+                            @click="fit_lines({
+                              'viewer_id': 'hub_comparison_viewer'
+                            })"
+                          >
+                            Fit Lines
+                          </v-btn>
+                          <v-list
+                            style="max-height: 300px"
+                            class="overflow-y-auto"
+                          >
+                            <v-list-item-group
+                              multiple
+                              v-model="state.hubble_comparison_selections"
+                            >
+                            <!--
+                              <v-list-item
+                                v-for="(option, index) in ['My data', 'Class data', 'All data']"
+                                :key="index"
+                                :value="index"
+                              >
+                              -->
+                              <v-list-item
+                                v-for="(option, index) in ['Hubble (1929)', 'HST Key Project (2001)', 'Supernova Ia (2004)']"
+                                :key="index"
+                                :value="index"
+                              >
+                                <template v-slot:default="{ active }">
+                                  <v-list-item-content>
+                                    {{option}}
+                                  </v-list-item-content>
+
+                                  <v-list-item-action>
+                                    <v-checkbox
+                                      :input-value="active"
+                                      :color="['orange', 'green', 'red'][index]"
+                                    ></v-checkbox>
+                                  </v-list-item-action>
+                                </template>
+                              </v-list-item>
+                            </v-list-item-group>
+                          </v-list>
+                        </v-col>
+                        <v-col>
+                          <v-lazy>
+                            <jupyter-widget
+                              :widget="viewers.hub_comparison_viewer"
+                            ></jupyter-widget>
+                          </v-lazy>
+                          <todo-alert>
+                            Right now the check boxes are still tied to "My data", "Class data", and "All data". Need to replace those with links to the real scientific data.
+                          </todo-alert>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-card
+                          class="pa-8"
+                          elevation="3"
+                          width="100%"
+                        >
+
+                          Buttons to calculate age of universe from H0 value.<br>
+
+                          <help-dialog
+                            button-text="Click Me!"
+                            title-text="Testing!"
+                            accept-text="Okay"
+                            cancel-text="Cancel"
+                            @accept="console.log('Button was clicked.')"
+                          >
+                            This is a test of a pure Vue dialog with a custom event.
+                          </help-dialog>
+
+                        </v-card>
+                     </v-row>
+                    </v-container>
+
+                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <hinttext-alert>
+                      This is for marginal hint text
+                    </hinttext-alert>
+                    <snackbar-alert>
+                      This is for guidance snackbars
+                    </snackbar-alert>
+                    <infodialog-alert>
+                      This is for informative dialog pop-ups
+                    </infodialog-alert>
+                    <responsedialog-alert>
+                      This is for worksheet form pop-ups
+                    </responsedialog-alert>
+
+                  </v-stepper-content>
+
                 </v-stepper-items>
               </v-stepper>
               <v-spacer></v-spacer>
@@ -858,12 +1235,12 @@
                   dark
                   @click="
                     state.over_model =
-                      state.over_model < 4
+                      state.over_model < 7
                         ? state.over_model + 1
                         : state.over_model
                   "
                 >
-                  {{ state.over_model == 4 ? 'Finish' : 'Next' }}
+                  {{ state.over_model == 7 ? 'Finish' : 'Next' }}
                 </v-btn>
               </v-card-actions>
             </v-card>
