@@ -182,12 +182,6 @@
                         </v-alert>
                       </v-row>
                     </v-container>
-                    <h2>
-                      <v-icon left>
-                        mdi-speedometer
-                      </v-icon>
-                      Measure Velocity
-                    </h2>
                     <v-container>
                       <v-row>
                         <v-col
@@ -197,9 +191,28 @@
                           <v-card
                             min-height="300px"
                             height="100%"
-                            class="pa-5"
                           >
-                            TO DO: New spectrum viewer code here.
+                            <v-toolbar
+                              color="pink"
+                              dark
+                            >
+                              <v-icon left>
+                                mdi-speedometer
+                              </v-icon>
+
+                              <v-toolbar-title>Measure Velocity</v-toolbar-title>
+
+                              <v-spacer></v-spacer>
+
+                              <v-btn icon>
+                                <v-icon>mdi-information-outline</v-icon>
+                              </v-btn>
+                            </v-toolbar>
+                            <v-card-text
+                              class="pa-5"
+                            >
+                              TO DO: New spectrum viewer code here.
+                            </v-card-text>
                           </v-card>
                         </v-col>
                         <v-col cols="12" md="4">
@@ -208,7 +221,7 @@
                             colored-border
                             color="indigo"
                             elevation="2"
-                            clas="mb-12"
+                            class="mb-12"
                           >
                           <!-- Our SME told me that E galaxies aren't likely to have H-alpha lines, so we will need to give
                           options for measuring other types of lines too, like Ca or K lines. We can figure this out once
@@ -360,21 +373,31 @@
 
                     <v-container>
                       <v-row>
-                        <h2>
-                          <v-icon left>
-                            mdi-ruler
-                          </v-icon>
-                          Estimate Distance
-                        </h2>
-                      </v-row>
-                      <v-row>
                         <!-- This WWT viewer widget allows user to select a galaxy; galaxy positions plotted by RA/Dec.
                         It will zoom in to chosen galaxy & put controls/instructions on screen. -->
                         <!-- viewers.wwt_viewer doesn't need to be prepended with "state" because it comes from "Application" in app.py, not "ApplicationState"-->
                         <v-col cols="12" md="8">
-                          <jupyter-widget
-                            :widget="viewers.wwt_viewer"
-                          ></jupyter-widget>
+                          <v-card>
+                            <v-toolbar
+                              color="pink"
+                              dark
+                            >
+                              <v-icon left>
+                                mdi-ruler
+                              </v-icon>
+
+                              <v-toolbar-title>Estimate Distance</v-toolbar-title>
+
+                              <v-spacer></v-spacer>
+
+                              <v-btn icon>
+                                <v-icon>mdi-information-outline</v-icon>
+                              </v-btn>
+                            </v-toolbar>
+                            <jupyter-widget
+                              :widget="viewers.wwt_viewer"
+                            ></jupyter-widget>
+                          </v-card>
                         </v-col>
 
                         <!-- Callout to select galaxy / info about selected galaxy -->
@@ -384,6 +407,7 @@
                           >
                             <v-card
                               color="indigo lighten-5"
+                              width="100%"
                             >
                               <v-card-title>Haro 11</v-card-title>
                               <v-card-text>
