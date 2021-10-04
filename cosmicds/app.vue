@@ -1011,7 +1011,7 @@
                         ><v-btn
                             color="primary"
                             @click="fit_lines({
-                              'viewer_id': 'hub_comparison_viewer'
+                              'viewer_id': 'hub_morphology_viewer'
                             })"
                           >
                             Fit Lines

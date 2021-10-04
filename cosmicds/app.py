@@ -2,6 +2,7 @@ from os.path import join
 from pathlib import Path
 
 from astropy.modeling import models, fitting
+from bqplot import figure
 from echo import CallbackProperty
 from echo.core import add_callback
 from glue.core.state_objects import State
@@ -218,6 +219,9 @@ class Application(VuetifyTemplate):
         morphology_subsets = [elliptical_subset, spiral_subset, irregular_subset]
         for subset in morphology_subsets:
             hub_morphology_viewer.add_subset(subset)
+        self._elliptical_subset = elliptical_subset
+        self._spiral_subset = spiral_subset
+        self._irregular_subset = irregular_subset
         hub_morphology_viewer.state.x_att = self.data_collection['galaxy_data'].id['EstDist_Mpc']
         hub_morphology_viewer.state.y_att = self.data_collection['galaxy_data'].id['velocity_km_s']
         update_figure_css(hub_morphology_viewer, style_path=style_path)
@@ -483,33 +487,39 @@ class Application(VuetifyTemplate):
                 viewer.add_data(data)
                 viewer.x_att = data.id['age']
 
+    def _scatter_selection_update(self, viewer_id, data, selections):
+        viewer = self._viewer_handlers[viewer_id]
+        labels = [x.label for (i,x) in enumerate(data) if i in selections]
+
+        for layer in viewer.layers:
+            layer.state.visible = layer.state.layer.label in labels
+
+        # We only want to show lines for the layers that are visible
+        line_info = self._fit_lines.get(viewer_id, [])
+        all_lines = [x[0] for x in line_info]
+
+        figure = viewer.figure
+        not_lines = [mark for mark in figure.marks if mark not in all_lines]
+        lines = [x[0] for x in line_info if x[1] in labels]
+        figure.marks = not_lines + lines
+
     def _hubble_comparison_selection_update(self, selections):
         # Indices:
         # 0: Student's data
         # 1: Their class's data
         # 2: All public data
         viewer_id = 'hub_comparison_viewer'
-        viewer = self._viewer_handlers[viewer_id]
         data = [self._student_data, self._class_data, self._all_data]
-        labels = [x.label for (i,x) in enumerate(data) if i in selections]
-
-        for layer in viewer.layers:
-            layer.state.visible = layer.state.layer.label in labels
-        
-        # We only want to show lines for the layers that are visible
-        line_info = self._fit_lines.get(viewer_id, [])
-        all_lines = [x[0] for x in line_info]
-        
-        figure = viewer.figure
-        not_lines = [mark for mark in figure.marks if mark not in all_lines]
-        lines = [x[0] for x in line_info if x[1] in labels]
-        figure.marks = not_lines + lines
+        self._scatter_selection_update(viewer_id, data, selections)
 
     def _morphology_selection_update(self, selections):
+        # Indices:
+        # 0: Elliptical
+        # 1: Spiral
+        # 2: Irregular
         viewer_id = 'hub_morphology_viewer'
-        viewer = self._viewer_handlers[viewer_id]
-        for index, layer in enumerate(viewer.layers):
-            layer.state.visible = index in selections
+        data = [self._elliptical_subset, self._spiral_subset, self._irregular_subset]
+        self._scatter_selection_update(viewer_id, data, selections)
 
     def _histogram_selection_update(self, selections, viewer_id, line_options=[], layer_mapping=None):
         """
