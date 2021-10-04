@@ -20,6 +20,7 @@ from .components.footer import Footer
 # from .components import *
 from .components.viewer_layout import ViewerLayout
 from .histogram_listener import HistogramListener
+from .line_draw_handler import LineDrawHandler
 from .utils import age_in_gyr, extend_tool, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
 from .viewers.spectrum_view import SpectrumView
@@ -153,6 +154,10 @@ class Application(VuetifyTemplate):
             # Update the viewer CSS
             update_figure_css(viewer, style_path=style_path)
 
+        for viewer in hub_viewers:
+            # Set the bottom-left corner of the plot to be zero
+            viewer.state.x_min = 0
+            viewer.state.y_min = 0
         
         # Set up the viewer that will listen to the histogram
         hub_students_viewer.add_data(class_data)
@@ -262,6 +267,10 @@ class Application(VuetifyTemplate):
         # Any vertical line marks on histograms
         # keyed by viewer id
         self._histogram_lines = {}
+
+        # For letting the student draw a line
+        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
+        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
