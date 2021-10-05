@@ -5,7 +5,9 @@ from astropy.modeling import models, fitting
 from bqplot import figure
 from echo import CallbackProperty
 from echo.core import add_callback
+from glue.core import Component, Data
 from glue.core.state_objects import State
+from glue.core.subset import ElementSubsetState
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
 from glue_jupyter.bqplot.image import BqplotImageView
@@ -14,7 +16,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from numpy import bitwise_or
+from numpy import array, bitwise_or, nan
 from traitlets import Dict, List
 
 from .components.footer import Footer
@@ -25,6 +27,7 @@ from .histogram_listener import HistogramListener
 from .line_draw_handler import LineDrawHandler
 from .utils import age_in_gyr, extend_tool, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
+from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
 
 # Within ipywidgets - update calls only happen in certain instances.
@@ -76,25 +79,6 @@ class Application(VuetifyTemplate):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Load the vue components through the ipyvuetify machinery. We add the
-        # html tag we want and an instance of the component class as a
-        # key-value pair to the components dictionary.
-        self.components = {'c-footer': Footer(self)
-                        # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
-                        #    'c-dialog-vel': Dialog(
-                        #        self,
-                        #        launch_button_text="Learn more",
-                        #        title_text="How do we measure galaxy velocity?",
-                        #        content_text="Verbiage about comparing observed & rest wavelengths of absorption/emission lines",
-                        #        accept_button_text="Close"),
-                        #    'c-dialog-age': Dialog(
-                        #        self,
-                        #        launch_button_text="Learn more",
-                        #        title_text="How do we estimate age of the universe?",
-                        #        content_text="Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.",
-                        #        accept_button_text="Close")
-        }
-
         self.state = ApplicationState()
         self._application_handler = JupyterApplication()
 
@@ -123,6 +107,19 @@ class Application(VuetifyTemplate):
         for dataset in datasets:
             self._application_handler.load_data(join(output_dir, f"{dataset}.csv"), label=dataset)
 
+        self._dummy_student_data = {
+            'gal_name': ['Galaxy A', 'Galaxy B', 'Galaxy C', 'Galaxy D'],
+            'element_level': ['Hα', 'Ca II', 'Hα', 'Hα'],
+            'rest_lambda': [653.6, 502.6, 685.4, 512.0],
+            'obs_lambda': [692.2, 521.1, 711.1, 555.6],
+            'student_id': [1, 1, 1, 1, 1],
+            'velocity': [10167.21, 5057.93, 20842.38, 9612.17, 18219],
+            'distance': [116.65, 78.22, 127.85, 134.49, 214.53],
+            'type': ['G', 'G', 'G', 'G', 'G']
+        }
+        self._dummy_student_counter = 0
+        self._dummy_distance_counter = 0
+
         # Instantiate the initial viewers
         spectrum_viewer = self._application_handler.new_data_viewer(
             SpectrumView, data=None, show=False)
@@ -140,27 +137,61 @@ class Application(VuetifyTemplate):
         hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(5)]
         hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer = hub_viewers
 
-        # Create a subset for the student
+        # Set up glue links for the Hubble data sets
+        student_data_fields = [
+            "gal_name",
+            "element_level",
+            "rest_lambda",
+            "obs_lambda",
+            "distance",
+            "velocity",
+        ]
+        self._galaxy_table_components = ['gal_name', 'element_level', 'rest_lambda', 'obs_lambda']
+        galaxy_table_names = ['Galaxy', 'Element/Level', 'Rest λ', 'Observed λ']
+        self._distance_table_components = ['gal_name', 'distance', 'velocity']
+        distance_table_names = ['Galaxy', 'Distance (Mpc)', 'Velocity']
+
+        measurement_data = Data(label='student_measurements', **{x : [] for x in student_data_fields})
         class_data = self.data_collection['HubbleData_ClassSample']
-        student_subset = class_data.new_subset(class_data.id["student_id"] == 1, label="Student 1")
+        self.data_collection.append(measurement_data)
+        all_data = self.data_collection['HubbleData_All']
+        for component in class_data.components:
+            field = component.label
+            self._application_handler.add_link(class_data, field, all_data, field)
+
+        # Load the vue components through the ipyvuetify machinery. We add the
+        # html tag we want and an instance of the component class as a
+        # key-value pair to the components dictionary.
+        self.components = {'c-footer': Footer(self),
+                            'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
+                                key_component='gal_name', names=galaxy_table_names),
+                            'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
+                                key_component='distance', names=distance_table_names)
+                        # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
+                        #    'c-dialog-vel': Dialog(
+                        #        self,
+                        #        launch_button_text="Learn more",
+                        #        title_text="How do we measure galaxy velocity?",
+                        #        content_text="Verbiage about comparing observed & rest wavelengths of absorption/emission lines",
+                        #        accept_button_text="Close"),
+                        #    'c-dialog-age': Dialog(
+                        #        self,
+                        #        launch_button_text="Learn more",
+                        #        title_text="How do we estimate age of the universe?",
+                        #        content_text="Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.",
+                        #        accept_button_text="Close")
+        }
 
         # Set up the scatter viewers
         style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "default_scatter.json")
         for viewer in hub_viewers[:-2]:
 
-            # Add the data from the first student
-            viewer.add_subset(student_subset)
-
-            # Set the x and y attributes of the viewer
-            viewer.state.x_att = class_data.id['distance']
-            viewer.state.y_att = class_data.id['velocity']
-
             # Update the viewer CSS
             update_figure_css(viewer, style_path=style_path)
 
+        # Set the bottom-left corner of the plot to be zero in each scatter viewer
         for viewer in hub_viewers:
-            # Set the bottom-left corner of the plot to be zero
             viewer.state.x_min = 0
             viewer.state.y_min = 0
         
@@ -172,17 +203,17 @@ class Application(VuetifyTemplate):
 
         # The Hubble comparison viewer should get the class and all public data as well
         all_data = self.data_collection['HubbleData_All']
-        self._application_handler.add_link(class_data, 'distance', all_data, 'distance')
-        self._application_handler.add_link(class_data, 'velocity', all_data, 'velocity')
         hub_comparison_viewer.add_data(class_data)
         hub_comparison_viewer.layers[-1].state.visible = False
         hub_comparison_viewer.add_data(all_data)
         hub_comparison_viewer.layers[-1].state.visible = False
+        hub_comparison_viewer.state.x_att = class_data.id['distance']
+        hub_comparison_viewer.state.y_att = class_data.id['velocity']
         update_figure_css(hub_comparison_viewer, style_path=style_path)
 
         # For convenience, we attach the relevant data sets to the application instance
         self._class_data = class_data
-        self._student_data = student_subset
+        self._measurement_data = measurement_data
         self._all_data = all_data
 
         # Link the age components of the summary data sets
@@ -287,10 +318,6 @@ class Application(VuetifyTemplate):
         # Any vertical line marks on histograms
         # keyed by viewer id
         self._histogram_lines = {}
-
-        # For letting the student draw a line
-        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
-        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
@@ -596,7 +623,6 @@ class Application(VuetifyTemplate):
             (2, self.class_slope, 'green')
         ]
         layer_mapping = { 0 : 0, 1 : 0 } # We hide a selected subset if the glue layer is hidden
-        print(selections)
         self._histogram_selection_update(selections, 'class_distr_viewer',
             layer_mapping=layer_mapping, line_options=line_options)
     
@@ -640,16 +666,112 @@ class Application(VuetifyTemplate):
         toolbar.active_tool = None
         self._histogram_listener.clear_subset()
 
+    def _setup_line_draw(self):
+        hub_fit_viewer = self._viewer_handlers['hub_fit_viewer']
+        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
+        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
+
+    def _on_first_distance_point_added(self):
+
+        # The scatter viewer's ImageGL mark isn't present when the viewer is initialized;
+        # it's only added once at least one layer exists
+        # so we wait until at least one piece of data has been added to do this
+        self._setup_line_draw()
+
+    def vue_add_distance_data_point(self, _args):
+        if self._dummy_distance_counter >= len(self._dummy_student_data):
+            return
+
+        dc = self.data_collection
+        label = 'student_measurements'
+        data = dc[label]
+
+        distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
+        if 'distance' in data.component_ids():
+            data.update_components({data.id['distance'] : distance})
+        else:
+            data.add_component(Component.autotyped(distance), 'distance')
+        data.broadcast('distance')
+
+        velocity = self._dummy_student_data['velocity'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
+        if 'velocity' in data.component_ids():
+            data.update_components({data.id['velocity'] : velocity })
+        else:
+            data.add_component(Component.autotyped(velocity), 'velocity')
+        data.broadcast('velocity')
+
+        # Create a new Data object from all of the 'finished' data points
+        df = data.to_dataframe()
+        df = df.dropna()
+        components = { col : list(df[col]) for col in df.columns }
+        student_data = Data(label='student_data', **components)
+
+        viewer_ids = ['hub_const_viewer', 'hub_fit_viewer', 'hub_comparison_viewer', 'hub_students_viewer']
+        if 'student_data' in self.data_collection:
+            old_sd = self.data_collection['student_data']
+            for viewer_id in viewer_ids:
+                self._viewer_handlers[viewer_id].remove_data(old_sd)
+            self.data_collection.remove(old_sd)
+        self.data_collection.append(student_data)
+        self._student_data = student_data
+
+        # Put the new glue Data object into the appropriate viewers
+        # We have to do this, since glue has trouble if we try to add a size-0 data set to the viewer
+        style_path = str(Path(__file__).parent / "data" /
+                                    "styles" / "default_scatter.json")
+        for component in self._class_data.components:
+            field = component.label
+            if field in data.component_ids():
+                self._application_handler.add_link(student_data, field, self._class_data, field)
+        for viewer_id in viewer_ids:
+            viewer = self._viewer_handlers[viewer_id]
+            viewer.add_data(student_data)
+            if viewer_id in ['hub_const_viewer', 'hub_fit_viewer']:
+                viewer.state.x_att = student_data.id['distance']
+                viewer.state.y_att = student_data.id['velocity']
+            viewer.state.reset_limits()
+            try:
+                update_figure_css(self._viewer_handlers[viewer_id], style_path=style_path)
+            except:
+                pass
+    
+        self._dummy_distance_counter += 1
+
+        # The first time we add a distance/velocity point, we need to do some stuff
+        if self._dummy_distance_counter == 1:
+            self._on_first_distance_point_added()
+
+
+    def vue_add_galaxy_data_point(self, _args):
+        if self._dummy_student_counter >= len(self._dummy_student_data):
+            return
+
+        dc = self.data_collection
+        label = 'student_measurements'
+        data = dc[label]
+        self._dummy_student_counter += 1
+        component_mapping = {
+            k : v[:self._dummy_student_counter] for k, v in self._dummy_student_data.items() if k not in ['distance', 'velocity']
+        }
+
+        new_data = Data(label=label, **component_mapping)
+        dc.remove(data)
+        dc.append(new_data)
+        self._student_data = new_data
+
+
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data
     @property
     def student_slope(self):
-        return self._fit_slopes.get(self._student_data.label)
+        if not hasattr(self, '_student_data'):
+            return 0
+        return self._fit_slopes.get(self._student_data.label, 0)
 
     @property
     def class_slope(self):
-        return self._fit_slopes.get(self._class_data.label)
+        return self._fit_slopes.get(self._class_data.label, 0)
 
     @property
     def all_slope(self):
-        return self._fit_slopes.get(self._all_data.label)
+        return self._fit_slopes.get(self._all_data.label, 0)

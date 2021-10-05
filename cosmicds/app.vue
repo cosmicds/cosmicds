@@ -141,9 +141,15 @@
                           </v-lazy>
                         </v-col>
                         <v-col>
+                          <v-btn
+                            color="primary"
+                            @click="add_galaxy_data_point()"
+                          >
+                          <v-icon>mdi-plus</v-icon>
+                          Add data
+                          </v-btn>
                           <!-- TABLE to hold Selected Galaxies -->
-                          <velocity-table>
-                          </velocity-table>
+                          <c-galaxy-table/>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -501,8 +507,14 @@
                           </v-btn>
                         </v-col>
                         <v-col>
-                          <dist-table>
-                          </dist-table>
+                          <c-distance-table/>
+                          <v-btn
+                            color="primary"
+                            @click="add_distance_data_point()"
+                          >
+                          <v-icon>mdi-plus</v-icon>
+                          Add data
+                          </v-btn>
                           <todo-alert>
                             <ul>
                               <li>When students click on a row of the table to choose their galaxy, the WWT window will display that galaxy with the measurement tools (so this won't need to have both a "Select galaxy" and "Estimate Distance" tab. It can be consolidated to just an Estimate Distance header.)

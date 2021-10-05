@@ -55,6 +55,8 @@ class Table(VuetifyTemplate, HubListener):
                            handler=self._on_data_collection_updated)
         self.hub.subscribe(self, DataCollectionDeleteMessage,
                            handler=self._on_data_collection_updated)
+        self.hub.subscribe(self, DataUpdateMessage,
+                           handler=self._on_data_updated, filter=self._message_filter)
 
         # Listen for changes to selected rows
         self.observe(self._on_selected_changed, names=['selected'])
@@ -76,7 +78,7 @@ class Table(VuetifyTemplate, HubListener):
         return state
 
     def _selection_from_state(self, state):
-        mask = state.to_mask()
+        mask = state.to_mask(self.glue_data)
         return [item for index, item in enumerate(self.items) if mask[index]]
 
     def _populate_table(self):
@@ -88,7 +90,7 @@ class Table(VuetifyTemplate, HubListener):
         self.headers[0]['align'] = 'start'
         self.items = [
             {
-                component: getattr(row, component) for component in self.glue_components
+                component : getattr(row, component, None) for component in self.glue_components
             } for row in df.itertuples()
         ]
 
@@ -98,14 +100,24 @@ class Table(VuetifyTemplate, HubListener):
         self._subset_group = self.data_collection.new_subset_group(self._subset_group_label, state)
         self._subset_group.style.color = self.subset_color
 
-    # def _on_data_updated(self):
-    #     self.selected = self._selection_from_state(self._subset_group.state)
+    def _on_data_updated(self, message=None):
+        if self._subset_group is not None:
+            self.selected = self._selection_from_state(self._subset_group.subset_state)
+            self._populate_table()
 
     def _on_data_deleted(self):
         self.data_collection.remove_subset_group(self._subset_group)
         self._subset_group = None
 
     def _on_data_collection_updated(self, message=None):
+
+        # print("Table received a message:")
+        # print(type(message))
+        # print(message.data.label)
+
+        # print("Is this message about our data?")
+        # print(message.data.label == self._data_label)
+
         if message is not None and message.data.label == self._data_label:
             if isinstance(message, DataCollectionAddMessage):
                 self._on_data_added()
