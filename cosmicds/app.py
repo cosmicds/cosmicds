@@ -2,6 +2,7 @@ from os.path import join
 from pathlib import Path
 
 from astropy.modeling import models, fitting
+from bqplot import figure
 from echo import CallbackProperty
 from echo.core import add_callback
 from glue.core.state_objects import State
@@ -13,6 +14,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
+from numpy import bitwise_or
 from traitlets import Dict, List
 
 from .components.footer import Footer
@@ -59,6 +61,8 @@ class ApplicationState(State):
     alldata_histogram_selections = CallbackProperty([0,1])
     sandbox_histogram_selections = CallbackProperty([0])
 
+    morphology_selections = CallbackProperty([0,1,2])
+
 
 # Everything in this class is exposed directly to the app.vue.
 class Application(VuetifyTemplate):
@@ -99,6 +103,7 @@ class Application(VuetifyTemplate):
         add_callback(self.state, 'class_histogram_selections', self._class_histogram_selection_update)
         add_callback(self.state, 'alldata_histogram_selections', self._alldata_histogram_selection_update)
         add_callback(self.state, 'sandbox_histogram_selections', self._sandbox_histogram_selection_update)
+        add_callback(self.state, 'morphology_selections', self._morphology_selection_update)
 
         # Load the galaxy position data
         # This adds the file to the glue data collection at the top level
@@ -132,8 +137,8 @@ class Application(VuetifyTemplate):
         spectrum_viewer.layers[0].state.attribute = data.id['flux']
 
         # Scatter viewers used for the display of the measured galaxy data
-        hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(4)]
-        hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer = hub_viewers
+        hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(5)]
+        hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer = hub_viewers
 
         # Create a subset for the student
         class_data = self.data_collection['HubbleData_ClassSample']
@@ -142,7 +147,7 @@ class Application(VuetifyTemplate):
         # Set up the scatter viewers
         style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "default_scatter.json")
-        for viewer in hub_viewers[:-1]:
+        for viewer in hub_viewers[:-2]:
 
             # Add the data from the first student
             viewer.add_subset(student_subset)
@@ -220,6 +225,21 @@ class Application(VuetifyTemplate):
         all_distr_viewer.state.x_att = self.data_collection["HubbleSummary_Students"].id['age']
         sandbox_distr_viewer.state.x_att = self.data_collection["HubbleSummary_Students"].id['age']
 
+        # Set up the subsets in the morphology viewer
+        galaxy_data = self.data_collection['galaxy_data']
+        elliptical_subset = galaxy_data.new_subset(galaxy_data.id['MorphType'] == 'E', label='Elliptical', color='orange')
+        spiral_subset = galaxy_data.new_subset(bitwise_or.reduce([galaxy_data.id["MorphType"] == x for x in ['Sa', 'Sb']]), label='Spiral', color='green')
+        irregular_subset = galaxy_data.new_subset(galaxy_data.id["MorphType"] == 'Ir', label='Irregular', color='red')
+        morphology_subsets = [elliptical_subset, spiral_subset, irregular_subset]
+        for subset in morphology_subsets:
+            hub_morphology_viewer.add_subset(subset)
+        self._elliptical_subset = elliptical_subset
+        self._spiral_subset = spiral_subset
+        self._irregular_subset = irregular_subset
+        hub_morphology_viewer.state.x_att = self.data_collection['galaxy_data'].id['EstDist_Mpc']
+        hub_morphology_viewer.state.y_att = self.data_collection['galaxy_data'].id['velocity_km_s']
+        update_figure_css(hub_morphology_viewer, style_path=style_path)
+
         # Set up the listener to sync the histogram <--> scatter viewers
         meas_data = self.data_collection["HubbleData_ClassSample"]
         summ_data = self.data_collection["HubbleSummary_ClassSample"]
@@ -282,6 +302,7 @@ class Application(VuetifyTemplate):
             'hub_comparison_viewer': hub_comparison_viewer,
             'hub_students_viewer': hub_students_viewer,
             'hub_fit_viewer': hub_fit_viewer,
+            'hub_morphology_viewer': hub_morphology_viewer,
             'wwt_viewer': wwt_viewer,
             'class_distr_viewer': class_distr_viewer,
             'all_distr_viewer': all_distr_viewer,
@@ -484,27 +505,39 @@ class Application(VuetifyTemplate):
                 viewer.add_data(data)
                 viewer.x_att = data.id['age']
 
+    def _scatter_selection_update(self, viewer_id, data, selections):
+        viewer = self._viewer_handlers[viewer_id]
+        labels = [x.label for (i,x) in enumerate(data) if i in selections]
+
+        for layer in viewer.layers:
+            layer.state.visible = layer.state.layer.label in labels
+
+        # We only want to show lines for the layers that are visible
+        line_info = self._fit_lines.get(viewer_id, [])
+        all_lines = [x[0] for x in line_info]
+
+        figure = viewer.figure
+        not_lines = [mark for mark in figure.marks if mark not in all_lines]
+        lines = [x[0] for x in line_info if x[1] in labels]
+        figure.marks = not_lines + lines
+
     def _hubble_comparison_selection_update(self, selections):
         # Indices:
         # 0: Student's data
         # 1: Their class's data
         # 2: All public data
         viewer_id = 'hub_comparison_viewer'
-        viewer = self._viewer_handlers[viewer_id]
         data = [self._student_data, self._class_data, self._all_data]
-        labels = [x.label for (i,x) in enumerate(data) if i in selections]
+        self._scatter_selection_update(viewer_id, data, selections)
 
-        for layer in viewer.layers:
-            layer.state.visible = layer.state.layer.label in labels
-        
-        # We only want to show lines for the layers that are visible
-        line_info = self._fit_lines.get(viewer_id, [])
-        all_lines = [x[0] for x in line_info]
-        
-        figure = viewer.figure
-        not_lines = [mark for mark in figure.marks if mark not in all_lines]
-        lines = [x[0] for x in line_info if x[1] in labels]
-        figure.marks = not_lines + lines
+    def _morphology_selection_update(self, selections):
+        # Indices:
+        # 0: Elliptical
+        # 1: Spiral
+        # 2: Irregular
+        viewer_id = 'hub_morphology_viewer'
+        data = [self._elliptical_subset, self._spiral_subset, self._irregular_subset]
+        self._scatter_selection_update(viewer_id, data, selections)
 
     def _histogram_selection_update(self, selections, viewer_id, line_options=[], layer_mapping=None):
         """
