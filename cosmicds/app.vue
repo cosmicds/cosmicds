@@ -964,7 +964,7 @@
                         ><v-btn
                             color="primary"
                             @click="fit_lines({
-                              'viewer_id': 'hub_comparison_viewer'
+                              'viewer_id': 'hub_morphology_viewer'
                             })"
                           >
                             Fit Lines
@@ -975,15 +975,8 @@
                           >
                             <v-list-item-group
                               multiple
-                              v-model="state.hubble_comparison_selections"
+                              v-model="state.morphology_selections"
                             >
-                            <!--
-                              <v-list-item
-                                v-for="(option, index) in ['My data', 'Class data', 'All data']"
-                                :key="index"
-                                :value="index"
-                              >
-                              -->
                               <v-list-item
                                 v-for="(option, index) in ['Elliptical', 'Spiral', 'Irregular']"
                                 :key="index"
@@ -1008,12 +1001,9 @@
                         <v-col>
                           <v-lazy>
                             <jupyter-widget
-                              :widget="viewers.hub_comparison_viewer"
+                              :widget="viewers.hub_morphology_viewer"
                             ></jupyter-widget>
                           </v-lazy>
-                          <todo-alert>
-                            Right now the check boxes are still tied to "My data", "Class data", and "All data". Need to replace those with Elliptical, Spiral, and Irregular subsets.
-                          </todo-alert>
                         </v-col>
                       </v-row>
                       <v-row>
