@@ -607,14 +607,7 @@
                             ></jupyter-widget>
                           </v-lazy>
                           <!-- TABLE to hold Galaxy, Velocity & Distance -->
-                          <mydata-table>
-                          </mydata-table>
-                          <todo-alert>
-                            Enable a button to draw your own fit line (unless this is
-                            prohibitively complicated). Plot drawn and calculated best
-                            fit lines. Display should include only this student's
-                            4-5 data points. 
-                          </todo-alert>
+                          <c-fit-table />
                         </v-col>
                       </v-row>
                       <v-row

@@ -38,13 +38,12 @@ class Table(VuetifyTemplate, HubListener):
         components = kwargs.get('glue_components', [x.label for x in data.components])
         self.key_component = kwargs.get('key_component', components[0])
         self._glue_data = data
-        self._data_label = data.label
 
         self.title = kwargs.get('title', '')
 
         self._glue_components = components
         self.glue_component_names = kwargs.get('names', components)
-        self._message_filter = lambda message: message.attribute in self._glue_components
+        self._message_filter = lambda message: message.data.label == self._glue_data.label and message.attribute in self._glue_components
 
         self.single_select = kwargs.get('single_select', False)
         self.subset_color = kwargs.get('color', Table.default_color)
@@ -78,8 +77,10 @@ class Table(VuetifyTemplate, HubListener):
 
     @glue_data.setter
     def glue_data(self, data):
+        print("Setting glue data")
         self._glue_data = data
-        self._populate_table()
+        #self.hub.unsubscribe(self, DataUpdateMessage)
+        #self.hub.subscribe(self, DataUpdateMessage, hander=self._on_data_updated, filter=self._message)
 
     def _subset_state_from_selected(self, selected):
         keys = [x[self.key_component] for x in selected]
@@ -107,7 +108,7 @@ class Table(VuetifyTemplate, HubListener):
         ]
 
     def _on_data_added(self):
-        self._glue_data = self.data_collection[self._data_label]
+        self._glue_data = self.data_collection[self._glue_data.label]
         state = self._subset_state_from_selected(self.selected)
         self._subset_group = self.data_collection.new_subset_group(self._subset_group_label, state)
         self._subset_group.style.color = self.subset_color
@@ -115,7 +116,7 @@ class Table(VuetifyTemplate, HubListener):
     def _on_data_updated(self, message=None):
         if self._subset_group is not None:
             self.selected = self._selection_from_state(self._subset_group.subset_state)
-            self._populate_table()
+        self._populate_table()
 
     def _on_data_deleted(self):
         self.data_collection.remove_subset_group(self._subset_group)
@@ -128,9 +129,9 @@ class Table(VuetifyTemplate, HubListener):
         # print(message.data.label)
 
         # print("Is this message about our data?")
-        # print(message.data.label == self._data_label)
+        # print(message.data.label == self._glue_data.label)
 
-        if message is not None and message.data.label == self._data_label:
+        if message is not None and message.data.label == self._glue_data.label:
             if isinstance(message, DataCollectionAddMessage):
                 self._on_data_added()
             else:

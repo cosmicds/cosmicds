@@ -142,7 +142,9 @@ class Application(VuetifyTemplate):
         self._galaxy_table_components = ['gal_name', 'element', 'restwave', 'measwave']
         galaxy_table_names = ['Galaxy Name', 'Element', 'Rest Wavelength (nm)', 'Observed Wavelength (nm)']
         self._distance_table_components = ['gal_name', 'distance', 'velocity']
-        distance_table_names = ['Galaxy', 'Distance (Mpc)', 'Velocity']
+        distance_table_names = ['Galaxy Name', 'Distance (Mpc)', 'Velocity']
+        self._fit_table_components = ['gal_name', 'type', 'velocity', 'distance']
+        fit_table_names = ['Galaxy Name', 'Galaxy Type', 'Velocity', 'Distance']
 
         measurement_data = Data(label='student_measurements', **{x : [] for x in student_data_fields})
         class_data = self.data_collection['HubbleData_ClassSample']
@@ -160,7 +162,9 @@ class Application(VuetifyTemplate):
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
                                 key_component='gal_name', names=galaxy_table_names, title=table_title),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
-                                key_component='distance', names=distance_table_names, title=table_title)
+                                key_component='distance', names=distance_table_names, title=table_title),
+                            'c-fit-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
+                                key_component='distance', names=distance_table_names, title=table_title),
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
                         #        self,
@@ -670,6 +674,9 @@ class Application(VuetifyTemplate):
         self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
         self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
+        # Set the table on screen 3 to use the completed data
+        self.components['c-fit-table'].glue_data = self._student_data
+
     def _update_data_component(self, data, attribute, values):
         if attribute in data.component_ids():
             data.update_components({data.id[attribute] : values})
@@ -742,6 +749,9 @@ class Application(VuetifyTemplate):
         data = self.data_collection['student_measurements']
         distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
         velocity = self._dummy_student_data['velocity'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
+        print(distance)
+        print(len(distance))
+        print(data.size)
         self._new_dist_vel_data_update(distance, velocity)
     
         self._dummy_distance_counter += 1
