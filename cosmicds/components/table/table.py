@@ -22,6 +22,7 @@ class Table(VuetifyTemplate, HubListener):
     search = Unicode().tag(sync=True)
     single_select = Bool(False).tag(sync=True)
     selected = List().tag(sync=True)
+    title = Unicode().tag(sync=True)
     use_search = Bool(False).tag(sync=True)
 
     def __init__(self, session, data, *args, **kwargs):
@@ -36,12 +37,14 @@ class Table(VuetifyTemplate, HubListener):
 
         components = kwargs.get('glue_components', [x.label for x in data.components])
         self.key_component = kwargs.get('key_component', components[0])
-        self.glue_data = data
+        self._glue_data = data
         self._data_label = data.label
 
-        self.glue_components = components
+        self.title = kwargs.get('title', '')
+
+        self._glue_components = components
         self.glue_component_names = kwargs.get('names', components)
-        self._message_filter = lambda message: message.attribute in self.glue_components
+        self._message_filter = lambda message: message.attribute in self._glue_components
 
         self.single_select = kwargs.get('single_select', False)
         self.subset_color = kwargs.get('color', Table.default_color)
@@ -69,33 +72,42 @@ class Table(VuetifyTemplate, HubListener):
     def hub(self):
         return self._session.hub
 
+    @property
+    def glue_data(self):
+        return self._glue_data
+
+    @glue_data.setter
+    def glue_data(self, data):
+        self._glue_data = data
+        self._populate_table()
+
     def _subset_state_from_selected(self, selected):
         keys = [x[self.key_component] for x in selected]
         if keys:
-            state = np.bitwise_or.reduce([self.glue_data.id[self.key_component] == x for x in keys])
+            state = np.bitwise_or.reduce([self._glue_data.id[self.key_component] == x for x in keys])
         else:
             state = SubsetState()
         return state
 
     def _selection_from_state(self, state):
-        mask = state.to_mask(self.glue_data)
+        mask = state.to_mask(self._glue_data)
         return [item for index, item in enumerate(self.items) if mask[index]]
 
     def _populate_table(self):
-        df = self.glue_data.to_dataframe()
+        df = self._glue_data.to_dataframe()
         self.headers = [{
             'text': self.glue_component_names[index],
-            'value': self.glue_components[index]
-        } for index in range(len(self.glue_components))]
+            'value': self._glue_components[index]
+        } for index in range(len(self._glue_components))]
         self.headers[0]['align'] = 'start'
         self.items = [
             {
-                component : getattr(row, component, None) for component in self.glue_components
+                component : getattr(row, component, None) for component in self._glue_components
             } for row in df.itertuples()
         ]
 
     def _on_data_added(self):
-        self.glue_data = self.data_collection[self._data_label]
+        self._glue_data = self.data_collection[self._data_label]
         state = self._subset_state_from_selected(self.selected)
         self._subset_group = self.data_collection.new_subset_group(self._subset_group_label, state)
         self._subset_group.style.color = self.subset_color

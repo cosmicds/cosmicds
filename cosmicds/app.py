@@ -108,14 +108,14 @@ class Application(VuetifyTemplate):
             self._application_handler.load_data(join(output_dir, f"{dataset}.csv"), label=dataset)
 
         self._dummy_student_data = {
-            'gal_name': ['Galaxy A', 'Galaxy B', 'Galaxy C', 'Galaxy D'],
-            'element_level': ['Hα', 'Ca II', 'Hα', 'Hα'],
-            'rest_lambda': [653.6, 502.6, 685.4, 512.0],
-            'obs_lambda': [692.2, 521.1, 711.1, 555.6],
-            'student_id': [1, 1, 1, 1, 1],
-            'velocity': [10167.21, 5057.93, 20842.38, 9612.17, 18219],
-            'distance': [116.65, 78.22, 127.85, 134.49, 214.53],
-            'type': ['G', 'G', 'G', 'G', 'G']
+            'gal_name': ['Haro 11', 'Hercules A', 'GOODS North', 'NGC 6052', 'UGC 2369', 'Abell 370'],
+            'element': ['H-alpha', 'Ca or K', 'H-alpha', 'H-alpha', 'H-alpha', 'H-alpha'],
+            'restwave': [656.3, 123.4, 656.3, 656.3, 656.3, 656.3],
+            'measwave': [669.7, 234.5, 725.6, 666.6, 676.8, 903.0],
+            'student_id': [1, 1, 1, 1, 1, 1],
+            'velocity': [10167.21, 5057.93, 20842.38, 9612.17, 18219, 16101.2],
+            'distance': [116.65, 78.22, 127.85, 134.49, 214.53, 176.95],
+            'type': ['irregular', 'elliptical', 'spiral', 'spiral', 'spiral', 'irregular']
         }
         self._dummy_student_counter = 0
         self._dummy_distance_counter = 0
@@ -138,16 +138,9 @@ class Application(VuetifyTemplate):
         hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer = hub_viewers
 
         # Set up glue links for the Hubble data sets
-        student_data_fields = [
-            "gal_name",
-            "element_level",
-            "rest_lambda",
-            "obs_lambda",
-            "distance",
-            "velocity",
-        ]
-        self._galaxy_table_components = ['gal_name', 'element_level', 'rest_lambda', 'obs_lambda']
-        galaxy_table_names = ['Galaxy', 'Element/Level', 'Rest λ', 'Observed λ']
+        student_data_fields = self._dummy_student_data.keys()
+        self._galaxy_table_components = ['gal_name', 'element', 'restwave', 'measwave']
+        galaxy_table_names = ['Galaxy Name', 'Element', 'Rest Wavelength (nm)', 'Observed Wavelength (nm)']
         self._distance_table_components = ['gal_name', 'distance', 'velocity']
         distance_table_names = ['Galaxy', 'Distance (Mpc)', 'Velocity']
 
@@ -162,11 +155,12 @@ class Application(VuetifyTemplate):
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
         # key-value pair to the components dictionary.
+        table_title = 'My Galaxies | Velocity Measurements'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
-                                key_component='gal_name', names=galaxy_table_names),
+                                key_component='gal_name', names=galaxy_table_names, title=table_title),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
-                                key_component='distance', names=distance_table_names)
+                                key_component='distance', names=distance_table_names, title=table_title)
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
                         #        self,
@@ -666,39 +660,30 @@ class Application(VuetifyTemplate):
         toolbar.active_tool = None
         self._histogram_listener.clear_subset()
 
-    def _setup_line_draw(self):
-        hub_fit_viewer = self._viewer_handlers['hub_fit_viewer']
-        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
-        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
-    def _on_first_distance_point_added(self):
+    def _on_first_complete_point_added(self):
 
         # The scatter viewer's ImageGL mark isn't present when the viewer is initialized;
         # it's only added once at least one layer exists
         # so we wait until at least one piece of data has been added to do this
-        self._setup_line_draw()
+        hub_fit_viewer = self._viewer_handlers['hub_fit_viewer']
+        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
+        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
-    def vue_add_distance_data_point(self, _args):
-        if self._dummy_distance_counter >= len(self._dummy_student_data):
-            return
+    def _update_data_component(self, data, attribute, values):
+        if attribute in data.component_ids():
+            data.update_components({data.id[attribute] : values})
+        else:
+            data.add_component(Component.autotyped(values), attribute)
+        data.broadcast(attribute)
 
-        dc = self.data_collection
+    def _new_dist_vel_data_update(self, distance, velocity):
+
+        # Update the measurement Data object
         label = 'student_measurements'
-        data = dc[label]
-
-        distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
-        if 'distance' in data.component_ids():
-            data.update_components({data.id['distance'] : distance})
-        else:
-            data.add_component(Component.autotyped(distance), 'distance')
-        data.broadcast('distance')
-
-        velocity = self._dummy_student_data['velocity'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
-        if 'velocity' in data.component_ids():
-            data.update_components({data.id['velocity'] : velocity })
-        else:
-            data.add_component(Component.autotyped(velocity), 'velocity')
-        data.broadcast('velocity')
+        data = self.data_collection[label]
+        self._update_data_component(data, 'distance', distance)
+        self._update_data_component(data, 'velocity', velocity)
 
         # Create a new Data object from all of the 'finished' data points
         df = data.to_dataframe()
@@ -734,30 +719,43 @@ class Application(VuetifyTemplate):
                 update_figure_css(self._viewer_handlers[viewer_id], style_path=style_path)
             except:
                 pass
-    
-        self._dummy_distance_counter += 1
 
         # The first time we add a distance/velocity point, we need to do some stuff
-        if self._dummy_distance_counter == 1:
-            self._on_first_distance_point_added()
+        if student_data.size == 1:
+            self._on_first_complete_point_added()
 
+    def _new_galaxy_data_update(self, new_data):
+        dc = self.data_collection
+        label = 'student_measurements'
 
+        if label in dc:
+            data = dc[label]
+            dc.remove(data)
+        
+        dc.append(new_data)
+        self._student_data = new_data
+
+    def vue_add_distance_data_point(self, _args):
+        if self._dummy_distance_counter >= len(self._dummy_student_data):
+            return
+
+        data = self.data_collection['student_measurements']
+        distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
+        velocity = self._dummy_student_data['velocity'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
+        self._new_dist_vel_data_update(distance, velocity)
+    
+        self._dummy_distance_counter += 1
+            
     def vue_add_galaxy_data_point(self, _args):
         if self._dummy_student_counter >= len(self._dummy_student_data):
             return
 
-        dc = self.data_collection
-        label = 'student_measurements'
-        data = dc[label]
         self._dummy_student_counter += 1
         component_mapping = {
             k : v[:self._dummy_student_counter] for k, v in self._dummy_student_data.items() if k not in ['distance', 'velocity']
         }
-
-        new_data = Data(label=label, **component_mapping)
-        dc.remove(data)
-        dc.append(new_data)
-        self._student_data = new_data
+        new_data = Data(label='student_measurements', **component_mapping)
+        self._new_galaxy_data_update(new_data)
 
 
     # These three properties provide convenient access to the slopes of the the fit lines

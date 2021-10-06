@@ -1,8 +1,9 @@
 <template>
   <v-card>
-    <v-card-title v-if="use_search">
+    <v-card-title v-if="title">
+      {{ title }}
       <v-spacer></v-spacer>
-      <v-text-field
+      <v-text-field v-if="use_search"
         v-model="search"
         append-icon="mdi-magnify"
         label="Search"
@@ -11,6 +12,7 @@
       ></v-text-field>
     </v-card-title>
     <v-data-table
+      dense
       v-model="selected"
       :headers="headers"
       :items="items"
