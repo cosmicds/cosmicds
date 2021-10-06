@@ -25,14 +25,3 @@
     </v-data-table>
   </v-card>
 </template>
-
-<script>
-  export default {
-    data () {
-      return {
-        search: '',
-        headers: [],
-      }
-    },
-  }
-</script>

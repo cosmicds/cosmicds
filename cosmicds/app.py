@@ -117,7 +117,7 @@ class Application(VuetifyTemplate):
             'distance': [116.65, 78.22, 127.85, 134.49, 214.53, 176.95],
             'type': ['irregular', 'elliptical', 'spiral', 'spiral', 'spiral', 'irregular']
         }
-        self._dummy_student_counter = 0
+        self._dummy_galaxy_counter = 0
         self._dummy_distance_counter = 0
 
         # Instantiate the initial viewers
@@ -139,15 +139,25 @@ class Application(VuetifyTemplate):
 
         # Set up glue links for the Hubble data sets
         student_data_fields = self._dummy_student_data.keys()
-        self._galaxy_table_components = ['gal_name', 'element', 'restwave', 'measwave']
-        galaxy_table_names = ['Galaxy Name', 'Element', 'Rest Wavelength (nm)', 'Observed Wavelength (nm)']
-        self._distance_table_components = ['gal_name', 'distance', 'velocity']
-        distance_table_names = ['Galaxy Name', 'Distance (Mpc)', 'Velocity']
+        table_columns_map = {
+            'gal_name' : 'Galaxy Name',
+            'element' : 'Element',
+            'restwave' : 'Rest Wavelength (nm)',
+            'measwave' : 'Observed Wavelength (nm)',
+            'velocity' : 'Velocity',
+            'distance' : 'Distance',
+            'type' : 'Galaxy Type'
+        }
+        self._galaxy_table_components = ['gal_name', 'element', 'restwave', 'measwave', 'velocity']
+        galaxy_table_names = [table_columns_map[x] for x in self._galaxy_table_components]
+        self._distance_table_components = ['gal_name', 'element', 'restwave', 'measwave', 'velocity', 'distance']
+        distance_table_names = [table_columns_map[x] for x in self._distance_table_components]
         self._fit_table_components = ['gal_name', 'type', 'velocity', 'distance']
-        fit_table_names = ['Galaxy Name', 'Galaxy Type', 'Velocity', 'Distance']
+        fit_table_names = [table_columns_map[x] for x in self._fit_table_components]
 
-        measurement_data = Data(label='student_measurements', **{x : [] for x in student_data_fields})
+        measurement_data = Data(label='student_measurements', **{x : array([], dtype='float64') for x in student_data_fields})
         class_data = self.data_collection['HubbleData_ClassSample']
+        self._measurement_data = measurement_data
         self.data_collection.append(measurement_data)
         all_data = self.data_collection['HubbleData_All']
         for component in class_data.components:
@@ -162,9 +172,9 @@ class Application(VuetifyTemplate):
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
                                 key_component='gal_name', names=galaxy_table_names, title=table_title),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
-                                key_component='distance', names=distance_table_names, title=table_title),
-                            'c-fit-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
-                                key_component='distance', names=distance_table_names, title=table_title),
+                                key_component='gal_name', names=distance_table_names, title=table_title),
+                            'c-fit-table': Table(self.session, measurement_data, glue_components=self._fit_table_components,
+                                key_component='gal_name', names=fit_table_names, title=table_title),
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
                         #        self,
@@ -294,6 +304,14 @@ class Application(VuetifyTemplate):
             self.session.edit_subset_mode.edit_subset = []
             self._histogram_listener.ignore()
         extend_tool(class_distr_viewer, 'bqplot:xrange', hist_selection_activate, hist_selection_deactivate)
+
+        # We want the hub_fit_viewer to be selecting for the same subset as the table
+        def hub_fit_selection_activate():
+            self.session.edit_subset_mode.edit_subset = [self.components['c-fit-table'].subset_group]
+        def hub_fit_selection_deactivate():
+            self.session.edit_subset_mode.edit_subset = []
+        for tool_id in ['bqplot:xrange', 'bqplot:yrange', 'bqplot:rectangle', 'bqplot:circle']:
+            extend_tool(hub_fit_viewer, tool_id, hub_fit_selection_activate, hub_fit_selection_deactivate)
 
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
@@ -665,56 +683,20 @@ class Application(VuetifyTemplate):
         self._histogram_listener.clear_subset()
 
 
-    def _on_first_complete_point_added(self):
-
-        # The scatter viewer's ImageGL mark isn't present when the viewer is initialized;
-        # it's only added once at least one layer exists
-        # so we wait until at least one piece of data has been added to do this
-        hub_fit_viewer = self._viewer_handlers['hub_fit_viewer']
-        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
-        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
-
-        # Set the table on screen 3 to use the completed data
-        self.components['c-fit-table'].glue_data = self._student_data
-
-    def _update_data_component(self, data, attribute, values):
-        if attribute in data.component_ids():
-            data.update_components({data.id[attribute] : values})
-        else:
-            data.add_component(Component.autotyped(values), attribute)
-        data.broadcast(attribute)
-
-    def _new_dist_vel_data_update(self, distance, velocity):
-
-        # Update the measurement Data object
-        label = 'student_measurements'
-        data = self.data_collection[label]
-        self._update_data_component(data, 'distance', distance)
-        self._update_data_component(data, 'velocity', velocity)
-
-        # Create a new Data object from all of the 'finished' data points
-        df = data.to_dataframe()
-        df = df.dropna()
-        components = { col : list(df[col]) for col in df.columns }
-        student_data = Data(label='student_data', **components)
-
-        viewer_ids = ['hub_const_viewer', 'hub_fit_viewer', 'hub_comparison_viewer', 'hub_students_viewer']
-        if 'student_data' in self.data_collection:
-            old_sd = self.data_collection['student_data']
-            for viewer_id in viewer_ids:
-                self._viewer_handlers[viewer_id].remove_data(old_sd)
-            self.data_collection.remove(old_sd)
-        self.data_collection.append(student_data)
-        self._student_data = student_data
+    def _on_first_complete_point_added(self, student_data):
 
         # Put the new glue Data object into the appropriate viewers
         # We have to do this, since glue has trouble if we try to add a size-0 data set to the viewer
+        self._student_data = student_data
+        self.data_collection.append(student_data)
         style_path = str(Path(__file__).parent / "data" /
                                     "styles" / "default_scatter.json")
         for component in self._class_data.components:
             field = component.label
-            if field in data.component_ids():
+            if field in student_data.component_ids():
                 self._application_handler.add_link(student_data, field, self._class_data, field)
+        
+        viewer_ids = ['hub_const_viewer', 'hub_fit_viewer', 'hub_comparison_viewer', 'hub_students_viewer']
         for viewer_id in viewer_ids:
             viewer = self._viewer_handlers[viewer_id]
             viewer.add_data(student_data)
@@ -727,20 +709,56 @@ class Application(VuetifyTemplate):
             except:
                 pass
 
-        # The first time we add a distance/velocity point, we need to do some stuff
-        if student_data.size == 1:
-            self._on_first_complete_point_added()
+        self.components['c-fit-table'].glue_data = student_data
 
+        # The scatter viewer's ImageGL mark isn't present when the viewer is initialized;
+        # it's only added once at least one layer exists
+        # so we wait until at least one piece of data has been added to do this
+        hub_fit_viewer = self._viewer_handlers['hub_fit_viewer']
+        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
+        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
+
+    def _update_data_component(self, data, attribute, values):
+        if attribute in data.component_ids():
+            data.update_components({data.id[attribute] : values})
+        else:
+            data.add_component(Component.autotyped(values), attribute)
+        data.broadcast(attribute)
+
+    def _new_dist_data_update(self, distance):
+
+        # Update the measurement Data object
+        label = 'student_measurements'
+        data = self.data_collection[label]
+        self._update_data_component(data, 'distance', distance)
+
+        # Create a new Data object from all of the 'finished' data points
+        # and update to match that
+        df = data.to_dataframe()
+        df = df.dropna()
+
+        main_comps = [x.label for x in data.main_components]
+        components = { col : list(df[col]) for col in main_comps }
+        new_data = Data(label='student_data', **components)
+
+        initial_size = self._student_data.size if hasattr(self, '_student_data') else 0
+        new_size = new_data.size
+
+        # The first time we add a distance/velocity point, we need to do some stuff
+        if initial_size == 0 and new_size >= 1:
+            self._on_first_complete_point_added(new_data)
+        else:
+            self._student_data.update_values_from_data(new_data)
+            viewer_ids = ['hub_const_viewer', 'hub_fit_viewer', 'hub_comparison_viewer', 'hub_students_viewer']
+            for viewer_id in viewer_ids:
+                viewer = self._viewer_handlers[viewer_id]
+                viewer.state.reset_limits()
+            
     def _new_galaxy_data_update(self, new_data):
         dc = self.data_collection
         label = 'student_measurements'
-
-        if label in dc:
-            data = dc[label]
-            dc.remove(data)
-        
-        dc.append(new_data)
-        self._student_data = new_data
+        data = dc[label]
+        data.update_values_from_data(new_data)
 
     def vue_add_distance_data_point(self, _args):
         if self._dummy_distance_counter >= len(self._dummy_student_data):
@@ -748,22 +766,25 @@ class Application(VuetifyTemplate):
 
         data = self.data_collection['student_measurements']
         distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
-        velocity = self._dummy_student_data['velocity'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
-        print(distance)
-        print(len(distance))
-        print(data.size)
-        self._new_dist_vel_data_update(distance, velocity)
+        self._new_dist_data_update(distance,)
     
         self._dummy_distance_counter += 1
             
     def vue_add_galaxy_data_point(self, _args):
-        if self._dummy_student_counter >= len(self._dummy_student_data):
+        if self._dummy_galaxy_counter >= len(self._dummy_student_data):
             return
 
-        self._dummy_student_counter += 1
+        self._dummy_galaxy_counter += 1
         component_mapping = {
-            k : v[:self._dummy_student_counter] for k, v in self._dummy_student_data.items() if k not in ['distance', 'velocity']
+            k : v[:self._dummy_galaxy_counter] for k, v in self._dummy_student_data.items() if k != 'distance'
         }
+
+        if 'student_measurements' in self.data_collection:
+            data = self.data_collection['student_measurements']
+            distance = list(data['distance']) + [None]
+        else:
+            distance = [None]*self._dummy_galaxy_counter
+        component_mapping['distance'] = distance
         new_data = Data(label='student_measurements', **component_mapping)
         self._new_galaxy_data_update(new_data)
 
