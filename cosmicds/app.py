@@ -2,21 +2,18 @@ from os.path import join
 from pathlib import Path
 
 from astropy.modeling import models, fitting
-from bqplot import figure
 from echo import CallbackProperty
 from echo.core import add_callback
 from glue.core import Component, Data
 from glue.core.state_objects import State
-from glue.core.subset import ElementSubsetState
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
-from glue_jupyter.bqplot.image import BqplotImageView
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from numpy import array, bitwise_or, nan
+from numpy import array, bitwise_or
 from traitlets import Dict, List
 
 from .components.footer import Footer
@@ -704,10 +701,7 @@ class Application(VuetifyTemplate):
                 viewer.state.x_att = student_data.id['distance']
                 viewer.state.y_att = student_data.id['velocity']
             viewer.state.reset_limits()
-            try:
-                update_figure_css(self._viewer_handlers[viewer_id], style_path=style_path)
-            except:
-                pass
+            update_figure_css(self._viewer_handlers[viewer_id], style_path=style_path)
 
         self.components['c-fit-table'].glue_data = student_data
 
