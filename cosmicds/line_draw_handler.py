@@ -116,3 +116,11 @@ class LineDrawHandler(object):
                 self._viewer.figure.interaction = self._interaction
         else:
             self._viewer.figure.interaction = self._original_interaction
+
+    def clear(self):
+        figure = self._viewer.figure
+        to_remove = [x for x in [self._drawn_line, self._endpt] if x is not None]
+        figure.marks = [mark for mark in figure.marks if mark not in to_remove]
+        self._drawn_line = None
+        self._endpt = None
+        self._app.state.draw_on = False
