@@ -549,12 +549,34 @@
                             class="d-flex mb-4"
                           >
                             <v-btn
+                              color="red"
+                              class="flex-grow-1 white--text"
+                              @click="
+                                state.points_plotted = true;
+                                show_fit_points();"
+                            >
+                            plot my points
+                            <v-spacer></v-spacer>
+                            <v-icon
+                                right
+                                dark
+                                class="px-4"
+                              >
+                                mdi-chart-scatter-plot
+                              </v-icon>
+                            </v-btn>
+                          </div>
+                          <div
+                            class="d-flex mb-4"
+                          >
+                            <v-btn
                               :outlined="state.draw_on"
+                              :disabled="!state.points_plotted"
                               color="orange"
                               class="flex-grow-1 white--text"
-                              @click="state.draw_on = !state.draw_on"
+                              @click="handle_fitline_click()"
                             >
-                              draw a fit line
+                              {{ state.bestfit_drawn ? 'erase fit line' : 'draw a fit line' }}
                               <v-spacer></v-spacer>
                               <v-icon
                                 right
@@ -569,10 +591,12 @@
                             class="d-flex mb-4"
                           >
                             <v-btn
+                              :disabled="!state.points_plotted"
                               color="green lighten-1"
                               class="flex-grow-1 white--text"
                               @click="fit_lines({
-                                'viewer_id': 'hub_fit_viewer'
+                                'viewer_id': 'hub_fit_viewer',
+                                'layers': [0]
                                 });
                                 state.bestfit_on = 1"
                             >

@@ -45,8 +45,8 @@ class Table(VuetifyTemplate, HubListener):
         self._glue_components = components
         self._glue_component_names = kwargs.get('names', components)
         self._data_update_filter = lambda message: message.data.label == self._glue_data.label and message.attribute in self._glue_components
-        #self._data_changed_filter = lambda message: message.data.label == self._glue_data.label
-        self._data_changed_filter = lambda _: True
+        self._data_changed_filter = lambda message: message.data.label == self._glue_data.label
+        #self._data_changed_filter = lambda _: True
         self._subset_changed_filter = lambda message: message.subset.label == self._subset_group_label and message.subset.data.label == self._glue_data.label
 
         self.single_select = kwargs.get('single_select', False)
@@ -154,8 +154,8 @@ class Table(VuetifyTemplate, HubListener):
                 self._on_data_deleted()
         self._populate_table()
         
-    def _on_selected_changed(self, _event):
-        state = self._subset_state_from_selected(_event['new'])
+    def _on_selected_changed(self, event):
+        state = self._subset_state_from_selected(event['new'])
         if self._subset_group is None:
             self._subset_group = self.data_collection.new_subset_group(self._subset_group_label, state)
         else:

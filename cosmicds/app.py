@@ -55,6 +55,8 @@ class ApplicationState(State):
 
     draw_on = CallbackProperty(0)
     bestfit_on = CallbackProperty(0)
+    bestfit_drawn = CallbackProperty(False)
+    points_plotted = CallbackProperty(False)
 
     hubble_comparison_selections = CallbackProperty([0])
     class_histogram_selections = CallbackProperty([0])
@@ -107,13 +109,15 @@ class Application(VuetifyTemplate):
         self._dummy_student_data = {
             'gal_name': ['Haro 11', 'Hercules A', 'GOODS North', 'NGC 6052', 'UGC 2369', 'Abell 370'],
             'element': ['H-alpha', 'Ca or K', 'H-alpha', 'H-alpha', 'H-alpha', 'H-alpha'],
-            'restwave': [656.3, 123.4, 656.3, 656.3, 656.3, 656.3],
-            'measwave': [669.7, 234.5, 725.6, 666.6, 676.8, 903.0],
+            'restwave': [656.3, 502.0, 656.3, 656.3, 656.3, 656.3],
+            'measwave': [669.7, 580.0, 725.6, 666.6, 676.8, 903.0],
             'student_id': [1, 1, 1, 1, 1, 1],
-            'velocity': [10167.21, 5057.93, 20842.38, 9612.17, 18219, 16101.2],
-            'distance': [116.65, 78.22, 127.85, 134.49, 214.53, 176.95],
+            'distance': [315, 147, 259, 119, 138, 3789],
             'type': ['irregular', 'elliptical', 'spiral', 'spiral', 'spiral', 'irregular']
         }
+
+        # Calculate the velocities from the wavelengths
+        self._dummy_student_data['velocity'] = [round((3*(10**5)) * (o - r) / r, 0) for o,r in zip(self._dummy_student_data['measwave'], self._dummy_student_data['restwave'])]
         self._dummy_galaxy_counter = 0
         self._dummy_distance_counter = 0
 
@@ -141,8 +145,8 @@ class Application(VuetifyTemplate):
             'element' : 'Element',
             'restwave' : 'Rest Wavelength (nm)',
             'measwave' : 'Observed Wavelength (nm)',
-            'velocity' : 'Velocity',
-            'distance' : 'Distance',
+            'velocity' : 'Velocity (km/s)',
+            'distance' : 'Distance (Mpc)',
             'type' : 'Galaxy Type'
         }
         self._galaxy_table_components = ['gal_name', 'element', 'restwave', 'measwave', 'velocity']
@@ -379,7 +383,6 @@ class Application(VuetifyTemplate):
         """
         return self._application_handler.data_collection
 
-    #def vue_fit_lines(self, viewer_id, data_ids=None, clear_others=False, aggregate=False):
     def vue_fit_lines(self, args):
         """
         This function handles line fitting, with the specifics of the fitting
@@ -431,7 +434,7 @@ class Application(VuetifyTemplate):
         for layer in layers:
 
             # Get the data (which may actually be a Data object,
-            # or represent a subset
+            # or represent a subset)
             data = layer.state.layer
 
             # Do the line fit
@@ -697,6 +700,7 @@ class Application(VuetifyTemplate):
         for viewer_id in viewer_ids:
             viewer = self._viewer_handlers[viewer_id]
             viewer.add_data(student_data)
+            viewer.layers[-1].state.visible = False # We don't want the points to show until the student hits a button
             if viewer_id in ['hub_const_viewer', 'hub_fit_viewer']:
                 viewer.state.x_att = student_data.id['distance']
                 viewer.state.y_att = student_data.id['velocity']
@@ -711,8 +715,6 @@ class Application(VuetifyTemplate):
         subset_group = self.data_collection.new_subset_group(label='fit-table-selected', subset_state=None)
         fit_table.subset_group = subset_group
         for viewer_id, viewer in self._viewer_handlers.items():
-            if viewer_id == 'hub_fit_viewer':
-                continue
             for layer in viewer.layers:
                 if layer.state.layer.label == subset_group.label:
                     layer.state.visible = False
@@ -759,6 +761,13 @@ class Application(VuetifyTemplate):
             for viewer_id in viewer_ids:
                 viewer = self._viewer_handlers[viewer_id]
                 viewer.state.reset_limits()
+
+        # If there's a line on the fit viewer, it's now out of date
+        # so we clear it
+        self.vue_clear_lines('hub_fit_viewer')
+
+        # Same for a drawn line
+        self._line_draw_handler.clear()
             
     def _new_galaxy_data_update(self, new_data):
         dc = self.data_collection
@@ -794,6 +803,17 @@ class Application(VuetifyTemplate):
         new_data = Data(label='student_measurements', **component_mapping)
         self._new_galaxy_data_update(new_data)
 
+    def vue_show_fit_points(self, _args):
+        viewer = self._viewer_handlers['hub_fit_viewer']
+        for layer in viewer.layers:
+            if layer.state.layer.label in [self._student_data.label, self.components['c-fit-table'].subset_group.label]:
+                layer.state.visible = True
+
+    def vue_handle_fitline_click(self, _args):
+        if not self.state.bestfit_drawn:
+            self.state.draw_on = not self.state.draw_on
+        else:
+            self._line_draw_handler.clear()
 
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data

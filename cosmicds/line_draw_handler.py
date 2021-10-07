@@ -26,6 +26,7 @@ class LineDrawHandler(object):
 
     def _done_editing(self):
         self._app.state.draw_on = False
+        self._app.state.bestfit_drawn = True
 
     def _message_handler(self, interaction, data, buffers):
         event_type = data['event']
@@ -80,7 +81,9 @@ class LineDrawHandler(object):
             endpt.on_drag_start(self._on_endpt_drag_start)
             endpt.on_drag(self._on_endpt_drag)
             endpt.on_drag_end(self._on_endpt_drag_end)
-            endpt.opacities = [0]
+            #endpt.opacities = [0]
+            endpt.hovered_style = {'cursor' : 'grab'}
+            endpt.enable_move = True
             figure.marks = figure.marks + [endpt]
             self._endpt = endpt
 
@@ -92,7 +95,13 @@ class LineDrawHandler(object):
         self._endpt.hovered_style = {'cursor' : 'grabbing'}
 
     def _on_endpt_drag_end(self, element, event):
-        self._done_editing()
+        pass
+
+    def _on_image_hover(self, element, event):
+        print("In _on_image_hover")
+        print(element)
+        if self._endpt is not None:
+            self._endpt.opacities = [1]
 
     def _on_endpt_drag(self, element, event):
         point = event["point"]
@@ -101,21 +110,20 @@ class LineDrawHandler(object):
         self._drawn_line.y = [0, y]
 
     def _draw_on_changed(self, draw_on):
-
         have_endpt = self._endpt is not None
 
-        if have_endpt:
-            self._endpt.opacities = [int(draw_on)]
-            self._endpt.hovered_style = {'cursor' : 'grab'} if draw_on else {}
-            self._endpt.enable_move = draw_on
+        # if have_endpt:
+        #     self._endpt.opacities = [int(draw_on)]
+        #     self._endpt.hovered_style = {'cursor' : 'grab'} if draw_on else {}
+        #     self._endpt.enable_move = draw_on
 
-        if draw_on:
-            if have_endpt:
-                self._viewer.figure.interaction = None
-            else:
-                self._viewer.figure.interaction = self._interaction
+        if have_endpt:
+            self._viewer.figure.interaction = None
+        elif draw_on:
+            self._viewer.figure.interaction = self._interaction
         else:
             self._viewer.figure.interaction = self._original_interaction
+        print("Interaction: ", self._viewer.figure.interaction)
 
     def clear(self):
         figure = self._viewer.figure
@@ -124,3 +132,4 @@ class LineDrawHandler(object):
         self._drawn_line = None
         self._endpt = None
         self._app.state.draw_on = False
+        self._app.state.bestfit_drawn = False
