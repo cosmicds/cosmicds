@@ -94,6 +94,12 @@ class Table(VuetifyTemplate, HubListener):
         self._glue_data = data
         self._populate_table()
 
+    @subset_group.setter
+    def subset_group(self, group):
+        self._subset_group = group
+        self._subset_group_label = group.label
+        self.selected = self._selection_from_state(self._subset_group.subset_state)
+
     def _subset_state_from_selected(self, selected):
         keys = [x[self.key_component] for x in selected]
         if keys:

@@ -703,10 +703,22 @@ class Application(VuetifyTemplate):
             viewer.state.reset_limits()
             update_figure_css(self._viewer_handlers[viewer_id], style_path=style_path)
 
-        self.components['c-fit-table'].glue_data = student_data
+        # Set the data for the screen 3 table to be the completed measurements data
+        # and create a subset for the table component.
+        # Finally, hide this subset everywhere but screen 3.
+        fit_table = self.components['c-fit-table']
+        fit_table.glue_data = student_data
+        subset_group = self.data_collection.new_subset_group(label='fit-table-selected', subset_state=None)
+        fit_table.subset_group = subset_group
+        for viewer_id, viewer in self._viewer_handlers.items():
+            if viewer_id == 'hub_fit_viewer':
+                continue
+            for layer in viewer.layers:
+                if layer.state.layer.label == subset_group.label:
+                    layer.state.visible = False
 
-        # The scatter viewer's ImageGL mark isn't present when the viewer is initialized;
-        # it's only added once at least one layer exists
+        # From what I can tell, he scatter viewer's ImageGL mark isn't present
+        #  when the viewer is initialized; it's only added once at least one layer exists
         # so we wait until at least one piece of data has been added to do this
         hub_fit_viewer = self._viewer_handlers['hub_fit_viewer']
         self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)

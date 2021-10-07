@@ -141,13 +141,6 @@
                           </v-lazy>
                         </v-col>
                         <v-col>
-                          <v-btn
-                            color="primary"
-                            @click="add_galaxy_data_point()"
-                          >
-                          <v-icon>mdi-plus</v-icon>
-                          Add data
-                          </v-btn>
                           <!-- TABLE to hold Selected Galaxies -->
                           <c-galaxy-table/>
                         </v-col>
@@ -179,7 +172,8 @@
                                 state.data_ready_snackbar = 0;
                                 state.gal_snackbar = 1;
                                 state.gal_selected = 1;
-                                state.haro_on = 'd-block'
+                                state.haro_on = 'd-block';
+                                add_galaxy_data_point();
                               "
                             >
                               select galaxy (placeholder function)
@@ -467,7 +461,8 @@
                                       state.vel_measured == 1
                                         ? false
                                         : true;
-                                    state.galaxy_dist = Math.floor(Math.random() * 450) + 50
+                                    state.galaxy_dist = Math.floor(Math.random() * 450) + 50;
+                                    add_distance_data_point();
                                   "
                                 >
                                   estimate
@@ -508,13 +503,6 @@
                         </v-col>
                         <v-col>
                           <c-distance-table/>
-                          <v-btn
-                            color="primary"
-                            @click="add_distance_data_point()"
-                          >
-                          <v-icon>mdi-plus</v-icon>
-                          Add data
-                          </v-btn>
                           <todo-alert>
                             <ul>
                               <li>When students click on a row of the table to choose their galaxy, the WWT window will display that galaxy with the measurement tools (so this won't need to have both a "Select galaxy" and "Estimate Distance" tab. It can be consolidated to just an Estimate Distance header.)
