@@ -151,7 +151,7 @@ class Application(VuetifyTemplate):
         }
         self._galaxy_table_components = ['gal_name', 'element', 'restwave', 'measwave', 'velocity']
         galaxy_table_names = [table_columns_map[x] for x in self._galaxy_table_components]
-        self._distance_table_components = ['gal_name', 'element', 'restwave', 'measwave', 'velocity', 'distance']
+        self._distance_table_components = ['gal_name', 'velocity', 'distance']
         distance_table_names = [table_columns_map[x] for x in self._distance_table_components]
         self._fit_table_components = ['gal_name', 'type', 'velocity', 'distance']
         fit_table_names = [table_columns_map[x] for x in self._fit_table_components]
