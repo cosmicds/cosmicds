@@ -576,7 +576,7 @@
                               class="flex-grow-1 white--text"
                               @click="handle_fitline_click()"
                             >
-                              {{ state.bestfit_drawn ? 'erase fit line' : 'draw a fit line' }}
+                              {{ state.bestfit_drawn ? 'erase drawn line' : 'draw a fit line' }}
                               <v-spacer></v-spacer>
                               <v-icon
                                 right
