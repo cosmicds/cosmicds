@@ -705,6 +705,8 @@ class Application(VuetifyTemplate):
                 viewer.state.x_att = student_data.id['distance']
                 viewer.state.y_att = student_data.id['velocity']
             viewer.state.reset_limits()
+            viewer.state.x_min = 0
+            viewer.state.y_min = 0
             update_figure_css(self._viewer_handlers[viewer_id], style_path=style_path)
 
         # Set the data for the screen 3 table to be the completed measurements data
@@ -761,6 +763,8 @@ class Application(VuetifyTemplate):
             for viewer_id in viewer_ids:
                 viewer = self._viewer_handlers[viewer_id]
                 viewer.state.reset_limits()
+                viewer.state.x_min = 0
+                viewer.state.y_min = 0
 
         # If there's a line on the fit viewer, it's now out of date
         # so we clear it
