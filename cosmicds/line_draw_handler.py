@@ -95,11 +95,16 @@ class LineDrawHandler(object):
         self._endpt.hovered_style = {'cursor' : 'grabbing'}
 
     def _on_endpt_drag_end(self, element, event):
-        pass
+        x = self._endpt.x[0]
+        y = self._endpt.y[0]
+        x_adj, y_adj = self._coordinates_in_bounds(x,y)
+        if x_adj != x or y_adj != y:
+            self._drawn_line.x = [0, x_adj]
+            self._drawn_line.y = [0, y_adj]
+            self._endpt.x = [x_adj]
+            self._endpt.y = [y_adj]
 
     def _on_image_hover(self, element, event):
-        print("In _on_image_hover")
-        print(element)
         if self._endpt is not None:
             self._endpt.opacities = [1]
 
@@ -123,7 +128,35 @@ class LineDrawHandler(object):
             self._viewer.figure.interaction = self._interaction
         else:
             self._viewer.figure.interaction = self._original_interaction
-        print("Interaction: ", self._viewer.figure.interaction)
+
+    def _coordinates_in_bounds(self, x, y):
+        """
+        If a student drags the endpoint beyond the viewer bounds, we want to bring it back inside.
+        This function, given x and y coordinates of a chosen endpoint, this function finds the
+        coordinates of the point where their line crosses the boundary of the viewer.
+        """
+
+        # Get the current viewer bounds
+        state = self._viewer.state
+        x_min, x_max, y_min, y_max = state.x_min, state.x_max, state.y_min, state.y_max
+
+        # If the point is in bounds, do nothing
+        if x >= x_min and x <= x_max and y >= y_min and y <= y_max:
+            return x, y
+
+        absratio = lambda n, d: abs(n / d) if d != 0 else 0
+        ratio = lambda c, c_min, c_max: absratio(c, c_min) if c < c_min else (absratio(c, c_max) if c > c_max else 1)
+        x_ratio = ratio(x, x_min, x_max)
+        y_ratio = ratio(y, y_min, y_max)
+        if x_ratio != 0 and y_ratio != 0:
+            ratio = max(x_ratio, y_ratio)
+        else:
+            ratio = 0
+        if ratio == 0:
+            return 0, 0
+
+        return x / ratio, y / ratio
+
 
     def clear(self):
         figure = self._viewer.figure
