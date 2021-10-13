@@ -139,7 +139,7 @@ class Application(VuetifyTemplate):
         hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer = hub_viewers
 
         # Set up glue links for the Hubble data sets
-        student_data_fields = self._dummy_student_data.keys()
+        measurement_data_fields = self._dummy_student_data.keys()
         table_columns_map = {
             'gal_name' : 'Galaxy Name',
             'element' : 'Element',
@@ -156,10 +156,31 @@ class Application(VuetifyTemplate):
         self._fit_table_components = ['gal_name', 'type', 'velocity', 'distance']
         fit_table_names = [table_columns_map[x] for x in self._fit_table_components]
 
-        measurement_data = Data(label='student_measurements', **{x : array([], dtype='float64') for x in student_data_fields})
+        measurement_data = Data(label='student_measurements', **{x : array([], dtype='float64') for x in measurement_data_fields})
         class_data = self.data_collection['HubbleData_ClassSample']
         self._measurement_data = measurement_data
         self.data_collection.append(measurement_data)
+        
+        # These zero values are dummies; we'll update them later
+        dummy_data = {x : ['X'] if x in ['gal_name', 'element', 'type'] else [0] for x in table_columns_map.keys()}
+        student_data = Data(label='student_data', **dummy_data)
+        self.data_collection.append(student_data)
+        for component in class_data.components:
+            field = component.label
+            if field in student_data.component_ids():
+                self._application_handler.add_link(student_data, field, class_data, field)
+        
+        viewers = [hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer]
+        for viewer in viewers:
+            viewer.add_data(student_data)
+            viewer.layers[-1].state.visible = False # We don't want the points to show until the student hits a button
+            viewer.state.x_att = student_data.id['distance']
+            viewer.state.y_att = student_data.id['velocity']
+
+        # Set up the line fit handler
+        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
+        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
+
         all_data = self.data_collection['HubbleData_All']
         for component in class_data.components:
             field = component.label
@@ -174,7 +195,7 @@ class Application(VuetifyTemplate):
                                 key_component='gal_name', names=galaxy_table_names, title=table_title),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
                                 key_component='gal_name', names=distance_table_names, title=table_title),
-                            'c-fit-table': Table(self.session, measurement_data, glue_components=self._fit_table_components,
+                            'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
                                 key_component='gal_name', names=fit_table_names, title=table_title),
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
@@ -206,8 +227,6 @@ class Application(VuetifyTemplate):
         
         # Set up the viewer that will listen to the histogram
         hub_students_viewer.add_data(class_data)
-        hub_students_viewer.state.x_att = class_data.id['distance']
-        hub_students_viewer.state.y_att = class_data.id['velocity']
         update_figure_css(hub_students_viewer, style_path=style_path)
 
         # The Hubble comparison viewer should get the class and all public data as well
@@ -216,11 +235,10 @@ class Application(VuetifyTemplate):
         hub_comparison_viewer.layers[-1].state.visible = False
         hub_comparison_viewer.add_data(all_data)
         hub_comparison_viewer.layers[-1].state.visible = False
-        hub_comparison_viewer.state.x_att = class_data.id['distance']
-        hub_comparison_viewer.state.y_att = class_data.id['velocity']
         update_figure_css(hub_comparison_viewer, style_path=style_path)
 
         # For convenience, we attach the relevant data sets to the application instance
+        self._student_data = student_data
         self._class_data = class_data
         self._measurement_data = measurement_data
         self._all_data = all_data
@@ -313,6 +331,17 @@ class Application(VuetifyTemplate):
             self.session.edit_subset_mode.edit_subset = []
         for tool_id in ['bqplot:xrange', 'bqplot:yrange', 'bqplot:rectangle', 'bqplot:circle']:
             extend_tool(hub_fit_viewer, tool_id, hub_fit_selection_activate, hub_fit_selection_deactivate)
+
+        # Set the data for the screen 3 table to be the completed measurements data
+        # and create a subset for the table component.
+        # Finally, hide this subset everywhere but screen 3.
+        fit_table = self.components['c-fit-table']
+        subset_group = self.data_collection.new_subset_group(label='fit-table-selected', subset_state=None)
+        fit_table.subset_group = subset_group
+        for viewer in hub_viewers + age_distr_viewers:
+            for layer in viewer.layers:
+                if layer.state.layer.label == subset_group.label:
+                    layer.state.visible = False
 
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
@@ -682,52 +711,6 @@ class Application(VuetifyTemplate):
         toolbar.active_tool = None
         self._histogram_listener.clear_subset()
 
-
-    def _on_first_complete_point_added(self, student_data):
-
-        # Put the new glue Data object into the appropriate viewers
-        # We have to do this, since glue has trouble if we try to add a size-0 data set to the viewer
-        self._student_data = student_data
-        self.data_collection.append(student_data)
-        style_path = str(Path(__file__).parent / "data" /
-                                    "styles" / "default_scatter.json")
-        for component in self._class_data.components:
-            field = component.label
-            if field in student_data.component_ids():
-                self._application_handler.add_link(student_data, field, self._class_data, field)
-        
-        viewer_ids = ['hub_const_viewer', 'hub_fit_viewer', 'hub_comparison_viewer', 'hub_students_viewer']
-        for viewer_id in viewer_ids:
-            viewer = self._viewer_handlers[viewer_id]
-            viewer.add_data(student_data)
-            viewer.layers[-1].state.visible = False # We don't want the points to show until the student hits a button
-            if viewer_id in ['hub_const_viewer', 'hub_fit_viewer']:
-                viewer.state.x_att = student_data.id['distance']
-                viewer.state.y_att = student_data.id['velocity']
-            viewer.state.reset_limits()
-            viewer.state.x_min = min(0, viewer.state.x_min)
-            viewer.state.y_min = min(0, viewer.state.y_min)
-            update_figure_css(self._viewer_handlers[viewer_id], style_path=style_path)
-
-        # Set the data for the screen 3 table to be the completed measurements data
-        # and create a subset for the table component.
-        # Finally, hide this subset everywhere but screen 3.
-        fit_table = self.components['c-fit-table']
-        fit_table.glue_data = student_data
-        subset_group = self.data_collection.new_subset_group(label='fit-table-selected', subset_state=None)
-        fit_table.subset_group = subset_group
-        for viewer_id, viewer in self._viewer_handlers.items():
-            for layer in viewer.layers:
-                if layer.state.layer.label == subset_group.label:
-                    layer.state.visible = False
-
-        # From what I can tell, he scatter viewer's ImageGL mark isn't present
-        #  when the viewer is initialized; it's only added once at least one layer exists
-        # so we wait until at least one piece of data has been added to do this
-        hub_fit_viewer = self._viewer_handlers['hub_fit_viewer']
-        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
-        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
-
     def _update_data_component(self, data, attribute, values):
         if attribute in data.component_ids():
             data.update_components({data.id[attribute] : values})
@@ -751,20 +734,14 @@ class Application(VuetifyTemplate):
         components = { col : list(df[col]) for col in main_comps }
         new_data = Data(label='student_data', **components)
 
-        initial_size = self._student_data.size if hasattr(self, '_student_data') else 0
-        new_size = new_data.size
-
-        # The first time we add a distance/velocity point, we need to do some stuff
-        if initial_size == 0 and new_size >= 1:
-            self._on_first_complete_point_added(new_data)
-        else:
-            self._student_data.update_values_from_data(new_data)
-            viewer_ids = ['hub_const_viewer', 'hub_fit_viewer', 'hub_comparison_viewer', 'hub_students_viewer']
-            for viewer_id in viewer_ids:
-                viewer = self._viewer_handlers[viewer_id]
-                viewer.state.reset_limits()
-                viewer.state.x_min = min(0, viewer.state.x_min)
-                viewer.state.y_min = min(0, viewer.state.y_min)
+        # Update the data
+        self._student_data.update_values_from_data(new_data)
+        viewer_ids = ['hub_const_viewer', 'hub_fit_viewer', 'hub_comparison_viewer', 'hub_students_viewer']
+        for viewer_id in viewer_ids:
+            viewer = self._viewer_handlers[viewer_id]
+            viewer.state.reset_limits()
+            viewer.state.x_min = min(0, viewer.state.x_min)
+            viewer.state.y_min = min(0, viewer.state.y_min)
 
         # If there's a line on the fit viewer, it's now out of date
         # so we clear it
