@@ -33,6 +33,7 @@ class ApplicationState(State):
     over_model = CallbackProperty(1)
     col_tab_model = CallbackProperty(0)
     est_model = CallbackProperty(0)
+    analysis_tabs = CallbackProperty(1)
 
     gal_snackbar = CallbackProperty(0)
     dist_snackbar = CallbackProperty(0)

@@ -62,7 +62,7 @@
                     step="1"
                     editable
                   >
-                    Collect<br>Velocity Data
+                    Collect Velocity Data
                   </v-stepper-step>
 
                   <v-divider></v-divider>
@@ -72,54 +72,21 @@
                     step="2"
                     editable
                   >
-                    Collect<br>Distance Data
-                  </v-stepper-step>
-
-                  <v-divider></v-divider>
-
-                  <v-stepper-step
-                    :complete="state.over_model > 3"
-                    step="3"
-                    editable
-                  >
-                    Estimate<br>Age
+                    Collect Distance Data
                   </v-stepper-step>
 
                   <v-divider></v-divider>
 
                   <v-stepper-step
                     :complete="state.over_model > 4"
-                    step="4"
+                    step="3"
                     editable
-                    >Explore<br>Class Data
-                  </v-stepper-step>
-
-                  <v-divider></v-divider>
-
-                  <v-stepper-step
-                    :complete="state.over_model > 5"
-                    step="5"
-                    editable
-                    >View<br>Distributions
-                  </v-stepper-step>
-                  <v-divider></v-divider>
-
-                <v-stepper-step
-                    :complete="state.over_model > 6"
-                    step="6"
-                    editable
-                    >Galaxy<br>Morphology
-                  </v-stepper-step>
-                  <v-divider></v-divider>
-                <v-stepper-step
-                    :complete="state.over_model > 7"
-                    step="7"
-                    editable
-                    >Professional<br>Science Data
+                  >
+                    Explore Data
                   </v-stepper-step>
                 </v-stepper-header>
 
-              <!-- This sets up the screen for the galaxy selection/measurement step -->
+                <!-- This sets up the screen for the galaxy selection/measurement step -->
                 <v-stepper-items
                   class=""
                 >
@@ -132,13 +99,18 @@
                       <v-row>
                         <v-col
                           cols="4"
+                          class="wwt_column"
                         >
                           <!-- WIDGET for WWT galaxy selection -->
-                          <v-lazy>
-                          <jupyter-widget
-                            :widget="viewers.wwt_viewer"
-                          ></jupyter-widget>
-                          </v-lazy>
+                          <div
+                            class="wwt_widget"
+                          >
+                            <v-lazy>
+                            <jupyter-widget
+                              :widget="viewers.wwt_viewer"
+                            ></jupyter-widget>
+                            </v-lazy>
+                          </div>
                         </v-col>
                         <v-col>
                           <!-- TABLE to hold Selected Galaxies -->
@@ -147,39 +119,41 @@
                         </v-col>
                       </v-row>
                       <v-row>
-                        <v-alert
-                          class="mb-4"
-                          border="left"
-                          colored-border
-                          color="indigo"
-                          elevation="2"
-                        >
-                          Pan the sky and click one of the markers to 
-                          select a galaxy to measure. You will then
-                          use emission or absorption lines in its
-                          spectrum to measure the galaxy's velocity.
-                          NOTE: The button here stands in place of WWT
-                          selection function until it becomes available.
-                          <!-- This can go because the "select" action will be on the galaxy marker within the WWT window -->
-                          <div class="text-center mt-4">
-                            <v-btn
-                              class="white--text"
-                              color="purple darken-2"
-                              @click="
-                                state.gal_snackbar = 0;
-                                state.dist_snackbar = 0;
-                                state.marker_snackbar = 0;
-                                state.vel_snackbar = 0;
-                                state.data_ready_snackbar = 0;
-                                state.gal_snackbar = 1;
-                                state.gal_selected = 1;
-                                state.haro_on = 'd-block'
-                              "
-                            >
-                              select galaxy (placeholder function)
-                            </v-btn>
-                          </div>
-                        </v-alert>
+                        <v-col>
+                          <v-alert
+                            class="mb-4"
+                            border="left"
+                            colored-border
+                            color="indigo"
+                            elevation="2"
+                          >
+                            Pan the sky and click one of the markers to 
+                            select a galaxy to measure. You will then
+                            use emission or absorption lines in its
+                            spectrum to measure the galaxy's velocity.
+                            NOTE: The button here stands in place of WWT
+                            selection function until it becomes available.
+                            <!-- This can go because the "select" action will be on the galaxy marker within the WWT window -->
+                            <div class="text-center mt-4">
+                              <v-btn
+                                class="white--text"
+                                color="purple darken-2"
+                                @click="
+                                  state.gal_snackbar = 0;
+                                  state.dist_snackbar = 0;
+                                  state.marker_snackbar = 0;
+                                  state.vel_snackbar = 0;
+                                  state.data_ready_snackbar = 0;
+                                  state.gal_snackbar = 1;
+                                  state.gal_selected = 1;
+                                  state.haro_on = 'd-block'
+                                "
+                              >
+                                select galaxy (placeholder function)
+                              </v-btn>
+                            </div>
+                          </v-alert>
+                        </v-col>
                       </v-row>
                     </v-container>
                     <v-container>
@@ -259,7 +233,7 @@
                           >
                             <v-card
                               color="indigo lighten-5"
-                              clas="mb-4"
+                              class="mb-4"
                               :disabled="!state.marker_set"
                             >
                               <v-card-text>
@@ -352,7 +326,13 @@
                       Repeat this process for four more galaxies (or however many your instructor would like you to collect data for).
                     </infodialog-alert>
 
+                    <v-divider></v-divider>
+
                     <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <v-divider
+                      class="mt-4"
+                    >
+                    </v-divider>
                     <hinttext-alert>
                       This is for marginal hint text
                     </hinttext-alert>
@@ -365,20 +345,30 @@
                     <responsedialog-alert>
                       This is for worksheet form pop-ups
                     </responsedialog-alert>
+                    <todo-alert>
+                      This is for tasks that still need to be completed
+                    </todo-alert>
                   </v-stepper-content>
+
                   <!-- ---------------- --------------------------------- ---------------- -->
                   <!-- ---------------- SECOND PAGE: DISTANCE MEASUREMENT ---------------- -->
                   <!-- ---------------- --------------------------------- ---------------- -->
                   <v-stepper-content step="2">
 
                     <v-container>
-                      <v-row>
+                      <v-row
+                        class="d-flex align-stretch"
+                      >
                         <!-- This WWT viewer widget allows user to select a galaxy; galaxy positions plotted by RA/Dec.
                         It will zoom in to chosen galaxy & put controls/instructions on screen. -->
                         <!-- viewers.wwt_viewer doesn't need to be prepended with "state" because it comes from "Application" in app.py, not "ApplicationState"-->
-                        <v-col cols="12" md="8">
-                          <v-card>
-                            <v-toolbar
+                        <v-col cols="12" md="8"
+                          class="wwt_column"
+                        >
+                          <v-card
+                            class="align-self-stretch"
+                          >
+                            <v-app-bar
                               color="pink"
                               dark
                             >
@@ -393,10 +383,12 @@
                               <v-btn icon>
                                 <v-icon>mdi-information-outline</v-icon>
                               </v-btn>
-                            </v-toolbar>
-                            <jupyter-widget
-                              :widget="viewers.wwt_viewer"
-                            ></jupyter-widget>
+                            </v-app-bar>
+                            <div class="wwt_widget">
+                              <jupyter-widget
+                                :widget="viewers.wwt_viewer"
+                              ></jupyter-widget>
+                            <div>
                           </v-card>
                         </v-col>
 
@@ -513,7 +505,13 @@
                       </v-row>
                     </v-container>
 
+                    <v-divider></v-divider>
+
                     <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <v-divider
+                      class="mt-4"
+                    >
+                    </v-divider>
                     <hinttext-alert>
                       This is for marginal hint text
                     </hinttext-alert>
@@ -526,6 +524,9 @@
                     <responsedialog-alert>
                       This is for worksheet form pop-ups
                     </responsedialog-alert>
+                    <todo-alert>
+                      This is for tasks that still need to be completed
+                    </todo-alert>
                   </v-stepper-content>
 
                 <!-- This sets up the screen for the Analysis/data fitting step -->
@@ -535,111 +536,633 @@
                      * Choosing different data sets - student/class/all
                      * Plotting by galaxy type -->
 
-                  <!-- ---------------- ------------------------------------ ---------------- -->
-                  <!-- ---------------- THIRD PAGE: ESTIMATE AGE OF UNIVERSE ---------------- -->
-                  <!-- ---------------- ------------------------------------ ---------------- -->
+                  <!-- ---------------- ------------------------- ---------------- -->
+                  <!-- ---------------- THIRD PAGE: ALL THAT DATA ---------------- -->
+                  <!-- ---------------- ------------------------- ---------------- -->
+
+                <!-- This sets up the screen for the Analysis/data fitting step -->
                   <v-stepper-content step="3">
                     <v-container>
                       <v-row>
-                        <v-col
-                          cols="3"
-                          class="align-stretch"
-                        >
-                          <div
-                            class="d-flex mb-4"
-                          >
-                            <v-btn
-                              :outlined="state.draw_on"
-                              color="orange"
-                              class="flex-grow-1 white--text"
-                              @click="state.draw_on = !state.draw_on"
-                            >
-                              draw a fit line
-                              <v-spacer></v-spacer>
-                              <v-icon
-                                right
-                                dark
-                                class="px-4"
-                              >
-                                mdi-draw
-                              </v-icon>
-                            </v-btn>
-                          </div>
-                          <div
-                            class="d-flex mb-4"
-                          >
-                            <v-btn
-                              color="green lighten-1"
-                              class="flex-grow-1 white--text"
-                              @click="fit_lines({
-                                'viewer_id': 'hub_fit_viewer'
-                                });
-                                state.bestfit_on = 1"
-                            >
-                              find best fit
-                              <v-spacer></v-spacer>
-                              <v-icon
-                                right
-                                dark
-                                class="px-4"
-                              >
-                                mdi-calculator
-                              </v-icon>
-                            </v-btn>
-                          </div>
-                        </v-col>
-                        <v-col>
-                          <v-lazy>
-                            <jupyter-widget
-                              :widget="viewers.hub_fit_viewer"
-                            ></jupyter-widget>
-                          </v-lazy>
-                          <!-- TABLE to hold Galaxy, Velocity & Distance -->
-                          <mydata-table>
-                          </mydata-table>
-                          <todo-alert>
-                            Enable a button to draw your own fit line (unless this is
-                            prohibitively complicated). Plot drawn and calculated best
-                            fit lines. Display should include only this student's
-                            4-5 data points. 
-                          </todo-alert>
-                        </v-col>
-                      </v-row>
-                      <v-row
-
-                      >
                         <v-card
-                          class="pa-8 mx-auto"
+                            width="100%"
+                            class="mx-2"
                         >
-                          Watch this video for an explanation how and why we can calculate
-                          the age of universe by inverting our <em>H</em><sub>0</sub> value.
-                          <div class="text-center mt-4">
-                            <video-dialog
-                              button-text="learn more"
-                              title-text="How do we estimate age of the universe?"
-                              close-text="close"
-                              @close="console.log('Close button was clicked.')"
+                          <!-- THE TAB TABS -->
+                          <v-tabs
+                            v-model="state.analysis_tabs"
+                            grow
+                            background-color="indigo"
+                            dark
+                          >
+                            <v-tab
+                              key="my_data"
                             >
-                              Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.
-                            </video-dialog>
-                          </div>
+                              my data
+                            </v-tab>
+                            <v-tab
+                              key="class_data"
+                            >
+                              my class data
+                            </v-tab>
+                            <v-tab
+                              key="gal_data"
+                            >
+                              galaxy type
+                            </v-tab>
+                            <v-tab
+                              key="prof_data"
+                            >
+                              professional<br>science data
+                            </v-tab>
+                          </v-tabs>
+
+                          <!-- THE TAB PANELS -->
+                          <v-tabs-items
+                            v-model="state.analysis_tabs"
+                            class="no-transition"
+                          >
+
+                            <!-- ---------------- ------------------ ---------------- -->
+                            <!-- ---------------- FIRST TAB: MY DATA ---------------- -->
+                            <!-- ---------------- ------------------ ---------------- -->
+                            <v-tab-item
+                              key="my_data"
+                            >
+                              <v-container>
+                                <v-row>
+                                  <v-col
+                                    cols="3"
+                                    class="align-stretch"
+                                  >
+                                    <div
+                                      class="d-flex mb-4"
+                                    >
+                                      <v-btn
+                                        :outlined="state.draw_on"
+                                        color="orange"
+                                        class="flex-grow-1 white--text"
+                                        @click="state.draw_on = !state.draw_on"
+                                      >
+                                        draw a fit line
+                                        <v-spacer></v-spacer>
+                                        <v-icon
+                                          right
+                                          dark
+                                          class="px-4"
+                                        >
+                                          mdi-draw
+                                        </v-icon>
+                                      </v-btn>
+                                    </div>
+                                    <div
+                                      class="d-flex mb-4"
+                                    >
+                                      <v-btn
+                                        color="green lighten-1"
+                                        class="flex-grow-1 white--text"
+                                        @click="fit_lines({
+                                          'viewer_id': 'hub_fit_viewer'
+                                          });
+                                          state.bestfit_on = 1"
+                                      >
+                                        find best fit
+                                        <v-spacer></v-spacer>
+                                        <v-icon
+                                          right
+                                          dark
+                                          class="px-4"
+                                        >
+                                          mdi-calculator
+                                        </v-icon>
+                                      </v-btn>
+                                    </div>
+                                  </v-col>
+                                  <v-col>
+                                    <v-lazy>
+                                      <jupyter-widget
+                                        :widget="viewers.hub_fit_viewer"
+                                      ></jupyter-widget>
+                                    </v-lazy>
+                                    <!-- TABLE to hold Galaxy, Velocity & Distance -->
+                                    <mydata-table>
+                                    </mydata-table>
+                                  </v-col>
+                                </v-row>
+                                <v-row>
+                                  <v-col>
+                                    <v-card
+                                      class="pa-8 mx-auto"
+                                      elevation="3"
+                                    >
+                                      Watch this video for an explanation how and why we can calculate
+                                      the age of universe by inverting our <em>H</em><sub>0</sub> value.
+                                      <div class="text-center mt-4">
+                                        <video-dialog
+                                          button-text="learn more"
+                                          title-text="How do we estimate age of the universe?"
+                                          close-text="close"
+                                          @close="console.log('Close button was clicked.')"
+                                        >
+                                          Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.
+                                        </video-dialog>
+                                      </div>
+                                    </v-card>
+                                  </v-col>
+                                </v-row>
+                              
+                                <!-- WIREFRAME for learning objectives/experience on First Page -->
+                                <v-divider
+                                  class="mt-4"
+                                >
+                                </v-divider>
+                                <hinttext-alert>
+                                  This is for marginal hint text
+                                </hinttext-alert>
+                                <snackbar-alert>
+                                  This is for guidance snackbars
+                                </snackbar-alert>
+                                <infodialog-alert>
+                                  This is for informative dialog pop-ups
+                                </infodialog-alert>
+                                <responsedialog-alert>
+                                  This is for worksheet form pop-ups
+                                </responsedialog-alert>
+                                <todo-alert>
+                                  This is for tasks that still need to be completed
+                                </todo-alert>
+                              </v-container>
+                            </v-tab-item>
+
+                            <!-- ---------------- ------------------------------ ---------------- -->
+                            <!-- ---------------- SECOND TAB: EXPLORE CLASS DATA ---------------- -->
+                            <!-- ---------------- ------------------------------ ---------------- -->
+                            <v-tab-item
+                              key="class_data"
+                            >
+                              <v-container>
+                                <v-row>
+                                  <v-col
+                                    cols="3"
+                                  >
+                                    <v-btn
+                                      color="primary"
+                                      @click="fit_lines({
+                                        'viewer_id': 'hub_comparison_viewer'
+                                      })"
+                                    >
+                                      Fit Lines
+                                    </v-btn>
+                                    <v-list
+                                      style="max-height: 300px"
+                                      class="overflow-y-auto"
+                                    >
+                                      <v-list-item-group
+                                        multiple
+                                        v-model="state.hubble_comparison_selections"
+                                      >
+                                        <v-list-item
+                                          v-for="(option, index) in ['My data', 'Class data', 'All data']"
+                                          :key="index"
+                                          :value="index"
+                                        >
+                                          <template v-slot:default="{ active }">
+                                            <v-list-item-content>
+                                              {{option}}
+                                            </v-list-item-content>
+
+                                            <v-list-item-action>
+                                              <v-checkbox
+                                                :input-value="active"
+                                                :color="['orange', 'green', 'red'][index]"
+                                              ></v-checkbox>
+                                            </v-list-item-action>
+                                          </template>
+                                        </v-list-item>
+                                      </v-list-item-group>
+                                    </v-list>
+                                  </v-col>
+                                  <v-col>
+                                    <v-lazy>
+                                      <jupyter-widget
+                                        :widget="viewers.hub_comparison_viewer"
+                                      ></jupyter-widget>
+                                    </v-lazy>
+                                  </v-col>
+                                </v-row>
+                                <v-row>
+                                  <v-col>
+                                    <v-card
+                                      class="pa-8 mx-auto"
+                                        elevation="3"
+                                    >
+                                      Complete these steps to discover how we can Estimate
+                                      the age of universe by inverting our <em>H</em><sub>0</sub> value.
+                                      <div class="text-center mt-4">
+                                        <form-dialog
+                                          button-text="estimate age of universe"
+                                          title-text="How do we estimate age of the universe?"
+                                          close-text="close"
+                                          @close="console.log('Close button was clicked.')"
+                                        >
+                                          Scaffolded steps to calculate the age of the universe from the <em>H</em><sub>0</sub> value.
+                                        </form-dialog>
+                                      </div>
+                                    </v-card>
+                                  </v-col>
+                                </v-row>
+                                <v-lazy>
+                                  <v-row>
+                                    <v-col>
+                                      <v-tabs>
+                                        <v-tab key="hist_class">My class</v-tab>
+                                        <v-tab key="hist_prob">All data</v-tab>
+                                        <v-tab key="hist_sandbox">Sandbox</v-tab>
+                                        <v-tab-item key="hist_class">
+                                          <v-container>
+                                            <v-row>
+                                              <v-col cols="3">
+                                                <v-list
+                                                  style="max-height: 300px"
+                                                  class="overflow-y-auto"
+                                                >
+                                                  <v-list-item-group
+                                                    multiple
+                                                    v-model="state.class_histogram_selections"
+                                                  >
+                                                    <v-list-item
+                                                      v-for="(option, index) in ['Individual students', 'My value', 'Class value']"
+                                                      :key="index"
+                                                      :value="index"
+                                                    >
+                                                      <template v-slot:default="{ active }">
+                                                        <v-list-item-content>
+                                                          {{option}}
+                                                        </v-list-item-content>
+
+                                                        <v-list-item-action>
+                                                          <v-checkbox
+                                                            :input-value="active"
+                                                            :color="['orange', 'blue', 'green'][index]"
+                                                          ></v-checkbox>
+                                                        </v-list-item-action>
+                                                      </template>
+                                                    </v-list-item>
+                                                  </v-list-item-group>
+                                                </v-list>
+                                                <v-btn
+                                                  color="primary"
+                                                  @click="clear_histogram_selection()"
+                                                >
+                                                Clear selection
+                                                </v-btn>
+                                              </v-col>
+                                              <v-col>
+                                                <v-lazy>
+                                                  <jupyter-widget
+                                                    style="height: 300px"
+                                                    :widget="viewers.class_distr_viewer">
+                                                  </jupyter-widget>
+                                                </v-lazy>
+                                              </v-col>
+                                            </v-row>
+                                          </v-container>
+                                        </v-tab-item>
+                                        <v-tab-item key="hist_prob">
+                                          <v-container>
+                                            <v-row>
+                                              <v-col cols="3">
+                                                <v-list
+                                                  style="max-height: 300px"
+                                                  class="overflow-y-auto"
+                                                >
+                                                  <v-list-item-group
+                                                    multiple
+                                                    v-model="state.alldata_histogram_selections"
+                                                  >
+                                                    <v-list-item
+                                                      v-for="(option, index) in ['Students','Classes']"
+                                                      :key="index"
+                                                      :value="index"
+                                                    >
+                                                      <template v-slot:default="{ active }">
+                                                        <v-list-item-content>
+                                                          {{option}}
+                                                        </v-list-item-content>
+
+                                                        <v-list-item-action>
+                                                          <v-checkbox
+                                                            :input-value="active"
+                                                            :color="['blue', 'red'][index]"
+                                                          ></v-checkbox>
+                                                        </v-list-item-action>
+                                                      </template>
+                                                    </v-list-item>
+                                                  </v-list-item-group>
+                                                </v-list>
+                                              </v-col>
+                                              <v-col>
+                                                <v-lazy>
+                                                  <jupyter-widget
+                                                    style="height: 300px"
+                                                    :widget="viewers.all_distr_viewer">
+                                                  </jupyter-widget>
+                                                </v-lazy>
+                                              </v-col>
+                                          </v-container>
+                                        </v-tab-item>
+                                        <v-tab-item key="hist_sandbox">
+                                          <v-container>
+                                            <v-row>
+                                              <v-col cols="3">
+                                                <v-list
+                                                  style="max-height: 300px"
+                                                  class="overflow-y-auto"
+                                                >
+                                                  <v-list-item-group
+                                                    multiple
+                                                    v-model="state.sandbox_histogram_selections"
+                                                  >
+                                                    <v-list-item
+                                                      v-for="(option, index) in ['Students in my class', 'All students', 'All classes', 'My class', 'All data', 'My value']"
+                                                      :key="index"
+                                                      :value="index"
+                                                    >
+                                                      <template v-slot:default="{ active }">
+                                                        <v-list-item-content>
+                                                          {{option}}
+                                                        </v-list-item-content>
+
+                                                        <v-list-item-action>
+                                                          <v-checkbox
+                                                            :input-value="active"
+                                                            :color="['orange', 'blue', 'red', 'purple', 'green', 'black'][index]"
+                                                          ></v-checkbox>
+                                                        </v-list-item-action>
+                                                      </template>
+                                                    </v-list-item>
+                                                  </v-list-item-group>
+                                                </v-list>
+                                              </v-col>
+                                              <v-col>
+                                                <v-lazy>
+                                                  <jupyter-widget
+                                                    style="height: 300px"
+                                                    :widget="viewers.sandbox_distr_viewer">
+                                                  </jupyter-widget>
+                                                </v-lazy>
+                                              </v-col>
+                                          </v-container>
+                                        </v-tab-item>
+                                      </v-tabs>
+                                    </v-col>
+                                  </v-row>
+                                </v-lazy>
+                                <v-card
+                                  class="fill-height mb-12"
+                                  color="grey lighten-1 elevation-0"
+                                ></v-card>
+                                <v-card
+                                  class="fill-height mb-12"
+                                  color="grey lighten-1 elevation-0"
+                                ></v-card>
+                              
+                                <!-- WIREFRAME for learning objectives/experience on First Page -->
+                                <v-divider
+                                  class="mt-4"
+                                >
+                                </v-divider>
+                                <hinttext-alert>
+                                  This is for marginal hint text
+                                </hinttext-alert>
+                                <snackbar-alert>
+                                  This is for guidance snackbars
+                                </snackbar-alert>
+                                <infodialog-alert>
+                                  This is for informative dialog pop-ups
+                                </infodialog-alert>
+                                <responsedialog-alert>
+                                  This is for worksheet form pop-ups
+                                </responsedialog-alert>
+                                <todo-alert>
+                                  This is for tasks that still need to be completed
+                                </todo-alert>
+                              </v-container>
+                            </v-tab-item>
+
+                            <!-- ---------------- ---------------------------- ---------------- -->
+                            <!-- ---------------- THIRD TAB: GALAXY MORPHOLOGY ---------------- -->
+                            <!-- ---------------- ---------------------------- ---------------- -->
+                            <v-tab-item
+                              key="gal_data"
+                            >
+                              <v-container>
+                                <v-row>
+                                  <v-col
+                                    cols="3"
+                                  >
+                                    <v-btn
+                                      color="primary"
+                                      @click="fit_lines({
+                                        'viewer_id': 'hub_morphology_viewer'
+                                      })"
+                                    >
+                                      Fit Lines
+                                    </v-btn>
+                                    <v-list
+                                      style="max-height: 300px"
+                                      class="overflow-y-auto"
+                                    >
+                                      <v-list-item-group
+                                        multiple
+                                        v-model="state.morphology_selections"
+                                      >
+                                        <v-list-item
+                                          v-for="(option, index) in ['Elliptical', 'Spiral', 'Irregular']"
+                                          :key="index"
+                                          :value="index"
+                                        >
+                                          <template v-slot:default="{ active }">
+                                            <v-list-item-content>
+                                              {{option}}
+                                            </v-list-item-content>
+
+                                            <v-list-item-action>
+                                              <v-checkbox
+                                                :input-value="active"
+                                                :color="['orange', 'green', 'red'][index]"
+                                              ></v-checkbox>
+                                            </v-list-item-action>
+                                          </template>
+                                        </v-list-item>
+                                      </v-list-item-group>
+                                    </v-list>
+                                  </v-col>
+                                  <v-col>
+                                    <v-lazy>
+                                      <jupyter-widget
+                                        :widget="viewers.hub_morphology_viewer"
+                                      ></jupyter-widget>
+                                    </v-lazy>
+                                  </v-col>
+                                </v-row>
+                                <v-row>
+                                  <v-col>
+                                    <v-card
+                                      class="pa-8 mx-auto"
+                                      elevation="3"
+                                    >
+                                      Buttons to calculate age of universe from <em>H</em><sub>0</sub> value.
+                                      <div class="text-center mt-4">
+                                        <form-dialog
+                                          button-text="estimate age of universe"
+                                          title-text="How do we estimate age of the universe?"
+                                          close-text="close"
+                                          @close="console.log('Close button was clicked.')"
+                                        >
+                                          Probably no dialog here. Just produce the age of the universe estimate from the <em>H</em><sub>0</sub> value.
+                                        </form-dialog>
+                                      </div>
+                                    </v-card>
+                                  </v-col>
+                                </v-row>
+                              
+                                <!-- WIREFRAME for learning objectives/experience on First Page -->
+                                <v-divider
+                                  class="mt-4"
+                                >
+                                </v-divider>
+                                <hinttext-alert>
+                                  This is for marginal hint text
+                                </hinttext-alert>
+                                <snackbar-alert>
+                                  This is for guidance snackbars
+                                </snackbar-alert>
+                                <infodialog-alert>
+                                  This is for informative dialog pop-ups
+                                </infodialog-alert>
+                                <responsedialog-alert>
+                                  This is for worksheet form pop-ups
+                                </responsedialog-alert>
+                                <todo-alert>
+                                  This is for tasks that still need to be completed
+                                </todo-alert>
+                              </v-container>
+                            </v-tab-item>
+                            
+                            <!-- ---------------- ----------------------------- ---------------- -->
+                            <!-- ---------------- FOURTH TAB: PROFESSIONAL DATA ---------------- -->
+                            <!-- ---------------- ----------------------------- ---------------- -->
+                            <v-tab-item
+                              key="prof_data"
+                            >
+                              <v-container>
+                                <v-row>
+                                  <v-col
+                                    cols="3"
+                                  >
+                                    <v-btn
+                                      color="primary"
+                                      @click="fit_lines({
+                                        'viewer_id': 'hub_comparison_viewer'
+                                      })"
+                                    >
+                                      Fit Lines
+                                    </v-btn>
+                                    <v-list
+                                      style="max-height: 300px"
+                                      class="overflow-y-auto"
+                                    >
+                                      <v-list-item-group
+                                        multiple
+                                        v-model="state.hubble_comparison_selections"
+                                      >
+                                      <!--
+                                        <v-list-item
+                                          v-for="(option, index) in ['My data', 'Class data', 'All data']"
+                                          :key="index"
+                                          :value="index"
+                                        >
+                                        -->
+                                        <v-list-item
+                                          v-for="(option, index) in ['Hubble (1929)', 'HST Key Project (2001)', 'Supernova Ia (2004)']"
+                                          :key="index"
+                                          :value="index"
+                                        >
+                                          <template v-slot:default="{ active }">
+                                            <v-list-item-content>
+                                              {{option}}
+                                            </v-list-item-content>
+
+                                            <v-list-item-action>
+                                              <v-checkbox
+                                                :input-value="active"
+                                                :color="['orange', 'green', 'red'][index]"
+                                              ></v-checkbox>
+                                            </v-list-item-action>
+                                          </template>
+                                        </v-list-item>
+                                      </v-list-item-group>
+                                    </v-list>
+                                  </v-col>
+                                  <v-col>
+                                    <v-lazy>
+                                      <jupyter-widget
+                                        :widget="viewers.hub_comparison_viewer"
+                                      ></jupyter-widget>
+                                    </v-lazy>
+                                    <todo-alert>
+                                      Right now the check boxes are still tied to "My data", "Class data", and "All data". Need to replace those with links to the real scientific data.
+                                    </todo-alert>
+                                  </v-col>
+                                </v-row>
+                                <v-row>
+                                  <v-col>
+                                    <v-card
+                                      class="pa-8 mx-auto"
+                                      elevation="3"
+                                    >
+                                      Buttons to calculate age of universe from <em>H</em><sub>0</sub> value.
+                                      <div class="text-center mt-4">
+                                        <form-dialog
+                                          button-text="estimate age of universe"
+                                          title-text="How do we estimate age of the universe?"
+                                          close-text="close"
+                                          @close="console.log('Close button was clicked.')"
+                                        >
+                                          Probably no dialog here. Just produce the age of the universe estimate from the <em>H</em><sub>0</sub> value.
+                                        </form-dialog>
+                                      </div>
+                                    </v-card>
+                                  </v-col>
+                                </v-row>
+                              
+                                <!-- WIREFRAME for learning objectives/experience on First Page -->
+                                <v-divider
+                                  class="mt-4"
+                                >
+                                </v-divider>
+                                <hinttext-alert>
+                                  This is for marginal hint text
+                                </hinttext-alert>
+                                <snackbar-alert>
+                                  This is for guidance snackbars
+                                </snackbar-alert>
+                                <infodialog-alert>
+                                  This is for informative dialog pop-ups
+                                </infodialog-alert>
+                                <responsedialog-alert>
+                                  This is for worksheet form pop-ups
+                                </responsedialog-alert>
+                                <todo-alert>
+                                  This is for tasks that still need to be completed
+                                </todo-alert>
+                              </v-container>
+                            </v-tab-item>
+                          </v-tabs-items>
                         </v-card>
                       </v-row>
                     </v-container>
-                    
-                    <!-- WIREFRAME for learning objectives/experience on First Page -->
-                    <hinttext-alert>
-                      This is for marginal hint text
-                    </hinttext-alert>
-                    <snackbar-alert>
-                      This is for guidance snackbars
-                    </snackbar-alert>
-                    <infodialog-alert>
-                      This is for informative dialog pop-ups
-                    </infodialog-alert>
-                    <responsedialog-alert>
-                      This is for worksheet form pop-ups
-                    </responsedialog-alert>
 <!-- Disabling for now
                     <v-btn color="primary" @click="state.over_model = 3">
                       Continue
@@ -647,509 +1170,6 @@
                     <v-btn text> Cancel </v-btn>
 -->
                   </v-stepper-content>
-
-                <!-- This sets up the screen for the View Results step where they can look at distributions -->
-                <!-- Will need buttons/functionality for choosing different data sets -->
-                <!-- Need to think through whether the hubble plot should also appear on this page or if that would be confusing -->
-
-                  <!-- ---------------- ------------------------------- ---------------- -->
-                  <!-- ---------------- FOURTH PAGE: EXPLORE CLASS DATA ---------------- -->
-                  <!-- ---------------- ------------------------------- ---------------- -->
-                  <v-stepper-content step="4">
-                    <v-container>
-                      <v-row>
-                        <v-col
-                          cols="3"
-                        ><v-btn
-                            color="primary"
-                            @click="fit_lines({
-                              'viewer_id': 'hub_comparison_viewer'
-                            })"
-                          >
-                            Fit Lines
-                          </v-btn>
-                          <v-list
-                            style="max-height: 300px"
-                            class="overflow-y-auto"
-                          >
-                            <v-list-item-group
-                              multiple
-                              v-model="state.hubble_comparison_selections"
-                            >
-                              <v-list-item
-                                v-for="(option, index) in ['My data', 'Class data', 'All data']"
-                                :key="index"
-                                :value="index"
-                              >
-                                <template v-slot:default="{ active }">
-                                  <v-list-item-content>
-                                    {{option}}
-                                  </v-list-item-content>
-
-                                  <v-list-item-action>
-                                    <v-checkbox
-                                      :input-value="active"
-                                      :color="['orange', 'green', 'red'][index]"
-                                    ></v-checkbox>
-                                  </v-list-item-action>
-                                </template>
-                              </v-list-item>
-                            </v-list-item-group>
-                          </v-list>
-                        </v-col>
-                        <v-col>
-                          <v-lazy>
-                            <jupyter-widget
-                              :widget="viewers.hub_comparison_viewer"
-                            ></jupyter-widget>
-                          </v-lazy>
-                          <todo-alert>
-                            Give options to view all data from class, fit a
-                            line, and calculate <em>H</em><sub>0</sub> and
-                            age values for full class data set.
-                          </todo-alert>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-card
-                          class="pa-8"
-                          elevation="3"
-                          width="100%"
-                        >
-
-                          Buttons to calculate age of universe from H0 value.<br>
-
-                          <help-dialog
-                            button-text="Click Me!"
-                            title-text="Testing!"
-                            accept-text="Okay"
-                            cancel-text="Cancel"
-                            @accept="console.log('Button was clicked.')"
-                          >
-                            This is a test of a pure Vue dialog with a custom event.
-                          </help-dialog>
-
-                        </v-card>
-                     </v-row>
-                    </v-container>
-                    
-                    <!-- WIREFRAME for learning objectives/experience on First Page -->
-                    <hinttext-alert>
-                      This is for marginal hint text
-                    </hinttext-alert>
-                    <snackbar-alert>
-                      This is for guidance snackbars
-                    </snackbar-alert>
-                    <infodialog-alert>
-                      This is for informative dialog pop-ups
-                    </infodialog-alert>
-                    <responsedialog-alert>
-                      This is for worksheet form pop-ups
-                    </responsedialog-alert>
-
-                  </v-stepper-content>
-
-                  <!-- ---------------- ------------------------------ ---------------- -->
-                  <!-- ---------------- FIFTH PAGE: VIEW DISTRIBUTIONS ---------------- -->
-                  <!-- ---------------- ------------------------------ ---------------- -->
-                  <v-stepper-content step="5">
-                    <v-container>
-                      <v-row>
-                        <v-col cols="3">
-                        </v-col>
-                        <v-col>
-                          <v-lazy>
-                            <jupyter-widget
-                              :widget="viewers.hub_students_viewer"
-                            ></jupyter-widget>
-                          </v-lazy>
-                          <todo-alert>
-                            Give options to look at galaxies &amp; distribution
-                            of age values for individual students within class
-                            or for unique classes within full data set.
-                          </todo-alert>
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                    <v-container>
-                    <v-lazy>
-                      <v-row>
-                        <v-col>
-                          <v-tabs>
-                            <v-tab key="hist_class">My class</v-tab>
-                            <v-tab key="hist_prob">All data</v-tab>
-                            <v-tab key="hist_sandbox">Sandbox</v-tab>
-                            <v-tab-item key="hist_class">
-                              <v-container>
-                                <v-row>
-                                  <v-col cols="3">
-                                    <v-list
-                                      style="max-height: 300px"
-                                      class="overflow-y-auto"
-                                    >
-                                      <v-list-item-group
-                                        multiple
-                                        v-model="state.class_histogram_selections"
-                                      >
-                                        <v-list-item
-                                          v-for="(option, index) in ['Individual students', 'My value', 'Class value']"
-                                          :key="index"
-                                          :value="index"
-                                        >
-                                          <template v-slot:default="{ active }">
-                                            <v-list-item-content>
-                                              {{option}}
-                                            </v-list-item-content>
-
-                                            <v-list-item-action>
-                                              <v-checkbox
-                                                :input-value="active"
-                                                :color="['orange', 'blue', 'green'][index]"
-                                              ></v-checkbox>
-                                            </v-list-item-action>
-                                          </template>
-                                        </v-list-item>
-                                      </v-list-item-group>
-                                    </v-list>
-                                    <v-btn
-                                      color="primary"
-                                      @click="clear_histogram_selection()"
-                                    >
-                                    Clear selection
-                                    </v-btn>
-                                  </v-col>
-                                  <v-col>
-                                    <v-lazy>
-                                      <jupyter-widget
-                                        style="height: 300px"
-                                        :widget="viewers.class_distr_viewer">
-                                      </jupyter-widget>
-                                    </v-lazy>
-                                  </v-col>
-                                </v-row>
-                              </v-container>
-                            </v-tab-item>
-                            <v-tab-item key="hist_prob">
-                              <v-container>
-                                <v-row>
-                                  <v-col cols="3">
-                                    <v-list
-                                      style="max-height: 300px"
-                                      class="overflow-y-auto"
-                                    >
-                                      <v-list-item-group
-                                        multiple
-                                        v-model="state.alldata_histogram_selections"
-                                      >
-                                        <v-list-item
-                                          v-for="(option, index) in ['Students','Classes']"
-                                          :key="index"
-                                          :value="index"
-                                        >
-                                          <template v-slot:default="{ active }">
-                                            <v-list-item-content>
-                                              {{option}}
-                                            </v-list-item-content>
-
-                                            <v-list-item-action>
-                                              <v-checkbox
-                                                :input-value="active"
-                                                :color="['blue', 'red'][index]"
-                                              ></v-checkbox>
-                                            </v-list-item-action>
-                                          </template>
-                                        </v-list-item>
-                                      </v-list-item-group>
-                                    </v-list>
-                                  </v-col>
-                                  <v-col>
-                                    <v-lazy>
-                                      <jupyter-widget
-                                        style="height: 300px"
-                                        :widget="viewers.all_distr_viewer">
-                                      </jupyter-widget>
-                                    </v-lazy>
-                                  </v-col>
-                              </v-container>
-                            </v-tab-item>
-                            <v-tab-item key="hist_sandbox">
-                              <v-container>
-                                <v-row>
-                                  <v-col cols="3">
-                                    <v-list
-                                      style="max-height: 300px"
-                                      class="overflow-y-auto"
-                                    >
-                                      <v-list-item-group
-                                        multiple
-                                        v-model="state.sandbox_histogram_selections"
-                                      >
-                                        <v-list-item
-                                          v-for="(option, index) in ['Students in my class', 'All students', 'All classes', 'My class', 'All data', 'My value']"
-                                          :key="index"
-                                          :value="index"
-                                        >
-                                          <template v-slot:default="{ active }">
-                                            <v-list-item-content>
-                                              {{option}}
-                                            </v-list-item-content>
-
-                                            <v-list-item-action>
-                                              <v-checkbox
-                                                :input-value="active"
-                                                :color="['orange', 'blue', 'red', 'purple', 'green', 'black'][index]"
-                                              ></v-checkbox>
-                                            </v-list-item-action>
-                                          </template>
-                                        </v-list-item>
-                                      </v-list-item-group>
-                                    </v-list>
-                                  </v-col>
-                                  <v-col>
-                                    <v-lazy>
-                                      <jupyter-widget
-                                        style="height: 300px"
-                                        :widget="viewers.sandbox_distr_viewer">
-                                      </jupyter-widget>
-                                    </v-lazy>
-                                  </v-col>
-                              </v-container>
-                            </v-tab-item>
-                          </v-tabs>
-                        </v-col>
-                      </v-row>
-                    </v-lazy>
-                    <v-card
-                      class="fill-height mb-12"
-                      color="grey lighten-1 elevation-0"
-                    ></v-card>
-                    <v-card
-                      class="fill-height mb-12"
-                      color="grey lighten-1 elevation-0"
-                    ></v-card>
-                    
-                    <!-- WIREFRAME for learning objectives/experience on First Page -->
-                    <hinttext-alert>
-                      This is for marginal hint text
-                    </hinttext-alert>
-                    <snackbar-alert>
-                      This is for guidance snackbars
-                    </snackbar-alert>
-                    <infodialog-alert>
-                      This is for informative dialog pop-ups
-                    </infodialog-alert>
-                    <responsedialog-alert>
-                      This is for worksheet form pop-ups
-                    </responsedialog-alert>
-                    
-<!-- disabling this because it's redundant with previous/next
-                    <v-btn color="primary" @click="state.over_model = 1">
-                      Continue
-                    </v-btn>
-                    <v-btn text> Cancel </v-btn>
--->
-                  <!-- Curly braces indicate text to be replaced by content in the variable,
-                  like {{state.dialog_text}}  (For example, in app.py file, you can collect
-                  student userID and display it here via something like "Hello <student userID>".) -->
-                  </v-stepper-content>
-
-                  <!-- ---------------- ----------------------------- ---------------- -->
-                  <!-- ---------------- SIXTH PAGE: GALAXY MORPHOLOGY ---------------- -->
-                  <!-- ---------------- ----------------------------- ---------------- -->
-                  <v-stepper-content step="6">
-                    <v-container>
-                      <v-row>
-                        <v-col
-                          cols="3"
-                        ><v-btn
-                            color="primary"
-                            @click="fit_lines({
-                              'viewer_id': 'hub_morphology_viewer'
-                            })"
-                          >
-                            Fit Lines
-                          </v-btn>
-                          <v-list
-                            style="max-height: 300px"
-                            class="overflow-y-auto"
-                          >
-                            <v-list-item-group
-                              multiple
-                              v-model="state.morphology_selections"
-                            >
-                              <v-list-item
-                                v-for="(option, index) in ['Elliptical', 'Spiral', 'Irregular']"
-                                :key="index"
-                                :value="index"
-                              >
-                                <template v-slot:default="{ active }">
-                                  <v-list-item-content>
-                                    {{option}}
-                                  </v-list-item-content>
-
-                                  <v-list-item-action>
-                                    <v-checkbox
-                                      :input-value="active"
-                                      :color="['orange', 'green', 'red'][index]"
-                                    ></v-checkbox>
-                                  </v-list-item-action>
-                                </template>
-                              </v-list-item>
-                            </v-list-item-group>
-                          </v-list>
-                        </v-col>
-                        <v-col>
-                          <v-lazy>
-                            <jupyter-widget
-                              :widget="viewers.hub_morphology_viewer"
-                            ></jupyter-widget>
-                          </v-lazy>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-card
-                          class="pa-8"
-                          elevation="3"
-                          width="100%"
-                        >
-
-                          Buttons to calculate age of universe from H0 value.<br>
-
-                          <help-dialog
-                            button-text="Click Me!"
-                            title-text="Testing!"
-                            accept-text="Okay"
-                            cancel-text="Cancel"
-                            @accept="console.log('Button was clicked.')"
-                          >
-                            This is a test of a pure Vue dialog with a custom event.
-                          </help-dialog>
-
-                        </v-card>
-                     </v-row>
-                    </v-container>
-
-                    <!-- WIREFRAME for learning objectives/experience on First Page -->
-                    <hinttext-alert>
-                      This is for marginal hint text
-                    </hinttext-alert>
-                    <snackbar-alert>
-                      This is for guidance snackbars
-                    </snackbar-alert>
-                    <infodialog-alert>
-                      This is for informative dialog pop-ups
-                    </infodialog-alert>
-                    <responsedialog-alert>
-                      This is for worksheet form pop-ups
-                    </responsedialog-alert>
-
-                  </v-stepper-content>
-
-
-
-                  <!-- ---------------- -------------------------------- ---------------- -->
-                  <!-- ---------------- SEVENTH PAGE: PRO ASTRONOMY DATA ---------------- -->
-                  <!-- ---------------- -------------------------------- ---------------- -->
-
-                  <v-stepper-content step="7">
-                    <v-container>
-                      <v-row>
-                        <v-col
-                          cols="3"
-                        ><v-btn
-                            color="primary"
-                            @click="fit_lines({
-                              'viewer_id': 'hub_comparison_viewer'
-                            })"
-                          >
-                            Fit Lines
-                          </v-btn>
-                          <v-list
-                            style="max-height: 300px"
-                            class="overflow-y-auto"
-                          >
-                            <v-list-item-group
-                              multiple
-                              v-model="state.hubble_comparison_selections"
-                            >
-                            <!--
-                              <v-list-item
-                                v-for="(option, index) in ['My data', 'Class data', 'All data']"
-                                :key="index"
-                                :value="index"
-                              >
-                              -->
-                              <v-list-item
-                                v-for="(option, index) in ['Hubble (1929)', 'HST Key Project (2001)', 'Supernova Ia (2004)']"
-                                :key="index"
-                                :value="index"
-                              >
-                                <template v-slot:default="{ active }">
-                                  <v-list-item-content>
-                                    {{option}}
-                                  </v-list-item-content>
-
-                                  <v-list-item-action>
-                                    <v-checkbox
-                                      :input-value="active"
-                                      :color="['orange', 'green', 'red'][index]"
-                                    ></v-checkbox>
-                                  </v-list-item-action>
-                                </template>
-                              </v-list-item>
-                            </v-list-item-group>
-                          </v-list>
-                        </v-col>
-                        <v-col>
-                          <v-lazy>
-                            <jupyter-widget
-                              :widget="viewers.hub_comparison_viewer"
-                            ></jupyter-widget>
-                          </v-lazy>
-                          <todo-alert>
-                            Right now the check boxes are still tied to "My data", "Class data", and "All data". Need to replace those with links to the real scientific data.
-                          </todo-alert>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-card
-                          class="pa-8"
-                          elevation="3"
-                          width="100%"
-                        >
-
-                          Buttons to calculate age of universe from H0 value.<br>
-
-                          <help-dialog
-                            button-text="Click Me!"
-                            title-text="Testing!"
-                            accept-text="Okay"
-                            cancel-text="Cancel"
-                            @accept="console.log('Button was clicked.')"
-                          >
-                            This is a test of a pure Vue dialog with a custom event.
-                          </help-dialog>
-
-                        </v-card>
-                     </v-row>
-                    </v-container>
-
-                    <!-- WIREFRAME for learning objectives/experience on First Page -->
-                    <hinttext-alert>
-                      This is for marginal hint text
-                    </hinttext-alert>
-                    <snackbar-alert>
-                      This is for guidance snackbars
-                    </snackbar-alert>
-                    <infodialog-alert>
-                      This is for informative dialog pop-ups
-                    </infodialog-alert>
-                    <responsedialog-alert>
-                      This is for worksheet form pop-ups
-                    </responsedialog-alert>
-
-                  </v-stepper-content>
-
                 </v-stepper-items>
               </v-stepper>
               <v-spacer></v-spacer>
@@ -1177,12 +1197,12 @@
                   dark
                   @click="
                     state.over_model =
-                      state.over_model < 7
+                      state.over_model < 3
                         ? state.over_model + 1
                         : state.over_model
                   "
                 >
-                  {{ state.over_model == 7 ? 'Finish' : 'Next' }}
+                  {{ state.over_model == 3 ? 'Finish' : 'Next' }}
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -1326,5 +1346,13 @@ body {
 
 .no-transition .v-stepper__content {
   transition: none !important;
+}
+
+/* issues with empty headers pushing WWT widget south, anyone else having this problem? -HOH */
+.wwt_column {
+  overflow-y: hidden;
+}
+.wwt_widget .v-toolbar {
+  display: none;
 }
 </style>
