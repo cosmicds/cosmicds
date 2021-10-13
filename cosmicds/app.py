@@ -232,9 +232,7 @@ class Application(VuetifyTemplate):
         # The Hubble comparison viewer should get the class and all public data as well
         all_data = self.data_collection['HubbleData_All']
         hub_comparison_viewer.add_data(class_data)
-        hub_comparison_viewer.layers[-1].state.visible = False
         hub_comparison_viewer.add_data(all_data)
-        hub_comparison_viewer.layers[-1].state.visible = False
         update_figure_css(hub_comparison_viewer, style_path=style_path)
 
         # For convenience, we attach the relevant data sets to the application instance
@@ -386,9 +384,11 @@ class Application(VuetifyTemplate):
         self.viewers = { k : ViewerLayout(v) for k, v in self._viewer_handlers.items() }
 
         # Make sure that the initial layer visibilities match the state
+        self._hubble_comparison_selection_update(self.state.hubble_comparison_selections)
         self._class_histogram_selection_update(self.state.class_histogram_selections)
         self._alldata_histogram_selection_update(self.state.alldata_histogram_selections)
         self._sandbox_histogram_selection_update(self.state.sandbox_histogram_selections)
+        self._morphology_selection_update(self.state.morphology_selections)
 
         self._application_handler.set_subset_mode('replace')
 
