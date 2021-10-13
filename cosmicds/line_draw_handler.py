@@ -141,21 +141,27 @@ class LineDrawHandler(object):
         x_min, x_max, y_min, y_max = state.x_min, state.x_max, state.y_min, state.y_max
 
         # If the point is in bounds, do nothing
-        if x >= x_min and x <= x_max and y >= y_min and y <= y_max:
+        if x > x_min and x < x_max and y > y_min and y < y_max:
             return x, y
 
-        absratio = lambda n, d: abs(n / d) if d != 0 else 0
-        ratio = lambda c, c_min, c_max: absratio(c, c_min) if c < c_min else (absratio(c, c_max) if c > c_max else 1)
-        x_ratio = ratio(x, x_min, x_max)
-        y_ratio = ratio(y, y_min, y_max)
-        if x_ratio != 0 and y_ratio != 0:
-            ratio = max(x_ratio, y_ratio)
-        else:
-            ratio = 0
-        if ratio == 0:
-            return 0, 0
+        # Vertical line
+        if x == 0:
+            y_adj = y_min if y < y_min else y_max
+            return x, y_adj
 
-        return x / ratio, y / ratio
+        # Horizontal line
+        if y == 0:
+            x_adj = x_min if x < x_min else x_max
+            return x_adj, y
+
+        t1 = x_min / x
+        t2 = x_max / x
+        t3 = y_min / y
+        t4 = y_max / y
+        ts = [t for t in [t1,t2,t3,t4] if t > 0 and t < 1]
+        t = min(ts or [0])
+
+        return x * t, y * t
 
 
     def clear(self):

@@ -199,7 +199,7 @@ class Application(VuetifyTemplate):
             # Update the viewer CSS
             update_figure_css(viewer, style_path=style_path)
 
-        # Set the bottom-left corner of the plot to be zero in each scatter viewer
+        # Set the bottom-left corner of the plot to be the origin in each scatter viewer
         for viewer in hub_viewers:
             viewer.state.x_min = 0
             viewer.state.y_min = 0
