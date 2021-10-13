@@ -159,7 +159,7 @@ class LineDrawHandler(object):
         t3 = y_min / y
         t4 = y_max / y
         ts = [t for t in [t1,t2,t3,t4] if t > 0 and t < 1]
-        t = min(ts or [0]) * 0.99
+        t = min(ts or [0]) * 0.98
 
         return x * t, y * t
 
