@@ -141,7 +141,7 @@ class LineDrawHandler(object):
         x_min, x_max, y_min, y_max = state.x_min, state.x_max, state.y_min, state.y_max
 
         # If the point is in bounds, do nothing
-        if x > x_min and x < x_max and y > y_min and y < y_max:
+        if x >= x_min and x <= x_max and y >= y_min and y <= y_max:
             return x, y
 
         # Vertical line
@@ -159,7 +159,7 @@ class LineDrawHandler(object):
         t3 = y_min / y
         t4 = y_max / y
         ts = [t for t in [t1,t2,t3,t4] if t > 0 and t < 1]
-        t = min(ts or [0])
+        t = min(ts or [0]) * 0.99
 
         return x * t, y * t
 
