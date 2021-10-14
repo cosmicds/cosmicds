@@ -142,8 +142,7 @@
                         </v-col>
                         <v-col>
                           <!-- TABLE to hold Selected Galaxies -->
-                          <velocity-table>
-                          </velocity-table>
+                          <c-galaxy-table/>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -173,7 +172,8 @@
                                 state.data_ready_snackbar = 0;
                                 state.gal_snackbar = 1;
                                 state.gal_selected = 1;
-                                state.haro_on = 'd-block'
+                                state.haro_on = 'd-block';
+                                add_galaxy_data_point();
                               "
                             >
                               select galaxy (placeholder function)
@@ -461,7 +461,8 @@
                                       state.vel_measured == 1
                                         ? false
                                         : true;
-                                    state.galaxy_dist = Math.floor(Math.random() * 450) + 50
+                                    state.galaxy_dist = Math.floor(Math.random() * 450) + 50;
+                                    add_distance_data_point();
                                   "
                                 >
                                   estimate
@@ -501,8 +502,7 @@
                           </v-btn>
                         </v-col>
                         <v-col>
-                          <dist-table>
-                          </dist-table>
+                          <c-distance-table/>
                           <todo-alert>
                             <ul>
                               <li>When students click on a row of the table to choose their galaxy, the WWT window will display that galaxy with the measurement tools (so this won't need to have both a "Select galaxy" and "Estimate Distance" tab. It can be consolidated to just an Estimate Distance header.)
@@ -549,12 +549,34 @@
                             class="d-flex mb-4"
                           >
                             <v-btn
+                              color="red"
+                              class="flex-grow-1 white--text"
+                              @click="
+                                state.points_plotted = true;
+                                show_fit_points();"
+                            >
+                            plot my points
+                            <v-spacer></v-spacer>
+                            <v-icon
+                                right
+                                dark
+                                class="px-4"
+                              >
+                                mdi-chart-scatter-plot
+                              </v-icon>
+                            </v-btn>
+                          </div>
+                          <div
+                            class="d-flex mb-4"
+                          >
+                            <v-btn
                               :outlined="state.draw_on"
+                              :disabled="!state.points_plotted"
                               color="orange"
                               class="flex-grow-1 white--text"
-                              @click="state.draw_on = !state.draw_on"
+                              @click="handle_fitline_click()"
                             >
-                              draw a fit line
+                              {{ state.bestfit_drawn ? 'erase drawn line' : 'draw a fit line' }}
                               <v-spacer></v-spacer>
                               <v-icon
                                 right
@@ -569,10 +591,12 @@
                             class="d-flex mb-4"
                           >
                             <v-btn
+                              :disabled="!state.points_plotted"
                               color="green lighten-1"
                               class="flex-grow-1 white--text"
                               @click="fit_lines({
-                                'viewer_id': 'hub_fit_viewer'
+                                'viewer_id': 'hub_fit_viewer',
+                                'layers': [0]
                                 });
                                 state.bestfit_on = 1"
                             >
@@ -595,14 +619,7 @@
                             ></jupyter-widget>
                           </v-lazy>
                           <!-- TABLE to hold Galaxy, Velocity & Distance -->
-                          <mydata-table>
-                          </mydata-table>
-                          <todo-alert>
-                            Enable a button to draw your own fit line (unless this is
-                            prohibitively complicated). Plot drawn and calculated best
-                            fit lines. Display should include only this student's
-                            4-5 data points. 
-                          </todo-alert>
+                          <c-fit-table />
                         </v-col>
                       </v-row>
                       <v-row
