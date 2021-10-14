@@ -2,13 +2,14 @@
   <v-app
     id="cosmicds-app"
   >
-    <!-- Tool bar, fixed to the top of the application -->
+    <!-- TOOLBAR, fixed to the top of the application -->
     <v-app-bar
       color="primary"
       dark
       src="https://cdn.eso.org/images/screen/eso1738b.jpg"
       scroll-target="#scrolling-techniques-4"
     >
+      <!-- Sets the BACKGROUND IMAGE and GRADIENT overlay -->
       <template
         v-slot:img="{ props }"
       >
@@ -21,21 +22,24 @@
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
       <v-toolbar-title>
-        Cosmic Data Stories | Hubble's Law
+        Hubble's Law
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
+      <v-toolbar-title>
+        Cosmic Data Stories
+      </v-toolbar-title>
       <v-btn icon>
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
-
       <v-btn icon>
         <v-icon>mdi-account-circle</v-icon>
       </v-btn>
+
     </v-app-bar>
 
-    <!-- The main section of the application -->
+    <!-- The MAIN section of the application -->
     <v-main
       id="scrolling-techniques-4"
       class="overflow-y-auto fill-height"
@@ -45,12 +49,13 @@
           <v-col cols="12" xl="8">
             <v-card class="d-flex flex-column">
 
-            <!-- This sets up the multi-step sections across the top -->
-            <!-- v-model is a 2-way token that controls the state of something in the app -->
+            <!-- The STEPPER that sets up the multi-step sections across the top -->
+            <!-- Note: V-MODEL is a 2-way token that controls the state of something in the app -->
               <v-stepper
                 v-model="state.over_model"
                 class="elevation-0"
               >
+                <!-- Navigational banner for each of the STEPPER STEPS -->
                 <v-stepper-header>
                   <!-- :complete="state.over_model > 1"   
                         : is a binding - binds state of "complete" to the thing in the "".  If over_model is > 1, then we have gone past step 1.
@@ -86,13 +91,15 @@
                   </v-stepper-step>
                 </v-stepper-header>
 
-                <!-- This sets up the screen for the galaxy selection/measurement step -->
+                <!-- STEPPER-ITEMS to hold all content of each STEPPER -->
                 <v-stepper-items
                   class=""
                 >
 
                   <!-- ---------------- -------------------------------- ---------------- -->
+                  <!-- ---------------- -------------------------------- ---------------- -->
                   <!-- ---------------- FIRST PAGE: VELOCITY MEASUREMENT ---------------- -->
+                  <!-- ---------------- -------------------------------- ---------------- -->
                   <!-- ---------------- -------------------------------- ---------------- -->
                   <v-stepper-content step="1">
                     <v-container>
@@ -105,10 +112,11 @@
                           <div
                             class="wwt_widget"
                           >
+                            <!-- WWT GALAXY PICKER as Jupyter Widget -- v-lazy loads when visible -->
                             <v-lazy>
-                            <jupyter-widget
-                              :widget="viewers.wwt_viewer"
-                            ></jupyter-widget>
+                              <jupyter-widget
+                                :widget="viewers.wwt_viewer"
+                              ></jupyter-widget>
                             </v-lazy>
                           </div>
                         </v-col>
@@ -120,6 +128,7 @@
                       </v-row>
                       <v-row>
                         <v-col>
+                          <!-- Temporary ALERT to stand in for Galaxy Selection function -->
                           <v-alert
                             class="mb-4"
                             border="left"
@@ -133,7 +142,7 @@
                             spectrum to measure the galaxy's velocity.
                             NOTE: The button here stands in place of WWT
                             selection function until it becomes available.
-                            <!-- This can go because the "select" action will be on the galaxy marker within the WWT window -->
+                            <!-- This can go eventually because the "select" action will be on the galaxy marker within the WWT window -->
                             <div class="text-center mt-4">
                               <v-btn
                                 class="white--text"
@@ -162,6 +171,7 @@
                           cols="12" md="8"
                           class="align-stretch"
                         >
+                          <!-- The CARD to hold the SPECTRUM TOOL and where students Measure Velocity -->
                           <v-card
                             min-height="300px"
                             height="100%"
@@ -189,6 +199,7 @@
                             </v-card-text>
                           </v-card>
                         </v-col>
+                        <!-- SIDEBAR COLUMN for processing velocity data -->
                         <v-col cols="12" md="4">
                           <v-alert
                             border="left"
@@ -207,7 +218,7 @@
                             in place of wavelength setter function until it
                             becomes available.
 
-                            <!-- Again, I think the click action will be on the spectrum itself, so we can remove this -->
+                            <!-- The click action will be on the spectrum itself, so we can remove this when it is active -->
                             <div class="text-center mt-4">
                               <v-btn
                                 :disabled="!state.gal_selected"
@@ -231,6 +242,7 @@
 
                           <div
                           >
+                            <!-- CARD to CALCULATE the velocity from the wavelength -->
                             <v-card
                               color="indigo lighten-5"
                               class="mb-4"
@@ -277,6 +289,7 @@
                               </v-card-text>
                             </v-card>
                           </div>
+                          <!-- Card to hold an Informational VIDEO -->
                           <v-card
                             outlined
                             class="pa-5 mt-8"
@@ -303,34 +316,46 @@
                       </v-row>
                     </v-container>
 
+                    <!-- WIREFRAME of Dialogs/Alerts for Student Experience and Learning Objectives -->
                     <infodialog-alert>
-                      This window provides a view of the "night sky". Left click and drag to pan around within the view. Roll your mouse wheel forward and backward to zoom in and out. (we can recycle instructions from the WWT interactives) <br>
-                      The (colored) dots mark the locations of galaxies you can collect data for. Left click on one of these dots to select that galaxy. (is it going to be an issue if left click is "pan" and they accidentally click on one of the dots while trying to pan?) <br>
+                      This window provides a view of the "night sky". Left click and drag to pan around
+                      within the view. Roll your mouse wheel forward and backward to zoom in and out.
+                      (we can recycle instructions from the WWT interactives) <br>
+                      The (colored) dots mark the locations of galaxies you can collect data for. Left
+                      click on one of these dots to select that galaxy. (is it going to be an issue if
+                      left click is "pan" and they accidentally click on one of the dots while trying to pan?)
                     </infodialog-alert>
                     <infodialog-alert>
                       Notice that the table now has a row for your selected galaxy.
                     </infodialog-alert>
                     <infodialog-alert>
-                      Great! Now let's take a look at your galaxy's spectrum. Recall that a spectrograph separates light from a source into its distinct colors. The spectrum graph shows how bright the light from the galaxy is at each color. Notice that the spectrum has one or more upward spiky lines that are very bright (emission lines) or downward dips that are faint (absorption lines). These lines are caused by specific atoms and molecules in the galaxy emitting or absorbing light at those particular colors. Look for one of the lines labeled as Hydrogen (H), Calcium (Ca), or Potassium (K).<br>
+                      Great! Now let's take a look at your galaxy's spectrum. Recall that a spectrograph
+                      separates light from a source into its distinct colors. The spectrum graph shows how
+                      bright the light from the galaxy is at each color. Notice that the spectrum has one
+                      or more upward spiky lines that are very bright (emission lines) or downward dips that
+                      are faint (absorption lines). These lines are caused by specific atoms and molecules
+                      in the galaxy emitting or absorbing light at those particular colors. Look for one of
+                      the lines labeled as Hydrogen (H), Calcium (Ca), or Potassium (K).
                     </infodialog-alert>
                     <infodialog-alert>
-                      Left click on the vertical measuring tool and drag it to line up with the labeled line. Click again to record the observed wavelength of that line.
+                      Left click on the vertical measuring tool and drag it to line up with the labeled line.
+                      Click again to record the observed wavelength of that line.
                     </infodialog-alert>
                     <infodialog-alert>
                       Notice your measurement is now recorded in the table.
                     </infodialog-alert>
                     <infodialog-alert>
-                      Click on the H, Ca, or K label next to the line to record the rest wavelength of the line in the table.
+                      Click on the H, Ca, or K label next to the line to record the rest wavelength of the
+                      line in the table.
                     </infodialog-alert>
                     <infodialog-alert>
-                      Repeat this process for four more galaxies (or however many your instructor would like you to collect data for).
+                      Repeat this process for four more galaxies (or however many your instructor would like
+                      you to collect data for).
                     </infodialog-alert>
 
-                    <v-divider></v-divider>
-
-                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <!-- Sample DIALOGS/ALERTS for Learning Experience -->
                     <v-divider
-                      class="mt-4"
+                      class="my-4"
                     >
                     </v-divider>
                     <hinttext-alert>
@@ -350,6 +375,7 @@
                     </todo-alert>
                   </v-stepper-content>
 
+
                   <!-- ---------------- --------------------------------- ---------------- -->
                   <!-- ---------------- SECOND PAGE: DISTANCE MEASUREMENT ---------------- -->
                   <!-- ---------------- --------------------------------- ---------------- -->
@@ -365,6 +391,7 @@
                         <v-col cols="12" md="8"
                           class="wwt_column"
                         >
+                          <!-- WWT WIDGET to frame galaxy for Distance Estimate -->
                           <v-card
                             class="align-self-stretch"
                           >
@@ -392,7 +419,7 @@
                           </v-card>
                         </v-col>
 
-                        <!-- Callout to select galaxy / info about selected galaxy -->
+                        <!-- SIDEBAR COLUMN to hold galaxy details and Estimate Distance -->
                         <v-col cols="12" md="4">
                           <div
                             :class="state.haro_on"
@@ -464,6 +491,7 @@
                         </v-col>
                       </v-row>
                       <v-row>
+                        <!-- SIDEBAR COLUMN for giving Instructions -->
                         <v-col
                           cols="3"
                         >
@@ -493,6 +521,7 @@
                           </v-btn>
                         </v-col>
                         <v-col>
+                          <!-- TABLE for Galaxies and Velocity Measurements -->
                           <dist-table>
                           </dist-table>
                           <todo-alert>
@@ -507,9 +536,9 @@
 
                     <v-divider></v-divider>
 
-                    <!-- WIREFRAME for learning objectives/experience on First Page -->
+                    <!-- Sample DIALOGS/ALERTS for Learning Experience -->
                     <v-divider
-                      class="mt-4"
+                      class="my-4"
                     >
                     </v-divider>
                     <hinttext-alert>
@@ -536,9 +565,10 @@
                      * Choosing different data sets - student/class/all
                      * Plotting by galaxy type -->
 
-                  <!-- ---------------- ------------------------- ---------------- -->
-                  <!-- ---------------- THIRD PAGE: ALL THAT DATA ---------------- -->
-                  <!-- ---------------- ------------------------- ---------------- -->
+
+                <!-- ---------------- ------------------------- ---------------- -->
+                <!-- ---------------- THIRD PAGE: ALL THAT DATA ---------------- -->
+                <!-- ---------------- ------------------------- ---------------- -->
 
                 <!-- This sets up the screen for the Analysis/data fitting step -->
                   <v-stepper-content step="3">
@@ -583,6 +613,7 @@
                             class="no-transition"
                           >
 
+
                             <!-- ---------------- ------------------ ---------------- -->
                             <!-- ---------------- FIRST TAB: MY DATA ---------------- -->
                             <!-- ---------------- ------------------ ---------------- -->
@@ -591,6 +622,7 @@
                             >
                               <v-container>
                                 <v-row>
+                                  <!-- SIDEBAR COLUMN with buttons to Draw Fit and Calculate Best Fit -->
                                   <v-col
                                     cols="3"
                                     class="align-stretch"
@@ -639,6 +671,7 @@
                                     </div>
                                   </v-col>
                                   <v-col>
+                                    <!-- PLOTTING WIDGET to plot My Data -->
                                     <v-lazy>
                                       <jupyter-widget
                                         :widget="viewers.hub_fit_viewer"
@@ -651,6 +684,7 @@
                                 </v-row>
                                 <v-row>
                                   <v-col>
+                                    <!-- Card to hold an Informational VIDEO -->
                                     <v-card
                                       class="pa-8 mx-auto"
                                       elevation="3"
@@ -671,9 +705,9 @@
                                   </v-col>
                                 </v-row>
                               
-                                <!-- WIREFRAME for learning objectives/experience on First Page -->
+                                <!-- Sample DIALOGS/ALERTS for Learning Experience -->
                                 <v-divider
-                                  class="mt-4"
+                                  class="my-4"
                                 >
                                 </v-divider>
                                 <hinttext-alert>
@@ -702,6 +736,7 @@
                             >
                               <v-container>
                                 <v-row>
+                                  <!-- SIDEBAR COLUMN to Select Data and Fit Lines -->
                                   <v-col
                                     cols="3"
                                   >
@@ -743,6 +778,7 @@
                                     </v-list>
                                   </v-col>
                                   <v-col>
+                                    <!-- PLOTTING WIDGET to plot Each Dataset -->
                                     <v-lazy>
                                       <jupyter-widget
                                         :widget="viewers.hub_comparison_viewer"
@@ -752,6 +788,7 @@
                                 </v-row>
                                 <v-row>
                                   <v-col>
+                                    <!-- FORM DIALOG to learn steps to Estimate the Age of the Universe -->
                                     <v-card
                                       class="pa-8 mx-auto"
                                         elevation="3"
@@ -774,13 +811,16 @@
                                 <v-lazy>
                                   <v-row>
                                     <v-col>
+                                      <!-- TABS for Histograms -->
                                       <v-tabs>
                                         <v-tab key="hist_class">My class</v-tab>
                                         <v-tab key="hist_prob">All data</v-tab>
                                         <v-tab key="hist_sandbox">Sandbox</v-tab>
+                                        <!-- My Class HISTOGRAM -->
                                         <v-tab-item key="hist_class">
                                           <v-container>
                                             <v-row>
+                                              <!-- SIDEBAR COLUMN for Data Selection -->
                                               <v-col cols="3">
                                                 <v-list
                                                   style="max-height: 300px"
@@ -818,6 +858,7 @@
                                                 </v-btn>
                                               </v-col>
                                               <v-col>
+                                                <!-- HISTOGRAM of My Class Data -->
                                                 <v-lazy>
                                                   <jupyter-widget
                                                     style="height: 300px"
@@ -828,9 +869,11 @@
                                             </v-row>
                                           </v-container>
                                         </v-tab-item>
+                                        <!-- All Data HISTOGRAM -->
                                         <v-tab-item key="hist_prob">
                                           <v-container>
                                             <v-row>
+                                              <!-- SIDEBAR COLUMN for Data Selection -->
                                               <v-col cols="3">
                                                 <v-list
                                                   style="max-height: 300px"
@@ -862,6 +905,7 @@
                                                 </v-list>
                                               </v-col>
                                               <v-col>
+                                                <!-- HISTOGRAM of All Data -->
                                                 <v-lazy>
                                                   <jupyter-widget
                                                     style="height: 300px"
@@ -871,9 +915,11 @@
                                               </v-col>
                                           </v-container>
                                         </v-tab-item>
+                                        <!-- Sandbox HISTOGRAM -->
                                         <v-tab-item key="hist_sandbox">
                                           <v-container>
                                             <v-row>
+                                              <!-- SIDEBAR COLUMN for Data Selection -->
                                               <v-col cols="3">
                                                 <v-list
                                                   style="max-height: 300px"
@@ -905,6 +951,7 @@
                                                 </v-list>
                                               </v-col>
                                               <v-col>
+                                                <!-- HISTOGRAM for Sandbox -->
                                                 <v-lazy>
                                                   <jupyter-widget
                                                     style="height: 300px"
@@ -927,9 +974,9 @@
                                   color="grey lighten-1 elevation-0"
                                 ></v-card>
                               
-                                <!-- WIREFRAME for learning objectives/experience on First Page -->
+                                <!-- Sample DIALOGS/ALERTS for Learning Experience -->
                                 <v-divider
-                                  class="mt-4"
+                                  class="my-4"
                                 >
                                 </v-divider>
                                 <hinttext-alert>
@@ -950,6 +997,7 @@
                               </v-container>
                             </v-tab-item>
 
+
                             <!-- ---------------- ---------------------------- ---------------- -->
                             <!-- ---------------- THIRD TAB: GALAXY MORPHOLOGY ---------------- -->
                             <!-- ---------------- ---------------------------- ---------------- -->
@@ -958,6 +1006,7 @@
                             >
                               <v-container>
                                 <v-row>
+                                  <!-- SIDEBAR COLUMN for data subset selection and Fit Lines -->
                                   <v-col
                                     cols="3"
                                   >
@@ -999,6 +1048,7 @@
                                     </v-list>
                                   </v-col>
                                   <v-col>
+                                    <!-- PLOTTING WIDGET for all galaxy types -->
                                     <v-lazy>
                                       <jupyter-widget
                                         :widget="viewers.hub_morphology_viewer"
@@ -1008,6 +1058,7 @@
                                 </v-row>
                                 <v-row>
                                   <v-col>
+                                    <!-- PROCEDURAL DIALOG to learn steps to Estimate the Age of the Universe -->
                                     <v-card
                                       class="pa-8 mx-auto"
                                       elevation="3"
@@ -1027,9 +1078,10 @@
                                   </v-col>
                                 </v-row>
                               
-                                <!-- WIREFRAME for learning objectives/experience on First Page -->
+                           
+                                <!-- Sample DIALOGS/ALERTS for Learning Experience -->
                                 <v-divider
-                                  class="mt-4"
+                                  class="my-4"
                                 >
                                 </v-divider>
                                 <hinttext-alert>
@@ -1050,6 +1102,7 @@
                               </v-container>
                             </v-tab-item>
                             
+
                             <!-- ---------------- ----------------------------- ---------------- -->
                             <!-- ---------------- FOURTH TAB: PROFESSIONAL DATA ---------------- -->
                             <!-- ---------------- ----------------------------- ---------------- -->
@@ -1058,6 +1111,7 @@
                             >
                               <v-container>
                                 <v-row>
+                                  <!-- SIDEBAR COLUMN to choose Subset data and Fit Lines -->
                                   <v-col
                                     cols="3"
                                   >
@@ -1106,6 +1160,7 @@
                                     </v-list>
                                   </v-col>
                                   <v-col>
+                                    <!-- PLOTTING WIDGET for Professional Science Data -->
                                     <v-lazy>
                                       <jupyter-widget
                                         :widget="viewers.hub_comparison_viewer"
@@ -1118,6 +1173,7 @@
                                 </v-row>
                                 <v-row>
                                   <v-col>
+                                    <!-- PROCEDURAL DIALOG to learn steps to Estimate the Age of the Universe -->
                                     <v-card
                                       class="pa-8 mx-auto"
                                       elevation="3"
@@ -1136,10 +1192,10 @@
                                     </v-card>
                                   </v-col>
                                 </v-row>
-                              
-                                <!-- WIREFRAME for learning objectives/experience on First Page -->
+                        
+                                <!-- Sample DIALOGS/ALERTS for Learning Experience -->
                                 <v-divider
-                                  class="mt-4"
+                                  class="my-4"
                                 >
                                 </v-divider>
                                 <hinttext-alert>
