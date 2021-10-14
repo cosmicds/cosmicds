@@ -154,7 +154,8 @@
                                   state.data_ready_snackbar = 0;
                                   state.gal_snackbar = 1;
                                   state.gal_selected = 1;
-                                  state.haro_on = 'd-block'
+                                  state.haro_on = 'd-block';
+                                  add_galaxy_data_point();
                                 "
                               >
                                 select galaxy (placeholder function)
@@ -569,8 +570,8 @@
                         <v-col>
                           <!-- TABLE for Galaxies and Velocity Measurements -->
                           <!-- Probably delete dist-table, but need to check what c-distance-table is first -->
-                          <dist-table>
-                          </dist-table>
+                          <!-- <dist-table>
+                          </dist-table> -->
                           <c-distance-table/>
                           <todo-alert>
                             <ul>
