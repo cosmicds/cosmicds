@@ -2,12 +2,12 @@
   <v-alert
     text
     prominent
-    color="pink darken-1"
-    icon="mdi-head-snowflake"
+    color="deep-purple lighten-3"
+    icon="mdi-penguin"
     class="pa-5 my-2 text-body-2"
   >
     <div>
-      <strong>Reflection Dialog</strong>
+      <strong>Team Aside</strong>
     </div>
     <slot></slot>
   </v-alert>

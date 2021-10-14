@@ -142,8 +142,7 @@
                         </v-col>
                         <v-col>
                           <!-- TABLE to hold Selected Galaxies -->
-                          <velocity-table>
-                          </velocity-table>
+                          <c-galaxy-table/>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -173,7 +172,8 @@
                                 state.data_ready_snackbar = 0;
                                 state.gal_snackbar = 1;
                                 state.gal_selected = 1;
-                                state.haro_on = 'd-block'
+                                state.haro_on = 'd-block';
+                                add_galaxy_data_point();
                               "
                             >
                               select galaxy (placeholder function)
@@ -330,27 +330,79 @@
                     </v-container>
 
                     <infodialog-alert>
-                      This window provides a view of the "night sky". Left click and drag to pan around within the view. Roll your mouse wheel forward and backward to zoom in and out. (we can recycle instructions from the WWT interactives) <br>
-                      The (colored) dots mark the locations of galaxies you can collect data for. Left click on one of these dots to select that galaxy. (is it going to be an issue if left click is "pan" and they accidentally click on one of the dots while trying to pan?) <br>
+                      This window provides a view of the "night sky". As you explore this view, you may see stars, nebulae, and galaxies.<br>
+                      <b>Pan:</b> click + drag (or use the W-A-S-D keys)<br>
+                      <b>Zoom:</b> scroll in and out (or use the I-O keys for finer zoom)<br>
+                      Once you feel comfortable navigating in the viewer, click "next"
+                    </infodialog-alert>
+                    <teamaside-alert>
+                      Load galaxy position markers.
+                    </teamaside-alert>
+                    <infodialog-alert>
+                      The (colored) dots mark the locations of galaxies you can collect data for. Click on one of these dots to select that galaxy.
+                    </infodialog-alert>
+                    <teamaside-alert>
+                       (Depending on sky density of final data set, we may need to think through the UX if students have trouble panning in the sky because they keep accidentally clicking on galaxies that get added to their table.) 
+                    </teamaside-alert>
+                    <infodialog-alert>
+                      Notice that the table now has a row for your selected galaxy. "next"
                     </infodialog-alert>
                     <infodialog-alert>
-                      Notice that the table now has a row for your selected galaxy.
+                      Now let's take a look at your galaxy's spectrum. Recall that a spectrograph separates light from a source into its distinct colors. The spectrum graph shows how bright the light from the galaxy is at each color. Notice that the spectrum has one or more upward spiky lines that are very bright (emission lines) or downward dips that are faint (absorption lines). These lines are caused by specific atoms and molecules in the galaxy emitting or absorbing light at those particular colors. Look for one of the lines labeled as Hydrogen (H), Calcium (Ca), or Potassium (K).<br>
+                      Click on the element label to record its rest wavelength in your table.
+                    </infodialog-alert>
+                    <teamaside-alert>
+                      Element and rest wavelength appear in table.
+                    </teamaside-alert>
+                    <infodialog-alert>
+                      Click on the vertical measuring tool and drag it to line up with the labeled line. Click again to record the observed wavelength of that line.
                     </infodialog-alert>
                     <infodialog-alert>
-                      Great! Now let's take a look at your galaxy's spectrum. Recall that a spectrograph separates light from a source into its distinct colors. The spectrum graph shows how bright the light from the galaxy is at each color. Notice that the spectrum has one or more upward spiky lines that are very bright (emission lines) or downward dips that are faint (absorption lines). These lines are caused by specific atoms and molecules in the galaxy emitting or absorbing light at those particular colors. Look for one of the lines labeled as Hydrogen (H), Calcium (Ca), or Potassium (K).<br>
-                    </infodialog-alert>
-                    <infodialog-alert>
-                      Left click on the vertical measuring tool and drag it to line up with the labeled line. Click again to record the observed wavelength of that line.
-                    </infodialog-alert>
-                    <infodialog-alert>
-                      Notice your measurement is now recorded in the table.
-                    </infodialog-alert>
-                    <infodialog-alert>
-                      Click on the H, Ca, or K label next to the line to record the rest wavelength of the line in the table.
+                      Notice your wavelength measurement is now recorded in the table.
                     </infodialog-alert>
                     <infodialog-alert>
                       Repeat this process for four more galaxies (or however many your instructor would like you to collect data for).
                     </infodialog-alert>
+                    <teamaside-alert>
+                      The reflection alerts below will need to be converted to components that have proper multiple choice functionality wired up.
+                    </teamaside-alert>
+                    <responsedialog-alert>
+                      How do the observed wavelengths of emission or absorption lines in your galaxies compare with the “rest” wavelength of those lines?
+                      <ul>
+                        <li>Lines in the galaxies have the same wavelength as the lines at rest
+                        <li>Some galaxies have lines with smaller wavelengths and some have lines with larger wavelengths than the lines at rest
+                        <li>Most or all of the galaxies have lines with smaller wavelengths than the lines at rest
+                        <li>Most or all of the galaxies have lines with larger wavelengths than the lines at rest.
+                      </ul>
+                    </responsedialog-alert>
+                    <responsedialog-alert>
+                      Reflect on what you can conclude from the data you just collected about how the galaxies are moving relative to our home galaxy, the Milky Way:
+                      <ul>
+                        <li>The galaxies are not moving.
+                        <li>Some galaxies are moving toward our galaxy and some galaxies are moving away from our galaxy.
+                        <li>Galaxies are mostly moving toward our galaxy.
+                        <li>Galaxies are mostly moving away from our galaxy.
+                      </ul>
+                    </responsedialog-alert>
+                    <responsedialog-alert>
+                      Now that we agree these galaxies are not static, let’s calculate how fast these galaxies are moving. 
+                    </responsedialog-alert>
+                    <teamaside-alert>
+                      Display interface that shows how to calculate velocity.
+                      Once they've been through it once correctly, display a button they can click to make the rest of the velocities appear.
+                    </teamaside-alert>
+                    <responsedialog-alert>
+                      These were the prevailing viewpoints in the 1920's:
+                      <ul>
+                        <li> "The universe is static and unchanging"
+                        <li> "Galaxies in the universe are moving randomly"
+                      </ul>
+
+                      Do you data support either of these conclusions? What would you tell a scientist from 1920 regarding the prevailing wisdom about galaxies during this time?
+                    </responsedialog-alert>
+                    <responsedialog-alert>
+                      How confident do you feel about the information you gave to the 1920 scientist based on your data? What would improve your confidence in your data and ideas?
+                    </responsedialog-alert>
 
                     <!-- WIREFRAME for learning objectives/experience on First Page -->
                     <hinttext-alert>
@@ -363,8 +415,13 @@
                       This is for informative dialog pop-ups
                     </infodialog-alert>
                     <responsedialog-alert>
-                      This is for worksheet form pop-ups
+                      This is for student reflection pop-ups
                     </responsedialog-alert>
+                    <teamaside-alert>
+                      This is for notes to the team that won't be exposed to the user in finished DS
+                    </teamaside-alert>
+
+
                   </v-stepper-content>
                   <!-- ---------------- --------------------------------- ---------------- -->
                   <!-- ---------------- SECOND PAGE: DISTANCE MEASUREMENT ---------------- -->
@@ -461,7 +518,8 @@
                                       state.vel_measured == 1
                                         ? false
                                         : true;
-                                    state.galaxy_dist = Math.floor(Math.random() * 450) + 50
+                                    state.galaxy_dist = Math.floor(Math.random() * 450) + 50;
+                                    add_distance_data_point();
                                   "
                                 >
                                   estimate
@@ -501,8 +559,7 @@
                           </v-btn>
                         </v-col>
                         <v-col>
-                          <dist-table>
-                          </dist-table>
+                          <c-distance-table/>
                           <todo-alert>
                             <ul>
                               <li>When students click on a row of the table to choose their galaxy, the WWT window will display that galaxy with the measurement tools (so this won't need to have both a "Select galaxy" and "Estimate Distance" tab. It can be consolidated to just an Estimate Distance header.)
@@ -549,12 +606,34 @@
                             class="d-flex mb-4"
                           >
                             <v-btn
+                              color="red"
+                              class="flex-grow-1 white--text"
+                              @click="
+                                state.points_plotted = true;
+                                show_fit_points();"
+                            >
+                            plot my points
+                            <v-spacer></v-spacer>
+                            <v-icon
+                                right
+                                dark
+                                class="px-4"
+                              >
+                                mdi-chart-scatter-plot
+                              </v-icon>
+                            </v-btn>
+                          </div>
+                          <div
+                            class="d-flex mb-4"
+                          >
+                            <v-btn
                               :outlined="state.draw_on"
+                              :disabled="!state.points_plotted"
                               color="orange"
                               class="flex-grow-1 white--text"
-                              @click="state.draw_on = !state.draw_on"
+                              @click="handle_fitline_click()"
                             >
-                              draw a fit line
+                              {{ state.bestfit_drawn ? 'erase drawn line' : 'draw a fit line' }}
                               <v-spacer></v-spacer>
                               <v-icon
                                 right
@@ -569,10 +648,12 @@
                             class="d-flex mb-4"
                           >
                             <v-btn
+                              :disabled="!state.points_plotted"
                               color="green lighten-1"
                               class="flex-grow-1 white--text"
                               @click="fit_lines({
-                                'viewer_id': 'hub_fit_viewer'
+                                'viewer_id': 'hub_fit_viewer',
+                                'layers': [0]
                                 });
                                 state.bestfit_on = 1"
                             >
@@ -595,14 +676,7 @@
                             ></jupyter-widget>
                           </v-lazy>
                           <!-- TABLE to hold Galaxy, Velocity & Distance -->
-                          <mydata-table>
-                          </mydata-table>
-                          <todo-alert>
-                            Enable a button to draw your own fit line (unless this is
-                            prohibitively complicated). Plot drawn and calculated best
-                            fit lines. Display should include only this student's
-                            4-5 data points. 
-                          </todo-alert>
+                          <c-fit-table />
                         </v-col>
                       </v-row>
                       <v-row
