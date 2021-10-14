@@ -2,19 +2,18 @@ from os.path import join
 from pathlib import Path
 
 from astropy.modeling import models, fitting
-from bqplot import figure
 from echo import CallbackProperty
 from echo.core import add_callback
+from glue.core import Component, Data
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
-from glue_jupyter.bqplot.image import BqplotImageView
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from numpy import bitwise_or
+from numpy import array, bitwise_or
 from traitlets import Dict, List
 
 from .components.footer import Footer
@@ -25,6 +24,7 @@ from .histogram_listener import HistogramListener
 from .line_draw_handler import LineDrawHandler
 from .utils import age_in_gyr, extend_tool, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
+from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
 
 # Within ipywidgets - update calls only happen in certain instances.
@@ -56,6 +56,8 @@ class ApplicationState(State):
 
     draw_on = CallbackProperty(0)
     bestfit_on = CallbackProperty(0)
+    bestfit_drawn = CallbackProperty(False)
+    points_plotted = CallbackProperty(False)
 
     hubble_comparison_selections = CallbackProperty([0])
     class_histogram_selections = CallbackProperty([0])
@@ -76,25 +78,6 @@ class Application(VuetifyTemplate):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # Load the vue components through the ipyvuetify machinery. We add the
-        # html tag we want and an instance of the component class as a
-        # key-value pair to the components dictionary.
-        self.components = {'c-footer': Footer(self)
-                        # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
-                        #    'c-dialog-vel': Dialog(
-                        #        self,
-                        #        launch_button_text="Learn more",
-                        #        title_text="How do we measure galaxy velocity?",
-                        #        content_text="Verbiage about comparing observed & rest wavelengths of absorption/emission lines",
-                        #        accept_button_text="Close"),
-                        #    'c-dialog-age': Dialog(
-                        #        self,
-                        #        launch_button_text="Learn more",
-                        #        title_text="How do we estimate age of the universe?",
-                        #        content_text="Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.",
-                        #        accept_button_text="Close")
-        }
 
         self.state = ApplicationState()
         self._application_handler = JupyterApplication()
@@ -124,6 +107,21 @@ class Application(VuetifyTemplate):
         for dataset in datasets:
             self._application_handler.load_data(join(output_dir, f"{dataset}.csv"), label=dataset)
 
+        self._dummy_student_data = {
+            'gal_name': ['Haro 11', 'Hercules A', 'GOODS North', 'NGC 6052', 'UGC 2369', 'Abell 370'],
+            'element': ['H-alpha', 'Ca or K', 'H-alpha', 'H-alpha', 'H-alpha', 'H-alpha'],
+            'restwave': [656.3, 502.0, 656.3, 656.3, 656.3, 656.3],
+            'measwave': [669.7, 580.0, 725.6, 666.6, 676.8, 903.0],
+            'student_id': [1, 1, 1, 1, 1, 1],
+            'distance': [315, 147, 259, 119, 138, 3789],
+            'type': ['irregular', 'elliptical', 'spiral', 'spiral', 'spiral', 'irregular']
+        }
+
+        # Calculate the velocities from the wavelengths
+        self._dummy_student_data['velocity'] = [round((3*(10**5)) * (o - r) / r, 0) for o,r in zip(self._dummy_student_data['measwave'], self._dummy_student_data['restwave'])]
+        self._dummy_galaxy_counter = 0
+        self._dummy_distance_counter = 0
+
         # Instantiate the initial viewers
         spectrum_viewer = self._application_handler.new_data_viewer(
             SpectrumView, data=None, show=False)
@@ -141,49 +139,107 @@ class Application(VuetifyTemplate):
         hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(5)]
         hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer = hub_viewers
 
-        # Create a subset for the student
+        # Set up glue links for the Hubble data sets
+        measurement_data_fields = self._dummy_student_data.keys()
+        table_columns_map = {
+            'gal_name' : 'Galaxy Name',
+            'element' : 'Element',
+            'restwave' : 'Rest Wavelength (nm)',
+            'measwave' : 'Observed Wavelength (nm)',
+            'velocity' : 'Velocity (km/s)',
+            'distance' : 'Distance (Mpc)',
+            'type' : 'Galaxy Type'
+        }
+        self._galaxy_table_components = ['gal_name', 'element', 'restwave', 'measwave', 'velocity']
+        galaxy_table_names = [table_columns_map[x] for x in self._galaxy_table_components]
+        self._distance_table_components = ['gal_name', 'velocity', 'distance']
+        distance_table_names = [table_columns_map[x] for x in self._distance_table_components]
+        self._fit_table_components = ['gal_name', 'type', 'velocity', 'distance']
+        fit_table_names = [table_columns_map[x] for x in self._fit_table_components]
+
+        measurement_data = Data(label='student_measurements', **{x : array([], dtype='float64') for x in measurement_data_fields})
         class_data = self.data_collection['HubbleData_ClassSample']
-        student_subset = class_data.new_subset(class_data.id["student_id"] == 1, label="Student 1")
+        self._measurement_data = measurement_data
+        self.data_collection.append(measurement_data)
+        
+        # These zero values are dummies; we'll update them later
+        dummy_data = {x : ['X'] if x in ['gal_name', 'element', 'type'] else [0] for x in table_columns_map.keys()}
+        student_data = Data(label='student_data', **dummy_data)
+        self.data_collection.append(student_data)
+        for component in class_data.components:
+            field = component.label
+            if field in student_data.component_ids():
+                self._application_handler.add_link(student_data, field, class_data, field)
+        
+        viewers = [hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer]
+        for viewer in viewers:
+            viewer.add_data(student_data)
+            viewer.layers[-1].state.visible = False # We don't want the points to show until the student hits a button
+            viewer.state.x_att = student_data.id['distance']
+            viewer.state.y_att = student_data.id['velocity']
+
+        # Set up the line fit handler
+        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
+        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
+
+        all_data = self.data_collection['HubbleData_All']
+        for component in class_data.components:
+            field = component.label
+            self._application_handler.add_link(class_data, field, all_data, field)
+
+        # Load the vue components through the ipyvuetify machinery. We add the
+        # html tag we want and an instance of the component class as a
+        # key-value pair to the components dictionary.
+        table_title = 'My Galaxies | Velocity Measurements'
+        self.components = {'c-footer': Footer(self),
+                            'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
+                                key_component='gal_name', names=galaxy_table_names, title=table_title),
+                            'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
+                                key_component='gal_name', names=distance_table_names, title=table_title),
+                            'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
+                                key_component='gal_name', names=fit_table_names, title=table_title),
+                        # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
+                        #    'c-dialog-vel': Dialog(
+                        #        self,
+                        #        launch_button_text="Learn more",
+                        #        title_text="How do we measure galaxy velocity?",
+                        #        content_text="Verbiage about comparing observed & rest wavelengths of absorption/emission lines",
+                        #        accept_button_text="Close"),
+                        #    'c-dialog-age': Dialog(
+                        #        self,
+                        #        launch_button_text="Learn more",
+                        #        title_text="How do we estimate age of the universe?",
+                        #        content_text="Verbiage about how the slope of the Hubble plot is the inverse of the age of the universe.",
+                        #        accept_button_text="Close")
+        }
 
         # Set up the scatter viewers
         style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "default_scatter.json")
         for viewer in hub_viewers[:-2]:
 
-            # Add the data from the first student
-            viewer.add_subset(student_subset)
-
-            # Set the x and y attributes of the viewer
-            viewer.state.x_att = class_data.id['distance']
-            viewer.state.y_att = class_data.id['velocity']
-
             # Update the viewer CSS
             update_figure_css(viewer, style_path=style_path)
 
+        # Set the bottom-left corner of the plot to be the origin in each scatter viewer
         for viewer in hub_viewers:
-            # Set the bottom-left corner of the plot to be zero
             viewer.state.x_min = 0
             viewer.state.y_min = 0
         
         # Set up the viewer that will listen to the histogram
         hub_students_viewer.add_data(class_data)
-        hub_students_viewer.state.x_att = class_data.id['distance']
-        hub_students_viewer.state.y_att = class_data.id['velocity']
         update_figure_css(hub_students_viewer, style_path=style_path)
 
         # The Hubble comparison viewer should get the class and all public data as well
         all_data = self.data_collection['HubbleData_All']
-        self._application_handler.add_link(class_data, 'distance', all_data, 'distance')
-        self._application_handler.add_link(class_data, 'velocity', all_data, 'velocity')
         hub_comparison_viewer.add_data(class_data)
-        hub_comparison_viewer.layers[-1].state.visible = False
         hub_comparison_viewer.add_data(all_data)
-        hub_comparison_viewer.layers[-1].state.visible = False
         update_figure_css(hub_comparison_viewer, style_path=style_path)
 
         # For convenience, we attach the relevant data sets to the application instance
+        self._student_data = student_data
         self._class_data = class_data
-        self._student_data = student_subset
+        self._measurement_data = measurement_data
         self._all_data = all_data
 
         # Link the age components of the summary data sets
@@ -267,6 +323,25 @@ class Application(VuetifyTemplate):
             self._histogram_listener.ignore()
         extend_tool(class_distr_viewer, 'bqplot:xrange', hist_selection_activate, hist_selection_deactivate)
 
+        # We want the hub_fit_viewer to be selecting for the same subset as the table
+        def hub_fit_selection_activate():
+            self.session.edit_subset_mode.edit_subset = [self.components['c-fit-table'].subset_group]
+        def hub_fit_selection_deactivate():
+            self.session.edit_subset_mode.edit_subset = []
+        for tool_id in ['bqplot:xrange', 'bqplot:yrange', 'bqplot:rectangle', 'bqplot:circle']:
+            extend_tool(hub_fit_viewer, tool_id, hub_fit_selection_activate, hub_fit_selection_deactivate)
+
+        # Set the data for the screen 3 table to be the completed measurements data
+        # and create a subset for the table component.
+        # Finally, hide this subset everywhere but screen 3.
+        fit_table = self.components['c-fit-table']
+        subset_group = self.data_collection.new_subset_group(label='fit-table-selected', subset_state=None)
+        fit_table.subset_group = subset_group
+        for viewer in hub_viewers + age_distr_viewers:
+            for layer in viewer.layers:
+                if layer.state.layer.label == subset_group.label:
+                    layer.state.visible = False
+
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
         wwt_viewer = self._application_handler.new_data_viewer(
@@ -289,10 +364,6 @@ class Application(VuetifyTemplate):
         # keyed by viewer id
         self._histogram_lines = {}
 
-        # For letting the student draw a line
-        self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
-        self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
-
         # scatter_viewer_layout = vuetify_layout_factory(gal_viewer)
 
         # Store an internal collection of the glue viewer objects
@@ -314,9 +385,11 @@ class Application(VuetifyTemplate):
         self.viewers = { k : ViewerLayout(v) for k, v in self._viewer_handlers.items() }
 
         # Make sure that the initial layer visibilities match the state
+        self._hubble_comparison_selection_update(self.state.hubble_comparison_selections)
         self._class_histogram_selection_update(self.state.class_histogram_selections)
         self._alldata_histogram_selection_update(self.state.alldata_histogram_selections)
         self._sandbox_histogram_selection_update(self.state.sandbox_histogram_selections)
+        self._morphology_selection_update(self.state.morphology_selections)
 
         self._application_handler.set_subset_mode('replace')
 
@@ -340,7 +413,6 @@ class Application(VuetifyTemplate):
         """
         return self._application_handler.data_collection
 
-    #def vue_fit_lines(self, viewer_id, data_ids=None, clear_others=False, aggregate=False):
     def vue_fit_lines(self, args):
         """
         This function handles line fitting, with the specifics of the fitting
@@ -392,7 +464,7 @@ class Application(VuetifyTemplate):
         for layer in layers:
 
             # Get the data (which may actually be a Data object,
-            # or represent a subset
+            # or represent a subset)
             data = layer.state.layer
 
             # Do the line fit
@@ -597,7 +669,6 @@ class Application(VuetifyTemplate):
             (2, self.class_slope, 'green')
         ]
         layer_mapping = { 0 : 0, 1 : 0 } # We hide a selected subset if the glue layer is hidden
-        print(selections)
         self._histogram_selection_update(selections, 'class_distr_viewer',
             layer_mapping=layer_mapping, line_options=line_options)
     
@@ -641,16 +712,103 @@ class Application(VuetifyTemplate):
         toolbar.active_tool = None
         self._histogram_listener.clear_subset()
 
+    def _update_data_component(self, data, attribute, values):
+        if attribute in data.component_ids():
+            data.update_components({data.id[attribute] : values})
+        else:
+            data.add_component(Component.autotyped(values), attribute)
+        data.broadcast(attribute)
+
+    def _new_dist_data_update(self, distance):
+
+        # Update the measurement Data object
+        label = 'student_measurements'
+        data = self.data_collection[label]
+        self._update_data_component(data, 'distance', distance)
+
+        # Create a new Data object from all of the 'finished' data points
+        # and update to match that
+        df = data.to_dataframe()
+        df = df.dropna()
+
+        main_comps = [x.label for x in data.main_components]
+        components = { col : list(df[col]) for col in main_comps }
+        new_data = Data(label='student_data', **components)
+
+        # Update the data
+        self._student_data.update_values_from_data(new_data)
+        viewer_ids = ['hub_const_viewer', 'hub_fit_viewer', 'hub_comparison_viewer', 'hub_students_viewer']
+        for viewer_id in viewer_ids:
+            viewer = self._viewer_handlers[viewer_id]
+            viewer.state.reset_limits()
+            viewer.state.x_min = min(0, viewer.state.x_min)
+            viewer.state.y_min = min(0, viewer.state.y_min)
+
+        # If there's a line on the fit viewer, it's now out of date
+        # so we clear it
+        self.vue_clear_lines('hub_fit_viewer')
+
+        # Same for a drawn line
+        self._line_draw_handler.clear()
+            
+    def _new_galaxy_data_update(self, new_data):
+        dc = self.data_collection
+        label = 'student_measurements'
+        data = dc[label]
+        data.update_values_from_data(new_data)
+
+    def vue_add_distance_data_point(self, _args):
+        if self._dummy_distance_counter >= len(self._dummy_student_data):
+            return
+
+        data = self.data_collection['student_measurements']
+        distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
+        self._new_dist_data_update(distance,)
+    
+        self._dummy_distance_counter += 1
+            
+    def vue_add_galaxy_data_point(self, _args):
+        if self._dummy_galaxy_counter >= len(self._dummy_student_data):
+            return
+
+        self._dummy_galaxy_counter += 1
+        component_mapping = {
+            k : v[:self._dummy_galaxy_counter] for k, v in self._dummy_student_data.items() if k != 'distance'
+        }
+
+        if 'student_measurements' in self.data_collection:
+            data = self.data_collection['student_measurements']
+            distance = list(data['distance']) + [None]
+        else:
+            distance = [None]*self._dummy_galaxy_counter
+        component_mapping['distance'] = distance
+        new_data = Data(label='student_measurements', **component_mapping)
+        self._new_galaxy_data_update(new_data)
+
+    def vue_show_fit_points(self, _args):
+        viewer = self._viewer_handlers['hub_fit_viewer']
+        for layer in viewer.layers:
+            if layer.state.layer.label in [self._student_data.label, self.components['c-fit-table'].subset_group.label]:
+                layer.state.visible = True
+
+    def vue_handle_fitline_click(self, _args):
+        if not self.state.bestfit_drawn:
+            self.state.draw_on = not self.state.draw_on
+        else:
+            self._line_draw_handler.clear()
+
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data
     @property
     def student_slope(self):
-        return self._fit_slopes.get(self._student_data.label)
+        if not hasattr(self, '_student_data'):
+            return 0
+        return self._fit_slopes.get(self._student_data.label, 0)
 
     @property
     def class_slope(self):
-        return self._fit_slopes.get(self._class_data.label)
+        return self._fit_slopes.get(self._class_data.label, 0)
 
     @property
     def all_slope(self):
-        return self._fit_slopes.get(self._all_data.label)
+        return self._fit_slopes.get(self._all_data.label, 0)
