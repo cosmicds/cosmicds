@@ -45,6 +45,16 @@
       class="overflow-y-auto fill-height"
     >
       <v-container>
+        <v-row>
+          <v-col cols="2">
+          Pan the sky and click one of the markers to 
+          select a galaxy to measure. You will then
+          use emission or absorption lines in its
+          spectrum to measure the galaxy's velocity.
+          NOTE: The button here stands in place of WWT
+          selection function until it becomes available.
+          </v-col>
+          <v-col cols="10">
         <v-row justify="center">
           <v-col cols="12" xl="8">
             <v-card class="d-flex flex-column">
@@ -105,7 +115,7 @@
                     <v-container>
                       <v-row>
                         <v-col
-                          cols="4"
+                          cols="6"
                           class="wwt_column"
                         >
                           <!-- WIDGET for WWT galaxy selection -->
@@ -120,7 +130,7 @@
                             </v-lazy>
                           </div>
                         </v-col>
-                        <v-col>
+                        <v-col cols="6">
                           <!-- TABLE to hold Selected Galaxies -->
                           <c-galaxy-table/>
                         </v-col>
@@ -668,6 +678,7 @@
                             <!-- ---------------- ------------------ ---------------- -->
                             <v-tab-item
                               key="my_data"
+                              class="no-transition" 
                             >
                               <v-container>
                                 <v-row>
@@ -807,6 +818,7 @@
                             <!-- ---------------- ------------------------------ ---------------- -->
                             <v-tab-item
                               key="class_data"
+                              class="no-transition" 
                             >
                               <v-container>
                                 <v-row>
@@ -1077,6 +1089,7 @@
                             <!-- ---------------- ---------------------------- ---------------- -->
                             <v-tab-item
                               key="gal_data"
+                              class="no-transition" 
                             >
                               <v-container>
                                 <v-row>
@@ -1182,6 +1195,7 @@
                             <!-- ---------------- ----------------------------- ---------------- -->
                             <v-tab-item
                               key="prof_data"
+                              class="no-transition" 
                             >
                               <v-container>
                                 <v-row>
@@ -1338,6 +1352,8 @@
             </v-card>
           </v-col>
         </v-row>
+        </v-col>
+        </v-row>
         <c-footer />
       </v-container>
     </v-main>
@@ -1475,6 +1491,10 @@ body {
 }
 
 .no-transition .v-stepper__content {
+  transition: none !important;
+}
+
+.no-transition {
   transition: none !important;
 }
 
