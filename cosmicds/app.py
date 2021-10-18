@@ -107,13 +107,13 @@ class Application(VuetifyTemplate):
             self._application_handler.load_data(join(output_dir, f"{dataset}.csv"), label=dataset)
 
         self._dummy_student_data = {
-            'gal_name': ['Haro 11', 'Hercules A', 'GOODS North', 'NGC 6052', 'UGC 2369', 'Abell 370'],
-            'element': ['H-alpha', 'Ca or K', 'H-alpha', 'H-alpha', 'H-alpha', 'H-alpha'],
-            'restwave': [656.3, 502.0, 656.3, 656.3, 656.3, 656.3],
-            'measwave': [669.7, 580.0, 725.6, 666.6, 676.8, 903.0],
-            'student_id': [1, 1, 1, 1, 1, 1],
-            'distance': [315, 147, 259, 119, 138, 3789],
-            'type': ['irregular', 'elliptical', 'spiral', 'spiral', 'spiral', 'irregular']
+            'gal_name': ['Haro 11', 'Hercules A', 'GOODS North', 'NGC 6052', 'UGC 2369'],# 'Abell 370'],
+            'element': ['H-alpha', 'Ca or K', 'H-alpha', 'H-alpha', 'H-alpha'],# 'H-alpha'],
+            'restwave': [656.3, 502.0, 656.3, 656.3, 656.3],# 656.3],
+            'measwave': [669.7, 580.0, 725.6, 666.6, 676.8],# 903.0],
+            'student_id': [1, 1, 1, 1, 1],# 1],
+            'distance': [315, 147, 259, 119, 138],# 3789],
+            'type': ['irregular', 'elliptical', 'spiral', 'spiral', 'spiral']#, 'irregular']
         }
 
         # Calculate the velocities from the wavelengths
@@ -158,8 +158,12 @@ class Application(VuetifyTemplate):
 
         measurement_data = Data(label='student_measurements', **{x : array([], dtype='float64') for x in measurement_data_fields})
         class_data = self.data_collection['HubbleData_ClassSample']
+        all_data = self.data_collection['HubbleData_All']
         self._measurement_data = measurement_data
         self.data_collection.append(measurement_data)
+        for component in class_data.components:
+            field = component.label
+            self._application_handler.add_link(class_data, field, all_data, field)
         
         # These zero values are dummies; we'll update them later
         dummy_data = {x : ['X'] if x in ['gal_name', 'element', 'type'] else [0] for x in table_columns_map.keys()}
@@ -180,11 +184,6 @@ class Application(VuetifyTemplate):
         # Set up the line fit handler
         self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
         self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
-
-        all_data = self.data_collection['HubbleData_All']
-        for component in class_data.components:
-            field = component.label
-            self._application_handler.add_link(class_data, field, all_data, field)
 
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
@@ -230,9 +229,11 @@ class Application(VuetifyTemplate):
         update_figure_css(hub_students_viewer, style_path=style_path)
 
         # The Hubble comparison viewer should get the class and all public data as well
-        all_data = self.data_collection['HubbleData_All']
         hub_comparison_viewer.add_data(class_data)
         hub_comparison_viewer.add_data(all_data)
+        hub_comparison_viewer.state.x_att = all_data.id['distance']
+        hub_comparison_viewer.state.y_att = all_data.id['velocity']
+        hub_comparison_viewer.state.reset_limits()
         update_figure_css(hub_comparison_viewer, style_path=style_path)
 
         # For convenience, we attach the relevant data sets to the application instance
@@ -391,6 +392,10 @@ class Application(VuetifyTemplate):
         self._morphology_selection_update(self.state.morphology_selections)
 
         self._application_handler.set_subset_mode('replace')
+
+        if kwargs.get('test', False):
+            self._testing_add_data()
+
 
     def reload(self):
         """
@@ -736,12 +741,6 @@ class Application(VuetifyTemplate):
 
         # Update the data
         self._student_data.update_values_from_data(new_data)
-        viewer_ids = ['hub_const_viewer', 'hub_fit_viewer', 'hub_comparison_viewer', 'hub_students_viewer']
-        for viewer_id in viewer_ids:
-            viewer = self._viewer_handlers[viewer_id]
-            viewer.state.reset_limits()
-            viewer.state.x_min = min(0, viewer.state.x_min)
-            viewer.state.y_min = min(0, viewer.state.y_min)
 
         # If there's a line on the fit viewer, it's now out of date
         # so we clear it
@@ -749,6 +748,9 @@ class Application(VuetifyTemplate):
 
         # Same for a drawn line
         self._line_draw_handler.clear()
+
+        # Update viewer limits
+        self._viewer_handlers['hub_fit_viewer'].state.reset_limits()
             
     def _new_galaxy_data_update(self, new_data):
         dc = self.data_collection
@@ -762,7 +764,7 @@ class Application(VuetifyTemplate):
 
         data = self.data_collection['student_measurements']
         distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
-        self._new_dist_data_update(distance,)
+        self._new_dist_data_update(distance)
     
         self._dummy_distance_counter += 1
             
@@ -795,6 +797,14 @@ class Application(VuetifyTemplate):
             self.state.draw_on = not self.state.draw_on
         else:
             self._line_draw_handler.clear()
+
+    def _testing_add_data(self):
+
+        # Add the data
+        for _ in range(len(self._dummy_student_data['gal_name'])):
+            self.vue_add_galaxy_data_point(None)
+            self.vue_add_distance_data_point(None)
+
 
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data
