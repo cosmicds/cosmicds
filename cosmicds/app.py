@@ -4,7 +4,7 @@ from pathlib import Path
 from astropy.modeling import models, fitting
 from echo import CallbackProperty
 from echo.core import add_callback
-from glue.core import Component, Data
+from glue.core import Component, Data, hub
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
@@ -62,6 +62,7 @@ class ApplicationState(State):
     class_histogram_selections = CallbackProperty([0])
     alldata_histogram_selections = CallbackProperty([0,1])
     sandbox_histogram_selections = CallbackProperty([0])
+    hubble_prodata_selections = CallbackProperty([0])
 
     morphology_selections = CallbackProperty([0,1,2])
 
@@ -87,6 +88,7 @@ class Application(VuetifyTemplate):
         add_callback(self.state, 'alldata_histogram_selections', self._alldata_histogram_selection_update)
         add_callback(self.state, 'sandbox_histogram_selections', self._sandbox_histogram_selection_update)
         add_callback(self.state, 'morphology_selections', self._morphology_selection_update)
+        add_callback(self.state, 'hubble_prodata_selections', self._hubble_prodata_selection_update)
 
         # Load the galaxy position data
         # This adds the file to the glue data collection at the top level
@@ -94,6 +96,10 @@ class Application(VuetifyTemplate):
         output_dir = data_dir / "hubble_simulation" / "output"
         self._application_handler.load_data(str(data_dir / "galaxy_data.csv"), 
             label='galaxy_data')
+        self._application_handler.load_data(str(data_dir / "Hubble 1929-Table 1.csv"),
+            label='Hubble 1929-Table 1')
+        self._application_handler.load_data(str(data_dir / "HSTkey2001.csv"),
+            label='HSTkey2001') 
 
         # Load some simulated measurements as summary data
         datasets =[
@@ -101,10 +107,10 @@ class Application(VuetifyTemplate):
             "HubbleData_All",
             "HubbleSummary_ClassSample",
             "HubbleSummary_Students",
-            "HubbleSummary_Classes"
+            "HubbleSummary_Classes",
         ]
         for dataset in datasets:
-            self._application_handler.load_data(join(output_dir, f"{dataset}.csv"), label=dataset)
+            self._application_handler.load_data(str(output_dir / f"{dataset}.csv"), label=dataset)
 
         self._dummy_student_data = {
             'gal_name': ['Haro 11', 'Hercules A', 'GOODS North', 'NGC 6052', 'UGC 2369', 'Abell 370'],
@@ -135,8 +141,8 @@ class Application(VuetifyTemplate):
         spectrum_viewer.layers[0].state.attribute = data.id['flux']
 
         # Scatter viewers used for the display of the measured galaxy data
-        hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(5)]
-        hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer = hub_viewers
+        hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(6)]
+        hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer, hub_prodata_viewer = hub_viewers
 
         # Set up glue links for the Hubble data sets
         measurement_data_fields = self._dummy_student_data.keys()
@@ -213,12 +219,16 @@ class Application(VuetifyTemplate):
         }
 
         # Set up the scatter viewers
-        style_path = str(Path(__file__).parent / "data" /
+        default_style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "default_scatter.json")
-        for viewer in hub_viewers[:-2]:
+        comparison_style_path = str(Path(__file__).parent / "data" /
+                                        "styles" / "comparison_scatter.json")
+        prodata_style_path = str(Path(__file__).parent / "data" /
+                                        "styles" / "prodata_scatter.json")
+        for viewer in hub_viewers[:-3]:
 
             # Update the viewer CSS
-            update_figure_css(viewer, style_path=style_path)
+            update_figure_css(viewer, style_path=default_style_path)
 
         # Set the bottom-left corner of the plot to be the origin in each scatter viewer
         for viewer in hub_viewers:
@@ -227,19 +237,36 @@ class Application(VuetifyTemplate):
         
         # Set up the viewer that will listen to the histogram
         hub_students_viewer.add_data(class_data)
-        update_figure_css(hub_students_viewer, style_path=style_path)
+        hub_students_viewer.layers[-1].state.zorder = 2
+        update_figure_css(hub_students_viewer, style_path=comparison_style_path)
 
         # The Hubble comparison viewer should get the class and all public data as well
         all_data = self.data_collection['HubbleData_All']
-        hub_comparison_viewer.add_data(class_data)
+        hub_comparison_viewer.layers[-1].state.zorder = 3
         hub_comparison_viewer.add_data(all_data)
-        update_figure_css(hub_comparison_viewer, style_path=style_path)
+        hub_comparison_viewer.layers[-1].state.zorder = 1
+        hub_comparison_viewer.add_data(class_data)
+        hub_comparison_viewer.layers[-1].state.zorder = 2
+        update_figure_css(hub_comparison_viewer, style_path=comparison_style_path)
+
+        # Set up the professional data viewer
+        hubble1929 = self.data_collection["Hubble 1929-Table 1"]
+        hstkp_data = self.data_collection["HSTkey2001"]
+        self._application_handler.add_link(hubble1929, 'Distance (Mpc)', hstkp_data, 'Distance (Mpc)')
+        self._application_handler.add_link(hubble1929, 'Tweaked Velocity (km/s)', hstkp_data, 'Velocity (km/s)')
+        hub_prodata_viewer.add_data(hstkp_data)
+        hub_prodata_viewer.state.x_att = hstkp_data.id["Distance (Mpc)"]
+        hub_prodata_viewer.state.y_att = hstkp_data.id["Velocity (km/s)"]
+        hub_prodata_viewer.add_data(hubble1929)
+        update_figure_css(hub_prodata_viewer, style_path=prodata_style_path)
 
         # For convenience, we attach the relevant data sets to the application instance
         self._student_data = student_data
         self._class_data = class_data
         self._measurement_data = measurement_data
         self._all_data = all_data
+        self._hubble1929 = hubble1929
+        self._hstkp_data = hstkp_data
 
         # Link the age components of the summary data sets
         self._application_handler.add_link(self.data_collection['HubbleSummary_Students'], 'age', self.data_collection['HubbleSummary_Classes'], 'age')
@@ -258,7 +285,7 @@ class Application(VuetifyTemplate):
         # both need the data for students in the class
         for viewer in [class_distr_viewer, sandbox_distr_viewer]:
             viewer.add_data(self.data_collection["HubbleSummary_ClassSample"])
-            viewer.layers[-1].state.color = 'orange'
+            viewer.layers[-1].state.color = 'red'
             viewer.figure.marks[-1].opacities = [0.5]
 
         # The histogram viewer that shows the overall distribution
@@ -269,8 +296,8 @@ class Application(VuetifyTemplate):
             viewer.layers[-1].state.color = 'blue'
             viewer.figure.marks[-1].opacities = [0.5]
             viewer.add_data(self.data_collection['HubbleSummary_Classes'])
-            viewer.layers[-1].state.color = 'red'
             viewer.figure.marks[-1].opacities = [0.5]
+            viewer.layers[-1].state.color = '#f0c470'
             viewer.state.normalize = True
             viewer.state.y_min = 0
             viewer.state.y_max = 1
@@ -294,7 +321,7 @@ class Application(VuetifyTemplate):
         self._irregular_subset = irregular_subset
         hub_morphology_viewer.state.x_att = self.data_collection['galaxy_data'].id['EstDist_Mpc']
         hub_morphology_viewer.state.y_att = self.data_collection['galaxy_data'].id['velocity_km_s']
-        update_figure_css(hub_morphology_viewer, style_path=style_path)
+        update_figure_css(hub_morphology_viewer, style_path=default_style_path)
 
         # Set up the listener to sync the histogram <--> scatter viewers
         meas_data = self.data_collection["HubbleData_ClassSample"]
@@ -305,7 +332,7 @@ class Application(VuetifyTemplate):
         # We add a listener for when a subset is modified/created on 
         # the histogram viewer as well as extend the xrange tool for the 
         # histogram to always affect this subset
-        hub_students_viewer.layers[-1].state.color = "#ff0000"
+        #hub_students_viewer.layers[-1].state.color = "#ff0000"
         self._histogram_listener = HistogramListener(self,
                                                      summ_data,
                                                      students_scatter_subset,
@@ -374,10 +401,11 @@ class Application(VuetifyTemplate):
             'hub_students_viewer': hub_students_viewer,
             'hub_fit_viewer': hub_fit_viewer,
             'hub_morphology_viewer': hub_morphology_viewer,
+            'hub_prodata_viewer': hub_prodata_viewer,
             'wwt_viewer': wwt_viewer,
             'class_distr_viewer': class_distr_viewer,
             'all_distr_viewer': all_distr_viewer,
-            'sandbox_distr_viewer': sandbox_distr_viewer
+            'sandbox_distr_viewer': sandbox_distr_viewer,
         }
 
         # Store a front-end accessible collection of renderable ipywidgets
@@ -389,6 +417,7 @@ class Application(VuetifyTemplate):
         self._alldata_histogram_selection_update(self.state.alldata_histogram_selections)
         self._sandbox_histogram_selection_update(self.state.sandbox_histogram_selections)
         self._morphology_selection_update(self.state.morphology_selections)
+        self._hubble_prodata_selection_update(self.state.hubble_prodata_selections)
 
         self._application_handler.set_subset_mode('replace')
 
@@ -611,6 +640,14 @@ class Application(VuetifyTemplate):
         data = [self._elliptical_subset, self._spiral_subset, self._irregular_subset]
         self._scatter_selection_update(viewer_id, data, selections)
 
+    def _hubble_prodata_selection_update(self, selections):
+        # Indices:
+        # 0: Hubble 1929
+        # 1: HSTKP
+        viewer_id = 'hub_prodata_viewer'
+        data = [self._hubble1929, self._hstkp_data]
+        self._scatter_selection_update(viewer_id, data, selections)
+
     def _histogram_selection_update(self, selections, viewer_id, line_options=[], layer_mapping=None):
         """
         Callback function to be executed when the selections corresponding to one of
@@ -785,10 +822,11 @@ class Application(VuetifyTemplate):
         self._new_galaxy_data_update(new_data)
 
     def vue_show_fit_points(self, _args):
-        viewer = self._viewer_handlers['hub_fit_viewer']
-        for layer in viewer.layers:
-            if layer.state.layer.label in [self._student_data.label, self.components['c-fit-table'].subset_group.label]:
-                layer.state.visible = True
+        for viewer_id in ['hub_fit_viewer', 'hub_comparison_viewer', 'hub_students_viewer']:
+            viewer = self._viewer_handlers[viewer_id]
+            for layer in viewer.layers:
+                if layer.state.layer.label in [self._student_data.label, self.components['c-fit-table'].subset_group.label]:
+                    layer.state.visible = True
 
     def vue_handle_fitline_click(self, _args):
         if not self.state.bestfit_drawn:
