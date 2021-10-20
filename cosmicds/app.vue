@@ -205,7 +205,8 @@
                             <v-card-text
                               class="pa-5"
                             >
-                              TO DO: New spectrum viewer code here.
+                              <jupyter-widget :widget="viewers.spectrum_viewer" >
+                              </jupyter-widget>  
                             </v-card-text>
                           </v-card>
                         </v-col>
