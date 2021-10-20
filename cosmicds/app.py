@@ -137,6 +137,7 @@ class Application(VuetifyTemplate):
         # Scatter viewers used for the display of the measured galaxy data
         hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(5)]
         hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer = hub_viewers
+        self._hub_viewers = hub_viewers
 
         # Set up glue links for the Hubble data sets
         measurement_data_fields = self._dummy_student_data.keys()
@@ -805,6 +806,10 @@ class Application(VuetifyTemplate):
             self.vue_add_galaxy_data_point(None)
             self.vue_add_distance_data_point(None)
 
+        # Set the bottom-left corner of the plot to be the origin in each scatter viewer
+        for viewer in self._hub_viewers:
+            viewer.state.x_min = 0
+            viewer.state.y_min = 0
 
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data
