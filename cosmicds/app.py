@@ -753,7 +753,10 @@ class Application(VuetifyTemplate):
         self._line_draw_handler.clear()
 
         # Update viewer limits
-        self._viewer_handlers['hub_fit_viewer'].state.reset_limits()
+        viewer = self._viewer_handlers['hub_fit_viewer']
+        viewer.state.reset_limits()
+        viewer.state.x_min = 0
+        viewer.state.y_min = 0
             
     def _new_galaxy_data_update(self, new_data):
         dc = self.data_collection
