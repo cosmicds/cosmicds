@@ -227,6 +227,8 @@ class Application(VuetifyTemplate):
         
         # Set up the viewer that will listen to the histogram
         hub_students_viewer.add_data(class_data)
+        hub_students_viewer.state.x_att = class_data.id['distance']
+        hub_students_viewer.state.y_att = class_data.id['velocity']
         update_figure_css(hub_students_viewer, style_path=style_path)
 
         # The Hubble comparison viewer should get the class and all public data as well
@@ -788,10 +790,10 @@ class Application(VuetifyTemplate):
         self._new_galaxy_data_update(new_data)
 
     def vue_show_fit_points(self, _args):
-        viewer = self._viewer_handlers['hub_fit_viewer']
-        for layer in viewer.layers:
-            if layer.state.layer.label in [self._student_data.label, self.components['c-fit-table'].subset_group.label]:
-                layer.state.visible = True
+        for viewer in self._hub_viewers:
+            for layer in viewer.layers:
+                if layer.state.layer.label in [self._student_data.label, self.components['c-fit-table'].subset_group.label]:
+                    layer.state.visible = True
 
     def vue_handle_fitline_click(self, _args):
         if not self.state.bestfit_drawn:
@@ -810,6 +812,8 @@ class Application(VuetifyTemplate):
         for viewer in self._hub_viewers:
             viewer.state.x_min = 0
             viewer.state.y_min = 0
+
+        self.vue_show_fit_points(None)
 
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data
