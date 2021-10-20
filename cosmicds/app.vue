@@ -855,7 +855,7 @@
                                             <v-list-item-action>
                                               <v-checkbox
                                                 :input-value="active"
-                                                :color="['orange', 'green', 'red'][index]"
+                                                :color="['#0616f4', '#f0c470', 'red'][index]"
                                               ></v-checkbox>
                                             </v-list-item-action>
                                           </template>
@@ -929,7 +929,7 @@
                                                         <v-list-item-action>
                                                           <v-checkbox
                                                             :input-value="active"
-                                                            :color="['orange', 'blue', 'green'][index]"
+                                                            :color="['red', 'blue', 'green'][index]"
                                                           ></v-checkbox>
                                                         </v-list-item-action>
                                                       </template>
@@ -970,7 +970,7 @@
                                                     v-model="state.alldata_histogram_selections"
                                                   >
                                                     <v-list-item
-                                                      v-for="(option, index) in ['Students','Classes']"
+                                                      v-for="(option, index) in ['Student values','Classe values']"
                                                       :key="index"
                                                       :value="index"
                                                     >
@@ -982,7 +982,7 @@
                                                         <v-list-item-action>
                                                           <v-checkbox
                                                             :input-value="active"
-                                                            :color="['blue', 'red'][index]"
+                                                            :color="['blue', 'orange'][index]"
                                                           ></v-checkbox>
                                                         </v-list-item-action>
                                                       </template>
@@ -1028,7 +1028,7 @@
                                                         <v-list-item-action>
                                                           <v-checkbox
                                                             :input-value="active"
-                                                            :color="['orange', 'blue', 'red', 'purple', 'green', 'black'][index]"
+                                                            :color="['red', 'blue', '#f0c470', 'purple', 'green', 'black'][index]"
                                                           ></v-checkbox>
                                                         </v-list-item-action>
                                                       </template>
@@ -1206,7 +1206,7 @@
                                     <v-btn
                                       color="primary"
                                       @click="fit_lines({
-                                        'viewer_id': 'hub_comparison_viewer'
+                                        'viewer_id': 'hub_prodata_viewer'
                                       })"
                                     >
                                       Fit Lines
@@ -1217,7 +1217,7 @@
                                     >
                                       <v-list-item-group
                                         multiple
-                                        v-model="state.hubble_comparison_selections"
+                                        v-model="state.hubble_prodata_selections"
                                       >
                                       <!--
                                         <v-list-item
@@ -1239,7 +1239,7 @@
                                             <v-list-item-action>
                                               <v-checkbox
                                                 :input-value="active"
-                                                :color="['orange', 'green', 'red'][index]"
+                                                :color="['#ee0df0', 'green', 'red'][index]"
                                               ></v-checkbox>
                                             </v-list-item-action>
                                           </template>
@@ -1251,12 +1251,9 @@
                                     <!-- PLOTTING WIDGET for Professional Science Data -->
                                     <v-lazy>
                                       <jupyter-widget
-                                        :widget="viewers.hub_comparison_viewer"
+                                        :widget="viewers.hub_prodata_viewer"
                                       ></jupyter-widget>
                                     </v-lazy>
-                                    <todo-alert>
-                                      Right now the check boxes are still tied to "My data", "Class data", and "All data". Need to replace those with links to the real scientific data.
-                                    </todo-alert>
                                   </v-col>
                                 </v-row>
                                 <v-row>
