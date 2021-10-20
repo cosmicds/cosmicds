@@ -202,11 +202,8 @@
                                 <v-icon>mdi-information-outline</v-icon>
                               </v-btn>
                             </v-toolbar>
-                            <v-card-text
-                              class="pa-5"
-                            >
-                              TO DO: New spectrum viewer code here.
-                            </v-card-text>
+                              <jupyter-widget :widget="viewers.spectrum_viewer" >
+                              </jupyter-widget>  
                           </v-card>
                         </v-col>
                         <!-- SIDEBAR COLUMN for processing velocity data -->
