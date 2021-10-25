@@ -13,7 +13,8 @@
 
     <v-dialog
         v-model="dialog"
-        max-width="500"
+        persistent
+        max-width="800px"
     >
       <v-card>
         <v-card-title class="text-h5">

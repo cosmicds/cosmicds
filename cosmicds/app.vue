@@ -323,6 +323,24 @@
                       </v-row>
                     </v-container>
 
+
+                    <!-- FORM DIALOG to as template for reflections/MC -->
+                    <form-dialog
+                      button-text="reflect"
+                      title-text="Reflection Questions"
+                      close-text="submit"
+                      @close="console.log('Submit button was clicked.')"
+                    >
+                      How do the observed wavelengths of emission or absorption lines in your galaxies
+                      compare with the “rest” wavelength of those lines?
+                      <mc-radiogroup
+                        radio-one="Lines in the galaxies have the same wavelength as the lines at rest."
+                        radio-two="Some galaxies have lines with smaller wavelengths and some have lines with larger wavelengths than the lines at rest."
+                        radio-three="Most or all of the galaxies have lines with smaller wavelengths than the lines at rest."
+                        radio-four="Most or all of the galaxies have lines with larger wavelengths than the lines at rest."
+                      >
+                      </mc-radiogroup>
+                    </form-dialog>
                     <!-- WIREFRAME of Dialogs/Alerts for Student Experience and Learning Objectives -->
                     <infodialog-alert>
                       This window provides a view of the "night sky". As you explore this view,
