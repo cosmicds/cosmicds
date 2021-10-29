@@ -4,8 +4,8 @@ from numpy import array, isin, unique
 from .subset_modifier_listener import SubsetModifierListener
 class HistogramListener(SubsetModifierListener):
 
-    def __init__(self, app, source, modify, source_viewer_ids=[], modify_viewer_ids=[], listen=True):
-        super().__init__(app, source, modify, source_viewer_ids, modify_viewer_ids, listen)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def _create_mask(self, message):
 

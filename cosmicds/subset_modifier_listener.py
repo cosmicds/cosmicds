@@ -1,34 +1,34 @@
 from glue.core import HubListener
 from glue.core.data import Data
-from glue.core.message import SubsetMessage, SubsetCreateMessage, SubsetDeleteMessage
+from glue.core.message import Message, SubsetMessage, SubsetCreateMessage, SubsetDeleteMessage
 from glue.core.subset import Subset
 from glue.core.subset_group import SubsetGroup, GroupedSubset
 
 class SubsetModifierListener(HubListener):
 
-    def __init__(self, app, source, modify, source_viewer_ids=[], modify_viewer_ids=[], listen=True):
+    def __init__(self, app, source, modify, source_viewer_ids=[], modify_viewer_ids=[], listen=True, color=None):
         if isinstance(source, Data):
             self._source_data = source
             self._source = None
-        elif isinstance(source, Subset) or isinstance(source, SubsetGroup):
+        elif isinstance(source, Subset) or isinstance(source, GroupedSubset):
             self._source = source
             self._source_data = source.data
         else:
-            raise ValueError("Source must be Data, Subset, or SubsetGroup")
+            raise ValueError("Source must be Data, Subset, or GroupedSubset")
             
         self._app = app
         self._modify = modify
         self._modify_viewer_ids = modify_viewer_ids or list(app._viewer_handlers.keys())
         self._source_viewer_ids = source_viewer_ids or list(app._viewer_handlers.keys())
-        self._hub = app.data_collection.hub
+        self._color = color
         if listen:
             self.listen()
 
     def listen(self):
-        self._hub.subscribe(self, SubsetMessage, handler=self._handle_message)
+        self.hub.subscribe(self, SubsetMessage, handler=self._handle_message)
 
     def ignore(self):
-        self._hub.unsubscribe(self, SubsetMessage)
+        self.hub.unsubscribe(self, SubsetMessage)
 
     def clear_subset(self):
         if self._source is None:
@@ -72,6 +72,8 @@ class SubsetModifierListener(HubListener):
         # If we don't have a source yet, it's the subset from this message
         if self._source is None and isinstance(message, SubsetCreateMessage):
             self._source = message.subset
+            if self._color:
+                message.subset.style.color = self._color
 
         # Get the subset mask and modify the subset
         subset_mask = self._create_mask(message)
@@ -92,7 +94,7 @@ class SubsetModifierListener(HubListener):
                 # It's just a member of the same subset group
                 # But it will have the same label
                 for layer in viewer.layers:
-                    if layer.state.layer.label == self._source.label:
+                    if layer.state.layer.label == self._source.label and layer.state.layer.data.label != self._source_data.label:
                         layer.state.visible = False
  
             # We also may want to control where the modified subset appears
@@ -109,3 +111,7 @@ class SubsetModifierListener(HubListener):
     @property
     def modify(self):
         return self._modify
+
+    @property
+    def hub(self):
+        return self._app.data_collection.hub

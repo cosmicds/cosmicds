@@ -1,10 +1,10 @@
-from os.path import join
 from pathlib import Path
 
 from astropy.modeling import models, fitting
+from bqplot import PanZoom
 from echo import CallbackProperty
 from echo.core import add_callback
-from glue.core import Component, Data, hub
+from glue.core import Component, Data
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
@@ -255,10 +255,14 @@ class Application(VuetifyTemplate):
         hstkp_data = self.data_collection["HSTkey2001"]
         self._application_handler.add_link(hubble1929, 'Distance (Mpc)', hstkp_data, 'Distance (Mpc)')
         self._application_handler.add_link(hubble1929, 'Tweaked Velocity (km/s)', hstkp_data, 'Velocity (km/s)')
+        self._application_handler.add_link(hstkp_data, 'Distance (Mpc)', student_data, 'distance')
+        self._application_handler.add_link(hstkp_data, 'Velocity (km/s)', student_data, 'velocity')
+        hub_prodata_viewer.add_data(student_data)
+        hub_prodata_viewer.state.x_att = student_data.id['distance']
+        hub_prodata_viewer.state.y_att = student_data.id['velocity']
         hub_prodata_viewer.add_data(hstkp_data)
-        hub_prodata_viewer.state.x_att = hstkp_data.id["Distance (Mpc)"]
-        hub_prodata_viewer.state.y_att = hstkp_data.id["Velocity (km/s)"]
         hub_prodata_viewer.add_data(hubble1929)
+        
         update_figure_css(hub_prodata_viewer, style_path=prodata_style_path)
 
         # For convenience, we attach the relevant data sets to the application instance
@@ -338,8 +342,9 @@ class Application(VuetifyTemplate):
                                                      summ_data,
                                                      students_scatter_subset,
                                                      ['class_distr_viewer'],
-                                                     ['hub_students_viewer'],
-                                                     listen=False)
+                                                     ['hub_comparison_viewer'],
+                                                     listen=False,
+                                                     color='green')
 
         def hist_selection_activate():
             if self._histogram_listener.source is not None:
@@ -429,8 +434,6 @@ class Application(VuetifyTemplate):
 
         if kwargs.get('test', False):
             self._testing_add_data()
-
-
 
 
     def reload(self):
@@ -640,7 +643,9 @@ class Application(VuetifyTemplate):
         # 1: Their class's data
         # 2: All public data
         viewer_id = 'hub_comparison_viewer'
-        data = [self._student_data, self._class_data, self._all_data]
+        data = [self._student_data, self._class_data, self._all_data, self._histogram_listener.modify]
+        if 1 in selections:
+            selections.append(3)
         self._scatter_selection_update(viewer_id, data, selections)
 
     def _morphology_selection_update(self, selections):
@@ -654,10 +659,11 @@ class Application(VuetifyTemplate):
 
     def _hubble_prodata_selection_update(self, selections):
         # Indices:
-        # 0: Hubble 1929
-        # 1: HSTKP
+        # 0: Student data
+        # 1: Hubble 1929
+        # 2: HSTKP
         viewer_id = 'hub_prodata_viewer'
-        data = [self._hubble1929, self._hstkp_data]
+        data = [self._student_data, self._hubble1929, self._hstkp_data]
         self._scatter_selection_update(viewer_id, data, selections)
 
     def _histogram_selection_update(self, selections, viewer_id, line_options=[], layer_mapping=None):
@@ -697,6 +703,53 @@ class Application(VuetifyTemplate):
         old_lines = self._histogram_lines.get(viewer_id, [])
         figure.marks = [mark for mark in figure.marks if not mark in old_lines] + lines
         self._histogram_lines[viewer_id] = lines
+
+        # We need to do a bit of a hack for the histogram viewer lines
+        # Using the same scale object as the viewer image modifies the y-axis for some reason
+        # so to get around that, these marks have new scales which mimic the view scales
+        # and thus we need to add them to the viewer's PanZoom interaction
+        line_scales = [line.scales for line in lines]
+        x_scales = [scale['x'] for scale in line_scales]
+        y_scales = [scale['y'] for scale in line_scales]
+
+        # If the PanZoom is currently open, we need to update this right now
+        if isinstance(figure.interaction.next, PanZoom):
+            figure.interaction.next = PanZoom(scales={
+                'x': [viewer.scale_x] + x_scales,
+                'y': [viewer.scale_y] + y_scales,
+            })
+
+        # Observe interaction changes so that we can modify when necessary
+        # We want to remove any observers that we have previously set
+        figure.interaction.unobserve_all(name='next')
+        figure.interaction.observe(lambda changed: self._panzoom_interaction_update(changed, viewer_id), names=['next'])
+
+    def _panzoom_interaction_update(self, change, viewer_id):
+
+        viewer = self._viewer_handlers[viewer_id]
+        figure = viewer.figure
+
+        # If the new interaction isn't a PanZoom, no need to do anything
+        if not isinstance(change['new'], PanZoom):
+            return
+        pan_zoom = change['new']
+
+        # No need to update if the scales are exactly the same as those in the PanZoom
+        # This also avoids infinite setting loops
+        lines = self._histogram_lines.get(viewer_id, [])
+        line_scales = [line.scales for line in lines]
+        x_scales = [scale['x'] for scale in line_scales]
+        y_scales = [scale['y'] for scale in line_scales]
+        x_needs_update = not all(scale in pan_zoom.scales['x'] for scale in x_scales)
+        y_needs_update = not all(scale in pan_zoom.scales['y'] for scale in y_scales)
+        if not (x_needs_update or y_needs_update):
+            return
+
+        # Update the interaction
+        figure.interaction.next = PanZoom(scales={
+            'x': [viewer.scale_x] + x_scales,
+            'y': [viewer.scale_y] + y_scales,
+        })
             
     def _class_histogram_selection_update(self, selections):
         """
@@ -793,11 +846,17 @@ class Application(VuetifyTemplate):
         # Same for a drawn line
         self._line_draw_handler.clear()
 
-        # Update viewer limits
-        viewer = self._viewer_handlers['hub_fit_viewer']
-        viewer.state.reset_limits()
-        viewer.state.x_min = 0
-        viewer.state.y_min = 0
+        # Update viewer limits and CSS (for labels)
+        viewer_ids = ['hub_fit_viewer', 'hub_comparison_viewer', 'hub_prodata_viewer']
+        style_files = ["default_scatter.json", "comparison_scatter.json", "prodata_scatter.json"]
+        for viewer_id, style_path in zip(viewer_ids, style_files):
+            style_path = str(Path(__file__).parent / "data" /
+                                        "styles" / style_path)
+            viewer = self._viewer_handlers[viewer_id]
+            viewer.state.reset_limits()
+            viewer.state.x_min = 0
+            viewer.state.y_min = 0
+            update_figure_css(viewer, style_path=style_path)
             
     def _new_galaxy_data_update(self, new_data):
         dc = self.data_collection
