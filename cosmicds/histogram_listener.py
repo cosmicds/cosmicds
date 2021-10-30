@@ -19,6 +19,7 @@ class HistogramListener(SubsetModifierListener):
         student_ids = list(unique(subset['student_id']))
         subset_mask = isin(self._modify.data['student_id'], student_ids)
 
+        print(subset_mask)
         return subset_mask
 
     def _handle_message(self, message):

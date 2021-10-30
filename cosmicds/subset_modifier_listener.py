@@ -10,11 +10,11 @@ class SubsetModifierListener(HubListener):
         if isinstance(source, Data):
             self._source_data = source
             self._source = None
-        elif isinstance(source, Subset) or isinstance(source, GroupedSubset):
+        elif isinstance(source, Subset) or isinstance(source, SubsetGroup):
             self._source = source
             self._source_data = source.data
         else:
-            raise ValueError("Source must be Data, Subset, or GroupedSubset")
+            raise ValueError("Source must be Data, Subset, or SubsetGroup")
             
         self._app = app
         self._modify = modify
@@ -38,11 +38,8 @@ class SubsetModifierListener(HubListener):
         if isinstance(self._source, SubsetGroup):
             subset_group = self._source
             data_collection.remove_subset_group(subset_group)
-        elif isinstance(self._source, GroupedSubset):
-            subset_group = self._source.group
-            data_collection.remove_subset_group(subset_group)
         elif isinstance(self._source, Subset):
-            self._source.data.remove_subset(self._source)
+            self._source.delete()
         message = SubsetDeleteMessage(self._source, "subset_modifier_delete")
         self._handle_message(message)
         self._source = None
@@ -94,7 +91,7 @@ class SubsetModifierListener(HubListener):
                 # It's just a member of the same subset group
                 # But it will have the same label
                 for layer in viewer.layers:
-                    if layer.state.layer.label == self._source.label and layer.state.layer.data.label != self._source_data.label:
+                    if layer.state.layer.label == self._source.label:
                         layer.state.visible = False
  
             # We also may want to control where the modified subset appears
