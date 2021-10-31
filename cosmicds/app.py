@@ -7,6 +7,7 @@ from echo.core import add_callback
 from glue.core import Component, Data
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
+from glue_jupyter.bqplot import scatter
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.state_traitlets_helpers import GlueState
@@ -331,7 +332,10 @@ class Application(VuetifyTemplate):
         # Set up the listener to sync the histogram <--> scatter viewers
         meas_data = self.data_collection["HubbleData_ClassSample"]
         summ_data = self.data_collection["HubbleSummary_ClassSample"]
-        students_scatter_subset = meas_data.new_subset(label="Scatter students")
+        hist_sync_sg = self.data_collection.new_subset_group(label="Hist Sync SG")
+        scatter_sync_sg = self.data_collection.new_subset_group(label="Scatter Sync SG")
+        hist_sync_sg.style.color = "green"
+        scatter_sync_sg.style.color = "green"
         
         # Set up the functionality for the histogram <---> scatter sync
         # We add a listener for when a subset is modified/created on 
@@ -339,16 +343,14 @@ class Application(VuetifyTemplate):
         # histogram to always affect this subset
         #hub_students_viewer.layers[-1].state.color = "#ff0000"
         self._histogram_listener = HistogramListener(self,
+                                                     hist_sync_sg,
                                                      summ_data,
-                                                     students_scatter_subset,
-                                                     ['class_distr_viewer'],
-                                                     ['hub_comparison_viewer'],
-                                                     listen=False,
-                                                     color='green')
+                                                     scatter_sync_sg, 
+                                                     meas_data)
 
         def hist_selection_activate():
             if self._histogram_listener.source is not None:
-                self.session.edit_subset_mode.edit_subset = [self._histogram_listener.source.group]
+                self.session.edit_subset_mode.edit_subset = [self._histogram_listener.source_group]
             self._histogram_listener.listen()
         def hist_selection_deactivate():
             self.session.edit_subset_mode.edit_subset = []
@@ -509,6 +511,8 @@ class Application(VuetifyTemplate):
             # Get the data (which may actually be a Data object,
             # or represent a subset)
             data = layer.state.layer
+            if data.size <= 1: # We need at least 2 points for a line
+                continue
 
             # Do the line fit
             x_arr = data[viewer.state.x_att]
@@ -590,7 +594,7 @@ class Application(VuetifyTemplate):
         figure.marks = marks_to_keep + [line]
         self._fit_lines[viewer_id] = to_keep + [(line, 'aggregate')]
 
-    def vue_clear_lines(self, viewer_id):
+    def vue_clear_lines(self, viewer_id, layer_indices=None):
         """
         "Clears all fit lines for the given viewer.
         """
@@ -598,9 +602,14 @@ class Application(VuetifyTemplate):
         figure = viewer.figure
 
         old_items = self._fit_lines.get(viewer_id, [])
-        old_marks = [x[0] for x in old_items]
 
-        figure.marks = [mark for mark in figure.marks if mark not in old_marks]
+        if layer_indices is None:
+            to_remove = [x[0] for x in old_items]
+        else:
+            labels = [viewer.layers[i].state.layer.label for i in layer_indices]
+            to_remove = [x[0] for x in old_items if x[1] in labels]
+
+        figure.marks = [mark for mark in figure.marks if mark not in to_remove]
         self._fit_lines[viewer_id] = []
 
     def vue_add_data_to_viewers(self, viewer_ids):
@@ -643,7 +652,7 @@ class Application(VuetifyTemplate):
         # 1: Their class's data
         # 2: All public data
         viewer_id = 'hub_comparison_viewer'
-        data = [self._student_data, self._class_data, self._all_data, self._histogram_listener.modify]
+        data = [self._student_data, self._class_data, self._all_data, self._histogram_listener.modify_group]
         if 1 in selections:
             selections.append(3)
         self._scatter_selection_update(viewer_id, data, selections)
