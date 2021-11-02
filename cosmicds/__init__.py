@@ -14,3 +14,5 @@ for comp_path in vue_comp_dir.iterdir():
         ipyvue.register_component_from_string(
             name=comp_path.stem.replace('_', '-'),
             value=comp_path.read_text())
+
+from .stories.hubbles_law import *
