@@ -1,1 +1,0 @@
-from .footer import *
