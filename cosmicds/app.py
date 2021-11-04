@@ -115,12 +115,12 @@ class Application(VuetifyTemplate):
             self._application_handler.load_data(str(output_dir / f"{dataset}.csv"), label=dataset)
 
         self._dummy_student_data = {
-            'gal_name': ['Haro 11', 'Hercules A', 'GOODS North', 'NGC 6052', 'UGC 2369'],# 'Abell 370'],
-            'element': ['H-alpha', 'Ca or K', 'H-alpha', 'H-alpha', 'H-alpha'],# 'H-alpha'],
+            'gal_name': ['Galaxy A', 'Galaxy B', 'Galaxy C', 'Galaxy D', 'Galaxy E'],# 'Abell 370'],
+            'element': ['H-alpha', 'Ca K', 'H-alpha', 'H-alpha', 'H-alpha'],# 'H-alpha'],
             'restwave': [656.3, 502.0, 656.3, 656.3, 656.3],# 656.3],
-            'measwave': [669.7, 580.0, 725.6, 666.6, 676.8],# 903.0],
+            'measwave': [661.7, 580.0, 725.6, 666.6, 676.8],# 903.0],
             'student_id': [1, 1, 1, 1, 1],# 1],
-            'distance': [315, 147, 259, 119, 138],# 3789],
+            'distance': [63, 147, 259, 119, 138],# 3789],
             'type': ['irregular', 'elliptical', 'spiral', 'spiral', 'spiral']#, 'irregular']
         }
 
@@ -336,6 +336,13 @@ class Application(VuetifyTemplate):
         scatter_sync_sg = self.data_collection.new_subset_group(label="Scatter Sync SG")
         hist_sync_sg.style.color = "green"
         scatter_sync_sg.style.color = "green"
+
+        # Right now, this is the only viewer aside from the synced viewers
+        # that shows these data objects
+        for layer in sandbox_distr_viewer.layers:
+            if layer.state.layer.label in [hist_sync_sg.label, scatter_sync_sg.label]:
+                layer.state.visible = False
+
         
         # Set up the functionality for the histogram <---> scatter sync
         # We add a listener for when a subset is modified/created on 
@@ -834,6 +841,9 @@ class Application(VuetifyTemplate):
         # Update the measurement Data object
         label = 'student_measurements'
         data = self.data_collection[label]
+        if len(distance) > data.size:
+            return
+
         self._update_data_component(data, 'distance', distance)
 
         # Create a new Data object from all of the 'finished' data points
@@ -850,22 +860,31 @@ class Application(VuetifyTemplate):
 
         # If there's a line on the fit viewer, it's now out of date
         # so we clear it
-        self.vue_clear_lines('hub_fit_viewer')
+        if self._fit_lines.get('hub_fit_viewer', []):
+            self.vue_clear_lines('hub_fit_viewer')
 
         # Same for a drawn line
         self._line_draw_handler.clear()
 
         # Update viewer limits and CSS (for labels)
         viewer_ids = ['hub_fit_viewer', 'hub_comparison_viewer', 'hub_prodata_viewer']
-        style_files = ["default_scatter.json", "comparison_scatter.json", "prodata_scatter.json"]
-        for viewer_id, style_path in zip(viewer_ids, style_files):
-            style_path = str(Path(__file__).parent / "data" /
-                                        "styles" / style_path)
+        for viewer_id in viewer_ids:
             viewer = self._viewer_handlers[viewer_id]
             viewer.state.reset_limits()
             viewer.state.x_min = 0
             viewer.state.y_min = 0
-            update_figure_css(viewer, style_path=style_path)
+
+
+        #style_files = ["default_scatter.json", "comparison_scatter.json", "prodata_scatter.json"]
+        # for viewer_id, style_path in zip(viewer_ids, style_files):
+        #     style_path = str(Path(__file__).parent / "data" /
+        #                                 "styles" / style_path)
+        #     viewer = self._viewer_handlers[viewer_id]
+        #     viewer.state.reset_limits()
+        #     viewer.state.x_min = 0
+        #     viewer.state.y_min = 0
+        #     update_figure_css(viewer, style_path=style_path)
+        #     print(f"Updated figure CSS for {viewer_id}")
             
     def _new_galaxy_data_update(self, new_data):
         dc = self.data_collection
