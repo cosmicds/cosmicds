@@ -287,6 +287,10 @@ class Application(VuetifyTemplate):
         age_distr_viewers = [self._application_handler.new_data_viewer(BqplotHistogramView, data=None, show=False) for _ in range(3)]
         class_distr_viewer, all_distr_viewer, sandbox_distr_viewer = age_distr_viewers
 
+        # Set the axis labels
+        for viewer in age_distr_viewers:
+            viewer.figure.axes[1].label = 'Count' if viewer == class_distr_viewer else 'Proportion' # maybe something else?
+
         # The class distribution viewer and the 'sandbox' histogram viewer
         # both need the data for students in the class
         for viewer in [class_distr_viewer, sandbox_distr_viewer]:
@@ -877,6 +881,9 @@ class Application(VuetifyTemplate):
             viewer.state.y_min = 0
             viewer.figure.axes[0].label = "Distance (Mpc)"
             viewer.figure.axes[1].label = "Velocity (km/s)"
+        for viewer_id in ['class_distr_viewer', 'all_distr_viewer', 'sandbox_distr_viewer']:
+            viewer = self._viewer_handlers[viewer_id]
+            viewer.figure.axes[0].label = 'Age (Gyr)'
 
 
         #style_files = ["default_scatter.json", "comparison_scatter.json", "prodata_scatter.json"]
