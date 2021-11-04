@@ -866,13 +866,17 @@ class Application(VuetifyTemplate):
         # Same for a drawn line
         self._line_draw_handler.clear()
 
-        # Update viewer limits and CSS (for labels)
+        # Update viewer limits and labels
+        # We don't want to redo all of the styling,
+        # as that is noticeably slow
         viewer_ids = ['hub_fit_viewer', 'hub_comparison_viewer', 'hub_prodata_viewer']
         for viewer_id in viewer_ids:
             viewer = self._viewer_handlers[viewer_id]
             viewer.state.reset_limits()
             viewer.state.x_min = 0
             viewer.state.y_min = 0
+            viewer.figure.axes[0].label = "Distance (Mpc)"
+            viewer.figure.axes[1].label = "Velocity (km/s)"
 
 
         #style_files = ["default_scatter.json", "comparison_scatter.json", "prodata_scatter.json"]
