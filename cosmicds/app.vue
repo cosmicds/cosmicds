@@ -906,7 +906,7 @@
                                             v-model="state.hubble_comparison_selections"
                                           >
                                             <v-list-item
-                                              v-for="(option, index) in ['My data', 'Class data', 'All data']"
+                                              v-for="(option, index) in ['My data', 'Class data', 'All Participant data']"
                                               :key="index"
                                               :value="index"
                                             >
@@ -1033,7 +1033,7 @@
                                                         v-model="state.alldata_histogram_selections"
                                                       >
                                                         <v-list-item
-                                                          v-for="(option, index) in ['Student values','Classe values']"
+                                                          v-for="(option, index) in ['Student values','Class values']"
                                                           :key="index"
                                                           :value="index"
                                                         >
@@ -1247,7 +1247,7 @@
                                             >
                                             -->
                                             <v-list-item
-                                              v-for="(option, index) in ['Hubble (1929)', 'HST Key Project (2001)', 'Supernova Ia (2004)']"
+                                              v-for="(option, index) in ['My data', 'Hubble (1929)', 'HST Key Project (2001)', 'Supernova Ia (2004)']"
                                               :key="index"
                                               :value="index"
                                             >
@@ -1259,7 +1259,7 @@
                                                 <v-list-item-action>
                                                   <v-checkbox
                                                     :input-value="active"
-                                                    :color="['#ee0df0', 'green', 'red'][index]"
+                                                    :color="['#0616f4', '#ee0df0', 'green', 'red'][index]"
                                                   ></v-checkbox>
                                                 </v-list-item-action>
                                               </template>
@@ -1299,6 +1299,9 @@
                                     </v-row>
                                   </v-container>
                                 </v-tab-item>
+
+
+
                               </v-tabs-items>
                             </v-card>
                           </v-row>
