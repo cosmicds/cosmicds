@@ -1,5 +1,6 @@
 <template>
   <v-btn
+      block
       color="info"
       dark
       @click.stop="dialog = true"
@@ -29,9 +30,9 @@
           <v-spacer></v-spacer>
 
           <v-btn
-              color="green darken-1"
-              text
-              @click="() => { $emit('close'); dialog = false } "
+            color="green darken-1"
+            text
+            @click="() => { $emit('close'); dialog = false } "
           >
             {{ closeText }}
           </v-btn>

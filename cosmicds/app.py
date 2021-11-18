@@ -35,6 +35,10 @@ class ApplicationState(State):
     est_model = CallbackProperty(0)
     analysis_tabs = CallbackProperty(0)
 
+
+    toggle_on = CallbackProperty('d-none')
+    toggle_off = CallbackProperty('d-block')
+
     gal_snackbar = CallbackProperty(0)
     dist_snackbar = CallbackProperty(0)
     marker_snackbar = CallbackProperty(0)
@@ -49,10 +53,17 @@ class ApplicationState(State):
     prev1_disabled = CallbackProperty(1)
     next1_disabled = CallbackProperty(1)
 
-    haro_on = CallbackProperty("d-flex")
-    marker_on = CallbackProperty("d-none")
+    gals_total = CallbackProperty(0)
+    vels_total = CallbackProperty(0)
+
+    haro_on = CallbackProperty("d-none")
     galaxy_dist = CallbackProperty("")
     galaxy_vel = CallbackProperty("")
+
+    calc_visible = CallbackProperty("d-none")
+
+    #state variables for reflections
+    rv1_visible = CallbackProperty("d-none")
 
     draw_on = CallbackProperty(0)
     bestfit_on = CallbackProperty(0)
