@@ -1444,6 +1444,57 @@
   </v-app>  
 </template>
 
+<script>
+
+export default {
+  mounted() {
+    window.MathJax = {
+      tex: {packages: {'[+]': ['input']}},
+      startup: {
+        ready() {
+          const Configuration = MathJax._.input.tex.Configuration.Configuration;
+          const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+          const TEXCLASS = MathJax._.core.MmlTree.MmlNode.TEXCLASS;
+          
+          new CommandMap('input', {input: 'Input'}, {
+            Input(parser, name) {
+              const xml = parser.create('node', 'XML');
+              const id = parser.GetBrackets(name, '');
+              const w = parser.GetBrackets(name, '5em');
+              const value = parser.GetArgument(name);
+              xml.setXML(MathJax.startup.adaptor.node('input', {
+                id: id, value: value, style: {width: w, border:'1px solid black', 'border-radius':'3px'}, xmlns: 'http://www.w3.org/1999/xhtml'
+              }), MathJax.startup.adaptor);
+              xml.getSerializedXML = function () {
+                return this.adaptor.outerHTML(this.xml) + '</input>';
+              }
+              parser.Push(
+                parser.create('node', 'TeXAtom', [
+                  parser.create('node', 'semantics', [
+                    parser.create('node', 'annotation-xml', [
+                      xml
+                    ], {encoding: 'application/xhtml+xml'})
+                  ])
+                ], {texClass: TEXCLASS.ORD})
+              );
+            }
+          });
+          Configuration.create('input', {handler: {macro: ['input']}});
+
+          MathJax.startup.defaultReady();
+        }
+      }
+    };
+
+    // Grab MathJax itself
+    const mathJaxScript = document.createElement('script');
+    mathJaxScript.async = true;
+    mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
+    document.head.appendChild(mathJaxScript);
+  }
+}
+</script>
+
 <style id="cosmicds-app">
 html {
   margin: 0;
