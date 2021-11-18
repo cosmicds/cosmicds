@@ -1,6 +1,8 @@
 from pathlib import Path
 
+from astropy.coordinates import SkyCoord
 from astropy.modeling import models, fitting
+import astropy.units as u
 from bqplot import PanZoom
 from echo import CallbackProperty
 from echo.core import add_callback
@@ -15,7 +17,10 @@ from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
 from numpy import array, bitwise_or
+from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, List
+
+from cosmicds.components.measuring_tool.measuring_tool import MeasuringTool
 
 from .components.footer import Footer
 # When we have multiple components, change above to
@@ -65,7 +70,6 @@ class ApplicationState(State):
     alldata_histogram_selections = CallbackProperty([0,1])
     sandbox_histogram_selections = CallbackProperty([0])
     hubble_prodata_selections = CallbackProperty([0])
-
     morphology_selections = CallbackProperty([0,1,2])
 
 
@@ -114,15 +118,16 @@ class Application(VuetifyTemplate):
         for dataset in datasets:
             self._application_handler.load_data(str(output_dir / f"{dataset}.csv"), label=dataset)
 
+        dummy_redshifts = [0.0119968, 0.00461038, 0.0251682, 0.0271153, 0.0467325]
         self._dummy_student_data = {
-            'gal_name': ['Galaxy A', 'Galaxy B', 'Galaxy C', 'Galaxy D', 'Galaxy E'],# 'Abell 370'],
-            'element': ['H-alpha', 'Ca K', 'H-alpha', 'H-alpha', 'H-alpha'],# 'H-alpha'],
-            'restwave': [656.3, 502.0, 656.3, 656.3, 656.3],# 656.3],
-            'measwave': [661.7, 580.0, 725.6, 666.6, 676.8],# 903.0],
-            'student_id': [1, 1, 1, 1, 1],# 1],
-            'distance': [63, 147, 259, 119, 138],# 3789],
-            'type': ['irregular', 'elliptical', 'spiral', 'spiral', 'spiral']#, 'irregular']
+            'gal_name': ['2.8205120973628E+018', '1.98723291005848E+018', '2.57949062495682E+018', '2.93425410635467E+018', '1.64172292008027E+018'],
+            'element': ['H-alpha', 'Ca K', 'H-alpha', 'H-alpha', 'H-alpha'],
+            'measwave': [661.7, 580.0, 725.6, 666.6, 676.8],
+            'student_id': [1, 1, 1, 1, 1],
+            'distance': [36.3, 80.89, 195.45, 58.61, 144.34],
+            'type': ['spiral', 'elliptical', 'irregular', 'spiral', 'elliptical']
         }
+        self._dummy_student_data['restwave'] = [round(m/(1+z),2) for m,z in zip(self._dummy_student_data['measwave'], dummy_redshifts)]
 
         # Calculate the velocities from the wavelengths
         self._dummy_student_data['velocity'] = [round((3*(10**5)) * (o - r) / r, 0) for o,r in zip(self._dummy_student_data['measwave'], self._dummy_student_data['restwave'])]
@@ -197,6 +202,11 @@ class Application(VuetifyTemplate):
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
         # key-value pair to the components dictionary.
+        measuring_widget = WWTJupyterWidget(hide_all_chrome=True)
+        sloan_dss = 'SDSS: Sloan Digital Sky Survey (Optical)'
+        measuring_widget.foreground = sloan_dss
+        coordinates = SkyCoord(235.5644989 * u.deg, 39.9837265 * u.deg, frame='icrs')
+        measuring_widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
         table_title = 'My Galaxies | Velocity Measurements'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
@@ -205,6 +215,7 @@ class Application(VuetifyTemplate):
                                 key_component='gal_name', names=distance_table_names, title=table_title),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
                                 key_component='gal_name', names=fit_table_names, title=table_title),
+                            'c-measuring-tool': MeasuringTool(measuring_widget),
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
                         #        self,
@@ -321,7 +332,7 @@ class Application(VuetifyTemplate):
         # Set up the subsets in the morphology viewer
         galaxy_data = self.data_collection['galaxy_data']
         elliptical_subset = galaxy_data.new_subset(galaxy_data.id['MorphType'] == 'E', label='Elliptical', color='orange')
-        spiral_subset = galaxy_data.new_subset(bitwise_or.reduce([galaxy_data.id["MorphType"] == x for x in ['Sa', 'Sb']]), label='Spiral', color='green')
+        spiral_subset = galaxy_data.new_subset(galaxy_data.id["MorphType"] == 'Sp', label='Spiral', color='green')
         irregular_subset = galaxy_data.new_subset(galaxy_data.id["MorphType"] == 'Ir', label='Irregular', color='red')
         morphology_subsets = [elliptical_subset, spiral_subset, irregular_subset]
         for subset in morphology_subsets:
@@ -904,7 +915,7 @@ class Application(VuetifyTemplate):
         data.update_values_from_data(new_data)
 
     def vue_add_distance_data_point(self, _args):
-        if self._dummy_distance_counter >= len(self._dummy_student_data):
+        if self._dummy_distance_counter >= len(self._dummy_student_data['gal_name']):
             return
 
         data = self.data_collection['student_measurements']
@@ -914,7 +925,7 @@ class Application(VuetifyTemplate):
         self._dummy_distance_counter += 1
             
     def vue_add_galaxy_data_point(self, _args):
-        if self._dummy_galaxy_counter >= len(self._dummy_student_data):
+        if self._dummy_galaxy_counter >= len(self._dummy_student_data['gal_name']):
             return
 
         self._dummy_galaxy_counter += 1
@@ -956,6 +967,13 @@ class Application(VuetifyTemplate):
             viewer.state.y_min = 0
 
         self.vue_show_fit_points(None)
+
+    def vue_reset_measurer(self, _args):
+        self.components['c-measuring-tool'].reset_canvas()
+
+    def vue_toggle_measuring(self, _args):
+        measurer = self.components['c-measuring-tool']
+        measurer.measuring = not measurer.measuring
 
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data

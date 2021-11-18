@@ -464,12 +464,22 @@
                                 <v-icon>mdi-information-outline</v-icon>
                               </v-btn>
                             </v-app-bar>
-                            <div class="wwt_widget">
-                              <jupyter-widget
-                                :widget="viewers.wwt_viewer"
-                              ></jupyter-widget>
-                            <div>
+                            <c-measuring-tool
+                              class="wwt_widget"
+                             />
                           </v-card>
+                          <v-btn
+                            class="white--text"
+                            color="purple darken-2"
+                            @click="reset_measurer()"
+                          >reset
+                          </v-btn>
+                          <v-btn
+                            class="white--text"
+                            color="purple darken-2"
+                            @click="toggle_measuring()"
+                          >toggle measuring
+                          </v-btn>
                         </v-col>
 
                         <!-- SIDEBAR COLUMN to hold galaxy details and Estimate Distance -->
