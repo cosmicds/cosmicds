@@ -118,6 +118,7 @@
                           cols="6"
                           class="wwt_column"
                         >
+
                           <!-- WIDGET for WWT galaxy selection -->
                           <div
                             class="wwt_widget"
@@ -1460,10 +1461,10 @@ export default {
             Input(parser, name) {
               const xml = parser.create('node', 'XML');
               const id = parser.GetBrackets(name, '');
-              const w = parser.GetBrackets(name, '5em');
+              const cls = parser.GetBrackets(name, '');
               const value = parser.GetArgument(name);
               xml.setXML(MathJax.startup.adaptor.node('input', {
-                id: id, value: value, style: {width: w, border:'1px solid black', 'border-radius':'3px'}, xmlns: 'http://www.w3.org/1999/xhtml'
+                id: id, class: cls, value: value, xmlns: 'http://www.w3.org/1999/xhtml'
               }), MathJax.startup.adaptor);
               xml.getSerializedXML = function () {
                 return this.adaptor.outerHTML(this.xml) + '</input>';
