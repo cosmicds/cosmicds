@@ -34,8 +34,8 @@ export default {
 
       // Set up the canvas
       this.canvas = this.$refs.canvas;
-      this.canvas.height = 400;
-      this.canvas.width = 500;
+      this.canvas.height = this.height;
+      this.canvas.width = this.width;
 
       // Set up the canvas context
       this.context = this.canvas.getContext('2d');
@@ -264,7 +264,6 @@ export default {
 
 #canvas {
   background: transparent;
-  border: 1px solid black;
   z-index: 20;
 }
 

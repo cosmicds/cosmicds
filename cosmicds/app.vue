@@ -478,8 +478,11 @@
                             class="white--text"
                             color="purple darken-2"
                             @click="toggle_measuring()"
-                          >toggle measuring
+                          >{{ state.measuring_on ? "Stop Measuring" : "Start Measuring" }}
                           </v-btn>
+                          <label
+                            v-if="state.measured_ang_dist && state.measured_ang_dist !== '0.0 deg'"
+                          >{{ state.measured_ang_dist }}</label>
                         </v-col>
 
                         <!-- SIDEBAR COLUMN to hold galaxy details and Estimate Distance -->
