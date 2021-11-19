@@ -1544,6 +1544,12 @@ body {
   transition: none !important;
 }
 
+input {
+  width: 1 rem !important;
+  border: 1px solid black !important;
+  border-radius: 3px !important;
+}
+
 /* issues with empty headers pushing WWT widget south, anyone else having this problem? -HOH */
 .wwt_column {
   overflow-y: hidden;
