@@ -204,10 +204,9 @@ class Application(VuetifyTemplate):
 
         # Set up the measuring tool
         measuring_widget = WWTJupyterWidget(hide_all_chrome=True)
-        measuring_widget.layout = Layout(height='400px', width='500px')
         measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
-        coordinates = SkyCoord(235.5644989 * u.deg, 39.9837265 * u.deg, frame='icrs')
-        measuring_widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
+        #coordinates = SkyCoord(235.5644989 * u.deg, 39.9837265 * u.deg, frame='icrs')
+        #measuring_widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
         measuring_tool = MeasuringTool(measuring_widget)
         def update_state_ang_dist(change):
             distance = change["new"]

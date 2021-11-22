@@ -18,6 +18,19 @@ export default {
   mounted() {
     this.setup();
     this.reset();
+    window.addEventListener('resize', this.handleResize);
+
+    // We don't get a Window resize event when the canvas first appears
+    // so we watch the canvas' dimensions instead
+    const resizeObserver = new ResizeObserver(_entries => {
+      this.handleResize();
+    });
+    resizeObserver.observe(this.canvas);
+  },
+
+  unmounted() {
+    window.removeEventListener('resize', this.handleResize);
+    resizeObserver.unobserve(this.canvas);
   },
 
   methods: {
@@ -32,15 +45,9 @@ export default {
       this.grabClass = "grab";
       this.grabbingClass = "grabbing";
 
-      // Set up the canvas
+      // Get the canvas
       this.canvas = this.$refs.canvas;
-      this.canvas.height = this.height;
-      this.canvas.width = this.width;
-
-      // Set up the canvas context
-      this.context = this.canvas.getContext('2d');
-      this.context.lineWidth = 3;
-      this.context.strokeStyle = 'dodgerblue';
+      this.setupCanvasContext();
     },
 
     // This needs to be done any time we want to reset the state
@@ -62,6 +69,12 @@ export default {
 
       // Clear the canvas, if necessary
       this.clearCanvas();
+    },
+
+    setupCanvasContext: function() {
+      this.context = this.canvas.getContext('2d');
+      this.context.lineWidth = 3;
+      this.context.strokeStyle = 'dodgerblue';
     },
 
     addInitialPoint: function(event) {
@@ -137,6 +150,28 @@ export default {
       }
     },
 
+    rescalePoints: function(points, xRatio, yRatio) {
+      points.forEach(point => {
+        point[0] = point[0] * xRatio;
+        point[1] = point[1] * yRatio;
+      });
+    },
+
+    handleResize: function() {
+      const oldWidth = this.canvas.width;
+      const oldHeight = this.canvas.height;
+      this.canvas.width = this.$el.clientWidth;
+      this.canvas.height = this.$el.clientHeight;
+      this.setupCanvasContext();
+      if (this.startPoint && this.endPoint) {
+        const xRatio = this.canvas.width / oldWidth;
+        const yRatio = this.canvas.height / oldHeight;
+        this.rescalePoints([this.startPoint, this.endPoint], xRatio, yRatio);
+        this.drawLine(this.startPoint, this.endPoint);
+        this.drawEndcaps(this.startPoint, this.endPoint);
+      }
+    },
+
     position: function(event) {
       return [event.offsetX, event.offsetY];
     },
@@ -188,14 +223,15 @@ export default {
 
     drawEndcaps: function(p1, p2) {
       const mPerp = this.perpSlope(p1, p2);
+      const endpts = [p1, p2];
 
       // We have to handle this a bit differently if the line is horizontal
-      // since the perpendicular lines are constant
+      // since the perpendicular lines are of the form x=constant
       if (Math.abs(mPerp) === Infinity) {
-        for (const p of [p1, p2]) {
+        endpts.forEach(p => {
           const [x, y] = p;
           this.drawLine([x, y - this.delta], [x, y + this.delta]);
-        }
+        });
         return;
       }
 
@@ -204,7 +240,7 @@ export default {
       const d = this.delta / Math.sqrt(1 + mPerp ** 2);
 
       // Draw the endcap through each point
-      for (const p of [p1, p2]) {
+     endpts.forEach(p => {
         const [x, y] = p;
         const nonXTerm = (y - mPerp * x);
         const xp = x + d;
@@ -212,7 +248,7 @@ export default {
         const xm = x - d;
         const ym = mPerp * xm + nonXTerm;
         this.drawLine([xm, ym], [xp, yp]);
-      }
+      });
     },
 
     lookForEndpoints: function(event) {
@@ -252,7 +288,7 @@ export default {
 <style scoped>
 #measurer-root {
   height: 400px;
-  width: 500px;
+  width: 100%;
   position: relative;
 }
 
