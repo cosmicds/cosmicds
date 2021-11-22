@@ -13,6 +13,13 @@
       hide-default-footer
       class="elevation-1"
     >
+      <template
+        v-slot:footer
+      >
+        <div>
+          You must select at least 5 galaxies.
+        </div>
+      </template>
     </v-data-table>
   </v-card>
 </template>

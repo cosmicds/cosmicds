@@ -1,5 +1,6 @@
 <template>
   <v-btn
+      block
       color="info"
       dark
       @click.stop="dialog = true"
@@ -13,7 +14,8 @@
 
     <v-dialog
         v-model="dialog"
-        max-width="500"
+        persistent
+        max-width="800px"
     >
       <v-card>
         <v-card-title class="text-h5">
@@ -28,9 +30,9 @@
           <v-spacer></v-spacer>
 
           <v-btn
-              color="green darken-1"
-              text
-              @click="() => { $emit('close'); dialog = false } "
+            color="green darken-1"
+            text
+            @click="() => { $emit('close'); dialog = false } "
           >
             {{ closeText }}
           </v-btn>
