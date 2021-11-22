@@ -40,9 +40,9 @@
         "enable_hover": true
       },
       "state": {
-          "size": [5, 5, 8, 5],
-          "color": ["green", "#ee0df0", "red"],
-          "alpha": [0.5, 0.8, 1, 0.5]
+          "size": [8, 5, 5, 5],
+          "color": ["#0616f4", "green", "#ee0df0", "red"],
+          "alpha": [1, 0.8, 0.5, 0.5]
       }
     }
   }

@@ -132,7 +132,7 @@ class LineDrawHandler(object):
     def _coordinates_in_bounds(self, x, y):
         """
         If a student drags the endpoint beyond the viewer bounds, we want to bring it back inside.
-        This function, given x and y coordinates of a chosen endpoint, this function finds the
+        This function, given x and y coordinates of a chosen endpoint, finds the
         coordinates of the point where their line crosses the boundary of the viewer.
         """
 
@@ -165,6 +165,8 @@ class LineDrawHandler(object):
 
 
     def clear(self):
+        if self._drawn_line is None and self._endpt is None:
+            return
         figure = self._viewer.figure
         to_remove = [x for x in [self._drawn_line, self._endpt] if x is not None]
         figure.marks = [mark for mark in figure.marks if mark not in to_remove]
