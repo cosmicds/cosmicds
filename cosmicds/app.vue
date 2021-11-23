@@ -517,7 +517,7 @@
                                   dark
                                   class="px-auto"
                                   max-width="100%"
-                                  :disabled="!state.measure_gal_selected && state.measured_ang_dist <= 0"
+                                  :disabled="!state.measure_gal_selected || state.measured_ang_dist <= 0"
                                   @click="
                                     state.dist_measured = 1;
                                     state.gal_snackbar = 0;
