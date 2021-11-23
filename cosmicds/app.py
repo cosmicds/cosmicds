@@ -15,8 +15,8 @@ from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
-from ipywidgets import widget_serialization, Layout
-from numpy import array, bitwise_or
+from ipywidgets import widget_serialization
+from numpy import array, pi
 from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, List
 
@@ -72,8 +72,9 @@ class ApplicationState(State):
     hubble_prodata_selections = CallbackProperty([0])
     morphology_selections = CallbackProperty([0,1,2])
 
-    measured_ang_dist = CallbackProperty("")
+    measured_ang_dist = CallbackProperty(0)
     measuring_on = CallbackProperty(False)
+    measure_gal_selected = CallbackProperty(False)
 
 
 # Everything in this class is exposed directly to the app.vue.
@@ -128,6 +129,8 @@ class Application(VuetifyTemplate):
             'measwave': [661.7, 580.0, 725.6, 666.6, 676.8],
             'student_id': [1, 1, 1, 1, 1],
             'distance': [36.3, 80.89, 195.45, 58.61, 144.34],
+            'ra_deg': [175.058075, 183.9847263, 139.9247131, 203.3716431, 195.7057343],
+            'dec_deg': [24.69706345, 14.43303874, 24.55243683, 17.47060966, 43.21479034],
             'type': ['spiral', 'elliptical', 'irregular', 'spiral', 'elliptical']
         }
         self._dummy_student_data['restwave'] = [round(m/(1+z),2) for m,z in zip(self._dummy_student_data['measwave'], dummy_redshifts)]
@@ -204,18 +207,21 @@ class Application(VuetifyTemplate):
 
         # Set up the measuring tool
         measuring_widget = WWTJupyterWidget(hide_all_chrome=True)
+        measuring_widget.background = 'Digitized Sky Survey (Color)'
         measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
-        #coordinates = SkyCoord(235.5644989 * u.deg, 39.9837265 * u.deg, frame='icrs')
-        #measuring_widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
+        coordinates = SkyCoord(235.5644989 * u.deg, 39.9837265 * u.deg, frame='icrs')
+        measuring_widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
         measuring_tool = MeasuringTool(measuring_widget)
         def update_state_ang_dist(change):
-            distance = change["new"]
-            if distance != 0:
-                self.state.measured_ang_dist = str(distance) + ' deg'
+            self.state.measured_ang_dist = change["new"]
         measuring_tool.observe(update_state_ang_dist, names=['angular_distance'])
         def update_state_measuring(change):
             self.state.measuring_on = change["new"]
+            self.state.galaxy_dist = ""
         measuring_tool.observe(update_state_measuring, names=["measuring"])
+        def update_measure_gal_selected(change):
+            self.state.measure_gal_selected = len(change["new"]) > 0
+        measuring_tool.observe(update_measure_gal_selected, names=["selected"])
 
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
@@ -225,7 +231,7 @@ class Application(VuetifyTemplate):
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
                                 key_component='gal_name', names=galaxy_table_names, title=table_title),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
-                                key_component='gal_name', names=distance_table_names, title=table_title),
+                                key_component='gal_name', names=distance_table_names, title=table_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
                                 key_component='gal_name', names=fit_table_names, title=table_title),
                             'c-measuring-tool': measuring_tool,
@@ -410,6 +416,23 @@ class Application(VuetifyTemplate):
             for layer in viewer.layers:
                 if layer.state.layer.label == subset_group.label:
                     layer.state.visible = False
+
+        # When we select an item in the distance table, we want the WWT viewer to go there
+        distance_table = self.components['c-distance-table']
+        def distance_table_selected_changed(selected):
+            table = self.components['c-distance-table']
+            state = table.subset_state_from_selected(selected["new"])
+            mask = state.to_mask(table.glue_data)
+            ra = next((x for index, x in enumerate(table.glue_data["ra_deg"]) if mask[index]), None)
+            dec = next((x for index, x in enumerate(table.glue_data["dec_deg"]) if mask[index]), None)
+            if ra is not None and dec is not None:
+                measuring_tool = self.components['c-measuring-tool']
+                widget = measuring_tool.widget
+                coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
+                ## TODO: Once we have it, specify the correct fov for each point
+                widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
+                measuring_tool.reset_canvas()
+        distance_table.observe(distance_table_selected_changed, names=['selected'])
 
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
@@ -927,12 +950,21 @@ class Application(VuetifyTemplate):
         data = dc[label]
         data.update_values_from_data(new_data)
 
-    def vue_add_distance_data_point(self, _args):
-        if self._dummy_distance_counter >= len(self._dummy_student_data['gal_name']):
-            return
-
+    def vue_add_distance_data_point(self, test=False):
         data = self.data_collection['student_measurements']
-        distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
+        if test:
+            if self._dummy_distance_counter >= len(self._dummy_student_data['gal_name']):
+                return
+            distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
+        else:
+            table = self.components['c-distance-table']
+            state = table.subset_state_from_selected(table.selected)
+            mask = state.to_mask(table.glue_data)
+            index = next((index for index in range(len(mask)) if mask[index]), None)
+            if index is not None:
+                distance = data["distance"]
+                distance[index] = 0.03 / (self.state.measured_ang_dist * pi / 180)
+
         self._new_dist_data_update(distance)
     
         self._dummy_distance_counter += 1

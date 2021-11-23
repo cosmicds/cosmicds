@@ -517,6 +517,7 @@
                                   dark
                                   class="px-auto"
                                   max-width="100%"
+                                  :disabled="!state.measure_gal_selected && state.measured_ang_dist <= 0"
                                   @click="
                                     state.dist_measured = 1;
                                     state.gal_snackbar = 0;
@@ -531,7 +532,7 @@
                                       state.vel_measured == 1
                                         ? false
                                         : true;
-                                    state.galaxy_dist = Math.floor(Math.random() * 450) + 50;
+                                    state.galaxy_dist = 0.03 / (state.measured_ang_dist * Math.PI / 180);
                                     add_distance_data_point();
                                   "
                                 >
@@ -555,9 +556,6 @@
                             @click="toggle_measuring()"
                           >{{ state.measuring_on ? "Stop Measuring" : "Start Measuring" }}
                           </v-btn>
-                          <label
-                            v-if="state.measured_ang_dist && state.measured_ang_dist !== '0.0 deg'"
-                          >{{ state.measured_ang_dist }}</label>
                       </v-row>
                       <v-row>
                         <!-- SIDEBAR COLUMN for giving Instructions -->

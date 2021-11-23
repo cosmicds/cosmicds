@@ -61,6 +61,7 @@ export default {
       this.shouldFollowMouse = false;
       this.lineCreated = false;
       this.measuredDistance = 0;
+      this.measuring = false
 
       // Set the canvas handlers
       this.canvas.onmousemove = null;
