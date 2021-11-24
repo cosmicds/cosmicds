@@ -4,7 +4,7 @@ from astropy.coordinates import SkyCoord
 from astropy.modeling import models, fitting
 import astropy.units as u
 from bqplot import PanZoom
-from echo import CallbackProperty
+from echo import CallbackProperty, DictCallbackProperty
 from echo.core import add_callback
 from glue.core import Component, Data
 from glue.core.state_objects import State
@@ -75,6 +75,8 @@ class ApplicationState(State):
     measured_ang_dist = CallbackProperty(0)
     measuring_on = CallbackProperty(False)
     measure_gal_selected = CallbackProperty(False)
+
+    fit_slopes = DictCallbackProperty()
 
 
 # Everything in this class is exposed directly to the app.vue.
@@ -593,7 +595,7 @@ class Application(VuetifyTemplate):
             labels.append(data.label)
             
             # Keep track of this slope for later use
-            self._fit_slopes[data.label] = fitted_line.slope.value
+            self.state.fit_slopes[data.label] = fitted_line.slope.value
 
         # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit lines directly onto the bqplot figure
@@ -638,7 +640,7 @@ class Application(VuetifyTemplate):
         start_x, end_x = x
         start_y, end_y = y
         line = line_mark(layers[0], start_x, start_y, end_x, end_y, 'black')
-        self._fit_slopes['aggregate_%s' % viewer_id] = fitted_line.slope.value
+        self.state.fit_slopes['aggregate_%s' % viewer_id] = fitted_line.slope.value
 
          # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit line directly onto the bqplot figure
@@ -1029,12 +1031,12 @@ class Application(VuetifyTemplate):
     def student_slope(self):
         if not hasattr(self, '_student_data'):
             return 0
-        return self._fit_slopes.get(self._student_data.label, 0)
+        return self.state.fit_slopes.get(self._student_data.label, 0)
 
     @property
     def class_slope(self):
-        return self._fit_slopes.get(self._class_data.label, 0)
+        return self.state.fit_slopes.get(self._class_data.label, 0)
 
     @property
     def all_slope(self):
-        return self._fit_slopes.get(self._all_data.label, 0)
+        return self.state.fit_slopes.get(self._all_data.label, 0)
