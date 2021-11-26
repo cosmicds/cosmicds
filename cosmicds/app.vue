@@ -479,14 +479,14 @@
                               color="indigo lighten-5"
                               width="100%"
                             >
-                              <v-card-title>Haro 11</v-card-title>
+                              <v-card-title>{{state.measuring_name || "Galaxy Name"}}</v-card-title>
                               <v-card-text>
                                 <v-divider></v-divider>
                                 <v-list
                                   color="indigo lighten-5"
                                 >
                                   <v-list-item-content>
-                                    <v-list-item-title>Irregular galaxy</v-list-item-title>
+                                    <v-list-item-title>{{state.measuring_type || "Galaxy Type"}}</v-list-item-title>
                                     <v-list-item-subtitle>type</v-list-item-subtitle>
                                   </v-list-item-content>
                                   <v-list-item-content>
@@ -494,7 +494,7 @@
                                     <v-list-item-subtitle>assumed size</v-list-item-subtitle>
                                   </v-list-item-content>
                                   <v-list-item-content>
-                                    <v-list-item-title>568 pixels</v-list-item-title>  
+                                    <v-list-item-title>{{state.measuring_tool_height}}</v-list-item-title>  
                                     <v-list-item-subtitle>height of display</v-list-item-subtitle>
                                   </v-list-item-content>
                                 </v-list>
@@ -532,7 +532,7 @@
                                       state.vel_measured == 1
                                         ? false
                                         : true;
-                                    state.galaxy_dist = 0.03 / (state.measured_ang_dist * Math.PI / 180);
+                                    state.galaxy_dist = +(0.03 / (state.measured_ang_dist * Math.PI / 180)).toFixed(2);
                                     add_distance_data_point();
                                   "
                                 >
@@ -544,12 +544,6 @@
                         </v-col>
                       </v-row>
                       <v-row>
-                        <v-btn
-                            class="white--text"
-                            color="purple darken-2"
-                            @click="reset_measurer()"
-                          >reset
-                          </v-btn>
                           <v-btn
                             class="white--text"
                             color="purple darken-2"

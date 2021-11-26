@@ -75,6 +75,9 @@ class ApplicationState(State):
     measured_ang_dist = CallbackProperty(0)
     measuring_on = CallbackProperty(False)
     measure_gal_selected = CallbackProperty(False)
+    measuring_name = CallbackProperty("")
+    measuring_type = CallbackProperty("")
+    measuring_tool_height = CallbackProperty("")
 
     fit_slopes = DictCallbackProperty()
 
@@ -220,7 +223,11 @@ class Application(VuetifyTemplate):
         def update_state_measuring(change):
             self.state.measuring_on = change["new"]
             self.state.galaxy_dist = ""
+        def update_measuring_height(change):
+            self.state.measuring_tool_height = str(change["new"]) + ' pixels'
+        measuring_tool.observe(update_measuring_height, names=["height"])
         measuring_tool.observe(update_state_measuring, names=["measuring"])
+        self.motions_left = 3
 
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
@@ -428,12 +435,19 @@ class Application(VuetifyTemplate):
             mask = state.to_mask(table.glue_data)
             ra = next((x for index, x in enumerate(table.glue_data["ra_deg"]) if mask[index]), None)
             dec = next((x for index, x in enumerate(table.glue_data["dec_deg"]) if mask[index]), None)
+            gal_type = next((x for index, x in enumerate(table.glue_data["type"]) if mask[index]), None)
+            name = selected[0]["gal_name"]
             if ra is not None and dec is not None:
                 measuring_tool = self.components['c-measuring-tool']
                 widget = measuring_tool.widget
                 coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
                 ## TODO: Once we have it, specify the correct fov for each point
-                widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
+                use_instant = self.motions_left <= 0
+                widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=use_instant)
+                if not use_instant:
+                    self.motions_left -= 1
+                self.state.measuring_name = name
+                self.state.measuring_type = gal_type.capitalize()
                 measuring_tool.reset_canvas()
             self.state.measure_gal_selected = len(selected) > 0
 
@@ -968,7 +982,7 @@ class Application(VuetifyTemplate):
             index = next((index for index in range(len(mask)) if mask[index]), None)
             if index is not None:
                 distance = data["distance"]
-                distance[index] = 0.03 / (self.state.measured_ang_dist * pi / 180)
+                distance[index] = round(0.03 / (self.state.measured_ang_dist * pi / 180), 2)
 
         self._new_dist_data_update(distance)
     
