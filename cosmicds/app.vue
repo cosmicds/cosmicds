@@ -1578,9 +1578,13 @@ body {
 }
 
 input {
-  width: 1 rem !important;
+  width: 1rem !important;
   border: 1px solid black !important;
   border-radius: 3px !important;
+}
+
+mjx-container {
+  width: fit-content;
 }
 
 /* issues with empty headers pushing WWT widget south, anyone else having this problem? -HOH */
