@@ -1583,8 +1583,9 @@ input {
   border-radius: 3px !important;
 }
 
-mjx-container {
+.MathJax, .MathJax_Display {
   width: fit-content;
+  height: fit-content;
 }
 
 /* issues with empty headers pushing WWT widget south, anyone else having this problem? -HOH */
