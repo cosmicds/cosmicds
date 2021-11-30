@@ -44,7 +44,6 @@ export default {
       this.pointerClass = "pointer";
       this.grabClass = "grab";
       this.grabbingClass = "grabbing";
-      
       // Get the canvas
       this.canvas = this.$refs.canvas;
       this.height = 400; // See the component CSS
@@ -181,6 +180,7 @@ export default {
         this.rescalePoints([this.startPoint, this.endPoint], xRatio, yRatio);
         this.drawLine(this.startPoint, this.endPoint);
         this.drawEndcaps(this.startPoint, this.endPoint);
+        this.updateMeasuredDistance();
       }
     },
 
