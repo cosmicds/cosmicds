@@ -436,6 +436,12 @@ class Application(VuetifyTemplate):
             ra = next((x for index, x in enumerate(table.glue_data["ra_deg"]) if mask[index]), None)
             dec = next((x for index, x in enumerate(table.glue_data["dec_deg"]) if mask[index]), None)
             gal_type = next((x for index, x in enumerate(table.glue_data["type"]) if mask[index]), None)
+            self.state.measure_gal_selected = len(selected) > 0
+            self.components['c-measuring-tool'].reset_canvas()
+            if not self.state.measure_gal_selected:
+                self.state.measuring_name = None
+                self.state.measuring_type = None
+                return
             name = selected[0]["gal_name"]
             if ra is not None and dec is not None:
                 measuring_tool = self.components['c-measuring-tool']
@@ -448,8 +454,6 @@ class Application(VuetifyTemplate):
                     self.motions_left -= 1
                 self.state.measuring_name = name
                 self.state.measuring_type = gal_type.capitalize()
-                measuring_tool.reset_canvas()
-            self.state.measure_gal_selected = len(selected) > 0
 
         distance_table.observe(distance_table_selected_changed, names=['selected'])
 
