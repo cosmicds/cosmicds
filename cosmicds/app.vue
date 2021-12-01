@@ -58,59 +58,22 @@
       </v-sheet>
 
       <v-stepper v-model="state.step" vertical flat class="elevation-0">
-        <v-stepper-step :complete="state.step > 0" step="0">
-          Collect Galaxy Data
-          <small>Summarize if needed</small>
-        </v-stepper-step>
+        <template v-for="(step, key, index) in steppers">
+          <v-stepper-step
+            :key="key"
+            :complete="state.step > index"
+            :step="index"
+          >
+            Step {{ index + 1 }}
+            <small>Summarize if needed</small>
+          </v-stepper-step>
 
-        <v-stepper-content step="0">
-          <v-skeleton-loader
-            class="mb-6"
-            boilerplate
-            type="article"
-          ></v-skeleton-loader>
-          <v-btn color="primary" @click="state.step = 1"> Continue </v-btn>
-          <v-btn text> Cancel </v-btn>
-        </v-stepper-content>
-
-        <v-stepper-step :complete="state.step > 1" step="1">
-          Estimate Age of Universe
-        </v-stepper-step>
-
-        <v-stepper-content step="1">
-          <v-skeleton-loader
-            class="mb-6"
-            boilerplate
-            type="article"
-          ></v-skeleton-loader>
-          <v-btn color="primary" @click="state.step = 0"> Continue </v-btn>
-          <v-btn text> Cancel </v-btn>
-        </v-stepper-content>
-
-        <!-- <v-stepper-step :complete="state.step > 3" step="3">
-          Select an ad format and name ad unit
-        </v-stepper-step>
-
-        <v-stepper-content step="3">
-          <v-skeleton-loader
-            class="mb-6"
-            boilerplate
-            type="article"
-          ></v-skeleton-loader>
-          <v-btn color="primary" @click="state.step = 4"> Continue </v-btn>
-          <v-btn text> Cancel </v-btn>
-        </v-stepper-content>
-
-        <v-stepper-step step="4"> View setup instructions </v-stepper-step>
-        <v-stepper-content step="4">
-          <v-skeleton-loader
-            class="mb-6"
-            boilerplate
-            type="article"
-          ></v-skeleton-loader>
-          <v-btn color="primary" @click="state.step = 1"> Continue </v-btn>
-          <v-btn text> Cancel </v-btn>
-        </v-stepper-content> -->
+          <v-stepper-content :key="key" :step="index">
+            <jupyter-widget :widget=step />
+            <v-btn color="primary" @click="state.step = (state.step + 1) < Object.keys(stages).length ? state.step + 1 : 0"> Continue </v-btn>
+            <v-btn text> Cancel </v-btn>
+          </v-stepper-content>
+        </template>
       </v-stepper>
     </v-navigation-drawer>
 
@@ -128,7 +91,7 @@
       <v-content>
         <v-container fluid>
           <v-tabs-items v-model="state.step">
-            <v-tab-item v-for="stage in stages" :key="stage">
+            <v-tab-item v-for="(stage, key, index) in stages" :key="index">
               <jupyter-widget :widget=stage />
             </v-tab-item>
           </v-tabs-items>

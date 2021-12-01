@@ -14,7 +14,7 @@ from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
 from traitlets import Dict, List
-from .registries import stage_registry
+from .registries import story_registry, stage_registry
 
 from .utils import load_template
 
@@ -29,6 +29,7 @@ class Application(VuetifyTemplate):
     state = GlueState().tag(sync=True)
     template = load_template("app.vue", __file__).tag(sync=True)
     stages = Dict().tag(sync=True, **widget_serialization)
+    steppers = Dict().tag(sync=True, **widget_serialization)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -36,12 +37,23 @@ class Application(VuetifyTemplate):
         self.state = ApplicationState()
         self._application_handler = JupyterApplication()
 
+        self.load_story(story)
+
+    def load_story(self, story):
+        if story not in story_registry.members:
+            raise ValueError(f"No story '{story}' found in registry. Available"
+                " stories include:" + "\n\t".join(story_registry.members))
+
         if story not in stage_registry.members:
             raise ValueError(f"No story '{story}' found in registry. Available"
-                " stories include:" + "\n\t".join(stage_registry.members))
+                " stories include:" + "\n\t".join(story_registry.members))
 
-        self.stages = {f"c-stage-{k}": v(self.session)
+        story_state = story_registry.members[story]()
+
+        self.stages = {f"c-stage-{k}": v(story_state, self.session)
                        for k, v in dict(sorted(stage_registry.members[story].items())).items()}
+        self.steppers = {f"c-step-{k}": v.stepper for k, v in self.stages.items()}
+
 
     def reload(self):
         """
