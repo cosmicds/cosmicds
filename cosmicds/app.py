@@ -14,7 +14,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from numpy import array, bitwise_or
+from numpy import array, bitwise_or, nan
 from traitlets import Dict, List
 
 from .components.footer import Footer
@@ -157,6 +157,12 @@ class Application(VuetifyTemplate):
         hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(6)]
         hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer, hub_prodata_viewer = hub_viewers
         self._hub_viewers = hub_viewers
+        for viewer in hub_viewers:
+            figure = viewer.figure
+            figure.legend_location = 'top-left'
+            figure.legend_style = {
+                'stroke-width': 0
+            }
 
         # Set up glue links for the Hubble data sets
         measurement_data_fields = self._dummy_student_data.keys()
@@ -549,12 +555,14 @@ class Application(VuetifyTemplate):
             # Keep track of this line and its slope
             start_x, end_x = x
             start_y, end_y = y
-            line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color)
+            slope_value = fitted_line.slope.value
+            label = 'v = %f * d' % slope_value if slope_value != nan else None
+            line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color, label)
             lines.append(line)
             labels.append(data.label)
             
             # Keep track of this slope for later use
-            self._fit_slopes[data.label] = fitted_line.slope.value
+            self._fit_slopes[data.label] = slope_value
 
         # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit lines directly onto the bqplot figure
@@ -598,8 +606,10 @@ class Application(VuetifyTemplate):
         # Keep track of this line and its slope
         start_x, end_x = x
         start_y, end_y = y
-        line = line_mark(layers[0], start_x, start_y, end_x, end_y, 'black')
-        self._fit_slopes['aggregate_%s' % viewer_id] = fitted_line.slope.value
+        slope_value = fitted_line.slope.value
+        label = 'v = %f * d' % slope_value if slope_value != nan else None
+        line = line_mark(layers[0], start_x, start_y, end_x, end_y, 'black', label)
+        self._fit_slopes['aggregate_%s' % viewer_id] = slope_value
 
          # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit line directly onto the bqplot figure
@@ -727,7 +737,8 @@ class Application(VuetifyTemplate):
         for index, slope, color in line_options:
             if index in selections and slope is not None:
                 age = age_in_gyr(slope)
-                line = vertical_line_mark(first_layer, age, color)
+                label = '%f Gyr' % age if age != nan else None
+                line = vertical_line_mark(first_layer, age, color, label)
                 lines.append(line)
 
         figure = viewer.figure
