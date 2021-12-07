@@ -156,7 +156,7 @@ def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
     tool.activate = extended_activate
     tool.deactivate = extended_deactivate
 
-def line_mark(layer, start_x, start_y, end_x, end_y, color):
+def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
     """
     Creates a LinesGL mark between the given start and end points
     using the scales of the given layer.
@@ -190,6 +190,8 @@ def line_mark(layer, start_x, start_y, end_x, end_y, color):
                    y=[start_y, end_y],
                    scales=scales,
                    colors=[color],
+                   label=label,
+                   display_legend=label is not None,
                    labels_visibility='label')
 
 def vertical_line_mark(layer, x, color):

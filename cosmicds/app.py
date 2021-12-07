@@ -157,6 +157,9 @@ class Application(VuetifyTemplate):
         hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(6)]
         hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer, hub_prodata_viewer = hub_viewers
         self._hub_viewers = hub_viewers
+        for viewer in hub_viewers:
+            figure = viewer.figure
+            figure.legend_location = 'top-left'
 
         # Set up glue links for the Hubble data sets
         measurement_data_fields = self._dummy_student_data.keys()
@@ -549,12 +552,14 @@ class Application(VuetifyTemplate):
             # Keep track of this line and its slope
             start_x, end_x = x
             start_y, end_y = y
+            slope_value = fitted_line.slope.value
+            label = 'v = %f * d' % slope_value
             line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color)
             lines.append(line)
             labels.append(data.label)
             
             # Keep track of this slope for later use
-            self._fit_slopes[data.label] = fitted_line.slope.value
+            self._fit_slopes[data.label] = slope_value
 
         # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit lines directly onto the bqplot figure
