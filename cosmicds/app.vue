@@ -1532,14 +1532,14 @@ export default {
     // to render their formulae properly
     const mathJaxOpeningDelimiters = [ "$$", "\\(", "\\[" ];
     const containsMathJax = node => mathJaxOpeningDelimiters.some(delim => node.innerHTML.includes(delim));
+    const elementToScan = node => node.nodeType === Node.ELEMENT_NODE;
     const mathJaxCallback = function(mutationList, _observer) {
       mutationList.forEach(mutation => {
         if (mutation.type === 'childList') {
 
           const needTypesetting = [];
           mutation.addedNodes.forEach(node => {
-            if (node.nodeType !== Node.ELEMENT_NODE) { return; }
-            if (containsMathJax(node)) {
+            if (elementToScan(node) && containsMathJax(node)) {
               needTypesetting.push(node);
             }
           });
@@ -1549,8 +1549,7 @@ export default {
 
           const toClear = [];
           mutation.removedNodes.forEach(node => {
-            if (node.nodeType !== Node.ELEMENT_NODE) { return; }
-            if (containsMathJax(node)) {
+            if (elementToScan(node) && containsMathJax(node)) {
               toClear.push(node);
             }
           })
