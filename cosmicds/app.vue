@@ -1522,9 +1522,33 @@ export default {
 
     // Grab MathJax itself
     const mathJaxScript = document.createElement('script');
-    mathJaxScript.async = true;
+    mathJaxScript.async = false;
     mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
     document.head.appendChild(mathJaxScript);
+
+    // Not all of our elements are initially in the DOM,
+    // so we need to account for that in order to get MathJax
+    // to render their formulae properly
+    const mathJaxOpeningDelimiters = [ "$$", "\\(", "\\[" ];
+    const mathJaxCallback = function(mutationList, _observer) {
+      mutationList.forEach(mutation => {
+        if (mutation.type === 'childList') {
+          const elements = [];
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType !== Node.ELEMENT_NODE) { return; }
+            if (mathJaxOpeningDelimiters.some(delim => node.innerHTML.includes(delim))) {
+              elements.push(node);
+            }
+          });
+          if (elements.length > 0) {
+            MathJax.typesetPromise(elements);
+          }
+        }
+      });
+    }
+    const observer = new MutationObserver(mathJaxCallback);
+    const options = { childList: true, subtree: true };
+    observer.observe(this.$el, options);
   }
 }
 </script>
