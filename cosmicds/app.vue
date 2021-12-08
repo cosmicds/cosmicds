@@ -433,6 +433,7 @@
 
                                           <!-- WIREFRAME of Dialogs/Alerts for Student Experience and Learning Objectives -->
                                           <infodialog-alert>
+                                            $$ x = \frac{\input[my-id][my-class my-class-2]{} - 1}{\input[my-id-2][my-class]{}} $$
                                             This window provides a view of the "night sky". As you explore this view,
                                             you may see stars, nebulae, and galaxies.<br>
                                             <b>Pan:</b> click + drag (or use the W-A-S-D keys)<br>
@@ -1530,18 +1531,31 @@ export default {
     // so we need to account for that in order to get MathJax
     // to render their formulae properly
     const mathJaxOpeningDelimiters = [ "$$", "\\(", "\\[" ];
+    const containsMathJax = node => mathJaxOpeningDelimiters.some(delim => node.innerHTML.includes(delim));
     const mathJaxCallback = function(mutationList, _observer) {
       mutationList.forEach(mutation => {
         if (mutation.type === 'childList') {
-          const elements = [];
+
+          const needTypesetting = [];
           mutation.addedNodes.forEach(node => {
             if (node.nodeType !== Node.ELEMENT_NODE) { return; }
-            if (mathJaxOpeningDelimiters.some(delim => node.innerHTML.includes(delim))) {
-              elements.push(node);
+            if (containsMathJax(node)) {
+              needTypesetting.push(node);
             }
           });
-          if (elements.length > 0) {
-            MathJax.typesetPromise(elements);
+          if (needTypesetting.length > 0) {
+            MathJax.typesetPromise(needTypesetting);
+          }
+
+          const toClear = [];
+          mutation.removedNodes.forEach(node => {
+            if (node.nodeType !== Node.ELEMENT_NODE) { return; }
+            if (containsMathJax(node)) {
+              toClear.push(node);
+            }
+          })
+          if (toClear.length > 0) {
+            MathJax.typesetClear(toClear);
           }
         }
       });
