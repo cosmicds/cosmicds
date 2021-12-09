@@ -433,6 +433,7 @@
 
                                           <!-- WIREFRAME of Dialogs/Alerts for Student Experience and Learning Objectives -->
                                           <infodialog-alert>
+                                            $$ x = \frac{\input[my-id][my-class my-class-2]{} - 1}{\input[my-id-2][my-class]{}} $$
                                             This window provides a view of the "night sky". As you explore this view,
                                             you may see stars, nebulae, and galaxies.<br>
                                             <b>Pan:</b> click + drag (or use the W-A-S-D keys)<br>
@@ -1478,6 +1479,93 @@
   </v-app>  
 </template>
 
+<script>
+
+export default {
+  mounted() {
+    window.MathJax = {
+      tex: {packages: {'[+]': ['input']}},
+      startup: {
+        ready() {
+          const Configuration = MathJax._.input.tex.Configuration.Configuration;
+          const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+          const TEXCLASS = MathJax._.core.MmlTree.MmlNode.TEXCLASS;
+          
+          new CommandMap('input', {input: 'Input'}, {
+            Input(parser, name) {
+              const xml = parser.create('node', 'XML');
+              const id = parser.GetBrackets(name, '');
+              const cls = parser.GetBrackets(name, '');
+              const value = parser.GetArgument(name);
+              xml.setXML(MathJax.startup.adaptor.node('input', {
+                id: id, class: cls, value: value, xmlns: 'http://www.w3.org/1999/xhtml'
+              }), MathJax.startup.adaptor);
+              xml.getSerializedXML = function () {
+                return this.adaptor.outerHTML(this.xml) + '</input>';
+              }
+              parser.Push(
+                parser.create('node', 'TeXAtom', [
+                  parser.create('node', 'semantics', [
+                    parser.create('node', 'annotation-xml', [
+                      xml
+                    ], {encoding: 'application/xhtml+xml'})
+                  ])
+                ], {texClass: TEXCLASS.ORD})
+              );
+            }
+          });
+          Configuration.create('input', {handler: {macro: ['input']}});
+
+          MathJax.startup.defaultReady();
+        }
+      }
+    };
+
+    // Grab MathJax itself
+    const mathJaxScript = document.createElement('script');
+    mathJaxScript.async = false;
+    mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
+    document.head.appendChild(mathJaxScript);
+
+    // Not all of our elements are initially in the DOM,
+    // so we need to account for that in order to get MathJax
+    // to render their formulae properly
+    const mathJaxOpeningDelimiters = [ "$$", "\\(", "\\[" ];
+    const containsMathJax = node => mathJaxOpeningDelimiters.some(delim => node.innerHTML.includes(delim));
+    const elementToScan = node => node.nodeType === Node.ELEMENT_NODE;
+    const mathJaxCallback = function(mutationList, _observer) {
+      mutationList.forEach(mutation => {
+        if (mutation.type === 'childList') {
+
+          const needTypesetting = [];
+          mutation.addedNodes.forEach(node => {
+            if (elementToScan(node) && containsMathJax(node)) {
+              needTypesetting.push(node);
+            }
+          });
+          if (needTypesetting.length > 0) {
+            MathJax.typesetPromise(needTypesetting);
+          }
+
+          const toClear = [];
+          mutation.removedNodes.forEach(node => {
+            if (elementToScan(node) && containsMathJax(node)) {
+              toClear.push(node);
+            }
+          })
+          if (toClear.length > 0) {
+            MathJax.typesetClear(toClear);
+          }
+        }
+      });
+    }
+    const observer = new MutationObserver(mathJaxCallback);
+    const options = { childList: true, subtree: true };
+    observer.observe(this.$el, options);
+  }
+}
+</script>
+
 <style id="cosmicds-app">
 html {
   margin: 0;
@@ -1524,6 +1612,17 @@ body {
 
 .no-transition {
   transition: none !important;
+}
+
+input {
+  width: 1rem !important;
+  border: 1px solid black !important;
+  border-radius: 3px !important;
+}
+
+.MathJax, .MathJax_Display {
+  width: fit-content;
+  height: fit-content;
 }
 
 /* issues with empty headers pushing WWT widget south, anyone else having this problem? -HOH */
