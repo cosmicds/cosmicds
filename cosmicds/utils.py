@@ -190,7 +190,7 @@ def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
                    y=[start_y, end_y],
                    scales=scales,
                    colors=[color],
-                   labels=[label],
+                   labels=[label] if label is not None else [],
                    display_legend=label is not None,
                    labels_visibility='label')
 

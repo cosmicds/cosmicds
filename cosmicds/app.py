@@ -14,7 +14,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from numpy import array, bitwise_or, nan
+from numpy import array, bitwise_or, isnan, nan
 from traitlets import Dict, List
 
 from .components.footer import Footer
@@ -556,7 +556,9 @@ class Application(VuetifyTemplate):
             start_x, end_x = x
             start_y, end_y = y
             slope_value = fitted_line.slope.value
-            label = 'v = %f * d' % slope_value if slope_value != nan else None
+            print(type(slope_value))
+            print(isnan(slope_value))
+            label = 'Slope = %.2f ks / s / Mpc' % slope_value if not isnan(slope_value) else None
             line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color, label)
             lines.append(line)
             labels.append(data.label)
@@ -607,7 +609,9 @@ class Application(VuetifyTemplate):
         start_x, end_x = x
         start_y, end_y = y
         slope_value = fitted_line.slope.value
-        label = 'v = %f * d' % slope_value if slope_value != nan else None
+        print(type(slope_value))
+        print(isnan(slope_value))
+        label = 'Slope = %.2f km / s /  Mpc' % slope_value if not isnan(slope_value) else None
         line = line_mark(layers[0], start_x, start_y, end_x, end_y, 'black', label)
         self._fit_slopes['aggregate_%s' % viewer_id] = slope_value
 
@@ -737,7 +741,7 @@ class Application(VuetifyTemplate):
         for index, slope, color in line_options:
             if index in selections and slope is not None:
                 age = age_in_gyr(slope)
-                label = '%f Gyr' % age if age != nan else None
+                label = '%.2f Gyr' % age if age != nan else None
                 line = vertical_line_mark(first_layer, age, color, label)
                 lines.append(line)
 
