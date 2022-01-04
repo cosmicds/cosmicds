@@ -225,8 +225,6 @@ class Application(VuetifyTemplate):
         measuring_widget = WWTJupyterWidget(hide_all_chrome=True)
         measuring_widget.background = 'Digitized Sky Survey (Color)'
         measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
-        coordinates = SkyCoord(235.5644989 * u.deg, 39.9837265 * u.deg, frame='icrs')
-        measuring_widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
         measuring_tool = MeasuringTool(measuring_widget)
         def update_state_ang_dist(change):
             self.state.measured_ang_dist = change["new"]
