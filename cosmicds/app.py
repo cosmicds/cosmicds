@@ -31,6 +31,9 @@ from .viewers.spectrum_view import SpectrumView
 # Within ipywidgets - update calls only happen in certain instances.
 # Tom added this glue state to allow 2-way binding and force communication that we want explicitly controlled between front end and back end.
 class ApplicationState(State):
+    # set the darkmode state
+    darkmode = CallbackProperty(1)
+
     over_model = CallbackProperty(1)
     col_tab_model = CallbackProperty(0)
     est_model = CallbackProperty(0)
@@ -62,6 +65,20 @@ class ApplicationState(State):
     galaxy_vel = CallbackProperty("")
 
     calc_visible = CallbackProperty("d-none")
+
+    #step 1 alerts
+    wwt_active = CallbackProperty(0)
+    explore_alert_visible = CallbackProperty(1)
+    explore2_alert_visible = CallbackProperty(0)
+    galaxy_table_visible = CallbackProperty(0)
+    galalerts_visible = CallbackProperty(0)
+    selectgals_alert_visible = CallbackProperty(1)
+    gal_active_alert_visible = CallbackProperty(0)
+    
+    spectrum_tool_visible = CallbackProperty(0)
+    spec_intro_alert_visible = CallbackProperty(0)
+    spec_vel_dialog_visible = CallbackProperty(0)
+    spec_2_alert_visible = CallbackProperty(0)
 
     #state variables for reflections
     rv1_visible = CallbackProperty("d-none")
@@ -211,7 +228,7 @@ class Application(VuetifyTemplate):
         table_title = 'My Galaxies | Velocity Measurements'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
-                                key_component='gal_name', names=galaxy_table_names, title=table_title),
+                                key_component='gal_name', names=galaxy_table_names, title=table_title, single_select=True),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
                                 key_component='gal_name', names=distance_table_names, title=table_title),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,

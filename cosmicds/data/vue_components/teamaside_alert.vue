@@ -11,6 +11,8 @@
     </div>
     <slot></slot>
   </v-alert>
+
+
 </template>
 
 <script>
