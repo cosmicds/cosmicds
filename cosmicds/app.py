@@ -556,7 +556,7 @@ class Application(VuetifyTemplate):
             start_x, end_x = x
             start_y, end_y = y
             slope_value = fitted_line.slope.value
-            label = 'Slope = %.2f ks / s / Mpc' % slope_value if not isnan(slope_value) else None
+            label = 'Slope = %.0f ks / s / Mpc' % slope_value if not isnan(slope_value) else None
             line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color, label)
             lines_and_labels.append((line, data.label))
             
@@ -610,7 +610,7 @@ class Application(VuetifyTemplate):
         start_x, end_x = x
         start_y, end_y = y
         slope_value = fitted_line.slope.value
-        label = 'Slope = %.2f km / s /  Mpc' % slope_value if not isnan(slope_value) else None
+        label = 'Slope = %.0f km / s /  Mpc' % slope_value if not isnan(slope_value) else None
         line = line_mark(layers[0], start_x, start_y, end_x, end_y, 'black', label)
         self._fit_slopes['aggregate_%s' % viewer_id] = slope_value
 
@@ -742,7 +742,7 @@ class Application(VuetifyTemplate):
         for index, slope, color in line_options:
             if index in selections and slope is not None:
                 age = age_in_gyr(slope)
-                label = 'Age = %.2f Gyr' % age if not isnan(age) else None
+                label = 'Age = %.0f Gyr' % age if not isnan(age) else None
                 line = vertical_line_mark(first_layer, age, color, label)
                 lines.append(line)
 
