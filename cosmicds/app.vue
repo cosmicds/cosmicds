@@ -607,6 +607,11 @@
                                         <v-list-item-title>{{state.measuring_tool_height}}</v-list-item-title>  
                                         <v-list-item-subtitle>height of display</v-list-item-subtitle>
                                       </v-list-item-content>
+                                      <v-list-item-content>
+                                        <v-list-item-title>{{state.measured_ang_dist_str}}</v-list-item-title>
+                                        <v-list-item-subtitle>measured angular distance</v-list-item-subtitle>
+                                      </v-list-item-content>
+
                                     </v-list>
                                     <v-divider></v-divider>
                                     <v-text-field
@@ -627,7 +632,7 @@
                                       dark
                                       class="px-auto"
                                       max-width="100%"
-                                      :disabled="!state.measure_gal_selected || state.measured_ang_dist <= 0"
+                                      :disabled="!state.measure_gal_selected || state.measured_ang_dist === 0"
                                       @click="
                                         state.dist_measured = 1;
                                         state.gal_snackbar = 0;
@@ -657,6 +662,7 @@
                             <v-btn
                               class="white--text"
                               color="purple darken-2"
+                              :disabled="!state.measure_gal_selected"
                               @click="toggle_measuring()"
                             >{{ state.measuring_on ? "Stop Measuring" : "Start Measuring" }}
                             </v-btn>

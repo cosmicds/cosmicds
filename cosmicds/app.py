@@ -83,12 +83,13 @@ class ApplicationState(State):
     hubble_prodata_selections = CallbackProperty([0])
     morphology_selections = CallbackProperty([0,1,2])
 
+    measured_ang_dist_str = CallbackProperty("0°")
     measured_ang_dist = CallbackProperty(0)
     measuring_on = CallbackProperty(False)
     measure_gal_selected = CallbackProperty(False)
     measuring_name = CallbackProperty("")
     measuring_type = CallbackProperty("")
-    measuring_tool_height = CallbackProperty("")
+    measuring_tool_height = CallbackProperty("60°")
 
     fit_slopes = DictCallbackProperty()
 
@@ -228,13 +229,17 @@ class Application(VuetifyTemplate):
         measuring_tool = MeasuringTool(measuring_widget)
         def update_state_ang_dist(change):
             self.state.measured_ang_dist = change["new"]
-        measuring_tool.observe(update_state_ang_dist, names=['angular_distance'])
+        def update_state_ang_dist_str(change):
+            self.state.measured_ang_dist_str = change["new"]
+        measuring_tool.observe(update_state_ang_dist, names=["angular_distance"])
+        measuring_tool.observe(update_state_ang_dist_str, names=["angular_distance_str"])
         def update_state_measuring(change):
             self.state.measuring_on = change["new"]
             self.state.galaxy_dist = ""
         def update_measuring_height(change):
-            self.state.measuring_tool_height = str(change["new"]) + ' pixels'
-        measuring_tool.observe(update_measuring_height, names=["height"])
+            self.state.measuring_tool_height = change["new"]
+        self.state.measuring_tool_height = measuring_tool.angular_height_str
+        measuring_tool.observe(update_measuring_height, names=["angular_height_str"])
         measuring_tool.observe(update_state_measuring, names=["measuring"])
         self.motions_left = 3
 
