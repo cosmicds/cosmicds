@@ -648,7 +648,7 @@
                                           state.vel_measured == 1
                                             ? false
                                             : true;
-                                        state.galaxy_dist = +(0.03 / (state.measured_ang_dist * Math.PI / 180)).toFixed(2);
+                                        state.galaxy_dist = +(0.03 / (state.measured_ang_dist * Math.PI / 180)).toFixed(0);
                                         add_distance_data_point();
                                       "
                                     >

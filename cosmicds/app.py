@@ -17,6 +17,7 @@ from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
 from numpy import array, pi, bitwise_or, isnan
+from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, List
 
 from cosmicds.components.measuring_tool.measuring_tool import MeasuringTool
@@ -1015,7 +1016,7 @@ class Application(VuetifyTemplate):
             index = next((index for index in range(len(mask)) if mask[index]), None)
             if index is not None:
                 distance = data["distance"]
-                distance[index] = round(0.03 / (self.state.measured_ang_dist * pi / 180), 2)
+                distance[index] = round(0.03 / (self.state.measured_ang_dist * pi / 180), 0)
 
         self._new_dist_data_update(distance)
     
