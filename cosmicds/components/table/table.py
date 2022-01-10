@@ -73,6 +73,7 @@ class Table(VuetifyTemplate, HubListener):
         # Listen for changes to selected rows
         self.observe(self._on_selected_changed, names=['selected'])
 
+
     @property
     def data_collection(self):
         return self._session.data_collection
@@ -100,7 +101,7 @@ class Table(VuetifyTemplate, HubListener):
         self._subset_group_label = group.label
         self.selected = self._selection_from_state(self._subset_group.subset_state)
 
-    def _subset_state_from_selected(self, selected):
+    def subset_state_from_selected(self, selected):
         keys = [x[self.key_component] for x in selected]
         if keys:
             state = np.bitwise_or.reduce([self._glue_data.id[self.key_component] == x for x in keys])
@@ -127,7 +128,7 @@ class Table(VuetifyTemplate, HubListener):
 
     def _on_data_added(self):
         self._glue_data = self.data_collection[self._glue_data.label]
-        state = self._subset_state_from_selected(self.selected)
+        state = self.subset_state_from_selected(self.selected)
         self._subset_group = self.data_collection.new_subset_group(self._subset_group_label, state)
         self._subset_group.style.color = self.subset_color
 
@@ -155,7 +156,7 @@ class Table(VuetifyTemplate, HubListener):
         self._populate_table()
         
     def _on_selected_changed(self, event):
-        state = self._subset_state_from_selected(event['new'])
+        state = self.subset_state_from_selected(event['new'])
         if self._subset_group is None:
             self._subset_group = self.data_collection.new_subset_group(self._subset_group_label, state)
         else:
