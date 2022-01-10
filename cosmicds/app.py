@@ -16,6 +16,7 @@ from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
 from numpy import array, bitwise_or
 from traitlets import Dict, List
+import ipyvuetify as v
 
 from .components.footer import Footer
 # When we have multiple components, change above to
@@ -27,6 +28,17 @@ from .utils import age_in_gyr, extend_tool, line_mark, load_template, update_fig
 from .components.dialog import Dialog
 from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
+
+v.theme.dark = True
+v.theme.themes.dark.primary = 'colors.teal.lighten1'
+v.theme.themes.light.primary = 'colors.teal'
+v.theme.themes.dark.accent = 'colors.amber.accent2'
+v.theme.themes.light.accent = 'colors.amber.accent3'
+v.theme.themes.dark.info = 'colors.deepOrange.darken3'
+v.theme.themes.light.info = 'colors.deepOrange.lighten2'
+v.theme.themes.dark.success = 'colors.green.accent2'
+v.theme.themes.light.success = 'colors.green.accent2'
+
 
 # Within ipywidgets - update calls only happen in certain instances.
 # Tom added this glue state to allow 2-way binding and force communication that we want explicitly controlled between front end and back end.
@@ -496,6 +508,9 @@ class Application(VuetifyTemplate):
         Underlying glue-jupyter application data collection instance.
         """
         return self._application_handler.data_collection
+
+    def vue_toggle_darkmode(self, args):
+        v.theme.dark = not v.theme.dark
 
     def vue_fit_lines(self, args):
         """

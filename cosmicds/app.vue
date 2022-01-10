@@ -1,6 +1,5 @@
 <template>
   <v-app
-    :class="state.darkmode ? 'theme--dark' : 'theme--light'"
     id="cosmicds-app"
   >
     <!-- TOOLBAR, fixed to the top of the application -->
@@ -31,7 +30,8 @@
       <v-btn
         icon
         @click="
-          state.darkmode = !state.darkmode;
+          toggle_darkmode()
+          state.darkmode = !state.darkmode
         "
       >
         <v-icon
@@ -87,7 +87,6 @@
               <v-col cols="10">
                 <v-card
                   class="d-flex flex-column"
-                  :class="state.darkmode ? 'theme--dark' : 'theme--light'"
                 >
 
                 <!-- The STEPPER that sets up the multi-step sections across the top -->
@@ -95,7 +94,6 @@
                   <v-stepper
                     v-model="state.over_model"
                     class="elevation-0"
-                    :class="state.darkmode ? 'theme--dark' : 'theme--light'"
                   >
                     <!-- Navigational banner for each of the STEPPER STEPS -->
                     <v-stepper-header
@@ -173,9 +171,8 @@
                               <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
                               <v-alert
                                 :class="state.explore_alert_visible ? 'd-block' : 'd-none'"
-                                :dark="state.darkmode"
                                 class="mb-4"
-                                :color="state.darkmode ? 'deep-orange darken-3' : 'deep-orange lighten-2'"
+                                color="info"
                                 elevation="6"
                               >
                                 <h3
@@ -203,8 +200,8 @@
                                     <v-col
                                       cols="9"
                                     >
-                                      click + drag<br>
-                                      (or use the <strong class="codeFont">W-A-S-D</strong> keys)
+                                      <strong>click + drag</strong><br>
+                                      (or use the <strong class="codeFont">I-J-K-L</strong> keys)
                                     </v-col>
                                   </v-row>
                                   <v-row
@@ -218,15 +215,13 @@
                                     <v-col
                                       cols="9"
                                     >
-                                      scroll in and out<br>
-                                      (or use the <strong class="codeFont">I-O</strong> keys for finer zoom)
+                                      <strong>scroll in and out</strong><br>
+                                      (or use the <strong class="codeFont">Z-X</strong> keys for finer zoom)
                                     </v-col>
                                   </v-row>
                                 </div>
                                 <v-divider
                                   class="my-4"
-                                  :color="state.darkmode ? 'white' : 'black'"
-                                  style="opacity: 0.4"
                                 >
                                 </v-divider>
 
@@ -244,8 +239,8 @@
                                     class="shrink"
                                   >
                                     <v-btn
-                                      :color="state.darkmode ? 'amber accent-2' : 'amber accent-3'"
-                                      light
+                                      color="accent"
+                                      class="black--text"
                                       elevation="2"
                                       @click="
                                         state.explore_alert_visible = 0;
@@ -261,9 +256,8 @@
                               <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
                               <v-alert
                                 :class="state.explore2_alert_visible ? 'd-block' : 'd-none'"
-                                :dark="state.darkmode"
                                 class="mb-4"
-                                :color="state.darkmode ? 'deep-orange darken-3' : 'deep-orange lighten-2'"
+                                color="info"
                                 elevation="6"
                               >
                                 <h3
@@ -283,8 +277,6 @@
                                 </div>
                                 <v-divider
                                   class="my-4"
-                                  color="white"
-                                  style="opacity: 0.4"
                                 >
                                 </v-divider>
 
@@ -297,8 +289,8 @@
                                     class="shrink"
                                   >
                                     <v-btn
-                                      :color="state.darkmode ? 'amber accent-2' : 'amber accent-3'"
-                                      light
+                                      color="accent"
+                                      class="black--text"
                                       elevation="2"
                                       @click="
                                         state.explore2_alert_visible = 0;
@@ -335,9 +327,8 @@
                               <!-- GUIDANCE ALERT - Show students how to select galaxies -->
                               <v-alert
                                 :class="state.selectgals_alert_visible ? 'd-block' : 'd-none'"
-                                :dark="state.darkmode"
+                                color="info"
                                 class="mb-4"
-                                :color="state.darkmode ? 'deep-orange darken-3' : 'deep-orange lighten-2'"
                                 elevation="6"
                               >
                                 <h3
@@ -355,8 +346,6 @@
                                 </div>
                                 <v-divider
                                   class="my-4"
-                                  color="white"
-                                  style="opacity: 0.4"
                                 >
                                 </v-divider>
 
@@ -366,8 +355,8 @@
                                 >
                                   <v-col>
                                     <v-btn
-                                      :color="state.darkmode ? 'green accent-2' : 'green accent-3'"
-                                      light
+                                      class="black--text"
+                                      color="success"
                                       elevation="2"
                                       @click="
                                         state.gal_snackbar = 0;
@@ -402,8 +391,8 @@
                                     :class="state.gals_total >= 5 ? 'd-block' : 'd-none'"
                                   >
                                     <v-btn
-                                      :color="state.darkmode ? 'amber accent-2' : 'amber accent-3'"
-                                      light
+                                      class="black--text"
+                                      color="accent"
                                       elevation="2"
                                       @click="
                                         state.selectgals_alert_visible = 0;
@@ -419,9 +408,8 @@
                               <!-- GUIDANCE ALERT - Request specific galaxy to work with -->
                               <v-alert
                                 :class="state.gal_active_alert_visible ? 'd-block' : 'd-none'"
-                                :dark="state.darkmode"
+                                color="info"
                                 class="mb-4"
-                                :color="state.darkmode ? 'deep-orange darken-3' : 'deep-orange lighten-2'"
                                 elevation="6"
                               >
                                 <h3
@@ -439,8 +427,6 @@
                                 </div>
                                 <v-divider
                                   class="my-4"
-                                  color="white"
-                                  style="opacity: 0.40"
                                 >
                                 </v-divider>
 
@@ -453,8 +439,8 @@
                                     class="shrink"
                                   >
                                     <v-btn
-                                      :color="state.darkmode ? 'amber accent-2' : 'amber accent-3'"
-                                      light
+                                      class="black--text"
+                                      color="accent"
                                       elevation="2"
                                       @click="
                                         state.galalerts_visible = 0;
@@ -483,9 +469,8 @@
                               <v-card
                                 :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
                                 min-height="300px"
-                                height="100%"
                                 outlined
-                                :color="state.darkmode ? 'deep-orange darken-3' : 'deep-orange lighten-2'"
+                                color="info"
                                 class="pa-1"
                               >
                                 <v-toolbar
@@ -511,9 +496,8 @@
                               <!-- GUIDANCE ALERT - Introduce Spectrum Tool -->
                               <v-alert
                                 :class="state.spec_intro_alert_visible ? 'd-block' : 'd-none'"
-                                :dark="state.darkmode"
                                 class="mb-4"
-                                :color="state.darkmode ? 'deep-orange darken-3' : 'deep-orange lighten-2'"
+                                color="info"
                                 elevation="6"
                               >
                                 <h3
@@ -531,8 +515,6 @@
                                 </div>
                                 <v-divider
                                   class="my-4"
-                                  color="white"
-                                  style="opacity: 0.4"
                                 >
                                 </v-divider>
 
@@ -547,7 +529,7 @@
 
                                     <!-- FORM DIALOG as template for reflections/MC -->
                                     <guide-specvel-windows
-                                      button-text="spectra and motion"
+                                      button-text="start"
                                       close-text="submit"
                                       @close="
                                         console.log('Submit button was clicked.');
@@ -555,6 +537,7 @@
                                         state.spec_2_alert_visible = 1;
                                       "
                                     >
+                                     
                                     </guide-specvel-windows>
                                   </v-col>
                                 </v-row>
@@ -563,9 +546,8 @@
                               <!-- GUIDANCE ALERT - Spectrum Tool #2 -->
                               <v-alert
                                 :class="state.spec_2_alert_visible ? 'd-block' : 'd-none'"
-                                :dark="state.darkmode"
                                 class="mb-4"
-                                :color="state.darkmode ? 'deep-orange darken-3' : 'deep-orange lighten-2'"
+                                color="info"
                                 elevation="6"
                               >
                                 <h3
@@ -589,8 +571,6 @@
                                 </div>
                                 <v-divider
                                   class="my-4"
-                                  color="white"
-                                  style="opacity: 0.4"
                                 >
                                 </v-divider>
 
@@ -603,8 +583,8 @@
                                     class="shrink"
                                   >
                                     <v-btn
-                                      :color="state.darkmode ? 'amber accent-2' : 'amber accent-3'"
-                                      light
+                                      color="accent"
+                                      class="black--text"
                                       elevation="2"
                                       @click="
                                         state.spec_2_alert_visible = 0;

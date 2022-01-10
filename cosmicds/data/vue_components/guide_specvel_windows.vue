@@ -1,8 +1,8 @@
 <template>
   <v-btn
     block
-    color="amber accent-2"
-    light
+    class="black--text"
+    color="accent"
     elevation="2"
     @click.stop="dialog = true"
   >
@@ -27,7 +27,7 @@
         >
           <span>{{ currentTitle }}</span>
           <v-avatar
-            color="pink lighten-3"
+            color="info"
             class="subheading white--text"
             size="24"
             v-text="step"
@@ -107,7 +107,7 @@
         <v-card-actions>
           <v-btn
             :disabled="step === 1"
-            color="primary"
+            color="accent"
             text
             @click="step--"
           >
@@ -116,7 +116,7 @@
           <v-spacer></v-spacer>
           <v-btn
             :disabled="step === 7"
-            color="primary"
+            color="accent"
             text
             @click="step++;"
           >
@@ -124,7 +124,8 @@
           </v-btn>
           <v-btn
             :disabled="step < 7"
-            color="primary darken-1"
+            color="accent"
+            class="black--text"
             depressed
             @click="() => { $emit('close'); dialog = false; }"
           >
