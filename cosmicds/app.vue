@@ -9,13 +9,13 @@
       src="https://cdn.eso.org/images/screen/eso1738b.jpg"
       scroll-target="#scrolling-techniques-4"
     >
-      <!-- Sets the BACKGROUND IMAGE and GRADIENT overlay -->
+      <!-- Sets the BACKGROUND IMAGE and GRADIENT overlay -- original RGBA values: "to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)" -->
       <template
         v-slot:img="{ props }"
       >
         <v-img
           v-bind="props"
-          gradient="to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)"
+          gradient="to top right, rgba(1, 87, 155, .7), rgba(0, 0, 0, .5)"
         ></v-img>
       </template>
 
@@ -267,7 +267,7 @@
                                 <div
                                   class="mb-4"
                                 >
-                                  The <strong :class="state.darkmode ? 'green--text text--lighten-2' : 'green--text text--darken-1'">green dots</strong> mark the locations of galaxies you can collect data for. 
+                                  The <strong :class="state.darkmode ? 'green--text text--lighten-2' : 'green--text text--darken-1'">green</strong> dots mark the locations of galaxies you can collect data for. 
                                 </div>
                                 <div
                                   class="mb-4"
@@ -470,7 +470,7 @@
                                 class="pa-1"
                               >
                                 <v-toolbar
-                                  color="black"
+                                  color="secondary"
                                   dense
                                   dark
                                 >
@@ -953,8 +953,9 @@
                                 class="align-self-stretch"
                               >
                                 <v-app-bar
-                                  color="pink"
+                                  color="secondary"
                                   dark
+                                  dense
                                 >
                                   <v-icon left>
                                     mdi-ruler
@@ -1198,7 +1199,7 @@
                                             class="flex-grow-1 white--text"
                                             @click="handle_fitline_click()"
                                           >
-                                            {{ state.bestfit_drawn ? 'erase drawn line' : 'draw a fit line' }}
+                                            {{ state.bestfit_drawn ? 'erase fit line' : 'draw a fit line' }}
                                             <v-spacer></v-spacer>
                                             <v-icon
                                               right
