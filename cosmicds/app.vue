@@ -170,7 +170,7 @@
                             >
                               <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
                               <v-alert
-                                :class="state.explore_alert_visible ? 'd-block' : 'd-none'"
+                                :class="state.marker == 'exp_sky1' ? 'd-block' : 'd-none'"
                                 class="mb-4"
                                 color="info"
                                 elevation="6"
@@ -243,8 +243,7 @@
                                       class="black--text"
                                       elevation="2"
                                       @click="
-                                        state.explore_alert_visible = 0;
-                                        state.explore2_alert_visible = 1;
+                                        state.marker = 'sel_gal1';
                                       "
                                     >
                                       next
@@ -255,7 +254,7 @@
 
                               <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
                               <v-alert
-                                :class="state.explore2_alert_visible ? 'd-block' : 'd-none'"
+                                :class="state.marker == 'sel_gal1' ? 'd-block' : 'd-none'"
                                 class="mb-4"
                                 color="info"
                                 elevation="6"
@@ -293,9 +292,8 @@
                                       class="black--text"
                                       elevation="2"
                                       @click="
-                                        state.explore2_alert_visible = 0;
+                                        state.marker = 'sel_gal2';
                                         state.galaxy_table_visible = 1;
-                                        state.galalerts_visible = 1;
                                         state.gal_snackbar = 0;
                                         state.dist_snackbar = 0;
                                         state.marker_snackbar = 0;
@@ -320,13 +318,13 @@
                             </v-col>
                           </v-row>
                           <v-row
-                            :class="state.galalerts_visible ? 'd-block' : 'd-none'"
+                            :class="state.marker == 'sel_gal2' | 'cho_row1' ? 'd-block' : 'd-none'"
                           >
                             <v-col>
 
                               <!-- GUIDANCE ALERT - Show students how to select galaxies -->
                               <v-alert
-                                :class="state.selectgals_alert_visible ? 'd-block' : 'd-none'"
+                                :class="state.marker == 'sel_gal2' ? 'd-block' : 'd-none'"
                                 color="info"
                                 class="mb-4"
                                 elevation="6"
@@ -395,8 +393,7 @@
                                       color="accent"
                                       elevation="2"
                                       @click="
-                                        state.selectgals_alert_visible = 0;
-                                        state.gal_active_alert_visible = 1;
+                                        state.marker = 'cho_row1';
                                       "
                                     >
                                       move on to measuring
@@ -407,7 +404,7 @@
 
                               <!-- GUIDANCE ALERT - Request specific galaxy to work with -->
                               <v-alert
-                                :class="state.gal_active_alert_visible ? 'd-block' : 'd-none'"
+                                :class="state.marker == 'cho_row1' ? 'd-block' : 'd-none'"
                                 color="info"
                                 class="mb-4"
                                 elevation="6"
@@ -443,9 +440,8 @@
                                       color="accent"
                                       elevation="2"
                                       @click="
-                                        state.galalerts_visible = 0;
                                         state.spectrum_tool_visible = 1;
-                                        state.spec_intro_alert_visible = 1;
+                                        state.marker = 'mee_spe1';
                                       "
                                     >
                                       next
@@ -495,7 +491,7 @@
 
                               <!-- GUIDANCE ALERT - Introduce Spectrum Tool -->
                               <v-alert
-                                :class="state.spec_intro_alert_visible ? 'd-block' : 'd-none'"
+                                :class="state.marker == 'mee_spe1' ? 'd-block' : 'd-none'"
                                 class="mb-4"
                                 color="info"
                                 elevation="6"
@@ -533,8 +529,7 @@
                                       close-text="submit"
                                       @close="
                                         console.log('Submit button was clicked.');
-                                        state.spec_intro_alert_visible = 0;
-                                        state.spec_2_alert_visible = 1;
+                                        state.marker = 'mee_spe2';
                                       "
                                     >
                                      
@@ -545,7 +540,7 @@
 
                               <!-- GUIDANCE ALERT - Spectrum Tool #2 -->
                               <v-alert
-                                :class="state.spec_2_alert_visible ? 'd-block' : 'd-none'"
+                                :class="state.marker == 'mee_spe2' ? 'd-block' : 'd-none'"
                                 class="mb-4"
                                 color="info"
                                 elevation="6"
@@ -587,7 +582,7 @@
                                       class="black--text"
                                       elevation="2"
                                       @click="
-                                        state.spec_2_alert_visible = 0;
+                                        state.marker = '';
                                       "
                                     >
                                       next
@@ -634,7 +629,7 @@
                               <!-- Our SME told me that E galaxies aren't likely to have H-alpha lines, so we will need to give
                               options for measuring other types of lines too, like Ca or K lines. We can figure this out once
                               we have the data set to look at.-->
-                                Use the mouse to drag the vertical wavelength marker until it lines up with the labeled absorption or emission line. Left-click to record the element and wavelength of the line. NOTE: The button here stands in place of wavelength setter function until it becomes available.
+                                Use the mouse to drag the vertical wavelength marker until it lines up with the labeled absorption or emission line. Left-click to record the element and wavelength of the line.
 
                                 <!-- The click action will be on the spectrum itself, so we can remove this when it is active -->
                                 <div class="text-center mt-4">
