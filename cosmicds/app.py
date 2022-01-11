@@ -45,13 +45,14 @@ v.theme.themes.light.success = 'colors.green.accent2'
 class ApplicationState(State):
     # set the darkmode state
     darkmode = CallbackProperty(1)
+    marker = CallbackProperty('exp_sky1')
 
     over_model = CallbackProperty(1)
     col_tab_model = CallbackProperty(0)
     est_model = CallbackProperty(0)
     analysis_tabs = CallbackProperty(0)
 
-
+    # expansion toggle
     toggle_on = CallbackProperty('d-none')
     toggle_off = CallbackProperty('d-block')
 
@@ -80,17 +81,9 @@ class ApplicationState(State):
 
     #step 1 alerts
     wwt_active = CallbackProperty(0)
-    explore_alert_visible = CallbackProperty(1)
-    explore2_alert_visible = CallbackProperty(0)
     galaxy_table_visible = CallbackProperty(0)
-    galalerts_visible = CallbackProperty(0)
-    selectgals_alert_visible = CallbackProperty(1)
-    gal_active_alert_visible = CallbackProperty(0)
     
     spectrum_tool_visible = CallbackProperty(0)
-    spec_intro_alert_visible = CallbackProperty(0)
-    spec_vel_dialog_visible = CallbackProperty(0)
-    spec_2_alert_visible = CallbackProperty(0)
 
     #state variables for reflections
     rv1_visible = CallbackProperty("d-none")
