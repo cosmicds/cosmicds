@@ -9,13 +9,13 @@
       src="https://cdn.eso.org/images/screen/eso1738b.jpg"
       scroll-target="#scrolling-techniques-4"
     >
-      <!-- Sets the BACKGROUND IMAGE and GRADIENT overlay -->
+      <!-- Sets the BACKGROUND IMAGE and GRADIENT overlay -- original RGBA values: "to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)" -->
       <template
         v-slot:img="{ props }"
       >
         <v-img
           v-bind="props"
-          gradient="to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)"
+          gradient="to top right, rgba(1, 87, 155, .7), rgba(0, 0, 0, .5)"
         ></v-img>
       </template>
 
@@ -26,6 +26,17 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
+
+      <v-btn
+        icon
+        @click="
+          toggle_darkmode()
+          state.darkmode = !state.darkmode
+        "
+      >
+        <v-icon
+        >mdi-white-balance-sunny</v-icon>
+      </v-btn>
 
       <v-btn
         icon
@@ -60,7 +71,9 @@
       id="scrolling-techniques-4"
       class="overflow-y-auto fill-height"
     >
-      <v-container>
+      <v-container
+        class="py-0"
+      >
         <v-row justify="center">
           <v-col cols="12" xl="8">
             <v-row justify="center">
@@ -72,7 +85,9 @@
                 </p>
               </v-col>
               <v-col cols="10">
-                <v-card class="d-flex flex-column">
+                <v-card
+                  class="d-flex flex-column"
+                >
 
                 <!-- The STEPPER that sets up the multi-step sections across the top -->
                 <!-- Note: V-MODEL is a 2-way token that controls the state of something in the app -->
@@ -81,7 +96,9 @@
                     class="elevation-0"
                   >
                     <!-- Navigational banner for each of the STEPPER STEPS -->
-                    <v-stepper-header>
+                    <v-stepper-header
+                      dense
+                    >
                       <!-- :complete="state.over_model > 1"   
                             : is a binding - binds state of "complete" to the thing in the "".  If over_model is > 1, then we have gone past step 1.
                       therefore, consider step 1 complete. -->
@@ -127,7 +144,9 @@
                       <!-- ---------------- -------------------------------- ---------------- -->
                       <!-- ---------------- -------------------------------- ---------------- -->
                       <v-stepper-content step="1">
-                        <v-container>
+                        <v-container
+                          class="pt-0"
+                        >
                           <v-row>
                             <v-col
                               cols="6"
@@ -145,52 +164,297 @@
                                 </v-lazy>
                               </div>
                             </v-col>
-                            <v-col cols="6">
+                            <v-col
+                              cols="6"
+                              class="galtable_column"
+                            >
+                              <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
+                              <v-alert
+                                :class="state.marker == 'exp_sky1' ? 'd-block' : 'd-none'"
+                                class="mb-4"
+                                color="info"
+                                elevation="6"
+                              >
+                                <h3
+                                  class="mb-4"
+                                >
+                                  Explore the Sky
+                                </h3>
+                                <div
+                                  class="mb-4"
+                                >
+                                  This window provides a view of the night sky. As you explore this view, you may see stars, nebulae, and galaxies.
+                                </div>
+                                <div
+                                  class="mb-2 mx-4"
+                                >
+                                  <v-row
+                                    no-gutters
+                                    class="mb-3"
+                                  >
+                                    <v-col
+                                      cols="3"
+                                    >
+                                      <strong>Pan</strong>
+                                    </v-col>
+                                    <v-col
+                                      cols="9"
+                                    >
+                                      <strong>click + drag</strong><br>
+                                      (or use the <strong class="codeFont">I-J-K-L</strong> keys)
+                                    </v-col>
+                                  </v-row>
+                                  <v-row
+                                    no-gutters
+                                  >
+                                    <v-col
+                                      cols="3"
+                                    >
+                                      <strong>Zoom</strong>
+                                    </v-col>
+                                    <v-col
+                                      cols="9"
+                                    >
+                                      <strong>scroll in and out</strong><br>
+                                      (or use the <strong class="codeFont">Z-X</strong> keys for finer zoom)
+                                    </v-col>
+                                  </v-row>
+                                </div>
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-col
+                                    cols="8"
+                                  >
+                                    Ready to proceed? Click <strong>NEXT</strong>.
+                                  </v-col>
+                                  <v-spacer></v-spacer>
+                                  <v-col
+                                    class="shrink"
+                                  >
+                                    <v-btn
+                                      color="accent"
+                                      class="black--text"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'sel_gal1';
+                                      "
+                                    >
+                                      next
+                                    </v-btn>
+                                  </v-col>
+                                </v-row>
+                              </v-alert>
+
+                              <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
+                              <v-alert
+                                :class="state.marker == 'sel_gal1' ? 'd-block' : 'd-none'"
+                                class="mb-4"
+                                color="info"
+                                elevation="6"
+                              >
+                                <h3
+                                  class="mb-4"
+                                >
+                                  Select a Galaxy
+                                </h3>
+                                <div
+                                  class="mb-4"
+                                >
+                                  The <strong :class="state.darkmode ? 'green--text text--lighten-2' : 'green--text text--darken-1'">green</strong> dots mark the locations of galaxies you can collect data for. 
+                                </div>
+                                <div
+                                  class="mb-4"
+                                >
+                                  Click on one of these dots to select that galaxy.
+                                </div>
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-spacer></v-spacer>
+                                  <v-col
+                                    class="shrink"
+                                  >
+                                    <v-btn
+                                      color="accent"
+                                      class="black--text"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'sel_gal2';
+                                        state.galaxy_table_visible = 1;
+                                        state.gal_snackbar = 0;
+                                        state.dist_snackbar = 0;
+                                        state.marker_snackbar = 0;
+                                        state.vel_snackbar = 0;
+                                        state.data_ready_snackbar = 0;
+                                        state.gal_snackbar = 1;
+                                        state.gal_selected = 1;
+                                        state.haro_on = 'd-block';
+                                        state.gals_total += 1;
+                                        add_galaxy_data_point();
+                                      "
+                                    >
+                                      next
+                                    </v-btn>
+                                  </v-col>
+                                </v-row>
+                              </v-alert>
                               <!-- TABLE to hold Selected Galaxies -->
-                              <c-galaxy-table/>
+                              <c-galaxy-table
+                                :class="state.galaxy_table_visible ? 'd-block' : 'd-none'"
+                              />
                             </v-col>
                           </v-row>
-                          <v-row>
+                          <v-row
+                            :class="state.marker == 'sel_gal2' | 'cho_row1' ? 'd-block' : 'd-none'"
+                          >
                             <v-col>
-                              <!-- Temporary ALERT to stand in for Galaxy Selection function -->
+
+                              <!-- GUIDANCE ALERT - Show students how to select galaxies -->
                               <v-alert
+                                :class="state.marker == 'sel_gal2' ? 'd-block' : 'd-none'"
+                                color="info"
                                 class="mb-4"
-                                border="left"
-                                colored-border
-                                color="indigo"
-                                elevation="2"
+                                elevation="6"
                               >
-                                Pan the sky and click one of the markers to 
-                                select a galaxy to measure. Your galaxy will
-                                be added to the table. You will need to add
-                                at least 5 galaxies to your table.
-                                <!-- This can go eventually because the "select" action will be on the galaxy marker within the WWT window -->
-                                <div class="text-center mt-4">
-                                  <v-btn
-                                    class="white--text"
-                                    color="purple darken-2"
-                                    @click="
-                                      state.gal_snackbar = 0;
-                                      state.dist_snackbar = 0;
-                                      state.marker_snackbar = 0;
-                                      state.vel_snackbar = 0;
-                                      state.data_ready_snackbar = 0;
-                                      state.gal_snackbar = 1;
-                                      state.gal_selected = 1;
-                                      state.haro_on = 'd-block';
-                                      state.gals_total += 1;
-                                      add_galaxy_data_point();
-                                    "
-                                  >
-                                    select galaxy ({{ state.gals_total }})
-                                  </v-btn>
+                                <h3
+                                  class="mb-4"
+                                >
+                                  Select Five Galaxies
+                                </h3>
+                                <div
+                                  class="mb-4"
+                                >
+                                  Notice that the table now has a row for your selected galaxy.
                                 </div>
+                                <div>
+                                  Now pan around the sky and choose 4 more galaxies to enter into your table.
+                                </div>
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-col>
+                                    <v-btn
+                                      class="black--text"
+                                      color="success"
+                                      elevation="2"
+                                      @click="
+                                        state.gal_snackbar = 0;
+                                        state.dist_snackbar = 0;
+                                        state.marker_snackbar = 0;
+                                        state.vel_snackbar = 0;
+                                        state.data_ready_snackbar = 0;
+                                        state.gal_snackbar = 1;
+                                        state.gal_selected = 1;
+                                        state.haro_on = 'd-block';
+                                        state.gals_total += 1;
+                                        add_galaxy_data_point();
+                                      "
+                                    >
+                                      select galaxy ({{ state.gals_total }})
+                                    </v-btn>
+                                  </v-col>
+                                  <v-spacer></v-spacer>
+                                  
+                                  <v-col
+                                    cols="2"
+                                    class="shrink"
+                                    :class="state.gals_total < 5 ? 'd-block' : 'd-none'"
+                                  >
+                                    <div
+                                    >
+                                      Select 5 galaxies before moving on.
+                                    </div>
+                                  </v-col>
+                                  <v-col
+                                    class="shrink"
+                                    :class="state.gals_total >= 5 ? 'd-block' : 'd-none'"
+                                  >
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'cho_row1';
+                                      "
+                                    >
+                                      move on to measuring
+                                    </v-btn>
+                                  </v-col>
+                                </v-row>
+                              </v-alert>
+
+                              <!-- GUIDANCE ALERT - Request specific galaxy to work with -->
+                              <v-alert
+                                :class="state.marker == 'cho_row1' ? 'd-block' : 'd-none'"
+                                color="info"
+                                class="mb-4"
+                                elevation="6"
+                              >
+                                <h3
+                                  class="mb-4"
+                                >
+                                  Choose a Row
+                                </h3>
+                                <div
+                                  class="mb-4"
+                                >
+                                  Now let's take a look at the light spectrum for one of your galaxies.
+                                </div>
+                                <div>
+                                  Click on a row in your table to choose that galaxy.
+                                </div>
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-spacer></v-spacer>
+                                  <v-col
+                                    class="shrink"
+                                  >
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
+                                        state.spectrum_tool_visible = 1;
+                                        state.marker = 'mee_spe1';
+                                      "
+                                    >
+                                      next
+                                    </v-btn>
+                                  </v-col>
+                                </v-row>
                               </v-alert>
                             </v-col>
                           </v-row>
                         </v-container>
                         <v-container
-                          :class="state.gals_total < 5 ? 'd-none' : 'd-block'"
+                          :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
+                          class="py-0"
                         >
                           <v-row>
                             <v-col
@@ -199,18 +463,18 @@
                             >
                               <!-- The CARD to hold the SPECTRUM TOOL and where students Measure Velocity -->
                               <v-card
+                                :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
                                 min-height="300px"
-                                height="100%"
+                                outlined
+                                color="info"
+                                class="pa-1"
                               >
                                 <v-toolbar
-                                  color="pink"
+                                  color="secondary"
+                                  dense
                                   dark
                                 >
-                                  <v-icon left>
-                                    mdi-speedometer
-                                  </v-icon>
-
-                                  <v-toolbar-title>Measure Velocity</v-toolbar-title>
+                                  <v-toolbar-title>Spectrum Tool</v-toolbar-title>
 
                                   <v-spacer></v-spacer>
 
@@ -218,28 +482,154 @@
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-toolbar>
-                                  <jupyter-widget :widget="viewers.spectrum_viewer" >
-                                  </jupyter-widget>  
+                                <jupyter-widget :widget="viewers.spectrum_viewer" >
+                                </jupyter-widget>  
                               </v-card>
                             </v-col>
                             <!-- SIDEBAR COLUMN for processing velocity data -->
                             <v-col cols="12" md="4">
+
+                              <!-- GUIDANCE ALERT - Introduce Spectrum Tool -->
+                              <v-alert
+                                :class="state.marker == 'mee_spe1' ? 'd-block' : 'd-none'"
+                                class="mb-4"
+                                color="info"
+                                elevation="6"
+                              >
+                                <h3
+                                  class="mb-4"
+                                >
+                                  Meet the Spectrum Tool
+                                </h3>
+                                <div
+                                  class="mb-4"
+                                >
+                                  To the left is a spectrum of light from your chosen galaxy.
+                                </div>
+                                <div>
+                                  Let’s learn how a spectrum can tell us if an object is moving toward or away from us.
+                                </div>
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-spacer></v-spacer>
+                                  <v-col
+                                    class="shrink"
+                                  >
+
+                                    <!-- FORM DIALOG as template for reflections/MC -->
+                                    <guide-specvel-windows
+                                      button-text="start"
+                                      close-text="submit"
+                                      @close="
+                                        console.log('Submit button was clicked.');
+                                        state.marker = 'mee_spe2';
+                                      "
+                                    >
+                                     
+                                    </guide-specvel-windows>
+                                  </v-col>
+                                </v-row>
+                              </v-alert>
+
+                              <!-- GUIDANCE ALERT - Spectrum Tool #2 -->
+                              <v-alert
+                                :class="state.marker == 'mee_spe2' ? 'd-block' : 'd-none'"
+                                class="mb-4"
+                                color="info"
+                                elevation="6"
+                              >
+                                <h3
+                                  class="mb-4"
+                                >
+                                  Meet the Spectrum Tool
+                                </h3>
+                                <div
+                                  class="mb-4"
+                                >
+                                  Let’s come back to your galaxy spectrum. Notice your spectrum has some bright spikes or faint dips.
+                                </div>
+                                <div>
+                                  The bright spikes are <strong>emission lines</strong>.
+                                </div>
+                                <div>
+                                  The faint dips are <strong>absorption lines</strong>.
+                                </div>
+                                <div>
+                                  Let’s learn how a spectrum can tell us if an object is moving toward or away from us.
+                                </div>
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-spacer></v-spacer>
+                                  <v-col
+                                    class="shrink"
+                                  >
+                                    <v-btn
+                                      color="accent"
+                                      class="black--text"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = '';
+                                      "
+                                    >
+                                      next
+                                    </v-btn>
+                                  </v-col>
+                                </v-row>
+                              </v-alert>
+
+
+
+                              <!-- GUIDANCE DIALOG - Explore Spectra & Velocities - might be able to delete this if the button works in the alert   -->
+                              <v-container
+                                class="d-none"
+                              >
+                                <v-row
+                                  class="text-center"
+                                >
+                                  <v-col
+                                  >
+                                    <!-- FORM DIALOG as template for reflections/MC -->
+                                    <reflect-velocity-windows
+                                      button-text="reflect"
+                                      close-text="submit"
+                                      @close="
+                                        console.log('Submit button was clicked.');
+                                        state.rv1_visible = 'd-none';
+                                        state.calc_visible = 'd-block';
+                                      "
+                                    >
+                                    </reflect-velocity-windows>
+                                  </v-col>
+                                </v-row>
+                              </v-container>
+
+
+
                               <v-alert
                                 border="left"
-                                colored-border
                                 color="indigo"
+                                dark
                                 elevation="2"
                                 class="mb-12"
                               >
                               <!-- Our SME told me that E galaxies aren't likely to have H-alpha lines, so we will need to give
                               options for measuring other types of lines too, like Ca or K lines. We can figure this out once
                               we have the data set to look at.-->
-                                Use the mouse to drag the vertical wavelength marker
-                                until it lines up with the labeled absorption or
-                                emission line. Left-click to record the element and
-                                wavelength of the line. NOTE: The button here stands
-                                in place of wavelength setter function until it
-                                becomes available.
+                                Use the mouse to drag the vertical wavelength marker until it lines up with the labeled absorption or emission line. Left-click to record the element and wavelength of the line.
 
                                 <!-- The click action will be on the spectrum itself, so we can remove this when it is active -->
                                 <div class="text-center mt-4">
@@ -424,7 +814,10 @@
                               <template>
                                 <v-row justify="center">
                                   <v-col cols="12">
-                                    <v-expansion-panels accordion>
+                                    <v-expansion-panels
+                                      accordion
+                                      :class="state.darkmode ? 'theme--dark' : 'theme--light'"
+                                    >
                                       <v-expansion-panel
                                         key="1"
                                       >
@@ -560,8 +953,9 @@
                                 class="align-self-stretch"
                               >
                                 <v-app-bar
-                                  color="pink"
+                                  color="secondary"
                                   dark
+                                  dense
                                 >
                                   <v-icon left>
                                     mdi-ruler
@@ -805,7 +1199,7 @@
                                             class="flex-grow-1 white--text"
                                             @click="handle_fitline_click()"
                                           >
-                                            {{ state.bestfit_drawn ? 'erase drawn line' : 'draw a fit line' }}
+                                            {{ state.bestfit_drawn ? 'erase fit line' : 'draw a fit line' }}
                                             <v-spacer></v-spacer>
                                             <v-icon
                                               right
@@ -1566,42 +1960,55 @@ export default {
 }
 </script>
 
+
 <style id="cosmicds-app">
+
 html {
   margin: 0;
   padding: 0;
 }
+
 body {
   margin: 0;
   padding: 0;
 }
+
 .jupyter-widgets .jp-Cell .jp-CodeCell .jp-Notebook-cell .jp-mod-noInput {
   margin: 0;
   padding: 0;
 }
+
 #cosmicds-app {
   height: 100%;
 }
+
 #app {
   height: 100vh;
 }
+
 .card-outter {
   position: relative;
   padding-bottom: 50px;
 }
+
 .card-actions {
   position: absolute;
   bottom: 0;
 }
+
 .v-stepper__wrapper {
   height: 100%;
 }
+
 .bqplot {
   height: 100%;
 }
-.v-stepper__content {
+
+.vuetify-styles .v-stepper__content {
   min-height: 500px;
+  padding: 0px;
 }
+
 .v-tabs-items {
   min-height: 300px;
 }
@@ -1629,7 +2036,24 @@ input {
 .wwt_column {
   overflow-y: hidden;
 }
+
 .wwt_widget .v-toolbar {
   display: none;
 }
+
+
+/* Styling for Galaxy table */
+.galtable_column .v-card {
+  min-height: 100%;
+}
+
+.galtable_column .v-data-table__wrapper {
+  overflow-y: hidden;
+}
+
+.codeFont {
+  font-family: 'Courier New';
+}
+
+
 </style>
