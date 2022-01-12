@@ -156,7 +156,7 @@ def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
     tool.activate = extended_activate
     tool.deactivate = extended_deactivate
 
-def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
+def line_mark(layer, start_x, start_y, end_x, end_y, color):
     """
     Creates a LinesGL mark between the given start and end points
     using the scales of the given layer.
@@ -190,11 +190,9 @@ def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
                    y=[start_y, end_y],
                    scales=scales,
                    colors=[color],
-                   labels=[label] if label is not None else [],
-                   display_legend=label is not None,
                    labels_visibility='label')
 
-def vertical_line_mark(layer, x, color, label=None):
+def vertical_line_mark(layer, x, color):
     """
     A specialization of `line_mark` specifically for vertical lines.
 
@@ -208,4 +206,4 @@ def vertical_line_mark(layer, x, color, label=None):
         The desired color of the line, represented as a hex string.
     """
     viewer_state = layer.state.viewer_state
-    return line_mark(layer, x, viewer_state.y_min, x, viewer_state.y_max, color, label)
+    return line_mark(layer, x, viewer_state.y_min, x, viewer_state.y_max, color)

@@ -30,6 +30,7 @@ class HistogramListener(SubsetModifierListener):
         
         viewer_id = 'hub_comparison_viewer'
         layer_index = self._layer_index()
+        print(layer_index)
         if layer_index >= 0:
             self._app.vue_clear_lines(viewer_id, [layer_index])
 
@@ -54,6 +55,7 @@ class HistogramListener(SubsetModifierListener):
         # Otherwise, clear lines
         
         viewer_id = 'hub_comparison_viewer'
+        print(message.subset)
         viewer = self._app._viewer_handlers[viewer_id]
         layer_index = self._layer_index()
         
