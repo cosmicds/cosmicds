@@ -88,7 +88,7 @@ class ApplicationState(State):
     spectrum_tool_visible = CallbackProperty(0)
 
     #state variables for reflections
-    rv1_visible = CallbackProperty("d-none")
+    rv1_visible = CallbackProperty(0)
 
     draw_on = CallbackProperty(0)
     bestfit_on = CallbackProperty(0)
