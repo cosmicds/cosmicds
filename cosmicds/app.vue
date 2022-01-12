@@ -991,14 +991,16 @@
                                 :class="state.haro_on"
                               >
                                 <v-card
-                                  color="indigo lighten-5"
+                                  color="blue lighten-3"
+                                  class="black--text"
                                   width="100%"
                                 >
                                   <v-card-title>Haro 11</v-card-title>
                                   <v-card-text>
-                                    <v-divider></v-divider>
+                                    <v-divider light></v-divider>
                                     <v-list
-                                      color="indigo lighten-5"
+                                      color="blue lighten-3"
+                                  class="black--text"
                                     >
                                       <v-list-item-content>
                                         <v-list-item-title>Irregular galaxy</v-list-item-title>
@@ -1013,14 +1015,14 @@
                                         <v-list-item-subtitle>height of display</v-list-item-subtitle>
                                       </v-list-item-content>
                                     </v-list>
-                                    <v-divider></v-divider>
+                                    <v-divider light></v-divider>
                                     <v-text-field
                                       :value="state.galaxy_dist"
                                       label="Estimated Distance"
                                       hint="click button below"
+                                      light
                                       persistent-hint
-                                      color="purple darken-2"
-                                      class="mt-8 mb-4"
+                                      class="mt-8 mb-4 black--text"
                                       suffix="Mpc"
                                       outlined
                                       readonly
@@ -1028,7 +1030,7 @@
                                     ></v-text-field>
                                     <v-btn
                                       block
-                                      color="purple darken-2"
+                                      color="primary"
                                       dark
                                       class="px-auto"
                                       max-width="100%"
