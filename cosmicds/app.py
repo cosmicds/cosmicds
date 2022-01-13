@@ -14,7 +14,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from numpy import array, bitwise_or
+from numpy import array, bitwise_or, isnan
 from traitlets import Dict, List
 import ipyvuetify as v
 
@@ -186,6 +186,12 @@ class Application(VuetifyTemplate):
         hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(6)]
         hub_const_viewer, hub_fit_viewer, hub_comparison_viewer, hub_students_viewer, hub_morphology_viewer, hub_prodata_viewer = hub_viewers
         self._hub_viewers = hub_viewers
+        for viewer in hub_viewers:
+            figure = viewer.figure
+            figure.legend_location = 'top-left'
+            figure.legend_style = {
+                'stroke-width': 0
+            }
 
         # Set up glue links for the Hubble data sets
         measurement_data_fields = self._dummy_student_data.keys()
@@ -282,10 +288,10 @@ class Application(VuetifyTemplate):
         # The Hubble comparison viewer should get the class and all public data as well
         all_data = self.data_collection['HubbleData_All']
         hub_comparison_viewer.layers[-1].state.zorder = 3
-        hub_comparison_viewer.add_data(all_data)
-        hub_comparison_viewer.layers[-1].state.zorder = 1
         hub_comparison_viewer.add_data(class_data)
         hub_comparison_viewer.layers[-1].state.zorder = 2
+        hub_comparison_viewer.add_data(all_data)
+        hub_comparison_viewer.layers[-1].state.zorder = 1
         hub_comparison_viewer.state.x_att = all_data.id['distance']
         hub_comparison_viewer.state.y_att = all_data.id['velocity']
         hub_comparison_viewer.state.reset_limits()
@@ -559,7 +565,7 @@ class Application(VuetifyTemplate):
 
         data_labels = [layer.state.layer.label for layer in layers]
 
-        lines, labels = [], []
+        lines_and_labels = []
         for layer in layers:
 
             # Get the data (which may actually be a Data object,
@@ -581,12 +587,17 @@ class Application(VuetifyTemplate):
             # Keep track of this line and its slope
             start_x, end_x = x
             start_y, end_y = y
-            line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color)
-            lines.append(line)
-            labels.append(data.label)
+            slope_value = fitted_line.slope.value
+            label = 'Slope = %.0f ks / s / Mpc' % slope_value if not isnan(slope_value) else None
+            line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color, label)
+            lines_and_labels.append((line, data.label))
             
             # Keep track of this slope for later use
-            self._fit_slopes[data.label] = fitted_line.slope.value
+            self._fit_slopes[data.label] = slope_value
+
+        # Order the lines in the same order as the layers
+        lines_and_labels.sort(key=lambda x: data_labels.index(x[1]), reverse=True)
+        lines, labels = [*zip(*lines_and_labels)]
 
         # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit lines directly onto the bqplot figure
@@ -600,8 +611,8 @@ class Application(VuetifyTemplate):
                 to_keep.append(item)
         marks_to_clear = [x[0] for x in to_clear]
         marks_to_keep = [x for x in figure.marks if x not in marks_to_clear]
-        figure.marks = marks_to_keep + lines
-        self._fit_lines[viewer_id] = to_keep + list(zip(lines, labels))
+        figure.marks = marks_to_keep + list(lines)
+        self._fit_lines[viewer_id] = to_keep + lines_and_labels
 
     def _fit_lines_aggregate(self, viewer_id, layers, clear_others=False):
         viewer = self._viewer_handlers[viewer_id]
@@ -630,8 +641,10 @@ class Application(VuetifyTemplate):
         # Keep track of this line and its slope
         start_x, end_x = x
         start_y, end_y = y
-        line = line_mark(layers[0], start_x, start_y, end_x, end_y, 'black')
-        self._fit_slopes['aggregate_%s' % viewer_id] = fitted_line.slope.value
+        slope_value = fitted_line.slope.value
+        label = 'Slope = %.0f km / s /  Mpc' % slope_value if not isnan(slope_value) else None
+        line = line_mark(layers[0], start_x, start_y, end_x, end_y, 'black', label)
+        self._fit_slopes['aggregate_%s' % viewer_id] = slope_value
 
          # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit line directly onto the bqplot figure
@@ -697,7 +710,9 @@ class Application(VuetifyTemplate):
 
         figure = viewer.figure
         not_lines = [mark for mark in figure.marks if mark not in all_lines]
-        lines = [x[0] for x in line_info if x[1] in labels]
+        line_items = [x for x in line_info if x[1] in labels]
+        line_items.sort(key=lambda x: labels.index(x[1]))
+        lines = [x[0] for x in line_items]
         figure.marks = not_lines + lines
 
     def _hubble_comparison_selection_update(self, selections):
@@ -759,7 +774,8 @@ class Application(VuetifyTemplate):
         for index, slope, color in line_options:
             if index in selections and slope is not None:
                 age = age_in_gyr(slope)
-                line = vertical_line_mark(first_layer, age, color)
+                label = 'Age = %.0f Gyr' % age if not isnan(age) else None
+                line = vertical_line_mark(first_layer, age, color, label)
                 lines.append(line)
 
         figure = viewer.figure
