@@ -30,8 +30,10 @@ from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
 
 v.theme.dark = True
-v.theme.themes.dark.primary = 'colors.teal.lighten1'
-v.theme.themes.light.primary = 'colors.teal'
+v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
+v.theme.themes.light.primary = 'colors.lightBlue.darken3'
+v.theme.themes.dark.secondary = 'colors.lightBlue.darken4'
+v.theme.themes.light.secondary = 'colors.lightBlue.darken4'
 v.theme.themes.dark.accent = 'colors.amber.accent2'
 v.theme.themes.light.accent = 'colors.amber.accent3'
 v.theme.themes.dark.info = 'colors.deepOrange.darken3'
