@@ -42,7 +42,17 @@
         icon
         @click="
           state.haro_on = 'd-block';
-          state.rv1_visible = 'd-block';
+          state.rv1_visible = 1;
+          state.galaxy_table_visible = 1;
+          state.gal_selected = 1;
+          state.gals_total += 5;
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          state.spectrum_tool_visible = 1;
+          state.marker = '';
           state.toggle_on = 'd-block';
           state.toggle_off = 'd-none';
         "
@@ -300,8 +310,6 @@
                                         state.vel_snackbar = 0;
                                         state.data_ready_snackbar = 0;
                                         state.gal_snackbar = 1;
-                                        state.gal_selected = 1;
-                                        state.haro_on = 'd-block';
                                         state.gals_total += 1;
                                         add_galaxy_data_point();
                                       "
@@ -608,7 +616,7 @@
                                       close-text="submit"
                                       @close="
                                         console.log('Submit button was clicked.');
-                                        state.rv1_visible = 'd-none';
+                                        state.rv1_visible = 0;
                                         state.calc_visible = 'd-block';
                                       "
                                     >
@@ -645,7 +653,7 @@
                                       state.data_ready_snackbar = 0;
                                       state.marker_snackbar = 1;
                                       state.marker_set = 1;
-                                      state.rv1_visible = 'd-block'
+                                      state.rv1_visible = 1;
                                     "
                                   >
                                     set marker
@@ -653,7 +661,7 @@
                                 </div>
                               </v-alert>
                               <v-container
-                                :class="state.rv1_visible"
+                                :class="state.rv1_visible ? 'd-block' : 'd-none'"
                               >
                                 <v-row
                                   class="text-center"
@@ -666,7 +674,7 @@
                                       close-text="submit"
                                       @close="
                                         console.log('Submit button was clicked.');
-                                        state.rv1_visible = 'd-none';
+                                        state.rv1_visible = 0;
                                         state.calc_visible = 'd-block';
                                       "
                                     >
