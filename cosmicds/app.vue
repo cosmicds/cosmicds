@@ -991,16 +991,14 @@
                                 :class="state.haro_on"
                               >
                                 <v-card
-                                  color="blue lighten-3"
-                                  class="black--text"
+                                  color="warning"
                                   width="100%"
                                 >
                                   <v-card-title>Haro 11</v-card-title>
                                   <v-card-text>
-                                    <v-divider light></v-divider>
+                                    <v-divider></v-divider>
                                     <v-list
-                                      color="blue lighten-3"
-                                  class="black--text"
+                                      color="warning"
                                     >
                                       <v-list-item-content>
                                         <v-list-item-title>Irregular galaxy</v-list-item-title>
@@ -1015,14 +1013,13 @@
                                         <v-list-item-subtitle>height of display</v-list-item-subtitle>
                                       </v-list-item-content>
                                     </v-list>
-                                    <v-divider light></v-divider>
+                                    <v-divider></v-divider>
                                     <v-text-field
                                       :value="state.galaxy_dist"
                                       label="Estimated Distance"
                                       hint="click button below"
-                                      light
                                       persistent-hint
-                                      class="mt-8 mb-4 black--text"
+                                      class="mt-8 mb-4"
                                       suffix="Mpc"
                                       outlined
                                       readonly
@@ -1130,7 +1127,7 @@
                               <v-tabs
                                 v-model="state.analysis_tabs"
                                 grow
-                                background-color="indigo"
+                                background-color="secondary"
                                 dark
                               >
                                 <v-tab
@@ -1225,7 +1222,7 @@
                                         >
                                           <v-btn
                                             :disabled="!state.points_plotted"
-                                            color="green lighten-1"
+                                            color="teal lighten-1"
                                             class="flex-grow-1 white--text"
                                             @click="fit_lines({
                                               'viewer_id': 'hub_fit_viewer',
@@ -1262,6 +1259,7 @@
                                         <v-card
                                           class="pa-8 mx-auto"
                                           elevation="3"
+                                          outlined
                                         >
                                           Watch this video for an explanation how and why we can calculate
                                           the age of universe by inverting our <em>H</em><sub>0</sub> value.
@@ -1294,14 +1292,6 @@
                                       <v-col
                                         cols="3"
                                       >
-                                        <v-btn
-                                          color="primary"
-                                          @click="fit_lines({
-                                            'viewer_id': 'hub_comparison_viewer'
-                                          })"
-                                        >
-                                          Fit Lines
-                                        </v-btn>
                                         <v-list
                                           style="max-height: 300px"
                                           class="overflow-y-auto"
@@ -1330,6 +1320,15 @@
                                             </v-list-item>
                                           </v-list-item-group>
                                         </v-list>
+                                        <v-btn
+                                          block
+                                          color="primary"
+                                          @click="fit_lines({
+                                            'viewer_id': 'hub_comparison_viewer'
+                                          })"
+                                        >
+                                          Fit Lines
+                                        </v-btn>
                                       </v-col>
                                       <v-col>
                                         <!-- PLOTTING WIDGET to plot Each Dataset -->
@@ -1544,14 +1543,6 @@
                                       <v-col
                                         cols="3"
                                       >
-                                        <v-btn
-                                          color="primary"
-                                          @click="fit_lines({
-                                            'viewer_id': 'hub_morphology_viewer'
-                                          })"
-                                        >
-                                          Fit Lines
-                                        </v-btn>
                                         <v-list
                                           style="max-height: 300px"
                                           class="overflow-y-auto"
@@ -1580,6 +1571,15 @@
                                             </v-list-item>
                                           </v-list-item-group>
                                         </v-list>
+                                        <v-btn
+                                          block
+                                          color="primary"
+                                          @click="fit_lines({
+                                            'viewer_id': 'hub_morphology_viewer'
+                                          })"
+                                        >
+                                          Fit Lines
+                                        </v-btn>
                                       </v-col>
                                       <v-col>
                                         <!-- PLOTTING WIDGET for all galaxy types -->
@@ -1628,14 +1628,6 @@
                                       <v-col
                                         cols="3"
                                       >
-                                        <v-btn
-                                          color="primary"
-                                          @click="fit_lines({
-                                            'viewer_id': 'hub_prodata_viewer'
-                                          })"
-                                        >
-                                          Fit Lines
-                                        </v-btn>
                                         <v-list
                                           style="max-height: 300px"
                                           class="overflow-y-auto"
@@ -1671,6 +1663,15 @@
                                             </v-list-item>
                                           </v-list-item-group>
                                         </v-list>
+                                        <v-btn
+                                          block
+                                          color="primary"
+                                          @click="fit_lines({
+                                            'viewer_id': 'hub_prodata_viewer'
+                                          })"
+                                        >
+                                          Fit Lines
+                                        </v-btn>
                                       </v-col>
                                       <v-col>
                                         <!-- PLOTTING WIDGET for Professional Science Data -->

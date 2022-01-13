@@ -1,9 +1,9 @@
 <template>
   <v-btn
-      block
-      color="info"
-      dark
-      @click.stop="dialog = true"
+    block
+    color="info"
+    dark
+    @click.stop="dialog = true"
   >
     <v-icon
       class="mr-4"
@@ -13,9 +13,9 @@
     {{ buttonText }}
 
     <v-dialog
-        v-model="dialog"
-        persistent
-        max-width="800px"
+      v-model="dialog"
+      persistent
+      max-width="800px"
     >
       <v-card>
         <v-card-title class="text-h5">
