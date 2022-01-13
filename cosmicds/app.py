@@ -40,6 +40,8 @@ v.theme.themes.dark.info = 'colors.deepOrange.darken3'
 v.theme.themes.light.info = 'colors.deepOrange.lighten2'
 v.theme.themes.dark.success = 'colors.green.accent2'
 v.theme.themes.light.success = 'colors.green.accent2'
+v.theme.themes.dark.warning = 'colors.lightBlue.lighten2'
+v.theme.themes.light.warning = 'colors.lightBlue.lighten4'
 
 
 # Within ipywidgets - update calls only happen in certain instances.
