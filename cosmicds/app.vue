@@ -30,17 +30,6 @@
       <v-btn
         icon
         @click="
-          toggle_darkmode()
-          state.darkmode = !state.darkmode
-        "
-      >
-        <v-icon
-        >mdi-white-balance-sunny</v-icon>
-      </v-btn>
-
-      <v-btn
-        icon
-        @click="
           state.haro_on = 'd-block';
           state.rv1_visible = 1;
           state.galaxy_table_visible = 1;
@@ -81,9 +70,7 @@
       id="scrolling-techniques-4"
       class="overflow-y-auto fill-height"
     >
-      <v-container
-        class="py-0"
-      >
+      <v-container>
         <v-row justify="center">
           <v-col cols="12" xl="8">
             <v-row justify="center">
@@ -95,9 +82,7 @@
                 </p>
               </v-col>
               <v-col cols="10">
-                <v-card
-                  class="d-flex flex-column"
-                >
+                <v-card class="d-flex flex-column">
 
                 <!-- The STEPPER that sets up the multi-step sections across the top -->
                 <!-- Note: V-MODEL is a 2-way token that controls the state of something in the app -->
@@ -106,9 +91,7 @@
                     class="elevation-0"
                   >
                     <!-- Navigational banner for each of the STEPPER STEPS -->
-                    <v-stepper-header
-                      dense
-                    >
+                    <v-stepper-header>
                       <!-- :complete="state.over_model > 1"   
                             : is a binding - binds state of "complete" to the thing in the "".  If over_model is > 1, then we have gone past step 1.
                       therefore, consider step 1 complete. -->
@@ -154,9 +137,7 @@
                       <!-- ---------------- -------------------------------- ---------------- -->
                       <!-- ---------------- -------------------------------- ---------------- -->
                       <v-stepper-content step="1">
-                        <v-container
-                          class="pt-0"
-                        >
+                        <v-container>
                           <v-row>
                             <v-col
                               cols="6"
@@ -322,22 +303,22 @@
                                 </v-row>
                               </v-alert>
                               <!-- TABLE to hold Selected Galaxies -->
-                              <c-galaxy-table
-                                :class="state.galaxy_table_visible ? 'd-block' : 'd-none'"
-                              />
+                              <c-galaxy-table/>
                             </v-col>
                           </v-row>
                           <v-row
                             :class="state.marker == 'sel_gal2' | 'cho_row1' ? 'd-block' : 'd-none'"
                           >
                             <v-col>
-
-                              <!-- GUIDANCE ALERT - Show students how to select galaxies -->
+                              <!-- Temporary ALERT to stand in for Galaxy Selection function -->
                               <v-alert
                                 :class="state.marker == 'sel_gal2' ? 'd-block' : 'd-none'"
                                 color="info"
                                 class="mb-4"
-                                elevation="6"
+                                border="left"
+                                colored-border
+                                color="indigo"
+                                elevation="2"
                               >
                                 <h3
                                   class="mb-4"
@@ -461,8 +442,7 @@
                           </v-row>
                         </v-container>
                         <v-container
-                          :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
-                          class="py-0"
+                          :class="state.gals_total < 5 ? 'd-none' : 'd-block'"
                         >
                           <v-row>
                             <v-col
@@ -471,18 +451,19 @@
                             >
                               <!-- The CARD to hold the SPECTRUM TOOL and where students Measure Velocity -->
                               <v-card
-                                :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
                                 min-height="300px"
-                                outlined
-                                color="info"
-                                class="pa-1"
+                                height="100%"
                               >
                                 <v-toolbar
                                   color="secondary"
                                   dense
                                   dark
                                 >
-                                  <v-toolbar-title>Spectrum Tool</v-toolbar-title>
+                                  <v-icon left>
+                                    mdi-speedometer
+                                  </v-icon>
+
+                                  <v-toolbar-title>Measure Velocity</v-toolbar-title>
 
                                   <v-spacer></v-spacer>
 
@@ -490,8 +471,8 @@
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-toolbar>
-                                <jupyter-widget :widget="viewers.spectrum_viewer" >
-                                </jupyter-widget>  
+                                  <jupyter-widget :widget="viewers.spectrum_viewer" >
+                                  </jupyter-widget>  
                               </v-card>
                             </v-col>
                             <!-- SIDEBAR COLUMN for processing velocity data -->
@@ -629,8 +610,8 @@
 
                               <v-alert
                                 border="left"
+                                colored-border
                                 color="indigo"
-                                dark
                                 elevation="2"
                                 class="mb-12"
                               >
@@ -822,10 +803,7 @@
                               <template>
                                 <v-row justify="center">
                                   <v-col cols="12">
-                                    <v-expansion-panels
-                                      accordion
-                                      :class="state.darkmode ? 'theme--dark' : 'theme--light'"
-                                    >
+                                    <v-expansion-panels accordion>
                                       <v-expansion-panel
                                         key="1"
                                       >
@@ -1971,55 +1949,42 @@ export default {
 }
 </script>
 
-
 <style id="cosmicds-app">
-
 html {
   margin: 0;
   padding: 0;
 }
-
 body {
   margin: 0;
   padding: 0;
 }
-
 .jupyter-widgets .jp-Cell .jp-CodeCell .jp-Notebook-cell .jp-mod-noInput {
   margin: 0;
   padding: 0;
 }
-
 #cosmicds-app {
   height: 100%;
 }
-
 #app {
   height: 100vh;
 }
-
 .card-outter {
   position: relative;
   padding-bottom: 50px;
 }
-
 .card-actions {
   position: absolute;
   bottom: 0;
 }
-
 .v-stepper__wrapper {
   height: 100%;
 }
-
 .bqplot {
   height: 100%;
 }
-
-.vuetify-styles .v-stepper__content {
+.v-stepper__content {
   min-height: 500px;
-  padding: 0px;
 }
-
 .v-tabs-items {
   min-height: 300px;
 }
@@ -2047,24 +2012,7 @@ input {
 .wwt_column {
   overflow-y: hidden;
 }
-
 .wwt_widget .v-toolbar {
   display: none;
 }
-
-
-/* Styling for Galaxy table */
-.galtable_column .v-card {
-  min-height: 100%;
-}
-
-.galtable_column .v-data-table__wrapper {
-  overflow-y: hidden;
-}
-
-.codeFont {
-  font-family: 'Courier New';
-}
-
-
 </style>

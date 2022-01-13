@@ -16,7 +16,6 @@ from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
 from numpy import array, bitwise_or
 from traitlets import Dict, List
-import ipyvuetify as v
 
 from .components.footer import Footer
 # When we have multiple components, change above to
@@ -239,7 +238,7 @@ class Application(VuetifyTemplate):
         table_title = 'My Galaxies | Velocity Measurements'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
-                                key_component='gal_name', names=galaxy_table_names, title=table_title, single_select=True),
+                                key_component='gal_name', names=galaxy_table_names, title=table_title),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
                                 key_component='gal_name', names=distance_table_names, title=table_title),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
@@ -507,9 +506,6 @@ class Application(VuetifyTemplate):
         Underlying glue-jupyter application data collection instance.
         """
         return self._application_handler.data_collection
-
-    def vue_toggle_darkmode(self, args):
-        v.theme.dark = not v.theme.dark
 
     def vue_fit_lines(self, args):
         """
