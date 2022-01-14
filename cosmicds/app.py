@@ -265,9 +265,6 @@ class Application(VuetifyTemplate):
             self.state.measuring_on = change["new"]
             self.state.galaxy_dist = ""
         measuring_tool.observe(update_state_measuring, names=["measuring"])
-        def update_measure_gal_selected(change):
-            self.state.measure_gal_selected = len(change["new"]) > 0
-        measuring_tool.observe(update_measure_gal_selected, names=["selected"])
 
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
@@ -455,19 +452,23 @@ class Application(VuetifyTemplate):
         # Set the data for the screen 3 table to be the completed measurements data
         # and create a subset for the table component.
         # Finally, hide this subset everywhere but screen 3.
-        fit_table = self.components['c-fit-table']
-        subset_group = self.data_collection.new_subset_group(label='fit-table-selected', subset_state=None)
-        fit_table.subset_group = subset_group
-        for viewer in hub_viewers + age_distr_viewers:
-            for layer in viewer.layers:
-                if layer.state.layer.label == subset_group.label:
-                    layer.state.visible = False
+        # We want to do the same for the distance table
+        for table_id in ['c-fit-table', 'c-distance-table']:
+            table = self.components[table_id]
+            subset_group_label = table_id[2:] + '-selected'
+            subset_group = self.data_collection.new_subset_group(label=subset_group_label, subset_state=None)
+            table.subset_group = subset_group
+            for viewer in hub_viewers + age_distr_viewers + [spectrum_viewer]:
+                for layer in viewer.layers:
+                    if layer.state.layer.label == subset_group.label:
+                        layer.state.visible = False
 
         # When we select an item in the distance table, we want the WWT viewer to go there
         distance_table = self.components['c-distance-table']
-        def distance_table_selected_changed(selected):
+        def distance_table_selected_changed(change):
             table = self.components['c-distance-table']
-            state = table.subset_state_from_selected(selected["new"])
+            selected = change["new"]
+            state = table.subset_state_from_selected(selected)
             mask = state.to_mask(table.glue_data)
             ra = next((x for index, x in enumerate(table.glue_data["ra_deg"]) if mask[index]), None)
             dec = next((x for index, x in enumerate(table.glue_data["dec_deg"]) if mask[index]), None)
@@ -478,6 +479,8 @@ class Application(VuetifyTemplate):
                 ## TODO: Once we have it, specify the correct fov for each point
                 widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
                 measuring_tool.reset_canvas()
+            self.state.measure_gal_selected = len(selected) > 0
+            
         distance_table.observe(distance_table_selected_changed, names=['selected'])
 
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
@@ -1062,7 +1065,7 @@ class Application(VuetifyTemplate):
         # Add the data
         for _ in range(len(self._dummy_student_data['gal_name'])):
             self.vue_add_galaxy_data_point(None)
-            self.vue_add_distance_data_point(None)
+            self.vue_add_distance_data_point(True)
 
         # Set the bottom-left corner of the plot to be the origin in each scatter viewer
         for viewer in self._hub_viewers:

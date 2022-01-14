@@ -166,6 +166,9 @@ export default {
         this.drawLine(this.startPoint, this.endPoint);
         this.drawEndcaps(this.startPoint, this.endPoint);
       }
+      if (this.canvas.width === 0 || this.canvas.height === 0) {
+        this.reset();
+      }
     },
 
     position: function(event) {
