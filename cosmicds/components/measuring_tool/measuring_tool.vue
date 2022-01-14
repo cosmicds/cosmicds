@@ -162,6 +162,11 @@ export default {
       this.canvas.height = this.$el.clientHeight;
       const newWidth = this.$el.clientWidth;
       const newHeight = this.$el.clientHeight;
+      if (newWidth === 0 || newHeight === 0) {
+        this.canvas.width = oldWidth;
+        this.canvas.height = oldHeight;
+        return;
+      }
       this.canvas.width = newWidth;
       this.canvas.height = newHeight;
       this.width = newWidth;
@@ -173,9 +178,6 @@ export default {
         this.rescalePoints([this.startPoint, this.endPoint], xRatio, yRatio);
         this.drawLine(this.startPoint, this.endPoint);
         this.drawEndcaps(this.startPoint, this.endPoint);
-      }
-      if (this.canvas.width === 0 || this.canvas.height === 0) {
-        this.reset();
       }
     },
 
