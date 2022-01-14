@@ -29,7 +29,7 @@ from .components.footer import Footer
 from .components.viewer_layout import ViewerLayout
 from .histogram_listener import HistogramListener
 from .line_draw_handler import LineDrawHandler
-from .utils import age_in_gyr, extend_tool, line_mark, load_template, update_figure_css, vertical_line_mark
+from .utils import age_in_gyr, extend_tool, format_angle, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
 from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
@@ -263,7 +263,9 @@ class Application(VuetifyTemplate):
         measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
         measuring_tool = MeasuringTool(measuring_widget)
         def update_state_ang_dist(change):
-            self.state.measured_ang_dist = change["new"]
+            ang_dist = change["new"]
+            self.state.measured_ang_dist = ang_dist.value # In degrees
+            self.state.measured_ang_dist_str = format_angle(ang_dist)
         def update_state_ang_dist_str(change):
             self.state.measured_ang_dist_str = change["new"]
         measuring_tool.observe(update_state_ang_dist, names=["angular_distance"])
@@ -272,9 +274,9 @@ class Application(VuetifyTemplate):
             self.state.measuring_on = change["new"]
             self.state.galaxy_dist = ""
         def update_measuring_height(change):
-            self.state.measuring_tool_height = change["new"]
-        self.state.measuring_tool_height = measuring_tool.angular_height_str
-        measuring_tool.observe(update_measuring_height, names=["angular_height_str"])
+            self.state.measuring_tool_height = format_angle(change["new"])
+        self.state.measuring_tool_height = format_angle(measuring_tool.angular_height)
+        measuring_tool.observe(update_measuring_height, names=["angular_height"])
         measuring_tool.observe(update_state_measuring, names=["measuring"])
         self.motions_left = 3
 

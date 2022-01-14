@@ -156,6 +156,25 @@ def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
     tool.activate = extended_activate
     tool.deactivate = extended_deactivate
 
+def format_angle(angle):
+    """
+    Formats an angle for display.
+    Parameters
+    ----------
+    angle : `astropy.units.Quantity`
+        The angle to be formatted
+    """
+    angle_deg = angle.to(u.deg)
+    if angle_deg.value >= 1:
+        return f"{angle_deg.value:.2f}°"
+
+    angle_min = angle_deg.to(u.arcmin)
+    if angle_min.value >= 1:
+        return f"{angle_min.value:.2f}′"
+
+    angle_asec = angle_min.to(u.arcsec)
+    return f"{angle_asec.value:.2f}″"
+
 def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
     """
     Creates a LinesGL mark between the given start and end points
