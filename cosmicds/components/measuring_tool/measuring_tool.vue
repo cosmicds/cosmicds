@@ -46,6 +46,8 @@ export default {
 
       // Get the canvas
       this.canvas = this.$refs.canvas;
+      this.height = 400; // See the component CSS
+      this.width = this.canvas.width;
       this.setupCanvasContext();
     },
 
@@ -158,6 +160,12 @@ export default {
       const oldHeight = this.canvas.height;
       this.canvas.width = this.$el.clientWidth;
       this.canvas.height = this.$el.clientHeight;
+      const newWidth = this.$el.clientWidth;
+      const newHeight = this.$el.clientHeight;
+      this.canvas.width = newWidth;
+      this.canvas.height = newHeight;
+      this.width = newWidth;
+      this.height = newHeight;
       this.setupCanvasContext();
       if (this.startPoint && this.endPoint) {
         const xRatio = this.canvas.width / oldWidth;
@@ -176,7 +184,7 @@ export default {
     },
 
     clearCanvas: function() {
-      this.context.clearRect(0, 0, canvas.width, canvas.height);
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
 
     drawPoint: function(coordinates, radius=this.pointRadius) {
