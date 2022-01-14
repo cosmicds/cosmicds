@@ -1008,11 +1008,11 @@
                                       </v-list-item-content>
                                       <v-list-item-content>
                                         <v-list-item-title>{{state.measuring_tool_height}}</v-list-item-title>
-                                        <v-list-item-subtitle>height of display</v-list-item-subtitle>
+                                        <v-list-item-subtitle>field of view</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
                                         <v-list-item-title>{{state.measured_ang_dist_str}}</v-list-item-title>
-                                        <v-list-item-subtitle>measured angular distance</v-list-item-subtitle>
+                                        <v-list-item-subtitle>measured angular size</v-list-item-subtitle>
                                       </v-list-item-content>
                                     </v-list>
                                     <v-divider></v-divider>
