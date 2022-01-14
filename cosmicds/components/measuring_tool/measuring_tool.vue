@@ -178,6 +178,7 @@ export default {
         this.rescalePoints([this.startPoint, this.endPoint], xRatio, yRatio);
         this.drawLine(this.startPoint, this.endPoint);
         this.drawEndcaps(this.startPoint, this.endPoint);
+        this.updateMeasuredDistance();
       }
     },
 
