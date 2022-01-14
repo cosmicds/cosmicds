@@ -16,7 +16,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from numpy import array, isnan, pi
+from numpy import array, pi, isnan
 from pywwt import WWTJupyterWidget
 from traitlets import Dict, List
 import ipyvuetify as v
@@ -1050,7 +1050,7 @@ class Application(VuetifyTemplate):
             index = next((index for index in range(len(mask)) if mask[index]), None)
             if index is not None:
                 distance = data["distance"]
-                distance[index] = round(0.03 / (self.state.measured_ang_dist * pi / 180), 2)
+                distance[index] = round(0.03 / (self.state.measured_ang_dist * pi / 180), 0)
 
         self._new_dist_data_update(distance)
         self._dummy_distance_counter += 1
