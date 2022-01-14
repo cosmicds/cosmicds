@@ -4,7 +4,7 @@ from astropy.coordinates import SkyCoord
 from astropy.modeling import models, fitting
 import astropy.units as u
 from bqplot import PanZoom
-from echo import CallbackProperty
+from echo import CallbackProperty, DictCallbackProperty
 from echo.core import add_callback
 from glue.core import Component, Data
 from glue.core.state_objects import State
@@ -16,7 +16,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from numpy import array, pi
+from numpy import array, isnan, pi
 from pywwt import WWTJupyterWidget
 from traitlets import Dict, List
 import ipyvuetify as v
@@ -115,6 +115,8 @@ class ApplicationState(State):
     measured_ang_dist = CallbackProperty(0)
     measuring_on = CallbackProperty(False)
     measure_gal_selected = CallbackProperty(False)
+
+    fit_slopes = DictCallbackProperty()
 
 
 # Everything in this class is exposed directly to the app.vue.
@@ -643,7 +645,7 @@ class Application(VuetifyTemplate):
             lines_and_labels.append((line, data.label))
             
             # Keep track of this slope for later use
-            self._fit_slopes[data.label] = slope_value
+            self.state.fit_slopes[data.label] = fitted_line.slope.value
 
         # Order the lines in the same order as the layers
         lines_and_labels.sort(key=lambda x: data_labels.index(x[1]), reverse=True)
@@ -694,7 +696,7 @@ class Application(VuetifyTemplate):
         slope_value = fitted_line.slope.value
         label = 'Slope = %.0f km / s /  Mpc' % slope_value if not isnan(slope_value) else None
         line = line_mark(layers[0], start_x, start_y, end_x, end_y, 'black', label)
-        self._fit_slopes['aggregate_%s' % viewer_id] = slope_value
+        self.state.fit_slopes['aggregate_%s' % viewer_id] = fitted_line.slope.value
 
          # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit line directly onto the bqplot figure
@@ -1087,12 +1089,12 @@ class Application(VuetifyTemplate):
     def student_slope(self):
         if not hasattr(self, '_student_data'):
             return 0
-        return self._fit_slopes.get(self._student_data.label, 0)
+        return self.state.fit_slopes.get(self._student_data.label, 0)
 
     @property
     def class_slope(self):
-        return self._fit_slopes.get(self._class_data.label, 0)
+        return self.state.fit_slopes.get(self._class_data.label, 0)
 
     @property
     def all_slope(self):
-        return self._fit_slopes.get(self._all_data.label, 0)
+        return self.state.fit_slopes.get(self._all_data.label, 0)
