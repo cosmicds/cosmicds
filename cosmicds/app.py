@@ -17,7 +17,7 @@ from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
 from numpy import array, pi, isnan
-from pywwt import WWTJupyterWidget
+from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, List
 import ipyvuetify as v
 
@@ -288,9 +288,9 @@ class Application(VuetifyTemplate):
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
                                 key_component='gal_name', names=galaxy_table_names, title=table_title, single_select=True),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
-                                key_component='gal_name', names=distance_table_names, title=table_title),
-                            'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
                                 key_component='gal_name', names=distance_table_names, title=table_title, single_select=True),
+                            'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
+                                key_component='gal_name', names=fit_table_names, title=table_title),
                             'c-measuring-tool': measuring_tool,
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
