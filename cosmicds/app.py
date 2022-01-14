@@ -15,7 +15,7 @@ from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
-from ipywidgets import widget_serialization
+from ipywidgets import widget_serialization, Layout
 from numpy import array, bitwise_or, isnan
 from pywwt import WWTJupyterWidget
 from traitlets import Dict, List
@@ -111,6 +111,9 @@ class ApplicationState(State):
     hubble_prodata_selections = CallbackProperty([0])
 
     morphology_selections = CallbackProperty([0,1,2])
+
+    measured_ang_dist = CallbackProperty("")
+    measuring_on = CallbackProperty(False)
 
 
 # Everything in this class is exposed directly to the app.vue.
@@ -245,14 +248,25 @@ class Application(VuetifyTemplate):
         self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
         self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
+        # Set up the measuring tool
+        measuring_widget = WWTJupyterWidget(hide_all_chrome=True)
+        measuring_widget.layout = Layout(height='400px', width='500px')
+        measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
+        coordinates = SkyCoord(235.5644989 * u.deg, 39.9837265 * u.deg, frame='icrs')
+        measuring_widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
+        measuring_tool = MeasuringTool(measuring_widget)
+        def update_state_ang_dist(change):
+            distance = change["new"]
+            if distance != 0:
+                self.state.measured_ang_dist = str(distance) + ' deg'
+        measuring_tool.observe(update_state_ang_dist, names=['angular_distance'])
+        def update_state_measuring(change):
+            self.state.measuring_on = change["new"]
+        measuring_tool.observe(update_state_measuring, names=["measuring"])
+
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
         # key-value pair to the components dictionary.
-        measuring_widget = WWTJupyterWidget(hide_all_chrome=True)
-        sloan_dss = 'SDSS: Sloan Digital Sky Survey (Optical)'
-        measuring_widget.foreground = sloan_dss
-        coordinates = SkyCoord(235.5644989 * u.deg, 39.9837265 * u.deg, frame='icrs')
-        measuring_widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=True)
         table_title = 'My Galaxies | Velocity Measurements'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
@@ -261,7 +275,7 @@ class Application(VuetifyTemplate):
                                 key_component='gal_name', names=distance_table_names, title=table_title),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
                                 key_component='gal_name', names=fit_table_names, title=table_title),
-                            'c-measuring-tool': MeasuringTool(measuring_widget),
+                            'c-measuring-tool': measuring_tool,
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
                         #        self,

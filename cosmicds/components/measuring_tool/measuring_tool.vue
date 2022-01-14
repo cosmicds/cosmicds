@@ -14,11 +14,14 @@
 
 <script>
 export default {
+    
   mounted() {
     this.setup();
     this.reset();
   },
+
   methods: {
+
     // This stuff only needs to be done once
     setup: function() {
       // Constants
@@ -30,13 +33,14 @@ export default {
       this.grabbingClass = "grabbing";
       // Set up the canvas
       this.canvas = this.$refs.canvas;
-      this.canvas.height = 400;
-      this.canvas.width = 500;
+      this.canvas.height = this.height;
+      this.canvas.width = this.width;
       // Set up the canvas context
       this.context = this.canvas.getContext('2d');
       this.context.lineWidth = 3;
       this.context.strokeStyle = 'dodgerblue';
     },
+
     // This needs to be done any time we want to reset the state
     reset: function() {
       this.startPoint = null;
@@ -55,13 +59,16 @@ export default {
       // Clear the canvas, if necessary
       this.clearCanvas();
     },
+
     addInitialPoint: function(event) {
+
       // If we haven't put the first point down
       const coordinates = this.position(event);
       if (this.startPoint == null) {
         this.startPoint = coordinates;
         this.drawPoint(this.startPoint, 1);
         this.canvas.onmousemove = (e) => this.lineFollow(e, false);
+
       // If we haven't put the second point down
       } else if (this.endPoint === null) {
         this.endPoint = coordinates;
@@ -75,14 +82,17 @@ export default {
       }
       this.lineCreated = true;
     },
+
     handleMouseDown: function(event) {
       this.mouseDown = true;
+
       // If we aren't on one of the endpoints,
       // then we're done here
       if (!(this.onStart || this.onEnd)) {
         event.stopImmediatePropagation();
         return;
       }
+
       // To make things easier, we define the point that
       // isn't being modified as the 'start' point
       if (this.onStart) {
@@ -95,6 +105,7 @@ export default {
       this.canvas.classList.add(this.grabbingClass);
       this.shouldFollowMouse = true;
     },
+
     handleMouseUp: function(event) {
       this.mouseDown = false;
       if (this.shouldFollowMouse) {
@@ -108,6 +119,7 @@ export default {
       this.mouseMoving = false;
       this.shouldFollowMouse = false;
     },
+
     handleMouseMove: function(event) {
       this.mouseMoving = true;
       if (this.shouldFollowMouse && this.mouseDown) {
@@ -116,23 +128,28 @@ export default {
         this.lookForEndpoints(event);
       }
     },
+
     position: function(event) {
       return [event.offsetX, event.offsetY];
     },
+
     clearCanvas: function() {
       this.context.clearRect(0, 0, canvas.width, canvas.height);
     },
+
     drawPoint: function(coordinates, radius=this.pointRadius) {
       this.context.beginPath();
       this.context.arc(...coordinates, radius, 0, 2*Math.PI);
       this.context.fill();
     },
+
     drawLine: function(start, end) {
       this.context.beginPath();
       this.context.moveTo(...start);
       this.context.lineTo(...end);
       this.context.stroke();
     },
+
     lineFollow: function(event, requireMouseDown) {
       this.mouseMoving = true;
       if (requireMouseDown && !this.mouseDown) { return; }
@@ -141,21 +158,26 @@ export default {
       this.drawPoint(this.startPoint);
       this.drawLine(this.startPoint, coordinates);
     },
+
     distanceSquared: function(p1, p2) {
       return (p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2;
     },
+
     slope: function(p1=this.startPoint, p2=this.endPoint) {
       if (!(p1 && p2)) { return undefined; }
       return (p2[1] - p1[1]) / (p2[0] - p1[0]);
     },
+
     perpSlope: function(p1=this.startPoint, p2=this.endPoint) {
       if (!(p1 && p2)) { return undefined; }
       return (p1[0] - p2[0]) / (p2[1] - p1[1]);
     },
+
     yIntercept: function(p1=this.startPoint, p2=this.endPoint) {
       if (!(p1 && p2)) { return undefined; }
       return p2[1] - this.slope(p1, p2) * p2[0];
     },
+
     drawEndcaps: function(p1, p2) {
       const mPerp = this.perpSlope(p1, p2);
       // We have to handle this a bit differently if the line is horizontal
@@ -181,6 +203,7 @@ export default {
         this.drawLine([xm, ym], [xp, yp]);
       }
     },
+
     lookForEndpoints: function(event) {
       const coordinates = this.position(event);
       const rsqStart = this.distanceSquared(coordinates, this.startPoint);
@@ -194,14 +217,18 @@ export default {
         this.canvas.classList.remove(this.grabClass);
       }
     },
+
     distance: function(p1=this.startPoint, p2=this.endPoint) {
       if (!(p1 && p2)) { return 0; }
       return Math.sqrt(this.distanceSquared(p1, p2));
     },
+
     updateMeasuredDistance: function() {
       this.measuredDistance = this.distance();
     },
+
     // Exposed to Jupyter
+
     jupyter_reset: function() {
       this.reset();
     },
@@ -215,25 +242,30 @@ export default {
   width: 500px;
   position: relative;
 }
+
 #widget {
   width: 100%;
   height: 100%;
   z-index: 15;
 }
+
 #canvas {
   background: transparent;
-  border: 1px solid black;
   z-index: 20;
 }
+
 #widget, #canvas {
   position: absolute;
 }
+
 .pointer {
   cursor: pointer;
 }
+
 .grab {
   cursor: grab;
 }
+
 .grabbing {
   cursor: grabbing;
 }
