@@ -29,7 +29,7 @@ class MeasuringTool(v.VueTemplate):
     @observe('measuredDistance')
     def _on_measured_distance_changed(self, change):
         fov = self.widget.get_fov()
-        widget_height = self.height
+        widget_height = self._height_from_pixel_str(self.widget.layout.height)
         self.angular_distance = ((change["new"] / widget_height) * fov).value
 
     @observe('measuring')

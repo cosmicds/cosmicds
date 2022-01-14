@@ -978,24 +978,9 @@
                                   </v-btn>
                                 </v-app-bar>
                                 <c-measuring-tool
-                                  class="wwt_widget"
+                                  class="wwt_measuring_tool"
                                 />
                               </v-card>
-                              <v-btn
-                                class="white--text"
-                                color="purple darken-2"
-                                @click="reset_measurer()"
-                              >reset
-                              </v-btn>
-                              <v-btn
-                                class="white--text"
-                                color="purple darken-2"
-                                @click="toggle_measuring()"
-                              >{{ state.measuring_on ? "Stop Measuring" : "Start Measuring" }}
-                              </v-btn>
-                              <label
-                                v-if="state.measured_ang_dist && state.measured_ang_dist !== '0.0 deg'"
-                              >{{ state.measured_ang_dist }}</label>
                             </v-col>
 
                             <!-- SIDEBAR COLUMN to hold galaxy details and Estimate Distance -->
@@ -1068,6 +1053,23 @@
                                 </v-card>
                               </div>
                             </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-btn
+                                class="white--text"
+                                color="purple darken-2"
+                                @click="reset_measurer()"
+                              >reset
+                              </v-btn>
+                              <v-btn
+                                class="white--text"
+                                color="purple darken-2"
+                                @click="toggle_measuring()"
+                              >{{ state.measuring_on ? "Stop Measuring" : "Start Measuring" }}
+                              </v-btn>
+                              <label
+                                v-if="state.measured_ang_dist && state.measured_ang_dist !== '0.0 deg'"
+                              >{{ state.measured_ang_dist }}</label>
                           </v-row>
                           <v-row>
                             <!-- SIDEBAR COLUMN for giving Instructions -->
@@ -2061,7 +2063,7 @@ input {
   overflow-y: hidden;
 }
 
-.wwt_widget .v-toolbar {
+.wwt_widget .v-toolbar, .wwt_measuring_tool .v-toolbar {
   display: none;
 }
 
