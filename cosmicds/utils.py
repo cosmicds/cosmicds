@@ -15,10 +15,13 @@ except ImportError:
     from astropy.cosmology import Planck15 as planck
 
 __all__ = [
+    'MILKY_WAY_SIZE_MPC',
     'age_in_gyr', 'load_template', 'update_figure_css',
-    'extend_tool', 'line_mark', 'vertical_line_mark'
+     'extend_tool', 'format_fov', 'format_measured_angle',
+    'line_mark', 'vertical_line_mark',
 ]
 
+MILKY_WAY_SIZE_MPC = 0.03
 
 def age_in_gyr(H0):
     """

@@ -29,10 +29,12 @@ from .components.footer import Footer
 from .components.viewer_layout import ViewerLayout
 from .histogram_listener import HistogramListener
 from .line_draw_handler import LineDrawHandler
-from .utils import age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
+from .utils import MILKY_WAY_SIZE_MPC, age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
 from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
+
+MEASUREMENT_THRESHOLD = 3000 # arcseconds
 
 v.theme.dark = True
 v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
@@ -112,13 +114,15 @@ class ApplicationState(State):
 
     morphology_selections = CallbackProperty([0,1,2])
 
-    measured_ang_dist_str = CallbackProperty("-")
-    measured_ang_dist = CallbackProperty(0)
+    measured_ang_size_str = CallbackProperty("-")
+    measured_ang_size = CallbackProperty(0)
     measuring_on = CallbackProperty(False)
     measure_gal_selected = CallbackProperty(False)
     measuring_name = CallbackProperty("")
     measuring_type = CallbackProperty("")
     measuring_tool_height = CallbackProperty("")
+    measuring_view_changing = CallbackProperty(False)
+    warn_size = CallbackProperty(False)
 
     fit_slopes = DictCallbackProperty()
 
@@ -262,23 +266,24 @@ class Application(VuetifyTemplate):
         measuring_widget.background = 'Digitized Sky Survey (Color)'
         measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
         measuring_tool = MeasuringTool(measuring_widget)
-        def update_state_ang_dist(change):
-            ang_dist = change["new"]
-            self.state.measured_ang_dist = ang_dist.value # In degrees
-            self.state.measured_ang_dist_str = format_measured_angle(ang_dist) if ang_dist.value != 0 else "-"
-        def update_state_ang_dist_str(change):
-            self.state.measured_ang_dist_str = change["new"]
-        measuring_tool.observe(update_state_ang_dist, names=["angular_distance"])
-        measuring_tool.observe(update_state_ang_dist_str, names=["angular_distance_str"])
+        def update_state_ang_size(change):
+            ang_size = change["new"]
+            self.state.measured_ang_size = ang_size.value # In degrees
+            self.state.measured_ang_size_str = format_measured_angle(ang_size) if ang_size.value != 0 else "-"
+        measuring_tool.observe(update_state_ang_size, names=["angular_size"])
         def update_state_measuring(change):
             self.state.measuring_on = change["new"]
             self.state.galaxy_dist = ""
+            self.state.warn_size = False
         def update_measuring_height(change):
             self.state.measuring_tool_height = format_fov(change["new"])
+        def update_measuring_view_changing(change):
+            self.state.measuring_view_changing = change["new"]
         self.state.measuring_tool_height = format_fov(measuring_tool.angular_height)
         measuring_tool.observe(update_measuring_height, names=["angular_height"])
         measuring_tool.observe(update_state_measuring, names=["measuring"])
-        self.motions_left = 3
+        measuring_tool.observe(update_measuring_view_changing, names=["view_changing"])
+        self.motions_left = 2
 
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
@@ -503,6 +508,8 @@ class Application(VuetifyTemplate):
                 widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=use_instant)
                 if not use_instant:
                     self.motions_left -= 1
+                else:
+                    measuring_tool.view_changing = False
                 self.state.measuring_name = name
                 self.state.measuring_type = gal_type.capitalize()
             
@@ -1038,6 +1045,16 @@ class Application(VuetifyTemplate):
         data.update_values_from_data(new_data)
 
     def vue_add_distance_data_point(self, test=False):
+
+        # Is the value that the student measured too large?
+        # If so, we give a warning rather than adding this value
+        if self.state.measured_ang_size >= MEASUREMENT_THRESHOLD:
+            self.state.warn_size = True
+            return
+        self.state.warn_size = False
+        distance_value = round(MILKY_WAY_SIZE_MPC / (self.state.measured_ang_size * pi / 180), 0)
+        self.state.galaxy_dist = distance_value
+
         data = self.data_collection['student_measurements']
         if test:
             if self._dummy_distance_counter >= len(self._dummy_student_data['gal_name']):
@@ -1050,7 +1067,7 @@ class Application(VuetifyTemplate):
             index = next((index for index in range(len(mask)) if mask[index]), None)
             if index is not None:
                 distance = data["distance"]
-                distance[index] = round(0.03 / (self.state.measured_ang_dist * pi / 180), 0)
+                distance[index] = distance_value
 
         self._new_dist_data_update(distance)
         self._dummy_distance_counter += 1
