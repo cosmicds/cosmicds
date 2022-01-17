@@ -508,8 +508,6 @@ class Application(VuetifyTemplate):
                 widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=use_instant)
                 if not use_instant:
                     self.motions_left -= 1
-                else:
-                    measuring_tool.view_changing = False
                 self.state.measuring_name = name
                 self.state.measuring_type = gal_type.capitalize()
             
