@@ -34,7 +34,7 @@ from .components.dialog import Dialog
 from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
 
-MEASUREMENT_THRESHOLD = 3000 # arcseconds
+MEASUREMENT_THRESHOLD = 1800 # arcseconds
 
 v.theme.dark = True
 v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
@@ -268,7 +268,8 @@ class Application(VuetifyTemplate):
         measuring_tool = MeasuringTool(measuring_widget)
         def update_state_ang_size(change):
             ang_size = change["new"]
-            self.state.measured_ang_size = ang_size.value # In degrees
+            ang_size_asec = int(ang_size.value * 3600)
+            self.state.measured_ang_size = ang_size_asec
             self.state.measured_ang_size_str = format_measured_angle(ang_size) if ang_size.value != 0 else "-"
         measuring_tool.observe(update_state_ang_size, names=["angular_size"])
         def update_state_measuring(change):
@@ -1049,8 +1050,9 @@ class Application(VuetifyTemplate):
         if self.state.measured_ang_size >= MEASUREMENT_THRESHOLD:
             self.state.warn_size = True
             return
+
         self.state.warn_size = False
-        distance_value = round(MILKY_WAY_SIZE_MPC / (self.state.measured_ang_size * pi / 180), 0)
+        distance_value = round(MILKY_WAY_SIZE_MPC / (self.state.measured_ang_size * pi / (180 * 3600)), 0)
         self.state.galaxy_dist = distance_value
 
         data = self.data_collection['student_measurements']

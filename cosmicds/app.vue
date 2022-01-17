@@ -1059,6 +1059,11 @@
                             </v-col>
                           </v-row>
                           <v-row>
+                            <p
+                              v-if="state.warn_size"
+                              style="color: red;"
+                            >This angular size seems much larger than expected. Are you sure your measurements are lined up with a galaxy? Please try again.
+                            </p>
                             <v-btn
                               class="white--text"
                               color="purple darken-2"
