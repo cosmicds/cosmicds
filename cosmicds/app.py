@@ -87,7 +87,6 @@ class ApplicationState(State):
     vels_total = CallbackProperty(0)
 
     haro_on = CallbackProperty("d-none")
-    galaxy_dist = CallbackProperty("")
     galaxy_vel = CallbackProperty("")
 
     calc_visible = CallbackProperty("d-none")
@@ -268,13 +267,13 @@ class Application(VuetifyTemplate):
         measuring_tool = MeasuringTool(measuring_widget)
         def update_state_ang_size(change):
             ang_size = change["new"]
-            ang_size_asec = int(ang_size.value * 3600)
+            ang_size_deg = ang_size.value if self.state.measuring_on else 0
+            ang_size_asec = int(ang_size_deg * 3600)
             self.state.measured_ang_size = ang_size_asec
-            self.state.measured_ang_size_str = format_measured_angle(ang_size) if ang_size.value != 0 else "-"
+            self.state.measured_ang_size_str = format_measured_angle(ang_size) if ang_size_deg != 0 else "-"
         measuring_tool.observe(update_state_ang_size, names=["angular_size"])
         def update_state_measuring(change):
             self.state.measuring_on = change["new"]
-            self.state.galaxy_dist = ""
             self.state.warn_size = False
         def update_measuring_height(change):
             self.state.measuring_tool_height = format_fov(change["new"])
@@ -1053,7 +1052,6 @@ class Application(VuetifyTemplate):
 
         self.state.warn_size = False
         distance_value = round(MILKY_WAY_SIZE_MPC / (self.state.measured_ang_size * pi / (180 * 3600)), 0)
-        self.state.galaxy_dist = distance_value
 
         data = self.data_collection['student_measurements']
         if test:
