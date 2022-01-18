@@ -288,14 +288,16 @@ class Application(VuetifyTemplate):
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
         # key-value pair to the components dictionary.
-        table_title = 'My Galaxies | Velocity Measurements'
+        velocity_title = 'My Galaxies | Velocity Measurements'
+        distance_title = 'My Galaxies | Distance Measurements'
+        fit_title = 'My Galaxies'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
-                                key_component='gal_name', names=galaxy_table_names, title=table_title, single_select=True),
+                                key_component='gal_name', names=galaxy_table_names, title=velocity_title, single_select=True),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
-                                key_component='gal_name', names=distance_table_names, title=table_title, single_select=True),
+                                key_component='gal_name', names=distance_table_names, title=distance_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
-                                key_component='gal_name', names=fit_table_names, title=table_title),
+                                key_component='gal_name', names=fit_table_names, title=fit_title),
                             'c-measuring-tool': measuring_tool,
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
