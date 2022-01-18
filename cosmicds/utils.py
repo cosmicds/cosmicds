@@ -24,6 +24,7 @@ __all__ = [
 
 MILKY_WAY_SIZE_MPC = 0.03
 
+# JC: I got this from https://stackoverflow.com/a/13151299
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):
         self._timer     = None
