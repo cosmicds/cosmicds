@@ -977,11 +977,9 @@
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-app-bar>
-                                <div class="wwt_widget">
-                                  <jupyter-widget
-                                    :widget="viewers.wwt_viewer"
-                                  ></jupyter-widget>
-                                <div>
+                                <c-measuring-tool
+                                  class="wwt_measuring_tool"
+                                />
                               </v-card>
                             </v-col>
 
@@ -994,14 +992,14 @@
                                   color="warning"
                                   width="100%"
                                 >
-                                  <v-card-title>Haro 11</v-card-title>
+                                  <v-card-title>{{state.measuring_name || "Galaxy Name"}}</v-card-title>
                                   <v-card-text>
                                     <v-divider></v-divider>
                                     <v-list
                                       color="warning"
                                     >
                                       <v-list-item-content>
-                                        <v-list-item-title>Irregular galaxy</v-list-item-title>
+                                        <v-list-item-title>{{state.measuring_type || "Galaxy Type"}}</v-list-item-title>
                                         <v-list-item-subtitle>type</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
@@ -1009,8 +1007,12 @@
                                         <v-list-item-subtitle>assumed size</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
-                                        <v-list-item-title>568 pixels</v-list-item-title>  
-                                        <v-list-item-subtitle>height of display</v-list-item-subtitle>
+                                        <v-list-item-title>{{state.measuring_tool_height}}</v-list-item-title>
+                                        <v-list-item-subtitle>field of view</v-list-item-subtitle>
+                                      </v-list-item-content>
+                                      <v-list-item-content>
+                                        <v-list-item-title>{{state.measured_ang_dist_str}}</v-list-item-title>
+                                        <v-list-item-subtitle>measured angular size</v-list-item-subtitle>
                                       </v-list-item-content>
                                     </v-list>
                                     <v-divider></v-divider>
@@ -1031,6 +1033,7 @@
                                       dark
                                       class="px-auto"
                                       max-width="100%"
+                                      :disabled="!state.measure_gal_selected || state.measured_ang_dist === 0"
                                       @click="
                                         state.dist_measured = 1;
                                         state.gal_snackbar = 0;
@@ -1045,7 +1048,7 @@
                                           state.vel_measured == 1
                                             ? false
                                             : true;
-                                        state.galaxy_dist = Math.floor(Math.random() * 450) + 50;
+                                        state.galaxy_dist = +(0.03 / (state.measured_ang_dist * Math.PI / 180)).toFixed(0);
                                         add_distance_data_point();
                                       "
                                     >
@@ -1055,6 +1058,15 @@
                                 </v-card>
                               </div>
                             </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-btn
+                              class="white--text"
+                              color="purple darken-2"
+                              :disabled="!state.measure_gal_selected"
+                              @click="toggle_measuring()"
+                            >{{ state.measuring_on ? "Stop Measuring" : "Start Measuring" }}
+                            </v-btn>
                           </v-row>
                           <v-row>
                             <!-- SIDEBAR COLUMN for giving Instructions -->
@@ -2048,7 +2060,7 @@ input {
   overflow-y: hidden;
 }
 
-.wwt_widget .v-toolbar {
+.wwt_widget .v-toolbar, .wwt_measuring_tool .v-toolbar {
   display: none;
 }
 

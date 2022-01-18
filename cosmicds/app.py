@@ -1,8 +1,10 @@
 from pathlib import Path
 
+from astropy.coordinates import SkyCoord
 from astropy.modeling import models, fitting
+import astropy.units as u
 from bqplot import PanZoom
-from echo import CallbackProperty
+from echo import CallbackProperty, DictCallbackProperty
 from echo.core import add_callback
 from glue.core import Component, Data
 from glue.core.state_objects import State
@@ -14,9 +16,12 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from numpy import array, bitwise_or, isnan
+from numpy import array, pi, isnan
+from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, List
 import ipyvuetify as v
+
+from cosmicds.components.measuring_tool.measuring_tool import MeasuringTool
 
 from .components.footer import Footer
 # When we have multiple components, change above to
@@ -24,7 +29,7 @@ from .components.footer import Footer
 from .components.viewer_layout import ViewerLayout
 from .histogram_listener import HistogramListener
 from .line_draw_handler import LineDrawHandler
-from .utils import age_in_gyr, extend_tool, line_mark, load_template, update_figure_css, vertical_line_mark
+from .utils import age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
 from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
@@ -107,6 +112,16 @@ class ApplicationState(State):
 
     morphology_selections = CallbackProperty([0,1,2])
 
+    measured_ang_dist_str = CallbackProperty("-")
+    measured_ang_dist = CallbackProperty(0)
+    measuring_on = CallbackProperty(False)
+    measure_gal_selected = CallbackProperty(False)
+    measuring_name = CallbackProperty("")
+    measuring_type = CallbackProperty("")
+    measuring_tool_height = CallbackProperty("")
+
+    fit_slopes = DictCallbackProperty()
+
 
 # Everything in this class is exposed directly to the app.vue.
 class Application(VuetifyTemplate):
@@ -153,15 +168,18 @@ class Application(VuetifyTemplate):
         for dataset in datasets:
             self._application_handler.load_data(str(output_dir / f"{dataset}.csv"), label=dataset)
 
+        dummy_redshifts = [0.0119968, 0.00461038, 0.0251682, 0.0271153, 0.0467325]
         self._dummy_student_data = {
-            'gal_name': ['Galaxy A', 'Galaxy B', 'Galaxy C', 'Galaxy D', 'Galaxy E'],# 'Abell 370'],
-            'element': ['H-alpha', 'Ca K', 'H-alpha', 'H-alpha', 'H-alpha'],# 'H-alpha'],
-            'restwave': [656.3, 502.0, 656.3, 656.3, 656.3],# 656.3],
-            'measwave': [661.7, 580.0, 725.6, 666.6, 676.8],# 903.0],
-            'student_id': [1, 1, 1, 1, 1],# 1],
-            'distance': [63, 147, 259, 119, 138],# 3789],
-            'type': ['irregular', 'elliptical', 'spiral', 'spiral', 'spiral']#, 'irregular']
+            'gal_name': ['2.8205120973628E+018', '1.98723291005848E+018', '2.57949062495682E+018', '2.93425410635467E+018', '1.64172292008027E+018'],
+            'element': ['H-alpha', 'Ca K', 'H-alpha', 'H-alpha', 'H-alpha'],
+            'measwave': [661.7, 580.0, 725.6, 666.6, 676.8],
+            'student_id': [1, 1, 1, 1, 1],
+            'distance': [36.3, 80.89, 195.45, 58.61, 144.34],
+            'ra_deg': [175.058075, 183.9847263, 139.9247131, 203.3716431, 195.7057343],
+            'dec_deg': [24.69706345, 14.43303874, 24.55243683, 17.47060966, 43.21479034],
+            'type': ['spiral', 'elliptical', 'irregular', 'spiral', 'elliptical']
         }
+        self._dummy_student_data['restwave'] = [round(m/(1+z),2) for m,z in zip(self._dummy_student_data['measwave'], dummy_redshifts)]
 
         # Calculate the velocities from the wavelengths
         self._dummy_student_data['velocity'] = [round((3*(10**5)) * (o - r) / r, 0) for o,r in zip(self._dummy_student_data['measwave'], self._dummy_student_data['restwave'])]
@@ -239,6 +257,29 @@ class Application(VuetifyTemplate):
         self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
         self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
+        # Set up the measuring tool
+        measuring_widget = WWTJupyterWidget(hide_all_chrome=True)
+        measuring_widget.background = 'Digitized Sky Survey (Color)'
+        measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
+        measuring_tool = MeasuringTool(measuring_widget)
+        def update_state_ang_dist(change):
+            ang_dist = change["new"]
+            self.state.measured_ang_dist = ang_dist.value # In degrees
+            self.state.measured_ang_dist_str = format_measured_angle(ang_dist) if ang_dist.value != 0 else "-"
+        def update_state_ang_dist_str(change):
+            self.state.measured_ang_dist_str = change["new"]
+        measuring_tool.observe(update_state_ang_dist, names=["angular_distance"])
+        measuring_tool.observe(update_state_ang_dist_str, names=["angular_distance_str"])
+        def update_state_measuring(change):
+            self.state.measuring_on = change["new"]
+            self.state.galaxy_dist = ""
+        def update_measuring_height(change):
+            self.state.measuring_tool_height = format_fov(change["new"])
+        self.state.measuring_tool_height = format_fov(measuring_tool.angular_height)
+        measuring_tool.observe(update_measuring_height, names=["angular_height"])
+        measuring_tool.observe(update_state_measuring, names=["measuring"])
+        self.motions_left = 3
+
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
         # key-value pair to the components dictionary.
@@ -247,9 +288,10 @@ class Application(VuetifyTemplate):
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
                                 key_component='gal_name', names=galaxy_table_names, title=table_title, single_select=True),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
-                                key_component='gal_name', names=distance_table_names, title=table_title),
+                                key_component='gal_name', names=distance_table_names, title=table_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
                                 key_component='gal_name', names=fit_table_names, title=table_title),
+                            'c-measuring-tool': measuring_tool,
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
                         #        self,
@@ -366,7 +408,7 @@ class Application(VuetifyTemplate):
         # Set up the subsets in the morphology viewer
         galaxy_data = self.data_collection['galaxy_data']
         elliptical_subset = galaxy_data.new_subset(galaxy_data.id['MorphType'] == 'E', label='Elliptical', color='orange')
-        spiral_subset = galaxy_data.new_subset(bitwise_or.reduce([galaxy_data.id["MorphType"] == x for x in ['Sa', 'Sb']]), label='Spiral', color='green')
+        spiral_subset = galaxy_data.new_subset(galaxy_data.id["MorphType"] == 'Sp', label='Spiral', color='green')
         irregular_subset = galaxy_data.new_subset(galaxy_data.id["MorphType"] == 'Ir', label='Irregular', color='red')
         morphology_subsets = [elliptical_subset, spiral_subset, irregular_subset]
         for subset in morphology_subsets:
@@ -424,13 +466,47 @@ class Application(VuetifyTemplate):
         # Set the data for the screen 3 table to be the completed measurements data
         # and create a subset for the table component.
         # Finally, hide this subset everywhere but screen 3.
-        fit_table = self.components['c-fit-table']
-        subset_group = self.data_collection.new_subset_group(label='fit-table-selected', subset_state=None)
-        fit_table.subset_group = subset_group
-        for viewer in hub_viewers + age_distr_viewers:
-            for layer in viewer.layers:
-                if layer.state.layer.label == subset_group.label:
-                    layer.state.visible = False
+        # We want to do the same for the distance table
+        for table_id in ['c-fit-table', 'c-distance-table']:
+            table = self.components[table_id]
+            subset_group_label = table_id[2:] + '-selected'
+            subset_group = self.data_collection.new_subset_group(label=subset_group_label, subset_state=None)
+            table.subset_group = subset_group
+            for viewer in hub_viewers + age_distr_viewers + [spectrum_viewer]:
+                for layer in viewer.layers:
+                    if layer.state.layer.label == subset_group.label:
+                        layer.state.visible = False
+
+        # When we select an item in the distance table, we want the WWT viewer to go there
+        distance_table = self.components['c-distance-table']
+        def distance_table_selected_changed(change):
+            table = self.components['c-distance-table']
+            selected = change["new"]
+            state = table.subset_state_from_selected(selected)
+            mask = state.to_mask(table.glue_data)
+            ra = next((x for index, x in enumerate(table.glue_data["ra_deg"]) if mask[index]), None)
+            dec = next((x for index, x in enumerate(table.glue_data["dec_deg"]) if mask[index]), None)
+            gal_type = next((x for index, x in enumerate(table.glue_data["type"]) if mask[index]), None)
+            self.state.measure_gal_selected = len(selected) > 0
+            self.components['c-measuring-tool'].reset_canvas()
+            if not self.state.measure_gal_selected:
+                self.state.measuring_name = None
+                self.state.measuring_type = None
+                return
+            name = selected[0]["gal_name"]
+            if ra is not None and dec is not None:
+                measuring_tool = self.components['c-measuring-tool']
+                widget = measuring_tool.widget
+                coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
+                ## TODO: Once we have it, specify the correct fov for each point
+                use_instant = self.motions_left <= 0
+                widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=use_instant)
+                if not use_instant:
+                    self.motions_left -= 1
+                self.state.measuring_name = name
+                self.state.measuring_type = gal_type.capitalize()
+            
+        distance_table.observe(distance_table_selected_changed, names=['selected'])
 
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the juptyer viewer.
@@ -592,7 +668,7 @@ class Application(VuetifyTemplate):
             lines_and_labels.append((line, data.label))
             
             # Keep track of this slope for later use
-            self._fit_slopes[data.label] = slope_value
+            self.state.fit_slopes[data.label] = fitted_line.slope.value
 
         # Order the lines in the same order as the layers
         lines_and_labels.sort(key=lambda x: data_labels.index(x[1]), reverse=True)
@@ -643,7 +719,7 @@ class Application(VuetifyTemplate):
         slope_value = fitted_line.slope.value
         label = 'Slope = %.0f km / s /  Mpc' % slope_value if not isnan(slope_value) else None
         line = line_mark(layers[0], start_x, start_y, end_x, end_y, 'black', label)
-        self._fit_slopes['aggregate_%s' % viewer_id] = slope_value
+        self.state.fit_slopes['aggregate_%s' % viewer_id] = fitted_line.slope.value
 
          # Since the glupyter viewer doesn't have an option for lines
         # we just draw the fit line directly onto the bqplot figure
@@ -961,18 +1037,26 @@ class Application(VuetifyTemplate):
         data = dc[label]
         data.update_values_from_data(new_data)
 
-    def vue_add_distance_data_point(self, _args):
-        if self._dummy_distance_counter >= len(self._dummy_student_data):
-            return
-
+    def vue_add_distance_data_point(self, test=False):
         data = self.data_collection['student_measurements']
-        distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
+        if test:
+            if self._dummy_distance_counter >= len(self._dummy_student_data['gal_name']):
+                return
+            distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
+        else:
+            table = self.components['c-distance-table']
+            state = table.subset_state_from_selected(table.selected)
+            mask = state.to_mask(table.glue_data)
+            index = next((index for index in range(len(mask)) if mask[index]), None)
+            if index is not None:
+                distance = data["distance"]
+                distance[index] = round(0.03 / (self.state.measured_ang_dist * pi / 180), 0)
+
         self._new_dist_data_update(distance)
-    
         self._dummy_distance_counter += 1
             
     def vue_add_galaxy_data_point(self, _args):
-        if self._dummy_galaxy_counter >= len(self._dummy_student_data):
+        if self._dummy_galaxy_counter >= len(self._dummy_student_data['gal_name']):
             return
 
         self._dummy_galaxy_counter += 1
@@ -1006,7 +1090,7 @@ class Application(VuetifyTemplate):
         # Add the data
         for _ in range(len(self._dummy_student_data['gal_name'])):
             self.vue_add_galaxy_data_point(None)
-            self.vue_add_distance_data_point(None)
+            self.vue_add_distance_data_point(True)
 
         # Set the bottom-left corner of the plot to be the origin in each scatter viewer
         for viewer in self._hub_viewers:
@@ -1015,18 +1099,25 @@ class Application(VuetifyTemplate):
 
         self.vue_show_fit_points(None)
 
+    def vue_reset_measurer(self, _args):
+        self.components['c-measuring-tool'].reset_canvas()
+
+    def vue_toggle_measuring(self, _args):
+        measurer = self.components['c-measuring-tool']
+        measurer.measuring = not measurer.measuring
+
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data
     @property
     def student_slope(self):
         if not hasattr(self, '_student_data'):
             return 0
-        return self._fit_slopes.get(self._student_data.label, 0)
+        return self.state.fit_slopes.get(self._student_data.label, 0)
 
     @property
     def class_slope(self):
-        return self._fit_slopes.get(self._class_data.label, 0)
+        return self.state.fit_slopes.get(self._class_data.label, 0)
 
     @property
     def all_slope(self):
-        return self._fit_slopes.get(self._all_data.label, 0)
+        return self.state.fit_slopes.get(self._all_data.label, 0)
