@@ -1,12 +1,14 @@
 <template>
-  <v-card flat>
-    <v-card-title>Step 1: Collect Galaxy Data</v-card-title>
-    <v-card-subtitle>Perhaps a small blurb about this step</v-card-subtitle>
-    <v-card-text
-      >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-      commodo consequat.</v-card-text
-    >
-  </v-card>
+  <v-stepper v-model="state.tab">
+    <v-stepper-items>
+      <v-stepper-content v-for="(step, key, i) in state.steps" :step="i" :key="key">
+        <!-- <v-card>
+          <jupyter-widget :widget="viewers.wwt_viewer"></jupyter-widget>
+        </v-card> -->
+        <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
+        
+        <v-btn color="primary" @click="state.tab = i < Object.keys(state.steps).length - 1 ? i + 1 : 0"> Continue </v-btn>
+      </v-stepper-content>
+    </v-stepper-items>
+  </v-stepper>
 </template>

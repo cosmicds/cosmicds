@@ -1,34 +1,68 @@
-from cosmicds.registries import stage_registry
+from cosmicds.components.viewer_layout import ViewerLayout
+from cosmicds.events import StepSetupMessage, StepChangeMessage
+from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
+from echo import CallbackProperty
+from echo.containers import DictCallbackProperty
 from glue.core import HubListener
+from glue.core.state_objects import State
 from glue_jupyter.state_traitlets_helpers import GlueState
+from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 from ipyvuetify import VuetifyTemplate
-from traitlets import Unicode
+from ipywidgets import widget_serialization
+from ipywidgets.widgets import widget
+from traitlets import Dict, List, Unicode, Int
+from glue_jupyter.bqplot.scatter import BqplotScatterView
 
 
-class StepperOne(VuetifyTemplate, HubListener):
-    template = load_template("stage_one.vue", __file__).tag(sync=True)
-    state = GlueState().tag(sync=True)
-    stage_title = Unicode("Collect Galaxy Data").tag(sync=True)
-    stage_subtitle = Unicode("Something small to say").tag(sync=True)
-    template = load_template("stepper_one.vue", __file__).tag(sync=True)
-
-    def __init__(self, state, session, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.state = state
-        self._session = session
+class StageOneState(State):
+    pass
 
 
-@stage_registry(name="hubbles_law", step=1)
+@register_stage(story="hubbles_law", index=1, steps=[
+    "Explore celestial sky",
+    "Collect galaxy data",
+    "Measure spectra",
+    "Reflect",
+    "Calculate velocities"
+])
 class StageOne(VuetifyTemplate, HubListener):
     template = load_template("stage_one.vue", __file__).tag(sync=True)
     state = GlueState().tag(sync=True)
-    name = Unicode("Collect Galaxy Data").tag(sync=True)
+    story_state = GlueState().tag(sync=True)
+    title = Unicode("Collect Galaxy Data").tag(sync=True)
+    subtitle = Unicode("Perhaps a small blurb about this stage").tag(sync=True)
+    viewers = Dict().tag(sync=True, **widget_serialization)
 
-    def __init__(self, state, session, *args, **kwargs):
+    def __init__(self, story_state, session, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.state = state
+        self.story_state = story_state
         self._session = session
-        self.stepper = StepperOne(self.state, self._session)
+        self.state = StageOneState()
+        
+        return
+
+        # Load the viewers for this stage
+        wwt_viewer = self.app.new_data_viewer(
+            BqplotScatterView, data=None, show=False)
+
+        # data = self.data_collection['galaxy_data']
+        # wwt_viewer.state.lon_att = data.id['RA_deg']
+        # wwt_viewer.state.lat_att = data.id['Dec_deg']
+
+        # Store an internal collection of the glue viewer objects
+        self._viewer_handlers = {
+            'wwt_viewer': wwt_viewer,
+        }
+
+        # Store a front-end accessible collection of renderable ipywidgets
+        self.viewers = {k : ViewerLayout(v) for k, v in self._viewer_handlers.items()}
+        
+    @property
+    def app(self):
+        return self._session.application
+
+    @property
+    def session(self):
+        return self._session
