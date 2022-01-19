@@ -13,7 +13,7 @@ from cosmicds import __version__
 CONFIGS_DIR = os.path.join(os.path.dirname(__file__), 'configs')
 
 STORY_PATHS = {
-    'hubble': Path(__file__).parent / "stories" / "Hubble DS.ipynb"
+    'hubble': Path(__file__).parent.parent / "notebooks" / "Example.ipynb"
 }
 
 
@@ -45,6 +45,7 @@ def main(data_story):
         VoilaConfiguration.template = 'cosmicds-default'
         VoilaConfiguration.enable_nbextensions = True
         VoilaConfiguration.file_whitelist = ['.*']
+        VoilaConfiguration.show_tracebacks
         sys.exit(Voila().launch_instance(argv=[]))
     finally:
         os.chdir(start_dir)
