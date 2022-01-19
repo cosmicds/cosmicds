@@ -15,4 +15,4 @@ for comp_path in vue_comp_dir.iterdir():
             name=comp_path.stem.replace('_', '-'),
             value=comp_path.read_text())
 
-from .stories.hubbles_law import *
+from .stories import *
