@@ -1,12 +1,12 @@
-from glue.core.state_objects import State
-from ipywidgets import widget_serialization
-from traitlets import Dict, List
-from cosmicds.registries import story_registry
-from echo import CallbackProperty
 
-from .stages import StageOne, StageTwo
+from typing import Dict
+from glue.core.state_objects import State
+from echo.containers import DictCallbackProperty, CallbackProperty
+from cosmicds.registries import story_registry
 
 
 @story_registry(name="hubbles_law")
-class HubbleStoryState(State):
-    stages = CallbackProperty([])
+class StoryState(State):
+    stage_index = CallbackProperty(0)
+    step_index = CallbackProperty(0)
+    stages = DictCallbackProperty()
