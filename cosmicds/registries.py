@@ -2,6 +2,8 @@ from glue.config import DictRegistry
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import Widget
 from glue.core.state_objects import State
+import warnings
+from .components.default_stepper import DefaultStepper
 
 __all__ = ['stage_registry']
 
@@ -44,13 +46,27 @@ class StoryRegistry(UniqueDictRegistry):
             return cls
         return decorator
 
+    def setup_story(self, name, session):
+        if name not in self.members:
+            raise ValueError(f"Story `{name}` does not exist in the "
+                             "registery.")
 
-class StageRegistry(UniqueDictRegistry):
-    """
-    Registry containing references to plugins which will populate the
-    application-level toolbar.
-    """
-    def __call__(self, name, step):
+        story_entry = self.members[name]
+        story_state = story_entry['cls']()
+
+        for k, v in story_entry['stages'].items():
+            stage = v['cls'](story_state, session)
+            
+            story_state.stages[k] = {"title": stage.title,
+                                     "subtitle": stage.subtitle,
+                                     "step_index": 0,
+                                     "steps": [{'title': x, 'completed': False} 
+                                               for x in v['steps']],
+                                     "model_id": f"IPY_MODEL_{stage.model_id}"}
+
+        return story_state
+
+    def register_stage(self, story, index, steps):
         def decorator(cls):
             # The class must inherit from `Widget` in order to be
             # ingestible by the component initialization.
@@ -60,11 +76,40 @@ class StageRegistry(UniqueDictRegistry):
                     f"registered tools must inherit from "
                     f"`ipyvuetify.VuetifyTemplate`.")
 
-            self.add(name, step, cls)
+            # Check to see if the given story has been registered
+            if not story in self.members:
+                raise ValueError(f"Story `{story}` does not exist in the "
+                                 "registery.")
+
+            self.members[story]['stages'][index] = {'cls': cls, 'steps': steps}
             return cls
         return decorator
 
-    def add(self, name, step, cls):
+    def add(self, name, cls):
+        self.members[name] = {'cls': cls, 'stages': {}}
+
+
+
+class StageRegistry(UniqueDictRegistry):
+    """
+    Registry containing references to plugins which will populate the
+    application-level toolbar.
+    """
+    def __call__(self, name, index):
+        def decorator(cls):
+            # The class must inherit from `Widget` in order to be
+            # ingestible by the component initialization.
+            if not issubclass(cls, VuetifyTemplate):
+                raise ValueError(
+                    f"Unrecognized superclass for `{cls.__name__}`. All "
+                    f"registered tools must inherit from "
+                    f"`ipyvuetify.VuetifyTemplate`.")
+
+            self.add(name, index, cls)
+            return cls
+        return decorator
+
+    def add(self, name, index, cls):
         """
         Add an item to the registry.
         Parameters
@@ -75,8 +120,9 @@ class StageRegistry(UniqueDictRegistry):
             The class definition (not instance) associated with the name given
             in the first parameter.
         """
-        self.members.setdefault(name, {})[step] = cls
+        self.members.setdefault(name, {})[index] = cls
 
 
 stage_registry = StageRegistry()
 story_registry = StoryRegistry()
+register_stage = story_registry.register_stage
