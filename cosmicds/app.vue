@@ -42,7 +42,17 @@
         icon
         @click="
           state.haro_on = 'd-block';
-          state.rv1_visible = 'd-block';
+          state.rv1_visible = 1;
+          state.galaxy_table_visible = 1;
+          state.gal_selected = 1;
+          state.gals_total += 5;
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          state.spectrum_tool_visible = 1;
+          state.marker = '';
           state.toggle_on = 'd-block';
           state.toggle_off = 'd-none';
         "
@@ -300,8 +310,6 @@
                                         state.vel_snackbar = 0;
                                         state.data_ready_snackbar = 0;
                                         state.gal_snackbar = 1;
-                                        state.gal_selected = 1;
-                                        state.haro_on = 'd-block';
                                         state.gals_total += 1;
                                         add_galaxy_data_point();
                                       "
@@ -608,7 +616,7 @@
                                       close-text="submit"
                                       @close="
                                         console.log('Submit button was clicked.');
-                                        state.rv1_visible = 'd-none';
+                                        state.rv1_visible = 0;
                                         state.calc_visible = 'd-block';
                                       "
                                     >
@@ -645,7 +653,7 @@
                                       state.data_ready_snackbar = 0;
                                       state.marker_snackbar = 1;
                                       state.marker_set = 1;
-                                      state.rv1_visible = 'd-block'
+                                      state.rv1_visible = 1;
                                     "
                                   >
                                     set marker
@@ -653,7 +661,7 @@
                                 </div>
                               </v-alert>
                               <v-container
-                                :class="state.rv1_visible"
+                                :class="state.rv1_visible ? 'd-block' : 'd-none'"
                               >
                                 <v-row
                                   class="text-center"
@@ -666,7 +674,7 @@
                                       close-text="submit"
                                       @close="
                                         console.log('Submit button was clicked.');
-                                        state.rv1_visible = 'd-none';
+                                        state.rv1_visible = 0;
                                         state.calc_visible = 'd-block';
                                       "
                                     >
@@ -969,11 +977,9 @@
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-app-bar>
-                                <div class="wwt_widget">
-                                  <jupyter-widget
-                                    :widget="viewers.wwt_viewer"
-                                  ></jupyter-widget>
-                                <div>
+                                <c-measuring-tool
+                                  class="wwt_measuring_tool"
+                                />
                               </v-card>
                             </v-col>
 
@@ -983,17 +989,17 @@
                                 :class="state.haro_on"
                               >
                                 <v-card
-                                  color="indigo lighten-5"
+                                  color="warning"
                                   width="100%"
                                 >
-                                  <v-card-title>Haro 11</v-card-title>
+                                  <v-card-title>{{state.measuring_name || "Galaxy Name"}}</v-card-title>
                                   <v-card-text>
                                     <v-divider></v-divider>
                                     <v-list
-                                      color="indigo lighten-5"
+                                      color="warning"
                                     >
                                       <v-list-item-content>
-                                        <v-list-item-title>Irregular galaxy</v-list-item-title>
+                                        <v-list-item-title>{{state.measuring_type || "Galaxy Type"}}</v-list-item-title>
                                         <v-list-item-subtitle>type</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
@@ -1001,8 +1007,12 @@
                                         <v-list-item-subtitle>assumed size</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
-                                        <v-list-item-title>568 pixels</v-list-item-title>  
-                                        <v-list-item-subtitle>height of display</v-list-item-subtitle>
+                                        <v-list-item-title>{{state.measuring_tool_height}}</v-list-item-title>
+                                        <v-list-item-subtitle>field of view</v-list-item-subtitle>
+                                      </v-list-item-content>
+                                      <v-list-item-content>
+                                        <v-list-item-title>{{state.measured_ang_dist_str}}</v-list-item-title>
+                                        <v-list-item-subtitle>measured angular size</v-list-item-subtitle>
                                       </v-list-item-content>
                                     </v-list>
                                     <v-divider></v-divider>
@@ -1011,7 +1021,6 @@
                                       label="Estimated Distance"
                                       hint="click button below"
                                       persistent-hint
-                                      color="purple darken-2"
                                       class="mt-8 mb-4"
                                       suffix="Mpc"
                                       outlined
@@ -1020,10 +1029,11 @@
                                     ></v-text-field>
                                     <v-btn
                                       block
-                                      color="purple darken-2"
+                                      color="primary"
                                       dark
                                       class="px-auto"
                                       max-width="100%"
+                                      :disabled="!state.measure_gal_selected || state.measured_ang_dist === 0"
                                       @click="
                                         state.dist_measured = 1;
                                         state.gal_snackbar = 0;
@@ -1038,7 +1048,7 @@
                                           state.vel_measured == 1
                                             ? false
                                             : true;
-                                        state.galaxy_dist = Math.floor(Math.random() * 450) + 50;
+                                        state.galaxy_dist = +(0.03 / (state.measured_ang_dist * Math.PI / 180)).toFixed(0);
                                         add_distance_data_point();
                                       "
                                     >
@@ -1048,6 +1058,15 @@
                                 </v-card>
                               </div>
                             </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-btn
+                              class="white--text"
+                              color="purple darken-2"
+                              :disabled="!state.measure_gal_selected"
+                              @click="toggle_measuring()"
+                            >{{ state.measuring_on ? "Stop Measuring" : "Start Measuring" }}
+                            </v-btn>
                           </v-row>
                           <v-row>
                             <!-- SIDEBAR COLUMN for giving Instructions -->
@@ -1120,7 +1139,7 @@
                               <v-tabs
                                 v-model="state.analysis_tabs"
                                 grow
-                                background-color="indigo"
+                                background-color="secondary"
                                 dark
                               >
                                 <v-tab
@@ -1215,7 +1234,7 @@
                                         >
                                           <v-btn
                                             :disabled="!state.points_plotted"
-                                            color="green lighten-1"
+                                            color="teal lighten-1"
                                             class="flex-grow-1 white--text"
                                             @click="fit_lines({
                                               'viewer_id': 'hub_fit_viewer',
@@ -1252,6 +1271,7 @@
                                         <v-card
                                           class="pa-8 mx-auto"
                                           elevation="3"
+                                          outlined
                                         >
                                           Watch this video for an explanation how and why we can calculate
                                           the age of universe by inverting our <em>H</em><sub>0</sub> value.
@@ -1284,14 +1304,6 @@
                                       <v-col
                                         cols="3"
                                       >
-                                        <v-btn
-                                          color="primary"
-                                          @click="fit_lines({
-                                            'viewer_id': 'hub_comparison_viewer'
-                                          })"
-                                        >
-                                          Fit Lines
-                                        </v-btn>
                                         <v-list
                                           style="max-height: 300px"
                                           class="overflow-y-auto"
@@ -1320,6 +1332,15 @@
                                             </v-list-item>
                                           </v-list-item-group>
                                         </v-list>
+                                        <v-btn
+                                          block
+                                          color="primary"
+                                          @click="fit_lines({
+                                            'viewer_id': 'hub_comparison_viewer'
+                                          })"
+                                        >
+                                          Fit Lines
+                                        </v-btn>
                                       </v-col>
                                       <v-col>
                                         <!-- PLOTTING WIDGET to plot Each Dataset -->
@@ -1534,14 +1555,6 @@
                                       <v-col
                                         cols="3"
                                       >
-                                        <v-btn
-                                          color="primary"
-                                          @click="fit_lines({
-                                            'viewer_id': 'hub_morphology_viewer'
-                                          })"
-                                        >
-                                          Fit Lines
-                                        </v-btn>
                                         <v-list
                                           style="max-height: 300px"
                                           class="overflow-y-auto"
@@ -1570,6 +1583,15 @@
                                             </v-list-item>
                                           </v-list-item-group>
                                         </v-list>
+                                        <v-btn
+                                          block
+                                          color="primary"
+                                          @click="fit_lines({
+                                            'viewer_id': 'hub_morphology_viewer'
+                                          })"
+                                        >
+                                          Fit Lines
+                                        </v-btn>
                                       </v-col>
                                       <v-col>
                                         <!-- PLOTTING WIDGET for all galaxy types -->
@@ -1618,14 +1640,6 @@
                                       <v-col
                                         cols="3"
                                       >
-                                        <v-btn
-                                          color="primary"
-                                          @click="fit_lines({
-                                            'viewer_id': 'hub_prodata_viewer'
-                                          })"
-                                        >
-                                          Fit Lines
-                                        </v-btn>
                                         <v-list
                                           style="max-height: 300px"
                                           class="overflow-y-auto"
@@ -1661,6 +1675,15 @@
                                             </v-list-item>
                                           </v-list-item-group>
                                         </v-list>
+                                        <v-btn
+                                          block
+                                          color="primary"
+                                          @click="fit_lines({
+                                            'viewer_id': 'hub_prodata_viewer'
+                                          })"
+                                        >
+                                          Fit Lines
+                                        </v-btn>
                                       </v-col>
                                       <v-col>
                                         <!-- PLOTTING WIDGET for Professional Science Data -->
@@ -2037,7 +2060,7 @@ input {
   overflow-y: hidden;
 }
 
-.wwt_widget .v-toolbar {
+.wwt_widget .v-toolbar, .wwt_measuring_tool .v-toolbar {
   display: none;
 }
 
