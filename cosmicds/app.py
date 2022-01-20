@@ -122,6 +122,7 @@ class ApplicationState(State):
     measuring_tool_height = CallbackProperty("")
     measuring_view_changing = CallbackProperty(False)
     warn_size = CallbackProperty(False)
+    galaxy_dist = CallbackProperty("")
 
     fit_slopes = DictCallbackProperty()
 
@@ -1054,6 +1055,7 @@ class Application(VuetifyTemplate):
 
         self.state.warn_size = False
         distance_value = round(MILKY_WAY_SIZE_MPC / (self.state.measured_ang_size * pi / (180 * 3600)), 0)
+        self.state.galaxy_dist = str(int(distance_value))
 
         data = self.data_collection['student_measurements']
         if test:
