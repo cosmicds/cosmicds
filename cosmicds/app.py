@@ -272,10 +272,12 @@ class Application(VuetifyTemplate):
             ang_size_asec = int(ang_size_deg * 3600)
             self.state.measured_ang_size = ang_size_asec
             self.state.measured_ang_size_str = format_measured_angle(ang_size) if ang_size_deg != 0 else "-"
+            self.state.galaxy_dist = ""
         measuring_tool.observe(update_state_ang_size, names=["angular_size"])
         def update_state_measuring(change):
             self.state.measuring_on = change["new"]
             self.state.warn_size = False
+            self.state.galaxy_dist = ""
         def update_measuring_height(change):
             self.state.measuring_tool_height = format_fov(change["new"])
         def update_measuring_view_changing(change):
