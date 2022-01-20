@@ -178,6 +178,17 @@
                               cols="6"
                               class="galtable_column"
                             >
+                            <!-- Temporarily moving up to work on equations-->
+                                    <reflect-velocity-windows
+                                      button-text="reflect"
+                                      close-text="submit"
+                                      @close="
+                                        console.log('Submit button was clicked.');
+                                        state.rv1_visible = 0;
+                                        state.calc_visible = 'd-block';
+                                      "
+                                    >
+                                    </reflect-velocity-windows>
                               <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
                               <v-alert
                                 :class="state.marker == 'exp_sky1' ? 'd-block' : 'd-none'"

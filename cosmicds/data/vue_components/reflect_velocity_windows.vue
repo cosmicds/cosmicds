@@ -33,10 +33,12 @@
           ></v-avatar>
         </v-card-title>
 
+
         <v-window
           v-model="step"
           vertical
         >
+        <!--
           <v-window-item :value="1">
             <v-card-text>
               How do the observed wavelengths of emission or absorption lines in your galaxies
@@ -64,10 +66,27 @@
               </mc-radiogroup>
             </v-card-text>
           </v-window-item>
-
-          <v-window-item :value="3">
+          -->
+          <v-lazy>
+          <v-window-item :value="4">
             <v-card-text>
               Now that we agree the galaxies are not static, let’s calculate how fast these galaxies are moving.
+
+              <p>
+                We will use the Doppler equation, which relates the observed wavelength of your spectral lines to their rest wavelength as follows:
+              </p>
+              <p>
+                $$ v=c \left(\frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}}-1\right) $$
+              </p>
+              <p>
+                $$ x = \frac{\input[my-id][my-class my-class-2]{} - 1}{\input[my-id-2][my-class]{}} $$
+              </p>
+
+
+
+
+
+<!--
               <v-row>
                 <v-col cols = 6>
                 </v-col>
@@ -130,8 +149,9 @@
                 </v-col>
               </v-row>
             </v-card-text>
-          </v-window-item>
 
+          </v-window-item>
+          </v-lazy>
           <v-window-item :value="4">
             <div class="pa-4 text-center">
               <v-img
@@ -146,6 +166,8 @@
               <span class="text-caption grey--text">You can start plotting your data now.</span>
             </div>
           </v-window-item>
+-->
+
         </v-window>
 
         <v-divider></v-divider>
