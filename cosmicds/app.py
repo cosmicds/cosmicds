@@ -29,11 +29,12 @@ from .components.footer import Footer
 from .components.viewer_layout import ViewerLayout
 from .histogram_listener import HistogramListener
 from .line_draw_handler import LineDrawHandler
-from .utils import age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
+from .utils import MILKY_WAY_SIZE_MPC, age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
 from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
 
+MEASUREMENT_THRESHOLD = 1800 # arcseconds
 
 v.theme.dark = True
 v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
@@ -86,7 +87,6 @@ class ApplicationState(State):
     vels_total = CallbackProperty(0)
 
     haro_on = CallbackProperty("d-none")
-    galaxy_dist = CallbackProperty("")
     galaxy_vel = CallbackProperty("")
 
     calc_visible = CallbackProperty("d-none")
@@ -113,13 +113,16 @@ class ApplicationState(State):
 
     morphology_selections = CallbackProperty([0,1,2])
 
-    measured_ang_dist_str = CallbackProperty("-")
-    measured_ang_dist = CallbackProperty(0)
+    measured_ang_size_str = CallbackProperty("-")
+    measured_ang_size = CallbackProperty(0)
     measuring_on = CallbackProperty(False)
     measure_gal_selected = CallbackProperty(False)
     measuring_name = CallbackProperty("")
     measuring_type = CallbackProperty("")
     measuring_tool_height = CallbackProperty("")
+    measuring_view_changing = CallbackProperty(False)
+    warn_size = CallbackProperty(False)
+    galaxy_dist = CallbackProperty("")
 
     fit_slopes = DictCallbackProperty()
 
@@ -263,35 +266,41 @@ class Application(VuetifyTemplate):
         measuring_widget.background = 'Digitized Sky Survey (Color)'
         measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
         measuring_tool = MeasuringTool(measuring_widget)
-        def update_state_ang_dist(change):
-            ang_dist = change["new"]
-            self.state.measured_ang_dist = ang_dist.value # In degrees
-            self.state.measured_ang_dist_str = format_measured_angle(ang_dist) if ang_dist.value != 0 else "-"
-        def update_state_ang_dist_str(change):
-            self.state.measured_ang_dist_str = change["new"]
-        measuring_tool.observe(update_state_ang_dist, names=["angular_distance"])
-        measuring_tool.observe(update_state_ang_dist_str, names=["angular_distance_str"])
+        def update_state_ang_size(change):
+            ang_size = change["new"]
+            ang_size_deg = ang_size.value if self.state.measuring_on else 0
+            ang_size_asec = int(ang_size_deg * 3600)
+            self.state.measured_ang_size = ang_size_asec
+            self.state.measured_ang_size_str = format_measured_angle(ang_size) if ang_size_deg != 0 else "-"
+            self.state.galaxy_dist = ""
+        measuring_tool.observe(update_state_ang_size, names=["angular_size"])
         def update_state_measuring(change):
             self.state.measuring_on = change["new"]
+            self.state.warn_size = False
             self.state.galaxy_dist = ""
         def update_measuring_height(change):
             self.state.measuring_tool_height = format_fov(change["new"])
+        def update_measuring_view_changing(change):
+            self.state.measuring_view_changing = change["new"]
         self.state.measuring_tool_height = format_fov(measuring_tool.angular_height)
         measuring_tool.observe(update_measuring_height, names=["angular_height"])
         measuring_tool.observe(update_state_measuring, names=["measuring"])
-        self.motions_left = 3
+        measuring_tool.observe(update_measuring_view_changing, names=["view_changing"])
+        self.motions_left = 2
 
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
         # key-value pair to the components dictionary.
-        table_title = 'My Galaxies | Velocity Measurements'
+        velocity_title = 'My Galaxies | Velocity Measurements'
+        distance_title = 'My Galaxies | Distance Measurements'
+        fit_title = 'My Galaxies'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
-                                key_component='gal_name', names=galaxy_table_names, title=table_title, single_select=True),
+                                key_component='gal_name', names=galaxy_table_names, title=velocity_title, single_select=True),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
-                                key_component='gal_name', names=distance_table_names, title=table_title, single_select=True),
+                                key_component='gal_name', names=distance_table_names, title=distance_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
-                                key_component='gal_name', names=fit_table_names, title=table_title),
+                                key_component='gal_name', names=fit_table_names, title=fit_title),
                             'c-measuring-tool': measuring_tool,
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
@@ -1039,6 +1048,17 @@ class Application(VuetifyTemplate):
         data.update_values_from_data(new_data)
 
     def vue_add_distance_data_point(self, test=False):
+
+        # Is the value that the student measured too large?
+        # If so, we give a warning rather than adding this value
+        if self.state.measured_ang_size >= MEASUREMENT_THRESHOLD:
+            self.state.warn_size = True
+            return
+
+        self.state.warn_size = False
+        distance_value = round(MILKY_WAY_SIZE_MPC / (self.state.measured_ang_size * pi / (180 * 3600)), 0)
+        self.state.galaxy_dist = str(int(distance_value))
+
         data = self.data_collection['student_measurements']
         if test:
             if self._dummy_distance_counter >= len(self._dummy_student_data['gal_name']):
@@ -1051,7 +1071,7 @@ class Application(VuetifyTemplate):
             index = next((index for index in range(len(mask)) if mask[index]), None)
             if index is not None:
                 distance = data["distance"]
-                distance[index] = round(0.03 / (self.state.measured_ang_dist * pi / 180), 0)
+                distance[index] = distance_value
 
         self._new_dist_data_update(distance)
         self._dummy_distance_counter += 1

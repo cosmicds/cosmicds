@@ -1011,7 +1011,7 @@
                                         <v-list-item-subtitle>field of view</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
-                                        <v-list-item-title>{{state.measured_ang_dist_str}}</v-list-item-title>
+                                        <v-list-item-title>{{state.measured_ang_size_str}}</v-list-item-title>
                                         <v-list-item-subtitle>measured angular size</v-list-item-subtitle>
                                       </v-list-item-content>
                                     </v-list>
@@ -1033,7 +1033,7 @@
                                       dark
                                       class="px-auto"
                                       max-width="100%"
-                                      :disabled="!state.measure_gal_selected || state.measured_ang_dist === 0"
+                                      :disabled="!state.measure_gal_selected || state.measured_ang_size === 0 || state.measuring_view_changing"
                                       @click="
                                         state.dist_measured = 1;
                                         state.gal_snackbar = 0;
@@ -1048,7 +1048,6 @@
                                           state.vel_measured == 1
                                             ? false
                                             : true;
-                                        state.galaxy_dist = +(0.03 / (state.measured_ang_dist * Math.PI / 180)).toFixed(0);
                                         add_distance_data_point();
                                       "
                                     >
@@ -1060,10 +1059,15 @@
                             </v-col>
                           </v-row>
                           <v-row>
+                            <p
+                              v-if="state.warn_size"
+                              style="color: red;"
+                            >This angular size seems much larger than expected. Are you sure your measurements are lined up with a galaxy? Please try again.
+                            </p>
                             <v-btn
                               class="white--text"
                               color="purple darken-2"
-                              :disabled="!state.measure_gal_selected"
+                              :disabled="!state.measure_gal_selected || state.measuring_view_changing"
                               @click="toggle_measuring()"
                             >{{ state.measuring_on ? "Stop Measuring" : "Start Measuring" }}
                             </v-btn>
