@@ -508,7 +508,7 @@
                             <!-- SIDEBAR COLUMN for processing velocity data -->
                             <v-col cols="12" md="4">
 
-                              <!-- GUIDANCE ALERT - Introduce Spectrum Tool -->
+                              <!-- GUIDANCE ALERT - Spectrum Tool #1 -->
                               <v-alert
                                 :class="state.marker == 'mee_spe1' ? 'd-block' : 'd-none'"
                                 class="mb-4"
@@ -537,22 +537,45 @@
                                   align="center"
                                   no-gutters
                                 >
+                                  <v-col>
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'cho_row1';
+                                        state.spectrum_tool_visible = 0;
+                                      "
+                                    >
+                                      back
+                                    </v-btn>
+                                  </v-col>
                                   <v-spacer></v-spacer>
+                                  
+                                  <v-col
+                                    cols="6"
+                                    class="shrink"
+                                    :class="state.vel_win_unopened ? 'd-block' : 'd-none'"
+                                  >
+                                    <div
+                                    >
+                                      Click INFO below.
+                                    </div>
+                                  </v-col>
                                   <v-col
                                     class="shrink"
+                                    :class="state.vel_win_unopened ? 'd-none' : 'd-block'"
                                   >
-
-                                    <!-- FORM DIALOG as template for reflections/MC -->
-                                    <guide-specvel-windows
-                                      button-text="start"
-                                      close-text="submit"
-                                      @close="
-                                        console.log('Submit button was clicked.');
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
                                         state.marker = 'mee_spe2';
                                       "
                                     >
-                                     
-                                    </guide-specvel-windows>
+                                      next
+                                    </v-btn>
                                   </v-col>
                                 </v-row>
                               </v-alert>
@@ -592,6 +615,18 @@
                                   align="center"
                                   no-gutters
                                 >
+                                  <v-col>
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'mee_spe1';
+                                      "
+                                    >
+                                      back
+                                    </v-btn>
+                                  </v-col>
                                   <v-spacer></v-spacer>
                                   <v-col
                                     class="shrink"
@@ -609,6 +644,38 @@
                                   </v-col>
                                 </v-row>
                               </v-alert>
+
+                              <v-row>
+                                <v-col
+                                  cols="6"
+                                >
+                                  <!-- FORM DIALOG as template for reflections/MC -->
+                                  <guide-specvel-windows
+                                    button-text="start"
+                                    close-text="submit"
+                                    @close="
+                                      console.log('Submit button was clicked.');
+                                      state.vel_win_unopened = 0;
+                                    "
+                                  >
+                                  </guide-specvel-windows>
+                                </v-col>
+                                <v-col
+                                  cols="6"
+                                >
+                                  <!-- FORM DIALOG as template for reflections/MC -->
+                                  <reflect-velocity-windows
+                                    button-text="do"
+                                    close-text="submit"
+                                    @close="
+                                      console.log('Submit button was clicked.');
+                                      state.rv1_visible = 0;
+                                      state.calc_visible = 'd-block';
+                                    "
+                                  >
+                                  </reflect-velocity-windows>
+                                </v-col>
+                              </v-row>
 
 
 
