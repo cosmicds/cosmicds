@@ -270,70 +270,13 @@
                             </v-col>
                           </v-row>
                           <v-row
-                            :class="state.marker == 'sel_gal2' | 'cho_row1' ? 'd-block' : 'd-none'"
+                            :class="state.marker == 'sel_gal1' | state.marker == 'cho_row1' ? 'd-block' : 'd-none'"
                           >
                             <v-col>
 
-                              <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
-                              <v-alert
-                                :class="state.marker == 'sel_gal1' ? 'd-block' : 'd-none'"
-                                class="mb-4"
-                                color="info"
-                                elevation="6"
-                              >
-                                <h3
-                                  class="mb-4"
-                                >
-                                  Select a Galaxy
-                                </h3>
-                                <div
-                                  class="mb-4"
-                                >
-                                  The <strong :class="state.darkmode ? 'green--text text--lighten-3' : 'green--text text--darken-2'">green</strong> dots scattered around the night sky mark the locations of galaxies you can collect data for. 
-                                </div>
-                                <div
-                                  class="mb-4"
-                                >
-                                  Click on one of these dots to select that galaxy into your table.
-                                </div>
-                                <v-divider
-                                  class="my-4"
-                                >
-                                </v-divider>
-
-                                <v-row
-                                  align="center"
-                                  no-gutters
-                                >
-                                  <v-spacer></v-spacer>
-                                  <v-col
-                                    class="shrink"
-                                  >
-                                    <v-btn
-                                      color="accent"
-                                      class="black--text"
-                                      elevation="2"
-                                      @click="
-                                        state.marker = 'sel_gal2';
-                                        state.gal_snackbar = 0;
-                                        state.dist_snackbar = 0;
-                                        state.marker_snackbar = 0;
-                                        state.vel_snackbar = 0;
-                                        state.data_ready_snackbar = 0;
-                                        state.gal_snackbar = 1;
-                                        state.gals_total += 1;
-                                        add_galaxy_data_point();
-                                      "
-                                    >
-                                      next
-                                    </v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-alert>
-
                               <!-- GUIDANCE ALERT - Show students how to select galaxies -->
                               <v-alert
-                                :class="state.marker == 'sel_gal2' ? 'd-block' : 'd-none'"
+                                :class="state.marker == 'sel_gal1' ? 'd-block' : 'd-none'"
                                 color="info"
                                 class="mb-4"
                                 elevation="6"
@@ -344,27 +287,57 @@
                                   Select Five Galaxies
                                 </h3>
                                 <div
+                                  :class="state.gals_total == 0 ? 'd-block' : 'd-none'"
                                   class="mb-4"
                                 >
-                                  Notice that the table now has a row for your selected galaxy.
+                                  <p>
+                                    The <strong :class="state.darkmode ? 'green--text text--lighten-3' : 'green--text text--darken-2'">green</strong> dots scattered around the night sky mark the locations of galaxies you can collect data for. 
+                                  </p>
+                                  <p>
+                                    Click on one of these dots to select that galaxy into your table.
+                                  </p>
                                 </div>
-                                <div>
-                                  Now pan around the sky and choose 4 more galaxies to enter into your table.
+                                <div
+                                  :class="state.gals_total == 1 ? 'd-block' : 'd-none'"
+                                  class="mb-4"
+                                >
+                                  <p>
+                                    Notice that the table now has a row for your selected galaxy.
+                                  </p>
+                                  <p>
+                                    Now pan around the sky and choose a different galaxy to enter into your table.
+                                  </p>
                                 </div>
-                                <v-divider
-                                  class="my-4"
+                                <div
+                                  :class="state.gals_total > 1 & state.gals_total < 5 ? 'd-block' : 'd-none'"
+                                  class="mb-4"
                                 >
-                                </v-divider>
-
-                                <v-row
-                                  align="center"
-                                  no-gutters
+                                  <p>
+                                    Check it out, your table is growing.
+                                  </p>
+                                  <p>
+                                    Keep selecting random galaxies until you have 5 rows in your table.
+                                  </p>
+                                </div>
+                                <div
+                                  :class="state.gals_total == 5 ? 'd-block' : 'd-none'"
+                                  class="mb-4"
                                 >
-                                  <v-col>
+                                  <p>
+                                    Great, you've got all the galaxies that you need in order to start.
+                                  </p>
+                                  <p>
+                                    Now you can start making measurements from your data.
+                                  </p>
+                                </div>
+                                <div
+                                  class="text-center my-8"
+                                >
                                     <v-btn
                                       class="black--text"
                                       color="success"
                                       elevation="2"
+                                      :disabled="state.gals_total == 5"
                                       @click="
                                         state.gal_snackbar = 0;
                                         state.dist_snackbar = 0;
@@ -378,24 +351,47 @@
                                         add_galaxy_data_point();
                                       "
                                     >
-                                      select galaxy ({{ state.gals_total }})
+                                      select galaxy
+                                    </v-btn>
+                                </div>
+                                
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-col>
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
+                                        state.galaxy_table_visible = 0;
+                                        state.marker = 'exp_sky1';
+                                      "
+                                    >
+                                      back
                                     </v-btn>
                                   </v-col>
                                   <v-spacer></v-spacer>
                                   
                                   <v-col
-                                    cols="2"
+                                    cols="3"
                                     class="shrink"
                                     :class="state.gals_total < 5 ? 'd-block' : 'd-none'"
                                   >
                                     <div
                                     >
-                                      Select 5 galaxies before moving on.
+                                      Select {{ 5 - state.gals_total }} more <span :class="state.gals_total < 4 ? 'd-inline' : 'd-none'">galaxies</span><span :class="state.gals_total == 4 ? 'd-inline' : 'd-none'">galaxy</span> before moving on.
                                     </div>
                                   </v-col>
                                   <v-col
                                     class="shrink"
-                                    :class="state.gals_total >= 5 ? 'd-block' : 'd-none'"
+                                    :class="state.gals_total == 5 ? 'd-block' : 'd-none'"
                                   >
                                     <v-btn
                                       class="black--text"
@@ -405,7 +401,7 @@
                                         state.marker = 'cho_row1';
                                       "
                                     >
-                                      move on to measuring
+                                      next
                                     </v-btn>
                                   </v-col>
                                 </v-row>
@@ -426,10 +422,12 @@
                                 <div
                                   class="mb-4"
                                 >
-                                  Now let's take a look at the light spectrum for one of your galaxies.
-                                </div>
-                                <div>
-                                  Click on a row in your table to choose that galaxy.
+                                  <p>
+                                    Let's take a look at the light spectrum for one of your galaxies.
+                                  </p>
+                                  <p>
+                                    Click on a row in your table to choose that galaxy.
+                                  </p>
                                 </div>
                                 <v-divider
                                   class="my-4"
@@ -440,6 +438,18 @@
                                   align="center"
                                   no-gutters
                                 >
+                                  <v-col>
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'sel_gal1';
+                                      "
+                                    >
+                                      back
+                                    </v-btn>
+                                  </v-col>
                                   <v-spacer></v-spacer>
                                   <v-col
                                     class="shrink"
