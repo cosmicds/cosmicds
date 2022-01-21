@@ -253,6 +253,7 @@
                                       class="black--text"
                                       elevation="2"
                                       @click="
+                                        state.galaxy_table_visible = 1;
                                         state.marker = 'sel_gal1';
                                       "
                                     >
@@ -261,6 +262,17 @@
                                   </v-col>
                                 </v-row>
                               </v-alert>
+
+                              <!-- TABLE to hold Selected Galaxies -->
+                              <c-galaxy-table
+                                :class="state.galaxy_table_visible ? 'd-block' : 'd-none'"
+                              />
+                            </v-col>
+                          </v-row>
+                          <v-row
+                            :class="state.marker == 'sel_gal2' | 'cho_row1' ? 'd-block' : 'd-none'"
+                          >
+                            <v-col>
 
                               <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
                               <v-alert
@@ -277,12 +289,12 @@
                                 <div
                                   class="mb-4"
                                 >
-                                  The <strong :class="state.darkmode ? 'green--text text--lighten-2' : 'green--text text--darken-1'">green</strong> dots mark the locations of galaxies you can collect data for. 
+                                  The <strong :class="state.darkmode ? 'green--text text--lighten-3' : 'green--text text--darken-2'">green</strong> dots scattered around the night sky mark the locations of galaxies you can collect data for. 
                                 </div>
                                 <div
                                   class="mb-4"
                                 >
-                                  Click on one of these dots to select that galaxy.
+                                  Click on one of these dots to select that galaxy into your table.
                                 </div>
                                 <v-divider
                                   class="my-4"
@@ -303,7 +315,6 @@
                                       elevation="2"
                                       @click="
                                         state.marker = 'sel_gal2';
-                                        state.galaxy_table_visible = 1;
                                         state.gal_snackbar = 0;
                                         state.dist_snackbar = 0;
                                         state.marker_snackbar = 0;
@@ -319,16 +330,6 @@
                                   </v-col>
                                 </v-row>
                               </v-alert>
-                              <!-- TABLE to hold Selected Galaxies -->
-                              <c-galaxy-table
-                                :class="state.galaxy_table_visible ? 'd-block' : 'd-none'"
-                              />
-                            </v-col>
-                          </v-row>
-                          <v-row
-                            :class="state.marker == 'sel_gal2' | 'cho_row1' ? 'd-block' : 'd-none'"
-                          >
-                            <v-col>
 
                               <!-- GUIDANCE ALERT - Show students how to select galaxies -->
                               <v-alert
