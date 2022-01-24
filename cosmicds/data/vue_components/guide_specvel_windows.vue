@@ -108,9 +108,9 @@
                 src="https://www.pngrepo.com/png/211744/512/rocket-ship-launch-missile.png"
               ></v-img>
               <h3 class="text-h6 font-weight-light mb-2">
-                Nice work reflecting!
+                You're ready to start measuring galaxy velocities now.
               </h3>
-              <span class="text-caption grey--text">You can start plotting your data now.</span>
+              <span class="text-caption grey--text">Click on "Info" if you'd like to come back for a refresher.</span>
             </div>
           </v-window-item>
         </v-window>
