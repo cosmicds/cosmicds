@@ -313,6 +313,25 @@
                                       class="black--text"
                                       elevation="2"
                                       @click="
+                                        state.marker = 'exp_sky1';
+                                        state.galaxy_table_visible = 1;
+                                        state.gal_snackbar = 0;
+                                        state.dist_snackbar = 0;
+                                        state.marker_snackbar = 0;
+                                        state.vel_snackbar = 0;
+                                        state.data_ready_snackbar = 0;
+                                        state.gal_snackbar = 1;
+                                        state.gals_total += 1;
+                                        add_galaxy_data_point();
+                                      "
+                                    >
+                                      back
+                                    </v-btn>
+                                    <v-btn
+                                      color="accent"
+                                      class="black--text"
+                                      elevation="2"
+                                      @click="
                                         state.marker = 'sel_gal2';
                                         state.galaxy_table_visible = 1;
                                         state.gal_snackbar = 0;
@@ -1912,7 +1931,13 @@
 export default {
   mounted() {
     window.MathJax = {
-      tex: {packages: {'[+]': ['input']}},
+      loader: {load: ['[tex]/color', '[tex]/bbox']},
+      tex: {
+        packages: {'[+]': ['input', 'color', 'bbox']},
+        color: {
+          padding: '12px'
+        }
+      },
       startup: {
         ready() {
           const Configuration = MathJax._.input.tex.Configuration.Configuration;
@@ -2056,7 +2081,7 @@ body {
 }
 
 input {
-  width: 1rem !important;
+  width: 4em !important;
   border: 1px solid black !important;
   border-radius: 3px !important;
 }
