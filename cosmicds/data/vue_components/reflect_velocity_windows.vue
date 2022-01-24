@@ -67,22 +67,33 @@
             </v-card-text>
           </v-window-item>
           -->
-          <v-lazy>
           <v-window-item :value="4">
-            <v-card-text>
-              Now that we agree the galaxies are not static, let’s calculate how fast these galaxies are moving.
+            <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+            <p>
+              Step 1: We will use the Doppler equation, which relates the observed wavelength of your spectral lines to their rest wavelength as follows:
+            </p>
+            <p>
+              $$ v=c \left(\frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}}-1\right) $$
+              $$ v\text{: velocity of your galaxy, in km/s}$$ 
+              $$ c\text{: speed of light, 300,000 km/s}$$
+              $$ \lambda_{\text{obs}}\text{: observed wavelength of spectral line in your galaxy} $$
+              $$ \lambda_{\text{rest}}\text{: rest wavelength of spectral line} $$
+            </p>
 
-              <p>
-                We will use the Doppler equation, which relates the observed wavelength of your spectral lines to their rest wavelength as follows:
-              </p>
-              <p>
-                $$ v=c \left(\frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}}-1\right) $$
-              </p>
-              <p>
-                $$ x = \frac{\input[my-id][my-class my-class-2]{} - 1}{\input[my-id-2][my-class]{}} $$
-              </p>
+            <p>
+              Step 2: Click on a row of your table to choose one of your galaxies and calculate its velocity. 
+            </p>
+            <p>
+              (highlight row in table)
+            </p>
 
-
+            <p>
+              Step 3: Enter the observed and rest wavelengths of your spectral line into the cells in the equation below:
+            </p>
+            <p>
+              $$ v=c \left(\frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}}-1\right) = c \left(\frac{\bbox[DarkSlateGrey]{\input[lam_obs][]{}}}{\bbox[DarkSlateGrey]{\input[lam_rest][]{}}}-1\right)  $$
+            </p>
+          </v-window-item>
 
 
 
@@ -151,7 +162,7 @@
             </v-card-text>
 
           </v-window-item>
-          </v-lazy>
+
           <v-window-item :value="4">
             <div class="pa-4 text-center">
               <v-img
