@@ -25,16 +25,30 @@
         <v-card-title
           class="text-h6 font-weight-regular justify-space-between"
         >
-          <span>{{ currentTitle }}</span>
-          <v-avatar
-            color="info"
-            class="subheading white--text"
-            size="24"
-            v-text="step"
-          ></v-avatar>
+          <span>
+            <v-avatar
+              color="info"
+              class="subheading white--text mr-4"
+              size="24"
+              v-text="step"
+            ></v-avatar>
+            {{ currentTitle }}
+          </span>
+          <span
+            @click="() => { $emit('close'); dialog = false; }"
+          >
+            <v-btn
+              icon
+            >
+              <v-icon>
+                mdi-close
+              </v-icon>
+            </v-btn>
+          </span>
         </v-card-title>
 
         <v-window
+          style="min-height: 250px;"
           v-model="step"
           vertical
         >
@@ -163,3 +177,11 @@ module.exports = {
   },
 };
 </script>
+
+<style>
+
+div {
+  color: "purple";
+}
+
+</style>
