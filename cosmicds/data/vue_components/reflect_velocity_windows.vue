@@ -1,9 +1,9 @@
 <template>
   <v-btn
-  block
-      color="accent"
-      class="black--text"
-      @click.stop="dialog = true"
+    block
+    color="primary"
+    elevation="2"
+    @click.stop="dialog = true"
   >
     <v-icon
       class="mr-4"
@@ -24,13 +24,26 @@
         <v-card-title
           class="text-h6 font-weight-regular justify-space-between"
         >
-          <span>{{ currentTitle }}</span>
-          <v-avatar
-            color="info"
-            class="subheading white--text"
-            size="24"
-            v-text="step"
-          ></v-avatar>
+          <span>
+            <v-avatar
+              color="info"
+              class="subheading white--text mr-4"
+              size="24"
+              v-text="step"
+            ></v-avatar>
+            {{ currentTitle }}
+          </span>
+          <span
+            @click="() => { dialog = false; }"
+          >
+            <v-btn
+              icon
+            >
+              <v-icon>
+                mdi-close
+              </v-icon>
+            </v-btn>
+          </span>
         </v-card-title>
 
         <v-window
@@ -172,7 +185,7 @@
             :disabled="step < 4"
             color="accent darken-1"
             depressed
-            @click="() => { $emit('close'); dialog = false; }"
+            @click="() => { $emit('submit'); dialog = false; }"
           >
             {{ closeText }}
           </v-btn>
