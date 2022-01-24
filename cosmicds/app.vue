@@ -690,7 +690,7 @@
                                     <reflect-velocity-windows
                                       button-text="do"
                                       close-text="submit"
-                                      @close="
+                                      @submit="
                                         console.log('Submit button was clicked.');
                                         state.rv1_visible = 0;
                                         state.calc_visible = 'd-block';
