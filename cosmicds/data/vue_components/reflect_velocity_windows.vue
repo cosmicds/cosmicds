@@ -95,6 +95,16 @@
             </p>
           </v-window-item>
 
+          <v-window-item :value="5">
+            <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+            <p>
+              Step 4: (Can't get here until values in Step 3 are entered correctly)
+            </p>
+            <p>
+              $$ v=c \left(\frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}}-1\right) = c \left(\frac{\bbox[DarkSlateGrey]{\text{this should display student's value of lam_obs}}}{\bbox[DarkSlateGrey]{\text{this should display student's value of lam_rest}}}-1\right) = c \left(\bbox[DarkSlateGrey]{\input[ratio_lam][]{}}-1\right)  $$
+            </p>
+          </v-window-item>
+
 
 
 <!--
@@ -194,15 +204,15 @@
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            :disabled="step === 4"
+            :disabled="step === 5"
             color="accent"
             text
             @click="step++;"
           >
-            {{ step < 4 ? 'next' : '' }}
+            {{ step < 5 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled="step < 4"
+            :disabled="step < 5"
             color="accent darken-1"
             depressed
             @click="() => { $emit('close'); dialog = false; }"
