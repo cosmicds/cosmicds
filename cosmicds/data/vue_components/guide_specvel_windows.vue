@@ -1,8 +1,7 @@
 <template>
   <v-btn
     block
-    class="black--text"
-    color="accent"
+    color="primary"
     elevation="2"
     @click.stop="dialog = true"
   >

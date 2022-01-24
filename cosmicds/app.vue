@@ -333,26 +333,26 @@
                                 <div
                                   class="text-center my-8"
                                 >
-                                    <v-btn
-                                      class="black--text"
-                                      color="success"
-                                      elevation="2"
-                                      :disabled="state.gals_total == 5"
-                                      @click="
-                                        state.gal_snackbar = 0;
-                                        state.dist_snackbar = 0;
-                                        state.marker_snackbar = 0;
-                                        state.vel_snackbar = 0;
-                                        state.data_ready_snackbar = 0;
-                                        state.gal_snackbar = 1;
-                                        state.gal_selected = 1;
-                                        state.haro_on = 'd-block';
-                                        state.gals_total += 1;
-                                        add_galaxy_data_point();
-                                      "
-                                    >
-                                      select galaxy
-                                    </v-btn>
+                                  <v-btn
+                                    class="black--text"
+                                    color="success"
+                                    elevation="2"
+                                    :disabled="state.gals_total == 5"
+                                    @click="
+                                      state.gal_snackbar = 0;
+                                      state.dist_snackbar = 0;
+                                      state.marker_snackbar = 0;
+                                      state.vel_snackbar = 0;
+                                      state.data_ready_snackbar = 0;
+                                      state.gal_snackbar = 1;
+                                      state.gal_selected = 1;
+                                      state.haro_on = 'd-block';
+                                      state.gals_total += 1;
+                                      add_galaxy_data_point();
+                                    "
+                                  >
+                                    select galaxy
+                                  </v-btn>
                                 </div>
                                 
                                 <v-divider
@@ -606,6 +606,26 @@
                                 <div>
                                   Let’s learn how a spectrum can tell us if an object is moving toward or away from us.
                                 </div>
+
+                                <div class="text-center my-8">
+                                  <v-btn
+                                    class="black--text"
+                                    color="success"
+                                    elevation="2"
+                                    @click="
+                                      state.gal_snackbar = 0;
+                                      state.dist_snackbar = 0;
+                                      state.marker_snackbar = 0;
+                                      state.vel_snackbar = 0;
+                                      state.data_ready_snackbar = 0;
+                                      state.marker_snackbar = 1;
+                                      state.marker_set = 1;
+                                      state.rv1_visible = 1;
+                                    "
+                                  >
+                                    set marker &times; 5
+                                  </v-btn>
+                                </div>
                                 <v-divider
                                   class="my-4"
                                 >
@@ -651,7 +671,7 @@
                                 >
                                   <!-- FORM DIALOG as template for reflections/MC -->
                                   <guide-specvel-windows
-                                    button-text="start"
+                                    button-text="info"
                                     close-text="submit"
                                     @close="
                                       console.log('Submit button was clicked.');
@@ -663,110 +683,31 @@
                                 <v-col
                                   cols="6"
                                 >
-                                  <!-- FORM DIALOG as template for reflections/MC -->
-                                  <reflect-velocity-windows
-                                    button-text="do"
-                                    close-text="submit"
-                                    @close="
-                                      console.log('Submit button was clicked.');
-                                      state.rv1_visible = 0;
-                                      state.calc_visible = 'd-block';
-                                    "
+                                  <span
+                                    :class="state.marker_set ? 'd-block' : 'd-none'"
                                   >
-                                  </reflect-velocity-windows>
+                                    <!-- FORM DIALOG as template for reflections/MC -->
+                                    <reflect-velocity-windows
+                                      button-text="do"
+                                      close-text="submit"
+                                      @close="
+                                        console.log('Submit button was clicked.');
+                                        state.rv1_visible = 0;
+                                        state.calc_visible = 'd-block';
+                                      "
+                                    >
+                                    </reflect-velocity-windows>
+                                  </span>
                                 </v-col>
                               </v-row>
-
-
-
-                              <!-- GUIDANCE DIALOG - Explore Spectra & Velocities - might be able to delete this if the button works in the alert   -->
-                              <v-container
-                                class="d-none"
-                              >
-                                <v-row
-                                  class="text-center"
-                                >
-                                  <v-col
-                                  >
-                                    <!-- FORM DIALOG as template for reflections/MC -->
-                                    <reflect-velocity-windows
-                                      button-text="reflect"
-                                      close-text="submit"
-                                      @close="
-                                        console.log('Submit button was clicked.');
-                                        state.rv1_visible = 0;
-                                        state.calc_visible = 'd-block';
-                                      "
-                                    >
-                                    </reflect-velocity-windows>
-                                  </v-col>
-                                </v-row>
-                              </v-container>
-
-
-
-                              <v-alert
-                                border="left"
-                                color="indigo"
-                                dark
-                                elevation="2"
-                                class="mb-12"
-                              >
-                              <!-- Our SME told me that E galaxies aren't likely to have H-alpha lines, so we will need to give
-                              options for measuring other types of lines too, like Ca or K lines. We can figure this out once
-                              we have the data set to look at.-->
-                                Use the mouse to drag the vertical wavelength marker until it lines up with the labeled absorption or emission line. Left-click to record the element and wavelength of the line.
-
-                                <!-- The click action will be on the spectrum itself, so we can remove this when it is active -->
-                                <div class="text-center mt-4">
-                                  <v-btn
-                                    :disabled="!state.gal_selected"
-                                    class="white--text"
-                                    color="purple darken-2"
-                                    @click="
-                                      state.gal_snackbar = 0;
-                                      state.dist_snackbar = 0;
-                                      state.marker_snackbar = 0;
-                                      state.vel_snackbar = 0;
-                                      state.data_ready_snackbar = 0;
-                                      state.marker_snackbar = 1;
-                                      state.marker_set = 1;
-                                      state.rv1_visible = 1;
-                                    "
-                                  >
-                                    set marker
-                                  </v-btn>
-                                </div>
-                              </v-alert>
-                              <v-container
-                                :class="state.rv1_visible ? 'd-block' : 'd-none'"
-                              >
-                                <v-row
-                                  class="text-center"
-                                >
-                                  <v-col
-                                  >
-                                    <!-- FORM DIALOG as template for reflections/MC -->
-                                    <reflect-velocity-windows
-                                      button-text="reflect"
-                                      close-text="submit"
-                                      @close="
-                                        console.log('Submit button was clicked.');
-                                        state.rv1_visible = 0;
-                                        state.calc_visible = 'd-block';
-                                      "
-                                    >
-                                    </reflect-velocity-windows>
-                                  </v-col>
-                                </v-row>
-                              </v-container>
 
                               <div
                                 :class="state.calc_visible"
                               >
                                 <!-- CARD to CALCULATE the velocity from the wavelength -->
+                                <!-- COMEUP -->
                                 <v-card
-                                  color="indigo lighten-5"
+                                  color="warning"
                                   class="mb-4"
                                   :disabled="!state.marker_set"
                                 >
@@ -785,7 +726,7 @@
                                     ></v-text-field>
                                     <v-btn
                                       block
-                                      color="purple darken-2"
+                                      color="primary"
                                       class="px-auto"
                                       max-width="100%"
                                       dark
@@ -858,30 +799,6 @@
                                   </v-col>
                                 </v-row>
                               </v-container>
-
-                              <!-- Card to hold an Informational VIDEO -->
-                              <v-card
-                                outlined
-                                class="pa-5 mt-8"
-                                color="orange lighten-5"
-                                elevation="0"
-                              >
-                                Watch this video for instructions on measuring
-                                wavelengths and velocities based on emission
-                                and absorption lines.
-
-                                <div class="text-center mt-4">
-                                  <video-dialog
-                                    button-text="learn more"
-                                    title-text="How do we measure galaxy velocity?"
-                                    close-text="close"
-                                    @close="console.log('Close button was clicked.')"
-                                  >
-                                    Verbiage about comparing observed and
-                                    rest wavelengths of absorption/emission lines
-                                  </video-dialog>
-                                </div>
-                              </v-card>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -1062,6 +979,7 @@
                             </v-col>
 
                             <!-- SIDEBAR COLUMN to hold galaxy details and Estimate Distance -->
+                            <!-- COMEDOWN -->
                             <v-col cols="12" md="4">
                               <div
                                 :class="state.haro_on"

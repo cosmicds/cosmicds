@@ -1,9 +1,9 @@
 <template>
   <v-btn
-  block
-      color="accent"
-      class="black--text"
-      @click.stop="dialog = true"
+    block
+    color="primary"
+    elevation="2"
+    @click.stop="dialog = true"
   >
     <v-icon
       class="mr-4"
