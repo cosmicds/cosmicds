@@ -501,8 +501,10 @@
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-toolbar>
-                                <jupyter-widget :widget="viewers.spectrum_viewer" >
-                                </jupyter-widget>  
+                                  <v-lazy>
+                                    <jupyter-widget :widget="viewers.spectrum_viewer" >
+                                    </jupyter-widget>  
+                                  </v-lazy>
                               </v-card>
                             </v-col>
                             <!-- SIDEBAR COLUMN for processing velocity data -->
@@ -672,10 +674,10 @@
                                   <!-- FORM DIALOG as template for reflections/MC -->
                                   <guide-specvel-windows
                                     button-text="info"
-                                    close-text="submit"
+                                    close-text="done"
                                     @close="
-                                      console.log('Submit button was clicked.');
-                                      state.vel_win_unopened = 0;
+                                      console.log('Done button was clicked.');
+                                      state.vel_win_unopened = 0;d
                                     "
                                   >
                                   </guide-specvel-windows>
