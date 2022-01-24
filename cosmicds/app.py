@@ -97,6 +97,8 @@ class ApplicationState(State):
     
     spectrum_tool_visible = CallbackProperty(0)
 
+    vel_win_unopened = CallbackProperty(1)
+
     #state variables for reflections
     rv1_visible = CallbackProperty(0)
 
