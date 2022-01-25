@@ -97,6 +97,7 @@ class ApplicationState(State):
     galaxy_table_visible = CallbackProperty(0)
     
     spectrum_tool_visible = CallbackProperty(0)
+    spectrum_tool_loading = CallbackProperty(False)
 
     #state variables for reflections
     rv1_visible = CallbackProperty(0)
@@ -469,8 +470,11 @@ class Application(VuetifyTemplate):
         # When we select an item in the galaxy table, we want to display its spectrum
         galaxy_table = self.components['c-galaxy-table']
         def galaxy_table_selected_changed(change):
+            print(change)
             if change["new"] == change["old"]:
                 return
+
+            self.state.spectrum_tool_loading = True
             table = self.components['c-galaxy-table']
             selected = change["new"]
             state = table.subset_state_from_selected(selected)
@@ -500,7 +504,6 @@ class Application(VuetifyTemplate):
                 dc.remove(dc[spectrum_name + '[SPECOBJ]'])
                 dc.remove(dc[spectrum_name + '[SPZLINE]'])
 
-            self.state.spectrum_tool_visible = 0
             data = dc[data_name]
             spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
             if len(spectrum_viewer.layers) > 0:
@@ -520,7 +523,7 @@ class Application(VuetifyTemplate):
                     layer.state.visible = False
             spectrum_viewer.layers[0].state.attribute = data.id['flux']
 
-            self.state.spectrum_tool_visible = 1
+            self.state.spectrum_tool_loading = False
 
         galaxy_table.observe(galaxy_table_selected_changed, names=['selected'])
 

@@ -467,16 +467,16 @@
                                 </v-toolbar>
                                 <v-lazy>
                                   <jupyter-widget
-                                    v-if="state.spectrum_tool_visible"
+                                    v-if="!state.spectrum_tool_loading"
                                     :widget="viewers.spectrum_viewer"
                                   >
                                   </jupyter-widget>
                                   <v-progress-circular
-                                    v-if="!state.spectrum_tool_visible"
+                                    v-if="state.spectrum_tool_loading"
                                     indeterminate
                                     color="primary"
                                     :size="50"
-                                    style="left: calc(50% - 25px); top: calc(50% - 25px)"
+                                    style="top: calc(50% - 25px); left: calc(50% - 25px);"
                                   ></v-progress-circular>
                                 </v-lazy>
                               </v-card>
