@@ -169,7 +169,7 @@
                                 <!-- WWT GALAXY PICKER as Jupyter Widget -- v-lazy loads when visible -->
                                 <v-lazy>
                                   <jupyter-widget
-                                    :widget="viewers.wwt_viewer"
+                                    :widget="widgets.wwt_widget"
                                   ></jupyter-widget>
                                 </v-lazy>
                               </div>
@@ -310,8 +310,6 @@
                                         state.vel_snackbar = 0;
                                         state.data_ready_snackbar = 0;
                                         state.gal_snackbar = 1;
-                                        state.gals_total += 1;
-                                        add_galaxy_data_point();
                                       "
                                     >
                                       next
@@ -358,30 +356,7 @@
                                 <v-row
                                   align="center"
                                   no-gutters
-                                >
-                                  <v-col>
-                                    <v-btn
-                                      class="black--text"
-                                      color="success"
-                                      elevation="2"
-                                      @click="
-                                        state.gal_snackbar = 0;
-                                        state.dist_snackbar = 0;
-                                        state.marker_snackbar = 0;
-                                        state.vel_snackbar = 0;
-                                        state.data_ready_snackbar = 0;
-                                        state.gal_snackbar = 1;
-                                        state.gal_selected = 1;
-                                        state.haro_on = 'd-block';
-                                        state.gals_total += 1;
-                                        add_galaxy_data_point();
-                                      "
-                                    >
-                                      select galaxy ({{ state.gals_total }})
-                                    </v-btn>
-                                  </v-col>
-                                  <v-spacer></v-spacer>
-                                  
+                                >   
                                   <v-col
                                     cols="2"
                                     class="shrink"
@@ -490,8 +465,20 @@
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-toolbar>
-                                <jupyter-widget :widget="viewers.spectrum_viewer" >
-                                </jupyter-widget>  
+                                <v-lazy>
+                                  <jupyter-widget
+                                    v-if="state.spectrum_tool_visible"
+                                    :widget="viewers.spectrum_viewer"
+                                  >
+                                  </jupyter-widget>
+                                  <v-progress-circular
+                                    v-if="!state.spectrum_tool_visible"
+                                    indeterminate
+                                    color="primary"
+                                    :size="50"
+                                    style="left: calc(50% - 25px); top: calc(50% - 25px)"
+                                  ></v-progress-circular>
+                                </v-lazy>
                               </v-card>
                             </v-col>
                             <!-- SIDEBAR COLUMN for processing velocity data -->
