@@ -58,50 +58,44 @@ v.theme.themes.light.anchor = ''
 class ApplicationState(State):
     # set the darkmode state
     darkmode = CallbackProperty(1)
+
+    # set the marker for the current scaffold burst
     marker = CallbackProperty('exp_sky1')
 
-    over_model = CallbackProperty(1)
-    col_tab_model = CallbackProperty(0)
-    est_model = CallbackProperty(0)
-    analysis_tabs = CallbackProperty(0)
+    # set the point for a variety of step/tab sequences
+    over_model = CallbackProperty(1)     # Overall stepper
+    analysis_tabs = CallbackProperty(0)  # The analysis tabs on page 3
 
-    # expansion toggle
+    # quick-open toggle (at top of the pages)
     toggle_on = CallbackProperty('d-none')
     toggle_off = CallbackProperty('d-block')
 
+    # a bunch of snackbars
     gal_snackbar = CallbackProperty(0)
     dist_snackbar = CallbackProperty(0)
     marker_snackbar = CallbackProperty(0)
     vel_snackbar = CallbackProperty(0)
     data_ready_snackbar = CallbackProperty(0)
 
+    # certain checkpoints
+    galaxy_table_visible = CallbackProperty(0)
+    gals_total = CallbackProperty(0)
     gal_selected = CallbackProperty(0)
-    dist_measured = CallbackProperty(0)
-    marker_set = CallbackProperty(0)
+    spectrum_tool_visible = CallbackProperty(0)
+    waveline_set = CallbackProperty(0)
+    vel_win_unopened = CallbackProperty(1)
+    vels_total = CallbackProperty(0)
     vel_measured = CallbackProperty(0)
+    dist_measured = CallbackProperty(0)
     adddata_disabled = CallbackProperty(1)
-    prev1_disabled = CallbackProperty(1)
     next1_disabled = CallbackProperty(1)
 
-    gals_total = CallbackProperty(0)
-    vels_total = CallbackProperty(0)
-
-    haro_on = CallbackProperty("d-none")
+    # these will get deleted when we delete the box, which will be very soon...
     galaxy_vel = CallbackProperty("")
-
     calc_visible = CallbackProperty("d-none")
 
-    #step 1 alerts
-    wwt_active = CallbackProperty(0)
-    galaxy_table_visible = CallbackProperty(0)
-    
-    spectrum_tool_visible = CallbackProperty(0)
-
-    vel_win_unopened = CallbackProperty(1)
-
+ 
     #state variables for reflections
-    rv1_visible = CallbackProperty(0)
-
     draw_on = CallbackProperty(0)
     bestfit_on = CallbackProperty(0)
     bestfit_drawn = CallbackProperty(False)

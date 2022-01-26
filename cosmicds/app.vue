@@ -44,11 +44,10 @@
           state.marker = 'exp_sky1';
           state.toggle_on = 'd-none';
           state.toggle_off = 'd-block';
-          state.haro_on = 'd-none';
-          state.rv1_visible = 0;
           state.galaxy_table_visible = 0;
           state.gal_selected = 0;
           state.spectrum_tool_visible = 0;
+          state.waveline_set = 0;
         "
       >
         <v-icon
@@ -58,20 +57,19 @@
       <v-btn
         icon
         @click="
-          state.haro_on = 'd-block';
-          state.rv1_visible = 1;
-          state.galaxy_table_visible = 1;
-          state.gal_selected = 1;
-          state.gals_total += 5;
-          add_galaxy_data_point();
-          add_galaxy_data_point();
-          add_galaxy_data_point();
-          add_galaxy_data_point();
-          add_galaxy_data_point();
-          state.spectrum_tool_visible = 1;
-          state.marker = '';
+          state.marker = 'mee_spe2';
           state.toggle_on = 'd-block';
           state.toggle_off = 'd-none';
+          state.galaxy_table_visible = 1;
+          state.gal_selected = 1;
+          state.spectrum_tool_visible = 1;
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          add_galaxy_data_point();
+          state.gals_total += 5;
+          state.waveline_set = 0;
         "
       >
         <v-icon
@@ -126,11 +124,6 @@
                     <v-stepper-header
                       dense
                     >
-                      <!-- :complete="state.over_model > 1"   
-                            : is a binding - binds state of "complete" to the thing in the "".  If over_model is > 1, then we have gone past step 1.
-                      therefore, consider step 1 complete. -->
-                      <!-- Another example could be something like :disabled = "state.continue_button_disabled==1" -->
-
                       <v-stepper-step
                         :complete="state.over_model > 1"
                         step="1"
@@ -152,7 +145,7 @@
                       <v-divider></v-divider>
 
                       <v-stepper-step
-                        :complete="state.over_model > 4"
+                        :complete="state.over_model > 3"
                         step="3"
                         editable
                       >
@@ -363,7 +356,6 @@
                                       state.data_ready_snackbar = 0;
                                       state.gal_snackbar = 1;
                                       state.gal_selected = 1;
-                                      state.haro_on = 'd-block';
                                       state.gals_total += 1;
                                       add_galaxy_data_point();
                                     "
@@ -638,8 +630,7 @@
                                       state.vel_snackbar = 0;
                                       state.data_ready_snackbar = 0;
                                       state.marker_snackbar = 1;
-                                      state.marker_set = 1;
-                                      state.rv1_visible = 1;
+                                      state.waveline_set = 1;
                                     "
                                   >
                                     set marker &times; 5
@@ -703,7 +694,7 @@
                                   cols="6"
                                 >
                                   <span
-                                    :class="state.marker_set ? 'd-block' : 'd-none'"
+                                    :class="state.waveline_set ? 'd-block' : 'd-none'"
                                   >
                                     <!-- FORM DIALOG as template for reflections/MC -->
                                     <reflect-velocity-windows
@@ -711,7 +702,6 @@
                                       close-text="submit"
                                       @submit="
                                         console.log('Submit button was clicked.');
-                                        state.rv1_visible = 0;
                                         state.calc_visible = 'd-block';
                                       "
                                     >
@@ -724,11 +714,10 @@
                                 :class="state.calc_visible"
                               >
                                 <!-- CARD to CALCULATE the velocity from the wavelength -->
-                                <!-- COMEUP -->
                                 <v-card
                                   color="warning"
                                   class="mb-4"
-                                  :disabled="!state.marker_set"
+                                  :disabled="!state.waveline_set"
                                 >
                                   <v-card-text>
                                     <v-text-field
@@ -998,10 +987,9 @@
                             </v-col>
 
                             <!-- SIDEBAR COLUMN to hold galaxy details and Estimate Distance -->
-                            <!-- COMEDOWN -->
                             <v-col cols="12" md="4">
                               <div
-                                :class="state.haro_on"
+                                :class="state.gal_selected ? 'd-block' : 'd-none'"
                               >
                                 <v-card
                                   color="warning"
@@ -1743,12 +1731,6 @@
                             </v-card>
                           </v-row>
                         </v-container>
-                        <!-- Disabling for now
-                        <v-btn color="primary" @click="state.over_model = 3">
-                          Continue
-                        </v-btn>
-                        <v-btn text> Cancel </v-btn>
-                        -->
                       </v-stepper-content>
                     </v-stepper-items>
                   </v-stepper>
@@ -1770,7 +1752,7 @@
                     <v-spacer></v-spacer>
 
                     <!-- for TESTING, use the following -- :disabled="false" -->
-                    <!-- for FINAL, use the following -- :disabled="state.over_model == 4 ? true : state.next1_disabled" -->
+                    <!-- for FINAL, use the following -- :disabled="state.over_model == 3 ? true : state.next1_disabled" -->
                     <v-btn
                       :disabled="false"
                       color="primary"
@@ -1851,7 +1833,6 @@
         text
         @click="
           state.dist_snackbar = 0;
-          state.col_tab_model = 1
         "
       >
           Go to Measure Velocity
@@ -1886,7 +1867,6 @@
         text
         @click="
           state.vel_snackbar = 0;
-          state.col_tab_model = 0
         "
       >
           Go to Estimate Distance
