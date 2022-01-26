@@ -46,11 +46,7 @@
           state.galaxy_table_visible = 1;
           state.gal_selected = 1;
           state.gals_total += 5;
-          add_galaxy_data_point();
-          add_galaxy_data_point();
-          add_galaxy_data_point();
-          add_galaxy_data_point();
-          add_galaxy_data_point();
+          testing_add_data();
           state.spectrum_tool_visible = 1;
           state.marker = '';
           state.toggle_on = 'd-block';
@@ -168,9 +164,7 @@
                               >
                                 <!-- WWT GALAXY PICKER as Jupyter Widget -- v-lazy loads when visible -->
                                 <v-lazy>
-                                  <jupyter-widget
-                                    :widget="widgets.wwt_widget"
-                                  ></jupyter-widget>
+                                  <c-selection-tool></c-selection-tool>
                                 </v-lazy>
                               </div>
                             </v-col>
@@ -252,8 +246,10 @@
                                       color="accent"
                                       class="black--text"
                                       elevation="2"
+                                      :disabled="!state.exploration_complete"
                                       @click="
                                         state.marker = 'sel_gal1';
+                                        state.galaxy_data_displayed = true;
                                       "
                                     >
                                       next
@@ -301,16 +297,7 @@
                                       color="accent"
                                       class="black--text"
                                       elevation="2"
-                                      @click="
-                                        state.marker = 'sel_gal2';
-                                        state.galaxy_table_visible = 1;
-                                        state.gal_snackbar = 0;
-                                        state.dist_snackbar = 0;
-                                        state.marker_snackbar = 0;
-                                        state.vel_snackbar = 0;
-                                        state.data_ready_snackbar = 0;
-                                        state.gal_snackbar = 1;
-                                      "
+                                      @click="first_galaxy_selected()"
                                     >
                                       next
                                     </v-btn>

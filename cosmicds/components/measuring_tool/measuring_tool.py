@@ -1,13 +1,10 @@
-import os
 import ipyvue as v
 from astropy.coordinates import Angle
-from astropy.coordinates.sky_coordinate import SkyCoord
 import astropy.units as u
 from cosmicds.utils import RepeatedTimer, load_template
-from traitlets import Instance, Bool, Float, Int, Unicode, observe
+from traitlets import Instance, Bool, Float, Int, observe
 from ipywidgets import DOMWidget, widget_serialization
 from datetime import datetime
-
 
 def angle_to_json(angle, _widget):
     return {
@@ -31,6 +28,8 @@ class MeasuringTool(v.VueTemplate):
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
 
+    UPDATE_TIME = 1 #seconds
+
     def __init__(self, wwt, *args, **kwargs):
         self.widget = wwt
         self.measuring = kwargs.get('measuring', False)
@@ -38,7 +37,7 @@ class MeasuringTool(v.VueTemplate):
         self.angular_height = Angle(60, u.deg)
         self.widget._set_message_type_callback('wwt_view_state', self._handle_view_message)
         self.last_update = datetime.now()
-        self._rt = RepeatedTimer(1, self._check_measuring_allowed)
+        self._rt = RepeatedTimer(self.UPDATE_TIME, self._check_measuring_allowed)
         super().__init__(*args, **kwargs)
 
     def reset_canvas(self):
@@ -54,7 +53,7 @@ class MeasuringTool(v.VueTemplate):
     def _check_measuring_allowed(self):
         if self.view_changing:
             delta = datetime.now() - self.last_update
-            if delta.total_seconds() >= 1:
+            if delta.total_seconds() >= self.UPDATE_TIME:
                 self.view_changing = False
 
     @observe('measuredDistance')
