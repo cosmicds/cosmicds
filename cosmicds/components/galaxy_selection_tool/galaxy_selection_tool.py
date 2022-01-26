@@ -58,7 +58,7 @@ class GalaxySelectionTool(v.VueTemplate):
         self._dec = dec
         self._fov = fov
         self.last_update = datetime.now()
-        if self.pan_count >= 3 and self.zoom_count >= 3:
+        if self.pan_count >= 2 and self.zoom_count >= 2:
             self.exploration_complete = True
             self.widget._set_message_type_callback('wwt_view_state', None)
 

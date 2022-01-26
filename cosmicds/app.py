@@ -281,7 +281,7 @@ class Application(VuetifyTemplate):
         def on_exploration_completed(change):
             self.state.exploration_complete = change["new"]
 
-        def display_galaxy_data(self):
+        def display_galaxy_data(value=None):
             from pandas import read_csv
             from astropy.table import Table as Astropy_Table
             df = read_csv(str(data_dir / "SDSS_all_sample_filtered.csv"))
