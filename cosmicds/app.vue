@@ -41,6 +41,23 @@
       <v-btn
         icon
         @click="
+          state.marker = 'exp_sky1';
+          state.toggle_on = 'd-none';
+          state.toggle_off = 'd-block';
+          state.haro_on = 'd-none';
+          state.rv1_visible = 0;
+          state.galaxy_table_visible = 0;
+          state.gal_selected = 0;
+          state.spectrum_tool_visible = 0;
+        "
+      >
+        <v-icon
+        >mdi-replay</v-icon>
+      </v-btn>
+
+      <v-btn
+        icon
+        @click="
           state.haro_on = 'd-block';
           state.rv1_visible = 1;
           state.galaxy_table_visible = 1;
