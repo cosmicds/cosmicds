@@ -84,15 +84,10 @@ class ApplicationState(State):
     spectrum_tool_visible = CallbackProperty(0)
     waveline_set = CallbackProperty(0)
     vel_win_unopened = CallbackProperty(1)
-    vels_total = CallbackProperty(0)
     vel_measured = CallbackProperty(0)
     dist_measured = CallbackProperty(0)
     adddata_disabled = CallbackProperty(1)
     next1_disabled = CallbackProperty(1)
-
-    # these will get deleted when we delete the box, which will be very soon...
-    galaxy_vel = CallbackProperty("")
-    calc_visible = CallbackProperty("d-none")
 
  
     #state variables for reflections

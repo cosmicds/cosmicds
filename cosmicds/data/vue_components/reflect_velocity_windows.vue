@@ -80,72 +80,71 @@
 
           <v-window-item :value="3">
             <v-card-text>
-              Now that we agree the galaxies are not static, let’s calculate how fast these galaxies are moving.
-              <v-row>
-                <v-col cols = 6>
-                </v-col>
-                <v-col cols = 6>
-                  <v-row>
-                    <v-col cols = "5">
-                      <v-text-field
-                        label="observed wavelength"
-                        outlined
-                      ></v-text-field>
-                    </v-col>
-                    <v-col
-                      cols = "2"
-                      class="text-center"
-                    >
-                      -
-                    </v-col>
-                    <v-col cols = "5">
-                      <v-text-field
-                        label="rest wavelength"
-                        outlined
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-divider class="mb-2"></v-divider>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols = "12">
-                      <v-text-field
-                        label="rest wavelength"
-                        outlined
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-
-                  <v-row>
-                    <v-col cols = "12">
-                      <v-text-field
-                        label="observed - rest"
-                        outlined
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-divider class="mb-2"></v-divider>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols = "12">
-                      <v-text-field
-                        label="rest wavelength"
-                        outlined
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
+              These were the prevailing viewpoints in the 1920's:
+              <ul class="mb-4">  
+                <li><em>The universe is static and unchanging</em></li>
+                <li><em>Galaxies in the universe are moving randomly</em></li>
+              </ul>
+              <h3>Question 1</h3>
+              Do your data support either of these conclusions?
+              <form-textarea
+                question-label="Question 1"
+              >
+              </form-textarea>
+              <h3>Question 2</h3>
+              What would you tell a scientist from 1920 regarding the prevailing wisdom about galaxies during this time?
+              <form-textarea
+                question-label="Question 2"
+              >
+              </form-textarea>
             </v-card-text>
           </v-window-item>
 
           <v-window-item :value="4">
+            <v-card-text>
+              These were the prevailing viewpoints in the 1920's:
+              <ul class="mb-4">  
+                <li><em>The universe is static and unchanging</em></li>
+                <li><em>Galaxies in the universe are moving randomly</em></li>
+              </ul>
+              <h3>Question 3</h3>
+              Based on your data, how confident are you about what you told the 1920's scientist? What would improve your confidence in your data and conclusions?
+              <form-textarea
+                question-label="Question 3"
+              >
+              </form-textarea>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="5">
+            <v-card-text>
+              <p>
+                You concluded from your data that your galaxies seem to be moving AWAY from our Milky Way galaxy.
+              </p>
+              <p>
+                The Doppler equation can be used to figure out just how fast the galaxies are moving.
+              </p>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="6">
+            <v-card-text>
+              MATHJAX Stuff
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="7">
+            <v-card-text>
+              <p>
+                Great, notice your calculated velocity is now entered in the table.
+              </p>
+              <p>
+                Now that you know how to use this equation, click below to have the velocities of the remaining galaxies calculated as well.
+              </p>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="8">
             <div class="pa-4 text-center">
               <v-img
                 class="mb-4"
@@ -174,15 +173,15 @@
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            :disabled="step === 4"
+            :disabled="step === 8"
             color="accent"
             text
             @click="step++;"
           >
-            {{ step < 4 ? 'next' : '' }}
+            {{ step < 8 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled="step < 4"
+            :disabled="step < 8"
             color="accent darken-1"
             depressed
             @click="() => { $emit('submit'); dialog = false; }"
@@ -209,10 +208,14 @@ module.exports = {
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 1: return 'Observed vs. Rest Wavelengths'
-        case 2: return 'How Galaxies Move'
-        case 3: return 'Calculate Galaxy Velocity'
-        default: return 'Complete'
+        case 1: return "Observed vs. Rest Wavelengths"
+        case 2: return "How Galaxies Move"
+        case 3: return "Feedback for a 1920's Scientist"
+        case 4: return "Confidence in Your Conclusions"
+        case 5: return "Moving Away"
+        case 6: return "MATHJAX"
+        case 7: return "Remaining Galaxy Velocities"
+        default: return "Complete"
       }
     },
   },

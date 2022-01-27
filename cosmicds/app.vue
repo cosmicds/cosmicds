@@ -57,7 +57,7 @@
       <v-btn
         icon
         @click="
-          state.marker = 'mee_spe2';
+          state.marker = 'nic_wor1';
           state.toggle_on = 'd-block';
           state.toggle_off = 'd-none';
           state.galaxy_table_visible = 1;
@@ -203,7 +203,9 @@
                                 <div
                                   class="mb-4"
                                 >
-                                  This window provides a view of the night sky. As you explore this view, you may see stars, nebulae, and galaxies.
+                                  <p>
+                                    This window provides a view of the night sky. As you explore this view, you may see stars, nebulae, and galaxies.
+                                  </p>
                                 </div>
                                 <div
                                   class="mb-2 mx-4"
@@ -534,10 +536,12 @@
                                 <div
                                   class="mb-4"
                                 >
-                                  To the left is a spectrum of light from your chosen galaxy.
-                                </div>
-                                <div>
-                                  Let’s learn how a spectrum can tell us if an object is moving toward or away from us.
+                                  <p>
+                                    To the left is a spectrum of light from your chosen galaxy.
+                                  </p>
+                                  <p>
+                                    Let’s learn how a spectrum can tell us if an object is moving toward or away from us.
+                                  </p>
                                 </div>
                                 <v-divider
                                   class="my-4"
@@ -582,7 +586,7 @@
                                       color="accent"
                                       elevation="2"
                                       @click="
-                                        state.marker = 'mee_spe2';
+                                        state.marker = 'res_wav1';
                                       "
                                     >
                                       next
@@ -593,7 +597,7 @@
 
                               <!-- GUIDANCE ALERT - Spectrum Tool #2 -->
                               <v-alert
-                                :class="state.marker == 'mee_spe2' ? 'd-block' : 'd-none'"
+                                :class="state.marker == 'res_wav1' ? 'd-block' : 'd-none'"
                                 class="mb-4"
                                 color="info"
                                 elevation="6"
@@ -601,21 +605,23 @@
                                 <h3
                                   class="mb-4"
                                 >
-                                  Meet the Spectrum Tool
+                                  Rest Wavelength
                                 </h3>
                                 <div
                                   class="mb-4"
                                 >
-                                  Let’s come back to your galaxy spectrum. Notice your spectrum has some bright spikes or faint dips.
-                                </div>
-                                <div>
-                                  The bright spikes are <strong>emission lines</strong>.
-                                </div>
-                                <div>
-                                  The faint dips are <strong>absorption lines</strong>.
-                                </div>
-                                <div>
-                                  Let’s learn how a spectrum can tell us if an object is moving toward or away from us.
+                                  <p>
+                                    Let’s come back to your galaxy spectrum. Notice your spectrum has some bright spikes or faint dips.
+                                  </p>
+                                  <p>
+                                    The bright spikes are <strong>emission lines</strong>.
+                                  </p>
+                                  <p>
+                                    The faint dips are <strong>absorption lines</strong>.
+                                  </p>
+                                  <p>
+                                    One of the lines in your spectrum is labeled with an element symbol. Click the label to note the element line and its <strong>rest wavelength</strong> in your table.
+                                  </p>
                                 </div>
 
                                 <div class="text-center my-8">
@@ -624,16 +630,9 @@
                                     color="success"
                                     elevation="2"
                                     @click="
-                                      state.gal_snackbar = 0;
-                                      state.dist_snackbar = 0;
-                                      state.marker_snackbar = 0;
-                                      state.vel_snackbar = 0;
-                                      state.data_ready_snackbar = 0;
-                                      state.marker_snackbar = 1;
-                                      state.waveline_set = 1;
                                     "
                                   >
-                                    set marker &times; 5
+                                    click the label
                                   </v-btn>
                                 </div>
                                 <v-divider
@@ -666,7 +665,222 @@
                                       class="black--text"
                                       elevation="2"
                                       @click="
-                                        state.marker = 'mee_spe2';
+                                        state.marker = 'obs_wav1';
+                                      "
+                                    >
+                                      next
+                                    </v-btn>
+                                  </v-col>
+                                </v-row>
+                              </v-alert>
+
+                              <!-- GUIDANCE ALERT - Observed Wavelength #1 -->
+                              <v-alert
+                                :class="state.marker == 'obs_wav1' ? 'd-block' : 'd-none'"
+                                class="mb-4"
+                                color="info"
+                                elevation="6"
+                              >
+                                <h3
+                                  class="mb-4"
+                                >
+                                  Observed Wavelength
+                                </h3>
+                                <div
+                                  class="mb-4"
+                                >
+                                  <p>
+                                    Your line’s rest wavelength has been recorded in the table.
+                                  </p>
+                                  <p>
+                                    Now let’s measure the <strong>observed wavelength</strong> of the line.
+                                  </p>
+                                  <p>
+                                    Slide the vertical measuring tool until it aligns with the line you identified, and click to record the line’s observed wavelength in the table.
+                                  </p>
+                                </div>
+
+                                <div class="text-center my-8">
+                                  <v-btn
+                                    class="black--text"
+                                    color="success"
+                                    elevation="2"
+                                    @click="
+                                    "
+                                  >
+                                    align tool to line
+                                  </v-btn>
+                                </div>
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-col>
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'res_wav1';
+                                      "
+                                    >
+                                      back
+                                    </v-btn>
+                                  </v-col>
+                                  <v-spacer></v-spacer>
+                                  <v-col
+                                    class="shrink"
+                                  >
+                                    <v-btn
+                                      color="accent"
+                                      class="black--text"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'rep_rem1';
+                                      "
+                                    >
+                                      next
+                                    </v-btn>
+                                  </v-col>
+                                </v-row>
+                              </v-alert>
+
+                              <!-- GUIDANCE ALERT - Repeat for Remaining Galaxies #1 -->
+                              <v-alert
+                                :class="state.marker == 'rep_rem1' ? 'd-block' : 'd-none'"
+                                class="mb-4"
+                                color="info"
+                                elevation="6"
+                              >
+                                <h3
+                                  class="mb-4"
+                                >
+                                  Repeat for Remaining Galaxies
+                                </h3>
+                                <div
+                                  class="mb-4"
+                                >
+                                  <p>
+                                    Your measurement of the line’s observed wavelength is now recorded in the table.
+                                  </p>
+                                  <p>
+                                    Repeat these measurements for your 4 remaining galaxies.
+                                  </p>
+                                </div>
+
+                                <div class="text-center my-8">
+                                  <v-btn
+                                    class="black--text"
+                                    color="success"
+                                    elevation="2"
+                                    @click="
+                                      state.gal_snackbar = 0;
+                                      state.dist_snackbar = 0;
+                                      state.marker_snackbar = 0;
+                                      state.vel_snackbar = 0;
+                                      state.data_ready_snackbar = 0;
+                                      state.marker_snackbar = 1;
+                                      state.waveline_set = 1;
+                                    "
+                                  >
+                                    repeat 4 times
+                                  </v-btn>
+                                </div>
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-col>
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'obs_wav1';
+                                      "
+                                    >
+                                      back
+                                    </v-btn>
+                                  </v-col>
+                                  <v-spacer></v-spacer>
+                                  <v-col
+                                    class="shrink"
+                                  >
+                                    <v-btn
+                                      color="accent"
+                                      class="black--text"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'nic_wor1';
+                                      "
+                                    >
+                                      next
+                                    </v-btn>
+                                  </v-col>
+                                </v-row>
+                              </v-alert>
+
+                              <!-- GUIDANCE ALERT - Nice Work #1 -->
+                              <v-alert
+                                :class="state.marker == 'nic_wor1' ? 'd-block' : 'd-none'"
+                                class="mb-4"
+                                color="info"
+                                elevation="6"
+                              >
+                                <h3
+                                  class="mb-4"
+                                >
+                                  Nice Work
+                                </h3>
+                                <div
+                                  class="mb-4"
+                                >
+                                  <p>
+                                    Now let’s examine what conclusions you might draw from your data.
+                                  </p>
+                                </div>
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-col>
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'rep_rem1';
+                                      "
+                                    >
+                                      back
+                                    </v-btn>
+                                  </v-col>
+                                  <v-spacer></v-spacer>
+                                  <v-col
+                                    class="shrink"
+                                  >
+                                    <v-btn
+                                      disabled
+                                      color="accent"
+                                      class="black--text"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'nic_wor1';
                                       "
                                     >
                                       next
@@ -702,111 +916,12 @@
                                       close-text="submit"
                                       @submit="
                                         console.log('Submit button was clicked.');
-                                        state.calc_visible = 'd-block';
                                       "
                                     >
                                     </reflect-velocity-windows>
                                   </span>
                                 </v-col>
                               </v-row>
-
-                              <div
-                                :class="state.calc_visible"
-                              >
-                                <!-- CARD to CALCULATE the velocity from the wavelength -->
-                                <v-card
-                                  color="warning"
-                                  class="mb-4"
-                                  :disabled="!state.waveline_set"
-                                >
-                                  <v-card-text>
-                                    <v-text-field
-                                      :value="state.galaxy_vel"
-                                      label="Calculated Velocity"
-                                      hint="click button below"
-                                      persistent-hint
-                                      color="purple darken-2"
-                                      class="mb-4"
-                                      suffix="km/s"
-                                      outlined
-                                      readonly
-                                      dense
-                                    ></v-text-field>
-                                    <v-btn
-                                      block
-                                      color="primary"
-                                      class="px-auto"
-                                      max-width="100%"
-                                      dark
-                                      @click="
-                                        state.gal_snackbar = 0;
-                                        state.dist_snackbar = 0;
-                                        state.marker_snackbar = 0;
-                                        state.vel_snackbar = 0;
-                                        state.data_ready_snackbar = 0;
-                                        state.vel_measured = 1;
-                                        state.dist_measured == 1
-                                          ? state.data_ready_snackbar = 1
-                                          : state.vel_snackbar = 1;
-                                        state.adddata_disabled =
-                                          state.dist_measured == 1
-                                            ? false
-                                            : true
-                                        state.galaxy_vel = Math.floor(Math.random() * 60000) + 5000
-                                        state.vels_total += 1
-                                      "
-                                    >
-                                      calculate ({{ state.vels_total }})
-                                    </v-btn>
-                                  </v-card-text>
-                                </v-card>
-                              </div>
-
-
-                              <v-container
-                                :class="state.vels_total < 5  ? 'd-none' : 'd-block'"
-                              >
-                                <v-row>
-                                  <v-col
-                                    cols="12"
-                                  >
-
-                                    <!-- FORM DIALOG as template for reflections/MC -->
-                                    <form-dialog
-                                      button-text="reflect"
-                                      title-text="Reflection Questions"
-                                      close-text="submit"
-                                      @close="console.log('Submit button was clicked.')"
-                                    >
-                                      These were the prevailing viewpoints in the 1920's:
-                                      <ul class="mb-4">  
-                                        <li><em>The universe is static and unchanging</em></li>
-                                        <li><em>Galaxies in the universe are moving randomly</em></li>
-                                      </ul>
-                                      <h3>Question 1</h3>
-                                      Do your data support either of these conclusions?
-                                      <form-textarea
-                                        question-label="Question 1"
-                                      >
-                                      </form-textarea>
-                                      <h3>Question 2</h3>
-                                      What would you tell a scientist from 1920 regarding the prevailing wisdom about galaxies during this time?
-                                      <form-textarea
-                                        question-label="Question 2"
-                                      >
-                                      </form-textarea>
-                                      <h3>Question 3</h3>
-                                      Based on your data, how confident are you about what you told the 1920's scientist?
-                                      What would improve your confidence in your data and conclusions?
-                                      <form-textarea
-                                        question-label="Question 3"
-                                      >
-                                      </form-textarea>
-                                    </form-dialog>
-
-                                  </v-col>
-                                </v-row>
-                              </v-container>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -847,18 +962,11 @@
                                           <teamaside-alert>
                                             Load galaxy position markers.
                                           </teamaside-alert>
-                                          <infodialog-alert>
-                                            The (colored) dots mark the locations of galaxies you can collect data for.
-                                            Click on one of these dots to select that galaxy.
-                                          </infodialog-alert>
                                           <teamaside-alert>
                                             (Depending on sky density of final data set, we may need to think through the UX
                                             if students have trouble panning in the sky because they keep accidentally
                                             clicking on galaxies that get added to their table.) 
                                           </teamaside-alert>
-                                          <infodialog-alert>
-                                            Notice that the table now has a row for your selected galaxy. "next"
-                                          </infodialog-alert>
                                           <infodialog-alert>
                                             Now let's take a look at your galaxy's spectrum. Recall that a spectrograph separates
                                             light from a source into its distinct colors. The spectrum graph shows how bright the
