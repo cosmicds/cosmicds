@@ -172,17 +172,37 @@
                               cols="6"
                               class="wwt_column"
                             >
-                              <!-- WIDGET for WWT galaxy selection -->
-                              <div
-                                class="wwt_widget"
+                              <!-- The CARD to hold the WWT VIEWER and where students Select Galaxies -->
+                              <v-card
+                                outlined
+                                color="info"
+                                class="pa-1"
                               >
-                                <!-- WWT GALAXY PICKER as Jupyter Widget -- v-lazy loads when visible -->
-                                <v-lazy>
-                                  <jupyter-widget
-                                    :widget="viewers.wwt_viewer"
-                                  ></jupyter-widget>
-                                </v-lazy>
-                              </div>
+                                <v-toolbar
+                                  color="secondary"
+                                  dense
+                                  dark
+                                >
+                                  <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
+
+                                  <v-spacer></v-spacer>
+
+                                  <v-btn icon>
+                                    <v-icon>mdi-information-outline</v-icon>
+                                  </v-btn>
+                                </v-toolbar>
+                                <!-- WIDGET for WWT galaxy selection -->
+                                <div
+                                  class="wwt_widget"
+                                >
+                                  <!-- WWT GALAXY PICKER as Jupyter Widget -- v-lazy loads when visible -->
+                                  <v-lazy>
+                                    <jupyter-widget
+                                      :widget="viewers.wwt_viewer"
+                                    ></jupyter-widget>
+                                  </v-lazy>
+                                </div>
+                              </v-card>
                             </v-col>
                             <v-col
                               cols="6"
@@ -2169,6 +2189,10 @@ input {
 
 .wwt_widget .v-toolbar, .wwt_measuring_tool .v-toolbar {
   display: none;
+}
+
+.wwt_widget .v-card {
+  overflow: hidden;
 }
 
 
