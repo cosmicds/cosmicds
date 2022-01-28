@@ -44,7 +44,6 @@
           state.marker = 'exp_sky1';
           state.toggle_on = 'd-none';
           state.toggle_off = 'd-block';
-          state.galaxy_table_visible = 0;
           state.gal_selected = 0;
           state.spectrum_tool_visible = 0;
           state.waveline_set = 0;
@@ -60,7 +59,6 @@
           state.marker = 'nic_wor1';
           state.toggle_on = 'd-block';
           state.toggle_off = 'd-none';
-          state.galaxy_table_visible = 1;
           state.gal_selected = 1;
           state.spectrum_tool_visible = 1;
           add_galaxy_data_point();
@@ -208,97 +206,8 @@
                               cols="6"
                               class="galtable_column"
                             >
-                              <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
-                              <v-alert
-                                :class="state.marker == 'exp_sky1' ? 'd-block' : 'd-none'"
-                                class="mb-4"
-                                color="info"
-                                elevation="6"
-                              >
-                                <h3
-                                  class="mb-4"
-                                >
-                                  Explore the Sky
-                                </h3>
-                                <div
-                                  class="mb-4"
-                                >
-                                  <p>
-                                    This window provides a view of the night sky. As you explore this view, you may see stars, nebulae, and galaxies.
-                                  </p>
-                                </div>
-                                <div
-                                  class="mb-2 mx-4"
-                                >
-                                  <v-row
-                                    no-gutters
-                                    class="mb-3"
-                                  >
-                                    <v-col
-                                      cols="3"
-                                    >
-                                      <strong>Pan</strong>
-                                    </v-col>
-                                    <v-col
-                                      cols="9"
-                                    >
-                                      <strong>click + drag</strong><br>
-                                      (or use the <strong class="codeFont">I-J-K-L</strong> keys)
-                                    </v-col>
-                                  </v-row>
-                                  <v-row
-                                    no-gutters
-                                  >
-                                    <v-col
-                                      cols="3"
-                                    >
-                                      <strong>Zoom</strong>
-                                    </v-col>
-                                    <v-col
-                                      cols="9"
-                                    >
-                                      <strong>scroll in and out</strong><br>
-                                      (or use the <strong class="codeFont">Z-X</strong> keys for finer zoom)
-                                    </v-col>
-                                  </v-row>
-                                </div>
-                                <v-divider
-                                  class="my-4"
-                                >
-                                </v-divider>
-
-                                <v-row
-                                  align="center"
-                                  no-gutters
-                                >
-                                  <v-col
-                                    cols="8"
-                                  >
-                                    Ready to proceed? Click <strong>NEXT</strong>.
-                                  </v-col>
-                                  <v-spacer></v-spacer>
-                                  <v-col
-                                    class="shrink"
-                                  >
-                                    <v-btn
-                                      color="accent"
-                                      class="black--text"
-                                      elevation="2"
-                                      @click="
-                                        state.galaxy_table_visible = 1;
-                                        state.marker = 'sel_gal1';
-                                      "
-                                    >
-                                      next
-                                    </v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-alert>
-
                               <!-- TABLE to hold Selected Galaxies -->
-                              <c-galaxy-table
-                                :class="state.galaxy_table_visible ? 'd-block' : 'd-none'"
-                              />
+                              <c-galaxy-table />
                             </v-col>
                           </v-row>
                           <v-row
@@ -323,10 +232,13 @@
                                   class="mb-4"
                                 >
                                   <p>
-                                    The <strong :class="state.darkmode ? 'green--text text--lighten-3' : 'green--text text--darken-2'">green</strong> dots scattered around the night sky mark the locations of galaxies you can collect data for. 
+                                    This is another view of the night sky, similar to the one you explored earlier. This view shows a more modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. This Data Story will focus on a nearby subset of galaxies.
                                   </p>
                                   <p>
-                                    Click on one of these dots to select that galaxy into your table.
+                                    The <strong :class="state.darkmode ? 'green--text text--lighten-3' : 'green--text text--darken-2'">green</strong> dots mark the locations of galaxies you can collect data for. 
+                                  </p>
+                                  <p>
+                                    Pan around the sky and click on one of these dots to select that galaxy.
                                   </p>
                                 </div>
                                 <div
@@ -385,6 +297,41 @@
                                     select galaxy
                                   </v-btn>
                                 </div>
+                                <div
+                                  class="mb-2 mx-4"
+                                >
+                                  <v-row
+                                    no-gutters
+                                    class="mb-3"
+                                  >
+                                    <v-col
+                                      cols="3"
+                                    >
+                                      <strong>Pan</strong>
+                                    </v-col>
+                                    <v-col
+                                      cols="9"
+                                    >
+                                      <strong>click + drag</strong><br>
+                                      (or use the <strong class="codeFont">I-J-K-L</strong> keys)
+                                    </v-col>
+                                  </v-row>
+                                  <v-row
+                                    no-gutters
+                                  >
+                                    <v-col
+                                      cols="3"
+                                    >
+                                      <strong>Zoom</strong>
+                                    </v-col>
+                                    <v-col
+                                      cols="9"
+                                    >
+                                      <strong>scroll in and out</strong><br>
+                                      (or use the <strong class="codeFont">Z-X</strong> keys for finer zoom)
+                                    </v-col>
+                                  </v-row>
+                                </div>
                                 
                                 <v-divider
                                   class="my-4"
@@ -395,19 +342,6 @@
                                   align="center"
                                   no-gutters
                                 >
-                                  <v-col>
-                                    <v-btn
-                                      class="black--text"
-                                      color="accent"
-                                      elevation="2"
-                                      @click="
-                                        state.galaxy_table_visible = 0;
-                                        state.marker = 'exp_sky1';
-                                      "
-                                    >
-                                      back
-                                    </v-btn>
-                                  </v-col>
                                   <v-spacer></v-spacer>
                                   
                                   <v-col

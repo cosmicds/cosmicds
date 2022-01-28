@@ -60,7 +60,7 @@ class ApplicationState(State):
     darkmode = CallbackProperty(1)
 
     # set the marker for the current scaffold burst
-    marker = CallbackProperty('exp_sky1')
+    marker = CallbackProperty('sel_gal1')
 
     # set the point for a variety of step/tab sequences
     over_model = CallbackProperty(1)     # Overall stepper
@@ -78,7 +78,6 @@ class ApplicationState(State):
     data_ready_snackbar = CallbackProperty(0)
 
     # certain checkpoints
-    galaxy_table_visible = CallbackProperty(0)
     gals_total = CallbackProperty(0)
     gal_selected = CallbackProperty(0)
     spectrum_tool_visible = CallbackProperty(0)
