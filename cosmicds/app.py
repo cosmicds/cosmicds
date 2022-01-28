@@ -99,9 +99,7 @@ class ApplicationState(State):
     exploration_complete = CallbackProperty(False)
     galaxy_data_displayed = CallbackProperty(False)
     galaxy_table_visible = CallbackProperty(0)
-    
     spectrum_tool_visible = CallbackProperty(0)
-    spectrum_tool_loading = CallbackProperty(False)
 
     #state variables for reflections
     rv1_visible = CallbackProperty(0)
@@ -214,6 +212,8 @@ class Application(VuetifyTemplate):
         distance_table_names = [table_columns_map[x] for x in self._distance_table_components]
         self._fit_table_components = ['ID', 'Type', 'velocity', 'distance']
         fit_table_names = [table_columns_map[x] for x in self._fit_table_components]
+
+        self._spectrum_data = None
 
         measurement_data = Data(label='student_measurements', **{x : array([], dtype='float64') for x in measurement_data_fields})
         class_data = self.data_collection['HubbleData_ClassSample']
@@ -502,60 +502,51 @@ class Application(VuetifyTemplate):
         # When we select an item in the galaxy table, we want to display its spectrum
         galaxy_table = self.components['c-galaxy-table']
         def galaxy_table_selected_changed(change):
-            print(change)
             if change["new"] == change["old"]:
                 return
 
-            self.state.spectrum_tool_loading = True
             table = self.components['c-galaxy-table']
             selected = change["new"]
             state = table.subset_state_from_selected(selected)
             mask = state.to_mask(table.glue_data)
             name = next((x for index, x in enumerate(table.glue_data["ID"]) if mask[index]), None)
             gal_type = next((x for index, x in enumerate(table.glue_data["Type"]) if mask[index]), None)
-            type_folders = {
-                "Sp" : "spirals_spectra",
-                "E" : "ellipticals_spectra",
-                "Ir" : "irregulars_spectra"
-            }
             if name is None or gal_type is None:
                 return
 
             filename = name
             spectrum_name = filename.split(".")[0]
             data_name = spectrum_name + '[COADD]'
-            dc = self.data_collection
             if data_name not in self.data_collection:
-                spectra_path = Path(__file__).parent / "data" / "spectra"
-                type_folder = spectra_path / type_folders[gal_type]
-                filepath = str(type_folder / filename)
-                self._application_handler.load_data(filepath, label=spectrum_name)
-                data_name = spectrum_name + '[COADD]'
-                data = dc[data_name]
-                data['lambda'] = 10 ** data['loglam']
-                dc.remove(dc[spectrum_name + '[SPECOBJ]'])
-                dc.remove(dc[spectrum_name + '[SPZLINE]'])
+                self._load_spectrum_data(filename, gal_type)
 
-            data = dc[data_name]
             spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
-            if len(spectrum_viewer.layers) > 0:
-                old_data = spectrum_viewer.layers[0].state.layer
-                self._application_handler.add_link(old_data, 'lambda', data, 'lambda')
-                self._application_handler.add_link(old_data, 'flux', data, 'flux')
+            dc = self.data_collection
+            data = dc[data_name]
+            if self._spectrum_data is None:
+                main_comps = [x.label for x in data.main_components]
+                components = { col : list(data[col]) for col in main_comps }
+                self._spectrum_data = Data(label='spectrum_data', **components)
+                dc.append(self._spectrum_data)
+                spectrum_viewer.add_data(self._spectrum_data)
+                spectrum_viewer.state.x_att = self._spectrum_data.id['lambda']
+                spectrum_viewer.state.y_att = self._spectrum_data.id['flux']
+                spectrum_viewer.layers[0].state.attribute = self._spectrum_data.id['flux']
                 for layer in spectrum_viewer.layers:
-                    spectrum_viewer.remove_layer(layer)
-                spectrum_viewer.remove_data(old_data)
+                    if layer.state.layer.label != self._spectrum_data.label:
+                        layer.state.visible = False
+            else:
+                self._spectrum_data.update_values_from_data(data)
+                spectrum_viewer.state.reset_limits()
 
-            spectrum_viewer.add_data(data)
-            spectrum_viewer.state.x_att = data.id['lambda']
-            spectrum_viewer.state.y_att = data.id['flux']
-            
-            for layer in spectrum_viewer.layers:
-                if layer.state.layer.label != data_name:
-                    layer.state.visible = False
-            spectrum_viewer.layers[0].state.attribute = data.id['flux']
+            self.state.gal_selected = len(selected) > 0
+            self.state.marker_set = 0
 
-            self.state.spectrum_tool_loading = False
+            # If this is the first selection we're making,
+            # we want to move the app forward
+            if self.state.marker == 'cho_row1':
+                self.state.spectrum_tool_visible = 1
+                self.state.marker = 'mee_spe1'
 
         galaxy_table.observe(galaxy_table_selected_changed, names=['selected'])
 
@@ -603,6 +594,7 @@ class Application(VuetifyTemplate):
                 return
             value = round(event["domain"]["x"], 2)
             self.add_measwave_data_point(value)
+            self.state.marker_set = 1
         spectrum_viewer.add_event_callback(on_spectrum_click, events=['click'])
 
 
@@ -861,7 +853,7 @@ class Application(VuetifyTemplate):
                 viewer.x_att = data.id['age']
 
     def _on_galaxy_selected(self, galaxy):
-        fields = ['RA', 'DEC', 'ID', 'Element', 'Type']
+        fields = ['RA', 'DEC', 'ID', 'Element', 'Type', 'Z']
         data = self.data_collection['student_measurements']
         main_components = [x.label for x in data.main_components]
         component_dict = {c : list(data[c]) for c in main_components}
@@ -879,6 +871,9 @@ class Application(VuetifyTemplate):
 
         if self.state.gals_total == 1:
             self.vue_first_galaxy_selected()
+
+        filename = galaxy['ID']
+        self._load_spectrum_data(filename, galaxy['Type'])
 
     def _scatter_selection_update(self, viewer_id, data, selections):
         viewer = self._viewer_handlers[viewer_id]
@@ -1086,6 +1081,25 @@ class Application(VuetifyTemplate):
         toolbar.active_tool = None
         self._histogram_listener.clear_subset()
 
+    def _load_spectrum_data(self, filename, gal_type):
+        type_folders = {
+            "Sp" : "spirals_spectra",
+            "E" : "ellipticals_spectra",
+            "Ir" : "irregulars_spectra"
+        }
+        spectrum_name = filename.split(".")[0]
+        dc = self.data_collection
+        spectra_path = Path(__file__).parent / "data" / "spectra"
+        type_folder = spectra_path / type_folders[gal_type]
+        filepath = str(type_folder / filename)
+        self._application_handler.load_data(filepath, label=spectrum_name)
+        data_name = spectrum_name + '[COADD]'
+        data = dc[data_name]
+        data['lambda'] = 10 ** data['loglam']
+        dc.remove(dc[spectrum_name + '[SPECOBJ]'])
+        dc.remove(dc[spectrum_name + '[SPZLINE]'])
+                
+
     def _update_data_component(self, data, attribute, values):
         if attribute in data.component_ids():
             data.update_components({data.id[attribute] : values})
@@ -1102,6 +1116,12 @@ class Application(VuetifyTemplate):
 
     def _new_measwave_data_update(self, measwave):
         self._new_field_data_update('student_measurements', 'measwave', measwave)
+
+    def _new_velocity_data_update(self, velocity):
+        self._new_field_data_update('student_measurements', 'velocity', velocity)
+
+    def _new_restwave_data_update(self, restwave):
+        self._new_field_data_update('student_measurements', 'restwave', restwave)
 
     def _new_dist_data_update(self, distance):
 
@@ -1183,7 +1203,7 @@ class Application(VuetifyTemplate):
 
         self.state.warn_size = False
         distance_value = round(MILKY_WAY_SIZE_MPC / (self.state.measured_ang_size * pi / (180 * 3600)), 0)
-        self.state.galaxy_dist = str(int(distance_value))
+        self.state.galaxy_dist = f"{distance_value:.0f}"
 
         data = self.data_collection['student_measurements']
         table = self.components['c-distance-table']
@@ -1209,6 +1229,12 @@ class Application(VuetifyTemplate):
 
     def vue_testing_add_data(self, args=None):
 
+        dummy_data = self.data_collection["dummy_student_data"]
+        names = dummy_data["ID"]
+        types = dummy_data["Type"]
+        for name, t in zip(names, types):
+            self._load_spectrum_data(name, t)
+
         self._new_galaxy_data_update(self.data_collection["dummy_student_data"])
 
         # Set the bottom-left corner of the plot to be the origin in each scatter viewer
@@ -1217,6 +1243,26 @@ class Application(VuetifyTemplate):
             viewer.state.y_min = 0
 
         self.vue_show_fit_points()
+
+    def vue_add_current_velocity(self, args=None):
+        data = self.data_collection['student_measurements']
+        table = self.components['c-galaxy-table']
+        state = table.subset_state_from_selected(table.selected)
+        mask = state.to_mask(table.glue_data)
+        index = next((index for index in range(len(mask)) if mask[index]), None)
+        if index is not None:
+            measwave = data["measwave"][index]
+            z = data["Z"][index]
+
+            restwave = data["restwave"]
+            restwave_value = round(measwave / (z + 1), 2)
+            restwave[index] = restwave_value
+            self._new_restwave_data_update(restwave)
+
+            velocity_value = int(3 * (10 ** 5) * z)
+            velocity = data["velocity"]
+            velocity[index] = velocity_value
+            self._new_velocity_data_update(velocity)
 
     def vue_reset_measurer(self, _args):
         self.components['c-measuring-tool'].reset_canvas()

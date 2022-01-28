@@ -454,17 +454,9 @@
                                 </v-toolbar>
                                 <v-lazy>
                                   <jupyter-widget
-                                    v-if="!state.spectrum_tool_loading"
                                     :widget="viewers.spectrum_viewer"
                                   >
                                   </jupyter-widget>
-                                  <v-progress-circular
-                                    v-if="state.spectrum_tool_loading"
-                                    indeterminate
-                                    color="primary"
-                                    :size="50"
-                                    style="top: calc(50% - 25px); left: calc(50% - 25px);"
-                                  ></v-progress-circular>
                                 </v-lazy>
                               </v-card>
                             </v-col>
@@ -633,6 +625,20 @@
                                     set marker
                                   </v-btn>
                                 </div>
+                              </v-alert>
+                              <v-alert
+                                border="left"
+                                color="indigo"
+                                dark
+                                elevation="2"
+                                class="mb-12">
+                                <v-btn
+                                  :disabled="!state.marker_set"
+                                  class="white-text"
+                                  color="green"
+                                  @click="add_current_velocity()"
+                                >find velocity
+                                </v-btn>
                               </v-alert>
                               <v-container
                                 :class="state.rv1_visible ? 'd-block' : 'd-none'"
