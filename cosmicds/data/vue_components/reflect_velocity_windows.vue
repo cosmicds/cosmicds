@@ -34,7 +34,7 @@
             {{ currentTitle }}
           </span>
           <span
-            @click="() => { dialog = false; }"
+            @click="() => { dialog = false; if (step == 8)  {step = 1}; }"
           >
             <v-btn
               icon
@@ -184,7 +184,7 @@
             :disabled="step < 8"
             color="accent darken-1"
             depressed
-            @click="() => { $emit('submit'); dialog = false; }"
+            @click="() => { $emit('submit'); dialog = false; step = 1; }"
           >
             {{ closeText }}
           </v-btn>
