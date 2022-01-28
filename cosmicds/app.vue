@@ -172,9 +172,9 @@
                             >
                               <!-- The CARD to hold the WWT VIEWER and where students Select Galaxies -->
                               <v-card
-                                outlined
-                                color="info"
-                                class="pa-1"
+                                
+                                :color="state.marker == 'sel_gal1' ? 'info' : 'none'"
+                                :class="state.marker == 'sel_gal1' ? 'pa-1' : 'pa-0'"
                               >
                                 <v-toolbar
                                   color="secondary"
@@ -206,8 +206,15 @@
                               cols="6"
                               class="galtable_column"
                             >
-                              <!-- TABLE to hold Selected Galaxies -->
-                              <c-galaxy-table />
+                              <!-- The CARD to hold the WWT VIEWER and where students Select Galaxies -->
+                              <v-card
+                                
+                                :color="state.marker == 'cho_row1' ? 'info' : 'none'"
+                                :class="state.marker == 'cho_row1' ? 'pa-1' : 'pa-0'"
+                              >
+                                <!-- TABLE to hold Selected Galaxies -->
+                                <c-galaxy-table />
+                              </v-card>
                             </v-col>
                           </v-row>
                           <v-row
