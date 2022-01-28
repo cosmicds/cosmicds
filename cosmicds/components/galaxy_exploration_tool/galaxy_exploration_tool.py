@@ -7,8 +7,8 @@ from datetime import datetime
 from ipywidgets import DOMWidget, widget_serialization
 from traitlets import Bool, Instance, Int
 
-class GalaxySelectionTool(v.VueTemplate):
-    template = load_template("galaxy_selection_tool.vue", __file__).tag(sync=True)
+class GalaxyExplorationTool(v.VueTemplate):
+    template = load_template("galaxy_exploration_tool.vue", __file__).tag(sync=True)
     widget = Instance(DOMWidget, allow_none=True).tag(sync=True, **widget_serialization)
     pan_count = Int(0).tag(sync=True)
     zoom_count = Int(0).tag(sync=True)
@@ -58,7 +58,7 @@ class GalaxySelectionTool(v.VueTemplate):
         self._dec = dec
         self._fov = fov
         self.last_update = datetime.now()
-        if self.pan_count >= 2 and self.zoom_count >= 2:
+        if self.pan_count >= 0 and self.zoom_count >= 0:
             self.exploration_complete = True
             self.widget._set_message_type_callback('wwt_view_state', None)
 

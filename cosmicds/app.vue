@@ -164,7 +164,9 @@
                               >
                                 <!-- WWT GALAXY PICKER as Jupyter Widget -- v-lazy loads when visible -->
                                 <v-lazy>
-                                  <c-selection-tool></c-selection-tool>
+                                  <jupyter-widget
+                                    :widget="widgets.wwt_widget"
+                                    ></jupyter-widget>
                                 </v-lazy>
                               </div>
                             </v-col>
@@ -172,92 +174,6 @@
                               cols="6"
                               class="galtable_column"
                             >
-                              <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
-                              <v-alert
-                                :class="state.marker == 'exp_sky1' ? 'd-block' : 'd-none'"
-                                class="mb-4"
-                                color="info"
-                                elevation="6"
-                              >
-                                <h3
-                                  class="mb-4"
-                                >
-                                  Explore the Sky
-                                </h3>
-                                <div
-                                  class="mb-4"
-                                >
-                                  This window provides a view of the night sky. As you explore this view, you may see stars, nebulae, and galaxies.
-                                </div>
-                                <div
-                                  class="mb-2 mx-4"
-                                >
-                                  <v-row
-                                    no-gutters
-                                    class="mb-3"
-                                  >
-                                    <v-col
-                                      cols="3"
-                                    >
-                                      <strong>Pan</strong>
-                                    </v-col>
-                                    <v-col
-                                      cols="9"
-                                    >
-                                      <strong>click + drag</strong><br>
-                                      (or use the <strong class="codeFont">I-J-K-L</strong> keys)
-                                    </v-col>
-                                  </v-row>
-                                  <v-row
-                                    no-gutters
-                                  >
-                                    <v-col
-                                      cols="3"
-                                    >
-                                      <strong>Zoom</strong>
-                                    </v-col>
-                                    <v-col
-                                      cols="9"
-                                    >
-                                      <strong>scroll in and out</strong><br>
-                                      (or use the <strong class="codeFont">Z-X</strong> keys for finer zoom)
-                                    </v-col>
-                                  </v-row>
-                                </div>
-                                <v-divider
-                                  class="my-4"
-                                >
-                                </v-divider>
-
-                                <v-row
-                                  align="center"
-                                  no-gutters
-                                >
-                                  <v-col
-                                    cols="8"
-                                  >
-                                    Ready to proceed? Click <strong>NEXT</strong>.
-                                  </v-col>
-                                  <v-spacer></v-spacer>
-                                  <v-col
-                                    class="shrink"
-                                  >
-                                    <v-btn
-                                      color="accent"
-                                      class="black--text"
-                                      elevation="2"
-                                      :disabled="!state.exploration_complete"
-                                      @click="
-                                        state.marker = 'sel_gal1';
-                                        state.galaxy_data_displayed = true;
-                                      "
-                                    >
-                                      next
-                                    </v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-alert>
-
                               <!-- GUIDANCE ALERT - introduce students to WWT Viewer -->
                               <v-alert
                                 :class="state.marker == 'sel_gal1' ? 'd-block' : 'd-none'"

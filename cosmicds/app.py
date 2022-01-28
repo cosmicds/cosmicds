@@ -2,6 +2,7 @@ from pathlib import Path
 
 from astropy.coordinates import SkyCoord
 from astropy.modeling import models, fitting
+from astropy.table import Table as Astropy_Table
 import astropy.units as u
 from bqplot import PanZoom
 from echo import CallbackProperty, DictCallbackProperty
@@ -9,21 +10,17 @@ from echo.core import add_callback
 from glue.core import Component, Data
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
-from glue_jupyter.bqplot import scatter
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.state_traitlets_helpers import GlueState
-from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
-from ipyvuetify import VuetifyTemplate
-from ipywidgets import DOMWidget, widget_serialization
-from numpy import array, pi, isnan
-from pywwt.jupyter import WWTJupyterWidget
-from soupsieve import select
-from traitlets import Dict, Instance, List
 import ipyvuetify as v
+from ipywidgets import widget_serialization
+from numpy import array, pi, isnan
+from pandas import read_csv
+from pywwt.jupyter import WWTJupyterWidget
+from traitlets import Dict, List
 
 from cosmicds.components.measuring_tool.measuring_tool import MeasuringTool
-from cosmicds.components.galaxy_selection_tool import GalaxySelectionTool
 
 from .components.footer import Footer
 # When we have multiple components, change above to
@@ -61,7 +58,7 @@ v.theme.themes.light.anchor = ''
 class ApplicationState(State):
     # set the darkmode state
     darkmode = CallbackProperty(1)
-    marker = CallbackProperty('exp_sky1')
+    marker = CallbackProperty('sel_gal1')
 
     over_model = CallbackProperty(1)
     col_tab_model = CallbackProperty(0)
@@ -132,11 +129,12 @@ class ApplicationState(State):
 
 
 # Everything in this class is exposed directly to the app.vue.
-class Application(VuetifyTemplate):
+class Application(v.VuetifyTemplate):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
     state = GlueState().tag(sync=True)
     template = load_template("app.vue", __file__).tag(sync=True)
     viewers = Dict().tag(sync=True, **widget_serialization)
+    widgets = Dict().tag(sync=True, **widget_serialization)
     items = List().tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
 
@@ -273,31 +271,20 @@ class Application(VuetifyTemplate):
 
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the jupyter viewer.
-        selection_widget = WWTJupyterWidget(hide_all_chrome=True)
-        selection_tool = GalaxySelectionTool(selection_widget)
-        selection_widget.background = 'Digitized Sky Survey (Color)'
-        selection_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
-
-        def on_exploration_completed(change):
-            self.state.exploration_complete = change["new"]
-
-        def display_galaxy_data(value=None):
-            from pandas import read_csv
-            from astropy.table import Table as Astropy_Table
-            df = read_csv(str(data_dir / "SDSS_all_sample_filtered.csv"))
-            table = Astropy_Table.from_pandas(df)
-            layer = selection_widget.layers.add_table_layer(table)
-            layer.size_scale = 35
-            layer.color = "#00FF00"
-            def wwt_cb(wwt, updated):
-                if 'most_recent_source' in updated:
-                    source = wwt.most_recent_source
-                    galaxy = source["layerData"]
-                    self._on_galaxy_selected(galaxy)
-            selection_widget.set_selection_change_callback(wwt_cb)
-
-        selection_tool.observe(on_exploration_completed, names=['exploration_complete'])
-        add_callback(self.state, 'galaxy_data_displayed', display_galaxy_data)
+        wwt_widget = WWTJupyterWidget(hide_all_chrome=True)
+        wwt_widget.background = 'Digitized Sky Survey (Color)'
+        wwt_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
+        df = read_csv(str(data_dir / "SDSS_all_sample_filtered.csv"))
+        table = Astropy_Table.from_pandas(df)
+        layer = wwt_widget.layers.add_table_layer(table)
+        layer.size_scale = 35
+        layer.color = "#00FF00"
+        def wwt_cb(wwt, updated):
+            if 'most_recent_source' in updated:
+                source = wwt.most_recent_source
+                galaxy = source["layerData"]
+                self._on_galaxy_selected(galaxy)
+        wwt_widget.set_selection_change_callback(wwt_cb)
 
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
@@ -312,8 +299,7 @@ class Application(VuetifyTemplate):
                                 key_component='ID', names=distance_table_names, title=distance_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
                                 key_component='ID', names=fit_table_names, title=fit_title),
-                            'c-measuring-tool': measuring_tool,
-                            'c-selection-tool': selection_tool
+                            'c-measuring-tool': measuring_tool
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
                         #        self,
@@ -429,9 +415,10 @@ class Application(VuetifyTemplate):
 
         # Set up the subsets in the morphology viewer
         galaxy_data = self.data_collection['galaxy_data']
-        elliptical_subset = galaxy_data.new_subset(galaxy_data.id['MorphType'] == 'E', label='Elliptical', color='orange')
-        spiral_subset = galaxy_data.new_subset(galaxy_data.id["MorphType"] == 'Sp', label='Spiral', color='green')
-        irregular_subset = galaxy_data.new_subset(galaxy_data.id["MorphType"] == 'Ir', label='Irregular', color='red')
+        galaxy_type_field = "Type"
+        elliptical_subset = galaxy_data.new_subset(galaxy_data.id[galaxy_type_field] == 'E', label='Elliptical', color='orange')
+        spiral_subset = galaxy_data.new_subset(galaxy_data.id[galaxy_type_field] == 'Sp', label='Spiral', color='green')
+        irregular_subset = galaxy_data.new_subset(galaxy_data.id[galaxy_type_field] == 'Ir', label='Irregular', color='red')
         morphology_subsets = [elliptical_subset, spiral_subset, irregular_subset]
         for subset in morphology_subsets:
             hub_morphology_viewer.add_subset(subset)
@@ -562,6 +549,7 @@ class Application(VuetifyTemplate):
             dec = next((x for index, x in enumerate(data["DEC"]) if mask[index]), None)
             gal_type = next((x for index, x in enumerate(data["Type"]) if mask[index]), None)
             self.state.measure_gal_selected = len(selected) > 0
+            self.state.haro_on = 'd-block'
             self.components['c-measuring-tool'].reset_canvas()
             if not self.state.measure_gal_selected:
                 self.state.measuring_name = None
@@ -630,6 +618,7 @@ class Application(VuetifyTemplate):
 
         # Store a front-end accessible collection of renderable ipywidgets
         self.viewers = { k : ViewerLayout(v) for k, v in self._viewer_handlers.items() }
+        self.widgets = { 'wwt_widget' : WidgetLayout(wwt_widget) }
 
         # Make sure that the initial layer visibilities match the state
         self._hubble_comparison_selection_update(self.state.hubble_comparison_selections)
