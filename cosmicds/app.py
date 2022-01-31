@@ -415,7 +415,7 @@ class Application(v.VuetifyTemplate):
 
         # Set up the subsets in the morphology viewer
         galaxy_data = self.data_collection['galaxy_data']
-        galaxy_type_field = "Type"
+        galaxy_type_field = "MorphType"
         elliptical_subset = galaxy_data.new_subset(galaxy_data.id[galaxy_type_field] == 'E', label='Elliptical', color='orange')
         spiral_subset = galaxy_data.new_subset(galaxy_data.id[galaxy_type_field] == 'Sp', label='Spiral', color='green')
         irregular_subset = galaxy_data.new_subset(galaxy_data.id[galaxy_type_field] == 'Ir', label='Irregular', color='red')
@@ -425,8 +425,8 @@ class Application(v.VuetifyTemplate):
         self._elliptical_subset = elliptical_subset
         self._spiral_subset = spiral_subset
         self._irregular_subset = irregular_subset
-        hub_morphology_viewer.state.x_att = self.data_collection['galaxy_data'].id['EstDist_Mpc']
-        hub_morphology_viewer.state.y_att = self.data_collection['galaxy_data'].id['velocity_km_s']
+        hub_morphology_viewer.state.x_att = galaxy_data.id['EstDist_Mpc']
+        hub_morphology_viewer.state.y_att = galaxy_data.id['velocity_km_s']
         update_figure_css(hub_morphology_viewer, style_path=default_style_path)
 
         # Set up the listener to sync the histogram <--> scatter viewers
