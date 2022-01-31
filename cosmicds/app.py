@@ -2,7 +2,7 @@ from pathlib import Path
 
 from astropy.coordinates import SkyCoord
 from astropy.modeling import models, fitting
-from astropy.table import Table as Astropy_Table
+from astropy.table import Table as AstropyTable
 import astropy.units as u
 from bqplot import PanZoom
 from echo import CallbackProperty, DictCallbackProperty
@@ -275,7 +275,7 @@ class Application(v.VuetifyTemplate):
         wwt_widget.background = 'Digitized Sky Survey (Color)'
         wwt_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
         df = read_csv(str(data_dir / "SDSS_all_sample_filtered.csv"))
-        table = Astropy_Table.from_pandas(df)
+        table = AstropyTable.from_pandas(df)
         layer = wwt_widget.layers.add_table_layer(table)
         layer.size_scale = 35
         layer.color = "#00FF00"
@@ -285,6 +285,8 @@ class Application(v.VuetifyTemplate):
                 galaxy = source["layerData"]
                 self._on_galaxy_selected(galaxy)
         wwt_widget.set_selection_change_callback(wwt_cb)
+        self.wwt_sdss_layer = layer
+        self.wwt_selected_layer = None
 
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
@@ -846,19 +848,25 @@ class Application(v.VuetifyTemplate):
         data = self.data_collection['student_measurements']
         main_components = [x.label for x in data.main_components]
         component_dict = {c : list(data[c]) for c in main_components}
-        if galaxy['ID'] in component_dict['ID']: # Avoid duplicates
-            return
-        for field in fields:
-            component_dict[field].append(galaxy[field])
-        for component, values in component_dict.items():
-            if component not in fields:
-                values.append(None)
+
+        remove = galaxy['ID'] in component_dict['ID'] # Avoid duplicates
+
+        if remove:
+            index = next(idx for idx, val in enumerate(component_dict['ID']) if val == galaxy['ID'])
+            for component, values in component_dict.items():
+                values.pop(index)
+        else:
+            for field in fields:
+                component_dict[field].append(galaxy[field])
+            for component, values in component_dict.items():
+                if component not in fields:
+                    values.append(None)
 
         new_data = Data(label='student_measurements', **component_dict)
         self.state.gals_total = new_data.size
         self._new_galaxy_data_update(new_data)
 
-        if self.state.gals_total == 1:
+        if self.state.gals_total == 1 and self.state.galaxy_table_visible == 0:
             self.vue_first_galaxy_selected()
 
         filename = galaxy['ID']
@@ -1170,6 +1178,17 @@ class Application(v.VuetifyTemplate):
         data = dc[label]
         data.update_values_from_data(new_data)
         data.label = label
+
+        # Update the selected WWT layer
+        wwt_widget = self.widgets['wwt_widget'].widget
+        df = data.to_dataframe()
+        table = AstropyTable.from_pandas(df)
+        selected_layer = wwt_widget.layers.add_table_layer(table)
+        selected_layer.size_scale = 100
+        selected_layer.color = "#FF00FF"
+        if self.wwt_selected_layer is not None:
+            wwt_widget.layers.remove_layer(self.wwt_selected_layer)
+        self.wwt_selected_layer = selected_layer
 
     def add_measwave_data_point(self, value):
         data = self.data_collection['student_measurements']
