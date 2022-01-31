@@ -494,6 +494,8 @@ class Application(v.VuetifyTemplate):
             if change["new"] == change["old"]:
                 return
 
+            # Convert the selected item (as a length-1 list) to a subset state
+            # and grab the name and galaxy_type
             table = self.components['c-galaxy-table']
             selected = change["new"]
             state = table.subset_state_from_selected(selected)
@@ -503,12 +505,14 @@ class Application(v.VuetifyTemplate):
             if name is None or gal_type is None:
                 return
 
+            # Load the spectrum data, if necessary
             filename = name
             spectrum_name = filename.split(".")[0]
             data_name = spectrum_name + '[COADD]'
             if data_name not in self.data_collection:
                 self._load_spectrum_data(filename, gal_type)
 
+            # Update the data in the spectrum viewer
             spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
             dc = self.data_collection
             data = dc[data_name]
@@ -870,7 +874,10 @@ class Application(v.VuetifyTemplate):
             self.vue_first_galaxy_selected()
 
         filename = galaxy['ID']
-        self._load_spectrum_data(filename, galaxy['Type'])
+        spectrum_name = filename.split(".")[0]
+        data_name = spectrum_name + '[COADD]'
+        if data_name not in self.data_collection:
+            self._load_spectrum_data(filename, galaxy['Type'])
 
     def _scatter_selection_update(self, viewer_id, data, selections):
         viewer = self._viewer_handlers[viewer_id]
