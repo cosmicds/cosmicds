@@ -942,63 +942,6 @@
                                           <teamaside-alert>
                                             Element and rest wavelength appear in table.
                                           </teamaside-alert>
-                                          <infodialog-alert>
-                                            Click on the vertical measuring tool and drag it to line up with the labeled line.
-                                            Click again to record the observed wavelength of that line.
-                                          </infodialog-alert>
-                                          <infodialog-alert>
-                                            Notice your wavelength measurement is now recorded in the table.
-                                          </infodialog-alert>
-                                          <infodialog-alert>
-                                            Repeat this process for four more galaxies (or however many your instructor would like
-                                            you to collect data for).
-                                          </infodialog-alert>
-                                          <teamaside-alert>
-                                            The reflection alerts below will need to be converted to components that have proper
-                                            multiple choice functionality wired up.
-                                          </teamaside-alert>
-                                          <responsedialog-alert>
-                                            How do the observed wavelengths of emission or absorption lines in your galaxies compare
-                                            with the “rest” wavelength of those lines?
-                                            <ul>
-                                              <li>Lines in the galaxies have the same wavelength as the lines at rest
-                                              <li>Some galaxies have lines with smaller wavelengths and some have lines with larger
-                                                wavelengths than the lines at rest
-                                              <li>Most or all of the galaxies have lines with smaller wavelengths than the lines at rest
-                                              <li>Most or all of the galaxies have lines with larger wavelengths than the lines at rest.
-                                            </ul>
-                                          </responsedialog-alert>
-                                          <responsedialog-alert>
-                                            Reflect on what you can conclude from the data you just collected about how the galaxies are
-                                            moving relative to our home galaxy, the Milky Way:
-                                            <ul>
-                                              <li>The galaxies are not moving.
-                                              <li>Some galaxies are moving toward our galaxy and some galaxies are moving away from our galaxy.
-                                              <li>Galaxies are mostly moving toward our galaxy.
-                                              <li>Galaxies are mostly moving away from our galaxy.
-                                            </ul>
-                                          </responsedialog-alert>
-                                          <responsedialog-alert>
-                                            Now that we agree these galaxies are not static, let’s calculate how fast these galaxies are moving. 
-                                          </responsedialog-alert>
-                                          <teamaside-alert>
-                                            Display interface that shows how to calculate velocity.
-                                            Once they've been through it once correctly, display a button they can click to make the rest of the velocities appear.
-                                          </teamaside-alert>
-                                          <responsedialog-alert>
-                                            These were the prevailing viewpoints in the 1920's:
-                                            <ul>
-                                              <li> "The universe is static and unchanging"
-                                              <li> "Galaxies in the universe are moving randomly"
-                                            </ul>
-
-                                            Do you data support either of these conclusions? What would you tell a scientist from 1920
-                                            regarding the prevailing wisdom about galaxies during this time?
-                                          </responsedialog-alert>
-                                          <responsedialog-alert>
-                                            How confident do you feel about the information you gave to the 1920 scientist based on your\
-                                            data? What would improve your confidence in your data and ideas?
-                                          </responsedialog-alert>
 
                                         </v-expansion-panel-content>
                                       </v-expansion-panel>
