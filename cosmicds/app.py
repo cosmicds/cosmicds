@@ -853,12 +853,17 @@ class Application(v.VuetifyTemplate):
         main_components = [x.label for x in data.main_components]
         component_dict = {c : list(data[c]) for c in main_components}
 
-        remove = galaxy['ID'] in component_dict['ID'] # Avoid duplicates
+        already_present = galaxy['ID'] in component_dict['ID'] # Avoid duplicates
 
-        if remove:
-            index = next(idx for idx, val in enumerate(component_dict['ID']) if val == galaxy['ID'])
-            for component, values in component_dict.items():
-                values.pop(index)
+        if already_present:
+
+            # To do nothing
+            return
+
+            # If instead we wanted to remove the point from the student's selection
+            # index = next(idx for idx, val in enumerate(component_dict['ID']) if val == galaxy['ID'])
+            # for component, values in component_dict.items():
+            #     values.pop(index)
         else:
             for field in fields:
                 component_dict[field].append(galaxy[field])
