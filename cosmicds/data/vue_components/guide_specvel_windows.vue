@@ -1,8 +1,7 @@
 <template>
   <v-btn
     block
-    class="black--text"
-    color="accent"
+    color="primary"
     elevation="2"
     @click.stop="dialog = true"
   >
@@ -25,16 +24,30 @@
         <v-card-title
           class="text-h6 font-weight-regular justify-space-between"
         >
-          <span>{{ currentTitle }}</span>
-          <v-avatar
-            color="info"
-            class="subheading white--text"
-            size="24"
-            v-text="step"
-          ></v-avatar>
+          <span>
+            <v-avatar
+              color="info"
+              class="subheading white--text mr-4"
+              size="24"
+              v-text="step"
+            ></v-avatar>
+            {{ currentTitle }}
+          </span>
+          <span
+            @click="() => { $emit('close'); dialog = false; if (step == 7)  {step = 1}; }"
+          >
+            <v-btn
+              icon
+            >
+              <v-icon>
+                mdi-close
+              </v-icon>
+            </v-btn>
+          </span>
         </v-card-title>
 
         <v-window
+          style="min-height: 250px;"
           v-model="step"
           vertical
         >
@@ -95,9 +108,9 @@
                 src="https://www.pngrepo.com/png/211744/512/rocket-ship-launch-missile.png"
               ></v-img>
               <h3 class="text-h6 font-weight-light mb-2">
-                Nice work reflecting!
+                You're ready to start measuring galaxy velocities now.
               </h3>
-              <span class="text-caption grey--text">You can start plotting your data now.</span>
+              <span class="text-caption grey--text">Click on "Info" if you'd like to come back for a refresher.</span>
             </div>
           </v-window-item>
         </v-window>
@@ -127,7 +140,7 @@
             color="accent"
             class="black--text"
             depressed
-            @click="() => { $emit('close'); dialog = false; }"
+            @click="() => { $emit('close'); dialog = false; step = 1; }"
           >
             {{ closeText }}
           </v-btn>
@@ -163,3 +176,11 @@ module.exports = {
   },
 };
 </script>
+
+<style>
+
+div {
+  color: "purple";
+}
+
+</style>

@@ -58,29 +58,34 @@ v.theme.themes.light.anchor = ''
 class ApplicationState(State):
     # set the darkmode state
     darkmode = CallbackProperty(1)
+
+    # set the marker for the current scaffold burst
     marker = CallbackProperty('sel_gal1')
 
-    over_model = CallbackProperty(1)
-    col_tab_model = CallbackProperty(0)
-    est_model = CallbackProperty(0)
-    analysis_tabs = CallbackProperty(0)
+    # set the point for a variety of step/tab sequences
+    over_model = CallbackProperty(1)     # Overall stepper
+    analysis_tabs = CallbackProperty(0)  # The analysis tabs on page 3
 
-    # expansion toggle
+    # quick-open toggle (at top of the pages)
     toggle_on = CallbackProperty('d-none')
     toggle_off = CallbackProperty('d-block')
 
+    # a bunch of snackbars
     gal_snackbar = CallbackProperty(0)
     dist_snackbar = CallbackProperty(0)
     marker_snackbar = CallbackProperty(0)
     vel_snackbar = CallbackProperty(0)
     data_ready_snackbar = CallbackProperty(0)
 
+    # certain checkpoints
+    gals_total = CallbackProperty(0)
     gal_selected = CallbackProperty(0)
-    dist_measured = CallbackProperty(0)
-    marker_set = CallbackProperty(0)
+    spectrum_tool_visible = CallbackProperty(0)
+    waveline_set = CallbackProperty(0)
+    vel_win_unopened = CallbackProperty(1)
     vel_measured = CallbackProperty(0)
+    dist_measured = CallbackProperty(0)
     adddata_disabled = CallbackProperty(1)
-    prev1_disabled = CallbackProperty(1)
     next1_disabled = CallbackProperty(1)
 
     gals_total = CallbackProperty(0)
@@ -96,8 +101,6 @@ class ApplicationState(State):
     spectrum_tool_visible = CallbackProperty(0)
 
     #state variables for reflections
-    rv1_visible = CallbackProperty(0)
-
     draw_on = CallbackProperty(0)
     bestfit_on = CallbackProperty(0)
     bestfit_drawn = CallbackProperty(False)
