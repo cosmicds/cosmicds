@@ -41,7 +41,7 @@
       <v-btn
         icon
         @click="
-          state.marker = 'exp_sky1';
+          state.marker = 'sel_gal1';
           state.toggle_on = 'd-none';
           state.toggle_off = 'd-block';
           state.gal_selected = 0;

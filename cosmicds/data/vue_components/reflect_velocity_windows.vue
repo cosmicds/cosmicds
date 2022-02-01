@@ -59,6 +59,15 @@
                 radio-two="Some galaxies have lines with smaller wavelengths and some have lines with larger wavelengths than the lines at rest."
                 radio-three="Most or all of the galaxies have lines with smaller wavelengths than the lines at rest."
                 radio-four="Most or all of the galaxies have lines with larger wavelengths than the lines at rest."
+                answer-key=4
+                color-one="red"
+                color-two="red"
+                color-three="red"
+                color-four="green"
+                feedback-one="Try again."
+                feedback-two="Try again."
+                feedback-three="Try again."
+                feedback-four="That's right!"
               >
               </mc-radiogroup>
             </v-card-text>
@@ -73,6 +82,15 @@
                 radio-two="Some galaxies are moving toward our galaxy and some galaxies are moving away from our galaxy."
                 radio-three="Galaxies are mostly moving toward our galaxy."
                 radio-four="Galaxies are mostly moving away from our galaxy."
+                answer-key=4
+                color-one="red"
+                color-two="red"
+                color-three="red"
+                color-four="green"
+                feedback-one="Try again."
+                feedback-two="Try again."
+                feedback-three="Try again."
+                feedback-four="That's right!"
               >
               </mc-radiogroup>
             </v-card-text>
