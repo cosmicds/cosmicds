@@ -379,18 +379,19 @@
                                 </v-row>
                               </v-alert>
 
+
                               <!-- GUIDANCE ALERT - Request specific galaxy to work with -->
-                              <v-alert
+                              <scaffold-alert
                                 :class="state.marker == 'cho_row1' ? 'd-block' : 'd-none'"
-                                color="info"
-                                class="mb-4"
-                                elevation="6"
+                                header-text="Choose a Row"
+                                @back="
+                                  state.marker = 'sel_gal1';
+                                "
+                                @next="
+                                  state.spectrum_tool_visible = 1;
+                                  state.marker = 'mee_spe1';
+                                "
                               >
-                                <h3
-                                  class="mb-4"
-                                >
-                                  Choose a Row
-                                </h3>
                                 <div
                                   class="mb-4"
                                 >
@@ -401,45 +402,8 @@
                                     Click on a row in your table to choose that galaxy.
                                   </p>
                                 </div>
-                                <v-divider
-                                  class="my-4"
-                                >
-                                </v-divider>
+                              </scaffold-alert>
 
-                                <v-row
-                                  align="center"
-                                  no-gutters
-                                >
-                                  <v-col>
-                                    <v-btn
-                                      class="black--text"
-                                      color="accent"
-                                      elevation="2"
-                                      @click="
-                                        state.marker = 'sel_gal1';
-                                      "
-                                    >
-                                      back
-                                    </v-btn>
-                                  </v-col>
-                                  <v-spacer></v-spacer>
-                                  <v-col
-                                    class="shrink"
-                                  >
-                                    <v-btn
-                                      class="black--text"
-                                      color="accent"
-                                      elevation="2"
-                                      @click="
-                                        state.spectrum_tool_visible = 1;
-                                        state.marker = 'mee_spe1';
-                                      "
-                                    >
-                                      next
-                                    </v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-alert>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -556,18 +520,17 @@
                                 </v-row>
                               </v-alert>
 
-                              <!-- GUIDANCE ALERT - Spectrum Tool #2 -->
-                              <v-alert
+                              <!-- GUIDANCE ALERT - Rest Wavelength #1 -->
+                              <scaffold-alert
                                 :class="state.marker == 'res_wav1' ? 'd-block' : 'd-none'"
-                                class="mb-4"
-                                color="info"
-                                elevation="6"
+                                header-text="Rest Wavelength"
+                                @back="
+                                  state.marker = 'mee_spe1';
+                                "
+                                @next="
+                                  state.marker = 'obs_wav1';
+                                "
                               >
-                                <h3
-                                  class="mb-4"
-                                >
-                                  Rest Wavelength
-                                </h3>
                                 <div
                                   class="mb-4"
                                 >
@@ -596,57 +559,20 @@
                                     click the label
                                   </v-btn>
                                 </div>
-                                <v-divider
-                                  class="my-4"
-                                >
-                                </v-divider>
+                              </scaffold-alert>
 
-                                <v-row
-                                  align="center"
-                                  no-gutters
-                                >
-                                  <v-col>
-                                    <v-btn
-                                      class="black--text"
-                                      color="accent"
-                                      elevation="2"
-                                      @click="
-                                        state.marker = 'mee_spe1';
-                                      "
-                                    >
-                                      back
-                                    </v-btn>
-                                  </v-col>
-                                  <v-spacer></v-spacer>
-                                  <v-col
-                                    class="shrink"
-                                  >
-                                    <v-btn
-                                      color="accent"
-                                      class="black--text"
-                                      elevation="2"
-                                      @click="
-                                        state.marker = 'obs_wav1';
-                                      "
-                                    >
-                                      next
-                                    </v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-alert>
 
                               <!-- GUIDANCE ALERT - Observed Wavelength #1 -->
-                              <v-alert
+                              <scaffold-alert
                                 :class="state.marker == 'obs_wav1' ? 'd-block' : 'd-none'"
-                                class="mb-4"
-                                color="info"
-                                elevation="6"
+                                header-text="Observed Wavelength"
+                                @back="
+                                  state.marker = 'res_wav1';
+                                "
+                                @next="
+                                  state.marker = 'rep_rem1';
+                                "
                               >
-                                <h3
-                                  class="mb-4"
-                                >
-                                  Observed Wavelength
-                                </h3>
                                 <div
                                   class="mb-4"
                                 >
@@ -672,57 +598,20 @@
                                     align tool to line
                                   </v-btn>
                                 </div>
-                                <v-divider
-                                  class="my-4"
-                                >
-                                </v-divider>
+                              </scaffold-alert>
 
-                                <v-row
-                                  align="center"
-                                  no-gutters
-                                >
-                                  <v-col>
-                                    <v-btn
-                                      class="black--text"
-                                      color="accent"
-                                      elevation="2"
-                                      @click="
-                                        state.marker = 'res_wav1';
-                                      "
-                                    >
-                                      back
-                                    </v-btn>
-                                  </v-col>
-                                  <v-spacer></v-spacer>
-                                  <v-col
-                                    class="shrink"
-                                  >
-                                    <v-btn
-                                      color="accent"
-                                      class="black--text"
-                                      elevation="2"
-                                      @click="
-                                        state.marker = 'rep_rem1';
-                                      "
-                                    >
-                                      next
-                                    </v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-alert>
 
                               <!-- GUIDANCE ALERT - Repeat for Remaining Galaxies #1 -->
-                              <v-alert
+                              <scaffold-alert
                                 :class="state.marker == 'rep_rem1' ? 'd-block' : 'd-none'"
-                                class="mb-4"
-                                color="info"
-                                elevation="6"
+                                header-text="Repeat for Remaining Galaxies"
+                                @back="
+                                  state.marker = 'obs_wav1';
+                                "
+                                @next="
+                                  state.marker = 'nic_wor1';
+                                "
                               >
-                                <h3
-                                  class="mb-4"
-                                >
-                                  Repeat for Remaining Galaxies
-                                </h3>
                                 <div
                                   class="mb-4"
                                 >
@@ -752,57 +641,19 @@
                                     repeat 4 times
                                   </v-btn>
                                 </div>
-                                <v-divider
-                                  class="my-4"
-                                >
-                                </v-divider>
-
-                                <v-row
-                                  align="center"
-                                  no-gutters
-                                >
-                                  <v-col>
-                                    <v-btn
-                                      class="black--text"
-                                      color="accent"
-                                      elevation="2"
-                                      @click="
-                                        state.marker = 'obs_wav1';
-                                      "
-                                    >
-                                      back
-                                    </v-btn>
-                                  </v-col>
-                                  <v-spacer></v-spacer>
-                                  <v-col
-                                    class="shrink"
-                                  >
-                                    <v-btn
-                                      color="accent"
-                                      class="black--text"
-                                      elevation="2"
-                                      @click="
-                                        state.marker = 'nic_wor1';
-                                      "
-                                    >
-                                      next
-                                    </v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-alert>
+                              </scaffold-alert>
 
                               <!-- GUIDANCE ALERT - Nice Work #1 -->
-                              <v-alert
+                              <scaffold-alert
                                 :class="state.marker == 'nic_wor1' ? 'd-block' : 'd-none'"
-                                class="mb-4"
-                                color="info"
-                                elevation="6"
+                                header-text="Nice Work"
+                                @back="
+                                  state.marker = 'rep_rem1';
+                                "
+                                @next="
+                                  state.marker = 'nic_wor1';
+                                "
                               >
-                                <h3
-                                  class="mb-4"
-                                >
-                                  Nice Work
-                                </h3>
                                 <div
                                   class="mb-4"
                                 >
@@ -810,45 +661,7 @@
                                     Now let’s examine what conclusions you might draw from your data.
                                   </p>
                                 </div>
-                                <v-divider
-                                  class="my-4"
-                                >
-                                </v-divider>
-
-                                <v-row
-                                  align="center"
-                                  no-gutters
-                                >
-                                  <v-col>
-                                    <v-btn
-                                      class="black--text"
-                                      color="accent"
-                                      elevation="2"
-                                      @click="
-                                        state.marker = 'rep_rem1';
-                                      "
-                                    >
-                                      back
-                                    </v-btn>
-                                  </v-col>
-                                  <v-spacer></v-spacer>
-                                  <v-col
-                                    class="shrink"
-                                  >
-                                    <v-btn
-                                      disabled
-                                      color="accent"
-                                      class="black--text"
-                                      elevation="2"
-                                      @click="
-                                        state.marker = 'nic_wor1';
-                                      "
-                                    >
-                                      next
-                                    </v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-alert>
+                              </scaffold-alert>
 
                               <v-row>
                                 <v-col
@@ -860,7 +673,7 @@
                                     close-text="done"
                                     @close="
                                       console.log('Done button was clicked.');
-                                      state.vel_win_unopened = 0;d
+                                      state.vel_win_unopened = 0;
                                     "
                                   >
                                   </guide-specvel-windows>
