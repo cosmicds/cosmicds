@@ -34,7 +34,7 @@
             {{ currentTitle }}
           </span>
           <span
-            @click="() => { $emit('close'); dialog = false; }"
+            @click="() => { $emit('close'); dialog = false; if (step == 7)  {step = 1}; }"
           >
             <v-btn
               icon
@@ -140,7 +140,7 @@
             color="accent"
             class="black--text"
             depressed
-            @click="() => { $emit('close'); dialog = false; }"
+            @click="() => { $emit('close'); dialog = false; step = 1; }"
           >
             {{ closeText }}
           </v-btn>
