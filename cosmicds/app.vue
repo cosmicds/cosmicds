@@ -532,8 +532,7 @@
                                     class="black--text"
                                     color="success"
                                     elevation="2"
-                                    @click="
-                                    "
+                                    @click="add_current_restwave()"
                                   >
                                     click the label
                                   </v-btn>
@@ -564,18 +563,6 @@
                                   <p>
                                     Slide the vertical measuring tool until it aligns with the line you identified, and click to record the line’s observed wavelength in the table.
                                   </p>
-                                </div>
-
-                                <div class="text-center my-8">
-                                  <v-btn
-                                    class="black--text"
-                                    color="success"
-                                    elevation="2"
-                                    @click="
-                                    "
-                                  >
-                                    align tool to line
-                                  </v-btn>
                                 </div>
                               </scaffold-alert>
 
@@ -614,7 +601,6 @@
                                       state.vel_snackbar = 0;
                                       state.data_ready_snackbar = 0;
                                       state.marker_snackbar = 1;
-                                      state.waveline_set = 1;
                                     "
                                   >
                                     repeat 4 times
@@ -628,16 +614,13 @@
                                 elevation="2"
                                 class="mb-12">
                                 <v-btn
-                                  :disabled="!state.marker_set"
+                                  :disabled="!state.waveline_set"
                                   class="white-text"
                                   color="green"
                                   @click="add_current_velocity()"
                                 >find velocity
                                 </v-btn>
                               </v-alert>
-                              <v-container
-                                :class="state.rv1_visible ? 'd-block' : 'd-none'"
-                              </scaffold-alert>
 
                               <!-- GUIDANCE ALERT - Nice Work #1 -->
                               <scaffold-alert

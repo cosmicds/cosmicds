@@ -533,7 +533,7 @@ class Application(v.VuetifyTemplate):
                 spectrum_viewer.state.reset_limits()
 
             self.state.gal_selected = len(selected) > 0
-            self.state.marker_set = 0
+            self.state.waveline_set = 0
 
             # If this is the first selection we're making,
             # we want to move the app forward
@@ -588,7 +588,7 @@ class Application(v.VuetifyTemplate):
                 return
             value = round(event["domain"]["x"], 2)
             self.add_measwave_data_point(value)
-            self.state.marker_set = 1
+            self.state.waveline_set = 1
         spectrum_viewer.add_event_callback(on_spectrum_click, events=['click'])
 
 
@@ -1075,7 +1075,6 @@ class Application(v.VuetifyTemplate):
         self._histogram_selection_update(selections, 'sandbox_distr_viewer', line_options=line_options)
 
     def vue_first_galaxy_selected(self, _args=None):
-        self.state.marker = 'sel_gal2';
         self.state.galaxy_table_visible = 1;
         self.state.gal_snackbar = 0;
         self.state.dist_snackbar = 0;
@@ -1140,7 +1139,7 @@ class Application(v.VuetifyTemplate):
         # and update to match that
         data = self.data_collection['student_measurements']
         df = data.to_dataframe()
-        df = df.dropna()
+        df = df[df['distance'].notna() & df['velocity'].notna()]
 
         main_comps = [x.label for x in data.main_components]
         components = { col : list(df[col]) for col in main_comps }
@@ -1213,7 +1212,7 @@ class Application(v.VuetifyTemplate):
             measwave[index] = value
             self._new_measwave_data_update(measwave)
 
-    def vue_add_distance_data_point(self):
+    def vue_add_distance_data_point(self, args=None):
 
         # Is the value that the student measured too large?
         # If so, we give a warning rather than adding this value
@@ -1264,21 +1263,28 @@ class Application(v.VuetifyTemplate):
 
         self.vue_show_fit_points()
 
-    def vue_add_current_velocity(self, args=None):
-        data = self.data_collection['student_measurements']
-        table = self.components['c-galaxy-table']
+    def _get_current_table_index(self, table):
         state = table.subset_state_from_selected(table.selected)
         mask = state.to_mask(table.glue_data)
         index = next((index for index in range(len(mask)) if mask[index]), None)
-        if index is not None:
-            measwave = data["measwave"][index]
-            z = data["Z"][index]
+        return index
 
+    def vue_add_current_restwave(self, args=None):
+        data = self.data_collection['student_measurements']
+        table = self.components['c-galaxy-table']
+        index = self._get_current_table_index(table)
+        if index is not None:
             restwave = data["restwave"]
-            restwave_value = round(measwave / (z + 1), 2)
+            restwave_value = 6562.8 # H-alpha, can make this more dynamic later
             restwave[index] = restwave_value
             self._new_restwave_data_update(restwave)
 
+    def vue_add_current_velocity(self, args=None):
+        data = self.data_collection['student_measurements']
+        table = self.components['c-galaxy-table']
+        index = self._get_current_table_index(table)
+        if index is not None:
+            z = data["Z"][index]
             velocity_value = int(3 * (10 ** 5) * z)
             velocity = data["velocity"]
             velocity[index] = velocity_value
