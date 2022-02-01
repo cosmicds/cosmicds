@@ -92,9 +92,6 @@ class ApplicationState(State):
     calc_visible = CallbackProperty("d-none")
 
     #step 1 alerts
-    wwt_active = CallbackProperty(0)
-    exploration_complete = CallbackProperty(False)
-    galaxy_data_displayed = CallbackProperty(False)
     galaxy_table_visible = CallbackProperty(0)
     spectrum_tool_visible = CallbackProperty(0)
 
