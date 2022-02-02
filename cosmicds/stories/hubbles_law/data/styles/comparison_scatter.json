@@ -1,0 +1,49 @@
+{
+    "figure": {
+      "background_style": {
+        "fill": "#fffef5"
+      },
+      "fig_margin": {
+        "left": 100,
+        "bottom": 60,
+        "top": 10,
+        "right": 10
+      },
+      "axes": [
+        {
+          "tick_style": {
+            "font-family": "Gill Sans",
+            "font-size": 14
+          },
+          "label_offset": "50px",
+          "label": "Distance (Mpc)"
+        },
+        {
+          "tick_format": ",.0f",
+          "tick_style": {
+            "font-family": "Gill Sans",
+            "font-size": 14
+          },
+          "label_offset": "75px",
+          "label_style": {
+            "font-family": "Times New Roman"
+          },
+          "label": "Velocity (km/s)"
+        }
+      ]
+    },
+    "viewer": {
+      "scatter": {
+        "marker": "circle",
+        "stroke": "#6b6d6c",
+        "stroke_width": 0.7,
+        "enable_hover": true
+      },
+      "state": {
+          "size": [5, 5, 8, 5],
+          "color": ["#da251c", "#f0c470", "#0616f4",  "green"],
+          "alpha": [0.5, 0.8, 1, 0.5]
+      }
+    }
+  }
+  
