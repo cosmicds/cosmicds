@@ -24,7 +24,8 @@ from voila.configuration import VoilaConfiguration
 from voila.app import Voila
 
 from .utils import load_template
-from .events import StepChangeMessage, StepSetupMessage
+from .events import StepChangeMessage
+import uuid
 
 v.theme.dark = True
 
@@ -40,9 +41,6 @@ class Application(VuetifyTemplate):
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session)
-
-    def _on_step_setup(self, msg):
-        pass
 
     def reload(self):
         """

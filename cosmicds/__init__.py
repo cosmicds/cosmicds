@@ -7,7 +7,7 @@ __all__ = []
 from pathlib import Path
 import ipyvue
 
-vue_comp_dir = Path(__file__).parent / "data" / "vue_components"
+vue_comp_dir = Path(__file__).parent / "vue_components"
 
 for comp_path in vue_comp_dir.iterdir():
     if comp_path.suffix == ".vue":

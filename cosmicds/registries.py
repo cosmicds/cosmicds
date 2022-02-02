@@ -3,7 +3,6 @@ from ipyvuetify import VuetifyTemplate
 from ipywidgets import Widget
 from glue.core.state_objects import State
 import warnings
-from .components.default_stepper import DefaultStepper
 
 __all__ = ['stage_registry']
 
@@ -32,6 +31,11 @@ class StoryRegistry(UniqueDictRegistry):
     Registry containing references to plugins which will populate the
     application-level toolbar.
     """
+    def __init__(self):
+        super().__init__()
+
+        self._instance_db = []
+
     def __call__(self, name):
         def decorator(cls):
             # The class must inherit from `Widget` in order to be
@@ -52,10 +56,10 @@ class StoryRegistry(UniqueDictRegistry):
                              "registery.")
 
         story_entry = self.members[name]
-        story_state = story_entry['cls']()
+        story_state = story_entry['cls'](session)
 
         for k, v in story_entry['stages'].items():
-            stage = v['cls'](story_state, session)
+            stage = v['cls'](session)
             
             story_state.stages[k] = {"title": stage.title,
                                      "subtitle": stage.subtitle,
