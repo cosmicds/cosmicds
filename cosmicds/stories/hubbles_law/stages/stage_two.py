@@ -1,5 +1,5 @@
 from cosmicds.components.viewer_layout import ViewerLayout
-from cosmicds.events import StepSetupMessage, StepChangeMessage
+from cosmicds.events import StepChangeMessage
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
 from echo import CallbackProperty
