@@ -290,12 +290,10 @@
                                     elevation="2"
                                     :disabled="state.gals_total == 5"
                                     @click="
-                                      state.gal_snackbar = 0;
                                       state.dist_snackbar = 0;
                                       state.marker_snackbar = 0;
                                       state.vel_snackbar = 0;
                                       state.data_ready_snackbar = 0;
-                                      state.gal_snackbar = 1;
                                       state.gal_selected = 1;
                                       state.gals_total += 1;
                                       add_galaxy_data_point();
@@ -629,7 +627,6 @@
                                     color="success"
                                     elevation="2"
                                     @click="
-                                      state.gal_snackbar = 0;
                                       state.dist_snackbar = 0;
                                       state.marker_snackbar = 0;
                                       state.vel_snackbar = 0;
@@ -797,7 +794,6 @@
                                       :disabled="!state.measure_gal_selected || state.measured_ang_size === 0 || state.measuring_view_changing"
                                       @click="
                                         state.dist_measured = 1;
-                                        state.gal_snackbar = 0;
                                         state.dist_snackbar = 0;
                                         state.marker_snackbar = 0;
                                         state.vel_snackbar = 0;
@@ -865,9 +861,6 @@
                             </v-col>
                             <v-col>
                               <!-- TABLE for Galaxies and Velocity Measurements -->
-                              <!-- Probably delete dist-table, but need to check what c-distance-table is first -->
-                              <!-- <dist-table>
-                              </dist-table> -->
                               <c-distance-table/>
                               <todo-alert>
                                 <ul>
