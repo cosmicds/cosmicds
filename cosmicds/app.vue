@@ -361,7 +361,7 @@
                                   </v-col>
                                   <v-col
                                     class="shrink"
-                                    :class="state.gals_total == 5 ? 'd-block' : 'd-none'"
+                                    :class="state.gals_total >= 5 ? 'd-block' : 'd-none'"
                                   >
                                     <v-btn
                                       class="black--text"
