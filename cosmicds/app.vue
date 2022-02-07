@@ -41,6 +41,7 @@
       <v-btn
         icon
         @click="
+          state.stage = 'intro'
           state.marker = 'sel_gal1';
           state.toggle_on = 'd-none';
           state.toggle_off = 'd-block';
@@ -56,6 +57,7 @@
       <v-btn
         icon
         @click="
+          state.stage = 'main'
           state.marker = 'nic_wor1';
           state.toggle_on = 'd-block';
           state.toggle_off = 'd-none';
@@ -97,7 +99,24 @@
       <v-container
         class="py-0"
       >
-        <v-row justify="center">
+        <v-row
+          :class="state.stage == 'intro' ? 'd-block' : 'd-none'"
+          justify="center"
+        >
+          <v-col cols="12">
+            <intro-windows
+              continue-text="get started"
+              @continue="
+                state.stage = 'main';
+              "
+            >
+            </intro-windows>
+          </v-col>
+        </v-row>
+        <v-row
+          :class="state.stage == 'main' ? 'd-block' : 'd-none'"
+          justify="center"
+        >
           <v-col cols="12" xl="8">
             <v-row justify="center">
               <v-col cols="2">
@@ -226,7 +245,8 @@
                               <v-alert
                                 :class="state.marker == 'sel_gal1' ? 'd-block' : 'd-none'"
                                 color="info"
-                                class="mb-4"
+                                class="mb-4 mx-auto"
+                                max-width="800"
                                 elevation="6"
                               >
                                 <h3

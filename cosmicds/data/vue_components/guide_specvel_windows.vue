@@ -175,7 +175,7 @@
             color="accent"
             class="black--text"
             depressed
-            @click="() => { $emit('close'); dialog = false; step = 1; }"
+            @click="() => { $emit('close'); dialog = false; step = 0; }"
           >
             {{ closeText }}
           </v-btn>
@@ -208,12 +208,12 @@ module.exports = {
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 1: return 'Light'
-        case 2: return 'Spectrometer'
-        case 3: return 'Atom & Molecule Emissions'
-        case 4: return 'Lines to Look For'
-        case 5: return 'Doppler, pt. I'
-        case 6: return 'Doppler, pt. II'
+        case 0: return 'Light'
+        case 1: return 'Spectrometer'
+        case 2: return 'Atom & Molecule Emissions'
+        case 3: return 'Lines to Look For'
+        case 4: return 'Doppler, pt. I'
+        case 5: return 'Doppler, pt. II'
         default: return 'Complete'
       }
     },

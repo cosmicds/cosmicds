@@ -274,13 +274,13 @@ module.exports = {
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 1: return "Observed vs. Rest Wavelengths"
-        case 2: return "How Galaxies Move"
-        case 3: return "Feedback for a 1920's Scientist"
-        case 4: return "Confidence in Your Conclusions"
-        case 5: return "Moving Away"
-        case 6: return "MATHJAX"
-        case 7: return "Remaining Galaxy Velocities"
+        case 0: return "Observed vs. Rest Wavelengths"
+        case 1: return "How Galaxies Move"
+        case 2: return "Feedback for a 1920's Scientist"
+        case 3: return "Confidence in Your Conclusions"
+        case 4: return "Moving Away"
+        case 5: return "MATHJAX"
+        case 6: return "Remaining Galaxy Velocities"
         default: return "Complete"
       }
     },
