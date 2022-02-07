@@ -34,7 +34,7 @@
             {{ currentTitle }}
           </span>
           <span
-            @click="() => { $emit('close'); dialog = false; if (step == 7)  {step = 1}; }"
+            @click="() => { $emit('close'); dialog = false; if (step == 6)  {step = 0}; }"
           >
             <v-btn
               icon
@@ -50,7 +50,7 @@
           style="min-height: 250px;"
           v-model="step"
         >
-          <v-window-item :value="1" 
+          <v-window-item :value="0" 
             class="no-transition"
           >
             <v-card-text>
@@ -59,7 +59,7 @@
           </v-window-item>
 
 
-          <v-window-item :value="2" 
+          <v-window-item :value="1" 
             class="no-transition"
           >
             <v-card-text>
@@ -67,7 +67,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="3" 
+          <v-window-item :value="2" 
             class="no-transition"
           >
             <v-card-text>
@@ -80,7 +80,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="4" 
+          <v-window-item :value="3" 
             class="no-transition"
           >
             <v-card-text>
@@ -90,7 +90,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="5" 
+          <v-window-item :value="4" 
             class="no-transition"
           >
             <v-card-text>
@@ -100,7 +100,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="6" 
+          <v-window-item :value="5" 
             class="no-transition"
           >
             <v-card-text>
@@ -110,7 +110,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="7" 
+          <v-window-item :value="6" 
             class="no-transition"
           >
             <div class="pa-4 text-center">
@@ -130,9 +130,11 @@
 
         <v-divider></v-divider>
 
-        <v-card-actions>
+        <v-card-actions
+          class="justify-space-between"
+        >
           <v-btn
-            :disabled="step === 1"
+            :disabled="step === 0"
             color="accent"
             text
             @click="step--"
@@ -140,16 +142,36 @@
             Back
           </v-btn>
           <v-spacer></v-spacer>
+          <v-item-group
+            v-model="step"
+            class="text-center"
+            mandatory
+          >
+            <v-item
+              v-for="n in length"
+              :key="`btn-${n}`"
+              v-slot="{ active, toggle }"
+            >
+              <v-btn
+                :input-value="active"
+                icon
+                @click="toggle"
+              >
+                <v-icon>mdi-record</v-icon>
+              </v-btn>
+            </v-item>
+          </v-item-group>
+          <v-spacer></v-spacer>
           <v-btn
-            :disabled="step === 7"
+            :disabled="step === 6"
             color="accent"
             text
             @click="step++;"
           >
-            {{ step < 7 ? 'next' : '' }}
+            {{ step < 6 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled="step < 7"
+            :disabled="step < 6"
             color="accent"
             class="black--text"
             depressed
@@ -178,7 +200,8 @@ module.exports = {
   props: ["buttonText", "titleText", "closeText"],
   data: function () {
     return {
-      step: 1,
+      step: 0,
+      length: 7,
       dialog: false
     };
   },
