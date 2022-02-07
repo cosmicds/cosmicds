@@ -49,22 +49,27 @@
         <v-window
           style="min-height: 250px;"
           v-model="step"
-          vertical
         >
-          <v-window-item :value="1">
+          <v-window-item :value="1" 
+            class="no-transition"
+          >
             <v-card-text>
               Galaxies emit light.
             </v-card-text>
           </v-window-item>
 
 
-          <v-window-item :value="2">
+          <v-window-item :value="2" 
+            class="no-transition"
+          >
             <v-card-text>
               Pass light through a spectrometer which will separate the light into its different colors (like a prism) and tell you how much light there is at each color (or wavelength).
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="3">
+          <v-window-item :value="3" 
+            class="no-transition"
+          >
             <v-card-text>
               <div>
                 Certain atoms and molecules absorb or emit light at very specific known wavelengths, creating bright spikes (emission lines) or faint dips (absorption lines) in the spectrum.
@@ -75,7 +80,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="4">
+          <v-window-item :value="4" 
+            class="no-transition"
+          >
             <v-card-text>
               <div>
                 In your galaxy data, you will be looking for a specific hydrogen emission line (known as H-alpha) that emits at 6563 Angstroms at rest;  or a magnesium absorption line (known as Mg-II) that absorbs at ____ .
@@ -83,7 +90,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="5">
+          <v-window-item :value="5" 
+            class="no-transition"
+          >
             <v-card-text>
               <div>
                 Firetruck siren - pitch gets higher when the truck is moving toward you; lower when truck is moving away.
@@ -91,7 +100,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="6">
+          <v-window-item :value="6" 
+            class="no-transition"
+          >
             <v-card-text>
               <div>
                 In the same way, wavelength of light gets shorter (bluer) when it’s moving toward you; longer (redder) when it’s moving away from you.
@@ -99,7 +110,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="7">
+          <v-window-item :value="7" 
+            class="no-transition"
+          >
             <div class="pa-4 text-center">
               <v-img
                 class="mb-4"
@@ -150,6 +163,14 @@
   </v-btn>
 </template>
 
+
+<style>
+
+.no-transition {
+  transition: none;
+}
+
+</style>
 
 
 <script>

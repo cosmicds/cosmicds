@@ -49,8 +49,12 @@
         <v-window
           v-model="step"
           vertical
+          class="no-transition"
+          style="min-height: 400px;"
         >
-          <v-window-item :value="1">
+          <v-window-item :value="1" 
+            class="no-transition"
+          >
             <v-card-text>
               How do the observed wavelengths of emission or absorption lines in your galaxies
               compare with the “rest” wavelength of those lines?
@@ -74,7 +78,9 @@
           </v-window-item>
 
 
-          <v-window-item :value="2">
+          <v-window-item :value="2"
+            class="no-transition"
+          >
             <v-card-text>
               From the data you just collected, what can you conclude about how the galaxies are moving relative to our home galaxy, the Milky Way?
               <mc-radiogroup
@@ -96,7 +102,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="3">
+          <v-window-item :value="3"
+            class="no-transition"
+          >
             <v-card-text>
               These were the prevailing viewpoints in the 1920's:
               <ul class="mb-4">  
@@ -118,7 +126,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="4">
+          <v-window-item :value="4"
+            class="no-transition"
+          >
             <v-card-text>
               These were the prevailing viewpoints in the 1920's:
               <ul class="mb-4">  
@@ -134,7 +144,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="5">
+          <v-window-item :value="5"
+            class="no-transition"
+          >
             <v-card-text>
               <p>
                 You concluded from your data that your galaxies seem to be moving AWAY from our Milky Way galaxy.
@@ -145,13 +157,17 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="6">
+          <v-window-item :value="6"
+            class="no-transition"
+          >
             <v-card-text>
               MATHJAX Stuff
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="7">
+          <v-window-item :value="7"
+            class="no-transition"
+          >
             <v-card-text>
               <p>
                 Great, notice your calculated velocity is now entered in the table.
@@ -162,7 +178,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="8">
+          <v-window-item :value="8"
+            class="no-transition"
+          >
             <div class="pa-4 text-center">
               <v-img
                 class="mb-4"
@@ -212,6 +230,14 @@
   </v-btn>
 </template>
 
+
+<style>
+
+.no-transition {
+  transition: none;
+}
+
+</style>
 
 
 <script>

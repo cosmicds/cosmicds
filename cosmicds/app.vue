@@ -67,7 +67,7 @@
           add_galaxy_data_point();
           add_galaxy_data_point();
           state.gals_total += 5;
-          state.waveline_set = 0;
+          state.waveline_set = 1;
         "
       >
         <v-icon
