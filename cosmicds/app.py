@@ -2,6 +2,7 @@ from pathlib import Path
 
 from astropy.coordinates import SkyCoord
 from astropy.modeling import models, fitting
+from astropy.table import Table as AstropyTable
 import astropy.units as u
 from bqplot import PanZoom
 from echo import CallbackProperty, DictCallbackProperty
@@ -9,17 +10,15 @@ from echo.core import add_callback
 from glue.core import Component, Data
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
-from glue_jupyter.bqplot import scatter
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.state_traitlets_helpers import GlueState
-from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
-from ipyvuetify import VuetifyTemplate
+import ipyvuetify as v
 from ipywidgets import widget_serialization
 from numpy import array, pi, isnan
+from pandas import read_csv
 from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, List
-import ipyvuetify as v
 
 from cosmicds.components.measuring_tool.measuring_tool import MeasuringTool
 
@@ -27,6 +26,7 @@ from .components.footer import Footer
 # When we have multiple components, change above to
 # from .components import *
 from .components.viewer_layout import ViewerLayout
+from .components.widget_layout import WidgetLayout
 from .histogram_listener import HistogramListener
 from .line_draw_handler import LineDrawHandler
 from .utils import MILKY_WAY_SIZE_MPC, age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
@@ -91,7 +91,18 @@ class ApplicationState(State):
     adddata_disabled = CallbackProperty(1)
     next1_disabled = CallbackProperty(1)
 
- 
+    gals_total = CallbackProperty(0)
+    vels_total = CallbackProperty(0)
+
+    haro_on = CallbackProperty("d-none")
+    galaxy_vel = CallbackProperty("")
+
+    calc_visible = CallbackProperty("d-none")
+
+    #step 1 alerts
+    galaxy_table_visible = CallbackProperty(0)
+    spectrum_tool_visible = CallbackProperty(0)
+
     #state variables for reflections
     draw_on = CallbackProperty(0)
     bestfit_on = CallbackProperty(0)
@@ -121,11 +132,12 @@ class ApplicationState(State):
 
 
 # Everything in this class is exposed directly to the app.vue.
-class Application(VuetifyTemplate):
+class Application(v.VuetifyTemplate):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
     state = GlueState().tag(sync=True)
     template = load_template("app.vue", __file__).tag(sync=True)
     viewers = Dict().tag(sync=True, **widget_serialization)
+    widgets = Dict().tag(sync=True, **widget_serialization)
     items = List().tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
 
@@ -153,6 +165,10 @@ class Application(VuetifyTemplate):
             label='Hubble 1929-Table 1')
         self._application_handler.load_data(str(data_dir / "HSTkey2001.csv"),
             label='HSTkey2001') 
+        self._application_handler.load_data(str(data_dir / "SDSS_all_sample_filtered.csv"), 
+            label='SDSS_all_sample_filtered')
+        self._application_handler.load_data(str(data_dir / "dummy_student_data.csv"),
+            label="dummy_student_data")
 
         # Load some simulated measurements as summary data
         datasets =[
@@ -165,36 +181,9 @@ class Application(VuetifyTemplate):
         for dataset in datasets:
             self._application_handler.load_data(str(output_dir / f"{dataset}.csv"), label=dataset)
 
-        dummy_redshifts = [0.0119968, 0.00461038, 0.0251682, 0.0271153, 0.0467325]
-        self._dummy_student_data = {
-            'gal_name': ['2.8205120973628E+018', '1.98723291005848E+018', '2.57949062495682E+018', '2.93425410635467E+018', '1.64172292008027E+018'],
-            'element': ['H-alpha', 'Ca K', 'H-alpha', 'H-alpha', 'H-alpha'],
-            'measwave': [661.7, 580.0, 725.6, 666.6, 676.8],
-            'student_id': [1, 1, 1, 1, 1],
-            'distance': [36.3, 80.89, 195.45, 58.61, 144.34],
-            'ra_deg': [175.058075, 183.9847263, 139.9247131, 203.3716431, 195.7057343],
-            'dec_deg': [24.69706345, 14.43303874, 24.55243683, 17.47060966, 43.21479034],
-            'type': ['spiral', 'elliptical', 'irregular', 'spiral', 'elliptical']
-        }
-        self._dummy_student_data['restwave'] = [round(m/(1+z),2) for m,z in zip(self._dummy_student_data['measwave'], dummy_redshifts)]
-
-        # Calculate the velocities from the wavelengths
-        self._dummy_student_data['velocity'] = [round((3*(10**5)) * (o - r) / r, 0) for o,r in zip(self._dummy_student_data['measwave'], self._dummy_student_data['restwave'])]
-        self._dummy_galaxy_counter = 0
-        self._dummy_distance_counter = 0
-
         # Instantiate the initial viewers
         spectrum_viewer = self._application_handler.new_data_viewer(
             SpectrumView, data=None, show=False)
-
-        self._application_handler.load_data(str(data_dir / "spectra" / 
-            "SDSS_J143450.62+033842.5_S.ecsv"))
-
-        spectrum_viewer.add_data("SDSS_J143450.62+033842.5_S")
-
-        data = self.data_collection['SDSS_J143450.62+033842.5_S']
-        # spectrum_viewer.state.x_att = data.id['wavelength']
-        spectrum_viewer.layers[0].state.attribute = data.id['flux']
 
         # Scatter viewers used for the display of the measured galaxy data
         hub_viewers = [self._application_handler.new_data_viewer(BqplotScatterView, data=None, show=False) for _ in range(6)]
@@ -208,22 +197,24 @@ class Application(VuetifyTemplate):
             }
 
         # Set up glue links for the Hubble data sets
-        measurement_data_fields = self._dummy_student_data.keys()
+        measurement_data_fields = [x.label for x in self.data_collection["dummy_student_data"].main_components]
         table_columns_map = {
-            'gal_name' : 'Galaxy Name',
-            'element' : 'Element',
+            'ID' : 'Galaxy Name',
+            'Element' : 'Element',
             'restwave' : 'Rest Wavelength (nm)',
             'measwave' : 'Observed Wavelength (nm)',
             'velocity' : 'Velocity (km/s)',
             'distance' : 'Distance (Mpc)',
-            'type' : 'Galaxy Type'
+            'Type' : 'Galaxy Type'
         }
-        self._galaxy_table_components = ['gal_name', 'element', 'restwave', 'measwave', 'velocity']
+        self._galaxy_table_components = ['ID', 'Element', 'restwave', 'measwave', 'velocity']
         galaxy_table_names = [table_columns_map[x] for x in self._galaxy_table_components]
-        self._distance_table_components = ['gal_name', 'velocity', 'distance']
+        self._distance_table_components = ['ID', 'velocity', 'distance']
         distance_table_names = [table_columns_map[x] for x in self._distance_table_components]
-        self._fit_table_components = ['gal_name', 'type', 'velocity', 'distance']
+        self._fit_table_components = ['ID', 'Type', 'velocity', 'distance']
         fit_table_names = [table_columns_map[x] for x in self._fit_table_components]
+
+        self._spectrum_data = None
 
         measurement_data = Data(label='student_measurements', **{x : array([], dtype='float64') for x in measurement_data_fields})
         class_data = self.data_collection['HubbleData_ClassSample']
@@ -235,7 +226,7 @@ class Application(VuetifyTemplate):
             self._application_handler.add_link(class_data, field, all_data, field)
         
         # These zero values are dummies; we'll update them later
-        dummy_data = {x : ['X'] if x in ['gal_name', 'element', 'type'] else [0] for x in table_columns_map.keys()}
+        dummy_data = {x : ['X'] if x in ['ID', 'Element', 'Type'] else [0] for x in table_columns_map.keys()}
         student_data = Data(label='student_data', **dummy_data)
         self.data_collection.append(student_data)
         for component in class_data.components:
@@ -281,6 +272,25 @@ class Application(VuetifyTemplate):
         measuring_tool.observe(update_measuring_view_changing, names=["view_changing"])
         self.motions_left = 2
 
+        # TO DO: Currently, the glue-wwt package requires qt binding even if we
+        #  only intend to use the jupyter viewer.
+        wwt_widget = WWTJupyterWidget(hide_all_chrome=True)
+        wwt_widget.background = 'Digitized Sky Survey (Color)'
+        wwt_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
+        df = read_csv(str(data_dir / "SDSS_all_sample_filtered.csv"))
+        table = AstropyTable.from_pandas(df)
+        layer = wwt_widget.layers.add_table_layer(table)
+        layer.size_scale = 35
+        layer.color = "#00FF00"
+        def wwt_cb(wwt, updated):
+            if 'most_recent_source' in updated:
+                source = wwt.most_recent_source
+                galaxy = source["layerData"]
+                self._on_galaxy_selected(galaxy)
+        wwt_widget.set_selection_change_callback(wwt_cb)
+        self.wwt_sdss_layer = layer
+        self.wwt_selected_layer = None
+
         # Load the vue components through the ipyvuetify machinery. We add the
         # html tag we want and an instance of the component class as a
         # key-value pair to the components dictionary.
@@ -289,12 +299,12 @@ class Application(VuetifyTemplate):
         fit_title = 'My Galaxies'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
-                                key_component='gal_name', names=galaxy_table_names, title=velocity_title, single_select=True),
+                                key_component='ID', names=galaxy_table_names, title=velocity_title, single_select=True),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
-                                key_component='gal_name', names=distance_table_names, title=distance_title, single_select=True),
+                                key_component='ID', names=distance_table_names, title=distance_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
-                                key_component='gal_name', names=fit_table_names, title=fit_title),
-                            'c-measuring-tool': measuring_tool,
+                                key_component='ID', names=fit_table_names, title=fit_title),
+                            'c-measuring-tool': measuring_tool
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
                         #        self,
@@ -410,17 +420,18 @@ class Application(VuetifyTemplate):
 
         # Set up the subsets in the morphology viewer
         galaxy_data = self.data_collection['galaxy_data']
-        elliptical_subset = galaxy_data.new_subset(galaxy_data.id['MorphType'] == 'E', label='Elliptical', color='orange')
-        spiral_subset = galaxy_data.new_subset(galaxy_data.id["MorphType"] == 'Sp', label='Spiral', color='green')
-        irregular_subset = galaxy_data.new_subset(galaxy_data.id["MorphType"] == 'Ir', label='Irregular', color='red')
+        galaxy_type_field = "MorphType"
+        elliptical_subset = galaxy_data.new_subset(galaxy_data.id[galaxy_type_field] == 'E', label='Elliptical', color='orange')
+        spiral_subset = galaxy_data.new_subset(galaxy_data.id[galaxy_type_field] == 'Sp', label='Spiral', color='green')
+        irregular_subset = galaxy_data.new_subset(galaxy_data.id[galaxy_type_field] == 'Ir', label='Irregular', color='red')
         morphology_subsets = [elliptical_subset, spiral_subset, irregular_subset]
         for subset in morphology_subsets:
             hub_morphology_viewer.add_subset(subset)
         self._elliptical_subset = elliptical_subset
         self._spiral_subset = spiral_subset
         self._irregular_subset = irregular_subset
-        hub_morphology_viewer.state.x_att = self.data_collection['galaxy_data'].id['EstDist_Mpc']
-        hub_morphology_viewer.state.y_att = self.data_collection['galaxy_data'].id['velocity_km_s']
+        hub_morphology_viewer.state.x_att = galaxy_data.id['EstDist_Mpc']
+        hub_morphology_viewer.state.y_att = galaxy_data.id['velocity_km_s']
         update_figure_css(hub_morphology_viewer, style_path=default_style_path)
 
         # Set up the listener to sync the histogram <--> scatter viewers
@@ -480,23 +491,80 @@ class Application(VuetifyTemplate):
                     if layer.state.layer.label == subset_group.label:
                         layer.state.visible = False
 
+        # When we select an item in the galaxy table, we want to display its spectrum
+        galaxy_table = self.components['c-galaxy-table']
+        def galaxy_table_selected_changed(change):
+            if change["new"] == change["old"]:
+                return
+
+            # Convert the selected item (as a length-1 list) to a subset state
+            # and grab the name and galaxy_type
+            table = self.components['c-galaxy-table']
+            selected = change["new"]
+            state = table.subset_state_from_selected(selected)
+            mask = state.to_mask(table.glue_data)
+            name = next((x for index, x in enumerate(table.glue_data["ID"]) if mask[index]), None)
+            gal_type = next((x for index, x in enumerate(table.glue_data["Type"]) if mask[index]), None)
+            if name is None or gal_type is None:
+                return
+
+            # Load the spectrum data, if necessary
+            filename = name
+            spectrum_name = filename.split(".")[0]
+            data_name = spectrum_name + '[COADD]'
+            if data_name not in self.data_collection:
+                self._load_spectrum_data(filename, gal_type)
+
+            # Update the data in the spectrum viewer
+            spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
+            dc = self.data_collection
+            data = dc[data_name]
+            if self._spectrum_data is None:
+                main_comps = [x.label for x in data.main_components]
+                components = { col : list(data[col]) for col in main_comps }
+                self._spectrum_data = Data(label='spectrum_data', **components)
+                dc.append(self._spectrum_data)
+                spectrum_viewer.add_data(self._spectrum_data)
+                spectrum_viewer.state.x_att = self._spectrum_data.id['lambda']
+                spectrum_viewer.state.y_att = self._spectrum_data.id['flux']
+                spectrum_viewer.layers[0].state.attribute = self._spectrum_data.id['flux']
+                for layer in spectrum_viewer.layers:
+                    if layer.state.layer.label != self._spectrum_data.label:
+                        layer.state.visible = False
+            else:
+                self._spectrum_data.update_values_from_data(data)
+                spectrum_viewer.state.reset_limits()
+
+            self.state.gal_selected = len(selected) > 0
+            self.state.waveline_set = 0
+
+            # If this is the first selection we're making,
+            # we want to move the app forward
+            if self.state.marker == 'cho_row1':
+                self.state.spectrum_tool_visible = 1
+                self.state.marker = 'mee_spe1'
+
+        galaxy_table.observe(galaxy_table_selected_changed, names=['selected'])
+
         # When we select an item in the distance table, we want the WWT viewer to go there
         distance_table = self.components['c-distance-table']
         def distance_table_selected_changed(change):
             table = self.components['c-distance-table']
             selected = change["new"]
+            data = table.glue_data
             state = table.subset_state_from_selected(selected)
-            mask = state.to_mask(table.glue_data)
-            ra = next((x for index, x in enumerate(table.glue_data["ra_deg"]) if mask[index]), None)
-            dec = next((x for index, x in enumerate(table.glue_data["dec_deg"]) if mask[index]), None)
-            gal_type = next((x for index, x in enumerate(table.glue_data["type"]) if mask[index]), None)
+            mask = state.to_mask(data)
+            ra = next((x for index, x in enumerate(data["RA"]) if mask[index]), None)
+            dec = next((x for index, x in enumerate(data["DEC"]) if mask[index]), None)
+            gal_type = next((x for index, x in enumerate(data["Type"]) if mask[index]), None)
             self.state.measure_gal_selected = len(selected) > 0
+            self.state.haro_on = 'd-block'
             self.components['c-measuring-tool'].reset_canvas()
             if not self.state.measure_gal_selected:
                 self.state.measuring_name = None
                 self.state.measuring_type = None
                 return
-            name = selected[0]["gal_name"]
+            name = selected[0]["ID"]
             if ra is not None and dec is not None:
                 measuring_tool = self.components['c-measuring-tool']
                 widget = measuring_tool.widget
@@ -511,14 +579,21 @@ class Application(VuetifyTemplate):
             
         distance_table.observe(distance_table_selected_changed, names=['selected'])
 
-        # TO DO: Currently, the glue-wwt package requires qt binding even if we
-        #  only intend to use the juptyer viewer.
-        wwt_viewer = self._application_handler.new_data_viewer(
-            WWTJupyterViewer, data=self.data_collection['galaxy_data'], show=False)
 
-        data = self.data_collection['galaxy_data']
-        wwt_viewer.state.lon_att = data.id['RA_deg']
-        wwt_viewer.state.lat_att = data.id['Dec_deg']
+        # Set up the interaction where the student clicking on the spectrum viewer adds
+        # their measured wavelength to the data
+        def on_spectrum_click(event):
+            # Because of the way that the bqplot viewers handle event
+            # callbacks (which I find extremely confusing)
+            # we need to check for the event, even though we specify
+            # it in `add_event_callback`
+            if event["event"] != 'click':
+                return
+            value = round(event["domain"]["x"], 2)
+            self.add_measwave_data_point(value)
+            self.state.waveline_set = 1
+        spectrum_viewer.add_event_callback(on_spectrum_click, events=['click'])
+
 
         # Any lines that we've obtained from fitting
         # Entries have the form (line, data label)
@@ -545,7 +620,6 @@ class Application(VuetifyTemplate):
             'hub_fit_viewer': hub_fit_viewer,
             'hub_morphology_viewer': hub_morphology_viewer,
             'hub_prodata_viewer': hub_prodata_viewer,
-            'wwt_viewer': wwt_viewer,
             'class_distr_viewer': class_distr_viewer,
             'all_distr_viewer': all_distr_viewer,
             'sandbox_distr_viewer': sandbox_distr_viewer,
@@ -553,6 +627,7 @@ class Application(VuetifyTemplate):
 
         # Store a front-end accessible collection of renderable ipywidgets
         self.viewers = { k : ViewerLayout(v) for k, v in self._viewer_handlers.items() }
+        self.widgets = { 'wwt_widget' : WidgetLayout(wwt_widget) }
 
         # Make sure that the initial layer visibilities match the state
         self._hubble_comparison_selection_update(self.state.hubble_comparison_selections)
@@ -570,7 +645,7 @@ class Application(VuetifyTemplate):
             viewer.state.y_min = 0
 
         if kwargs.get('test', False):
-            self._testing_add_data()
+            self.vue_testing_add_data()
 
 
     def reload(self):
@@ -775,6 +850,43 @@ class Application(VuetifyTemplate):
                 viewer.add_data(data)
                 viewer.x_att = data.id['age']
 
+    def _on_galaxy_selected(self, galaxy):
+        fields = ['RA', 'DEC', 'ID', 'Element', 'Type', 'Z']
+        data = self.data_collection['student_measurements']
+        main_components = [x.label for x in data.main_components]
+        component_dict = {c : list(data[c]) for c in main_components}
+
+        already_present = galaxy['ID'] in component_dict['ID'] # Avoid duplicates
+
+        if already_present:
+
+            # To do nothing
+            return
+
+            # If instead we wanted to remove the point from the student's selection
+            # index = next(idx for idx, val in enumerate(component_dict['ID']) if val == galaxy['ID'])
+            # for component, values in component_dict.items():
+            #     values.pop(index)
+        else:
+            for field in fields:
+                component_dict[field].append(galaxy[field])
+            for component, values in component_dict.items():
+                if component not in fields:
+                    values.append(None)
+
+        new_data = Data(label='student_measurements', **component_dict)
+        self.state.gals_total = new_data.size
+        self._new_galaxy_data_update(new_data)
+
+        if self.state.gals_total == 1 and self.state.galaxy_table_visible == 0:
+            self.vue_first_galaxy_selected()
+
+        filename = galaxy['ID']
+        spectrum_name = filename.split(".")[0]
+        data_name = spectrum_name + '[COADD]'
+        if data_name not in self.data_collection:
+            self._load_spectrum_data(filename, galaxy['Type'])
+
     def _scatter_selection_update(self, viewer_id, data, selections):
         viewer = self._viewer_handlers[viewer_id]
         labels = [x.label for (i,x) in enumerate(data) if i in selections]
@@ -965,10 +1077,39 @@ class Application(VuetifyTemplate):
         ]
         self._histogram_selection_update(selections, 'sandbox_distr_viewer', line_options=line_options)
 
-    def vue_clear_histogram_selection(self, _args):
+    def vue_first_galaxy_selected(self, _args=None):
+        self.state.galaxy_table_visible = 1;
+        self.state.gal_snackbar = 0;
+        self.state.dist_snackbar = 0;
+        self.state.marker_snackbar = 0;
+        self.state.vel_snackbar = 0;
+        self.state.data_ready_snackbar = 0;
+        self.state.gal_snackbar = 1;
+
+
+    def vue_clear_histogram_selection(self, _args=None):
         toolbar = self._viewer_handlers['class_distr_viewer'].toolbar
         toolbar.active_tool = None
         self._histogram_listener.clear_subset()
+
+    def _load_spectrum_data(self, filename, gal_type):
+        type_folders = {
+            "Sp" : "spirals_spectra",
+            "E" : "ellipticals_spectra",
+            "Ir" : "irregulars_spectra"
+        }
+        spectrum_name = filename.split(".")[0]
+        dc = self.data_collection
+        spectra_path = Path(__file__).parent / "data" / "spectra"
+        type_folder = spectra_path / type_folders[gal_type]
+        filepath = str(type_folder / filename)
+        self._application_handler.load_data(filepath, label=spectrum_name)
+        data_name = spectrum_name + '[COADD]'
+        data = dc[data_name]
+        data['lambda'] = 10 ** data['loglam']
+        dc.remove(dc[spectrum_name + '[SPECOBJ]'])
+        dc.remove(dc[spectrum_name + '[SPZLINE]'])
+                
 
     def _update_data_component(self, data, attribute, values):
         if attribute in data.component_ids():
@@ -977,20 +1118,31 @@ class Application(VuetifyTemplate):
             data.add_component(Component.autotyped(values), attribute)
         data.broadcast(attribute)
 
+    def _new_field_data_update(self, data_label, field_name, values):
+        # Update the Data object
+        data = self.data_collection[data_label]
+        if len(values) > data.size:
+            return
+        self._update_data_component(data, field_name, values)
+
+    def _new_measwave_data_update(self, measwave):
+        self._new_field_data_update('student_measurements', 'measwave', measwave)
+
+    def _new_velocity_data_update(self, velocity):
+        self._new_field_data_update('student_measurements', 'velocity', velocity)
+
+    def _new_restwave_data_update(self, restwave):
+        self._new_field_data_update('student_measurements', 'restwave', restwave)
+
     def _new_dist_data_update(self, distance):
 
-        # Update the measurement Data object
-        label = 'student_measurements'
-        data = self.data_collection[label]
-        if len(distance) > data.size:
-            return
-
-        self._update_data_component(data, 'distance', distance)
+        self._new_field_data_update('student_measurements', 'distance', distance)
 
         # Create a new Data object from all of the 'finished' data points
         # and update to match that
+        data = self.data_collection['student_measurements']
         df = data.to_dataframe()
-        df = df.dropna()
+        df = df[df['distance'].notna() & df['velocity'].notna()]
 
         main_comps = [x.label for x in data.main_components]
         components = { col : list(df[col]) for col in main_comps }
@@ -1039,8 +1191,31 @@ class Application(VuetifyTemplate):
         label = 'student_measurements'
         data = dc[label]
         data.update_values_from_data(new_data)
+        data.label = label
 
-    def vue_add_distance_data_point(self, test=False):
+        # Update the selected WWT layer
+        wwt_widget = self.widgets['wwt_widget'].widget
+        df = data.to_dataframe()
+        table = AstropyTable.from_pandas(df)
+        selected_layer = wwt_widget.layers.add_table_layer(table)
+        selected_layer.size_scale = 100
+        selected_layer.color = "#FF00FF"
+        if self.wwt_selected_layer is not None:
+            wwt_widget.layers.remove_layer(self.wwt_selected_layer)
+        self.wwt_selected_layer = selected_layer
+
+    def add_measwave_data_point(self, value):
+        data = self.data_collection['student_measurements']
+        table = self.components['c-galaxy-table']
+        state = table.subset_state_from_selected(table.selected)
+        mask = state.to_mask(table.glue_data)
+        index = next((index for index in range(len(mask)) if mask[index]), None)
+        if index is not None:
+            measwave = data["measwave"]
+            measwave[index] = value
+            self._new_measwave_data_update(measwave)
+
+    def vue_add_distance_data_point(self, args=None):
 
         # Is the value that the student measured too large?
         # If so, we give a warning rather than adding this value
@@ -1050,68 +1225,73 @@ class Application(VuetifyTemplate):
 
         self.state.warn_size = False
         distance_value = round(MILKY_WAY_SIZE_MPC / (self.state.measured_ang_size * pi / (180 * 3600)), 0)
-        self.state.galaxy_dist = str(int(distance_value))
+        self.state.galaxy_dist = f"{distance_value:.0f}"
 
         data = self.data_collection['student_measurements']
-        if test:
-            if self._dummy_distance_counter >= len(self._dummy_student_data['gal_name']):
-                return
-            distance = self._dummy_student_data['distance'][:self._dummy_distance_counter + 1] + [None]*(data.size - self._dummy_distance_counter - 1)
-        else:
-            table = self.components['c-distance-table']
-            state = table.subset_state_from_selected(table.selected)
-            mask = state.to_mask(table.glue_data)
-            index = next((index for index in range(len(mask)) if mask[index]), None)
-            if index is not None:
-                distance = data["distance"]
-                distance[index] = distance_value
+        table = self.components['c-distance-table']
+        state = table.subset_state_from_selected(table.selected)
+        mask = state.to_mask(table.glue_data)
+        index = next((index for index in range(len(mask)) if mask[index]), None)
+        if index is not None:
+            distance = data["distance"]
+            distance[index] = distance_value
+            self._new_dist_data_update(distance)
 
-        self._new_dist_data_update(distance)
-        self._dummy_distance_counter += 1
-            
-    def vue_add_galaxy_data_point(self, _args):
-        if self._dummy_galaxy_counter >= len(self._dummy_student_data['gal_name']):
-            return
-
-        self._dummy_galaxy_counter += 1
-        component_mapping = {
-            k : v[:self._dummy_galaxy_counter] for k, v in self._dummy_student_data.items() if k != 'distance'
-        }
-
-        if 'student_measurements' in self.data_collection:
-            data = self.data_collection['student_measurements']
-            distance = list(data['distance']) + [None]
-        else:
-            distance = [None]*self._dummy_galaxy_counter
-        component_mapping['distance'] = distance
-        new_data = Data(label='student_measurements', **component_mapping)
-        self._new_galaxy_data_update(new_data)
-
-    def vue_show_fit_points(self, _args):
+    def vue_show_fit_points(self, _args=None):
         for viewer in self._hub_viewers:
             for layer in viewer.layers:
                 if layer.state.layer.label in [self._student_data.label, self.components['c-fit-table'].subset_group.label]:
                     layer.state.visible = True
 
-    def vue_handle_fitline_click(self, _args):
+    def vue_handle_fitline_click(self, _args=None):
         if not self.state.bestfit_drawn:
             self.state.draw_on = not self.state.draw_on
         else:
             self._line_draw_handler.clear()
 
-    def _testing_add_data(self):
+    def vue_testing_add_data(self, args=None):
 
-        # Add the data
-        for _ in range(len(self._dummy_student_data['gal_name'])):
-            self.vue_add_galaxy_data_point(None)
-            self.vue_add_distance_data_point(True)
+        dummy_data = self.data_collection["dummy_student_data"]
+        names = dummy_data["ID"]
+        types = dummy_data["Type"]
+        for name, t in zip(names, types):
+            self._load_spectrum_data(name, t)
+
+        self._new_galaxy_data_update(self.data_collection["dummy_student_data"])
 
         # Set the bottom-left corner of the plot to be the origin in each scatter viewer
         for viewer in self._hub_viewers:
             viewer.state.x_min = 0
             viewer.state.y_min = 0
 
-        self.vue_show_fit_points(None)
+        self.vue_show_fit_points()
+
+    def _get_current_table_index(self, table):
+        state = table.subset_state_from_selected(table.selected)
+        mask = state.to_mask(table.glue_data)
+        index = next((index for index in range(len(mask)) if mask[index]), None)
+        return index
+
+    def vue_add_current_restwave(self, args=None):
+        data = self.data_collection['student_measurements']
+        table = self.components['c-galaxy-table']
+        index = self._get_current_table_index(table)
+        if index is not None:
+            restwave = data["restwave"]
+            restwave_value = 6562.8 # H-alpha, can make this more dynamic later
+            restwave[index] = restwave_value
+            self._new_restwave_data_update(restwave)
+
+    def vue_add_current_velocity(self, args=None):
+        data = self.data_collection['student_measurements']
+        table = self.components['c-galaxy-table']
+        index = self._get_current_table_index(table)
+        if index is not None:
+            z = data["Z"][index]
+            velocity_value = int(3 * (10 ** 5) * z)
+            velocity = data["velocity"]
+            velocity[index] = velocity_value
+            self._new_velocity_data_update(velocity)
 
     def vue_reset_measurer(self, _args):
         self.components['c-measuring-tool'].reset_canvas()
