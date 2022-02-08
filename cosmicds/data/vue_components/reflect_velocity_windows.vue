@@ -34,7 +34,7 @@
             {{ currentTitle }}
           </span>
           <span
-            @click="() => { dialog = false; if (step == 8)  {step = 1}; }"
+            @click="() => { dialog = false; if (step == 7)  {step = 0}; }"
           >
             <v-btn
               icon
@@ -49,8 +49,12 @@
         <v-window
           v-model="step"
           vertical
+          class="no-transition"
+          style="min-height: 400px;"
         >
-          <v-window-item :value="1">
+          <v-window-item :value="0" 
+            class="no-transition"
+          >
             <v-card-text>
               How do the observed wavelengths of emission or absorption lines in your galaxies
               compare with the “rest” wavelength of those lines?
@@ -74,7 +78,9 @@
           </v-window-item>
 
 
-          <v-window-item :value="2">
+          <v-window-item :value="1"
+            class="no-transition"
+          >
             <v-card-text>
               From the data you just collected, what can you conclude about how the galaxies are moving relative to our home galaxy, the Milky Way?
               <mc-radiogroup
@@ -96,7 +102,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="3">
+          <v-window-item :value="2"
+            class="no-transition"
+          >
             <v-card-text>
               These were the prevailing viewpoints in the 1920's:
               <ul class="mb-4">  
@@ -118,7 +126,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="4">
+          <v-window-item :value="3"
+            class="no-transition"
+          >
             <v-card-text>
               These were the prevailing viewpoints in the 1920's:
               <ul class="mb-4">  
@@ -134,7 +144,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="5">
+          <v-window-item :value="4"
+            class="no-transition"
+          >
             <v-card-text>
               <p>
                 You concluded from your data that your galaxies seem to be moving AWAY from our Milky Way galaxy.
@@ -145,13 +157,17 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="6">
+          <v-window-item :value="5"
+            class="no-transition"
+          >
             <v-card-text>
               MATHJAX Stuff
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="7">
+          <v-window-item :value="6"
+            class="no-transition"
+          >
             <v-card-text>
               <p>
                 Great, notice your calculated velocity is now entered in the table.
@@ -162,7 +178,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="8">
+          <v-window-item :value="7"
+            class="no-transition"
+          >
             <div class="pa-4 text-center">
               <v-img
                 class="mb-4"
@@ -182,7 +200,7 @@
 
         <v-card-actions>
           <v-btn
-            :disabled="step === 1"
+            :disabled="step === 0"
             color="accent"
             text
             @click="step--"
@@ -190,19 +208,40 @@
             Back
           </v-btn>
           <v-spacer></v-spacer>
+          <v-item-group
+            v-model="step"
+            class="text-center"
+            mandatory
+          >
+            <v-item
+              v-for="n in length"
+              :key="`btn-${n}`"
+              v-slot="{ active, toggle }"
+            >
+              <v-btn
+                :input-value="active"
+                icon
+                @click="toggle"
+              >
+                <v-icon>mdi-record</v-icon>
+              </v-btn>
+            </v-item>
+          </v-item-group>
+          <v-spacer></v-spacer>
           <v-btn
-            :disabled="step === 8"
+            :disabled="step === 7"
             color="accent"
             text
             @click="step++;"
           >
-            {{ step < 8 ? 'next' : '' }}
+            {{ step < 7 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled="step < 8"
-            color="accent darken-1"
+            :disabled="step < 7"
+            color="accent"
+            class="black--text"
             depressed
-            @click="() => { $emit('submit'); dialog = false; step = 1; }"
+            @click="() => { $emit('submit'); dialog = false; step = 0; }"
           >
             {{ closeText }}
           </v-btn>
@@ -213,26 +252,35 @@
 </template>
 
 
+<style>
+
+.no-transition {
+  transition: none;
+}
+
+</style>
+
 
 <script>
 module.exports = {
   props: ["buttonText", "titleText", "closeText"],
   data: function () {
     return {
-      step: 1,
+      step: 0,
+      length: 8,
       dialog: false
     };
   },
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 1: return "Observed vs. Rest Wavelengths"
-        case 2: return "How Galaxies Move"
-        case 3: return "Feedback for a 1920's Scientist"
-        case 4: return "Confidence in Your Conclusions"
-        case 5: return "Moving Away"
-        case 6: return "MATHJAX"
-        case 7: return "Remaining Galaxy Velocities"
+        case 0: return "Observed vs. Rest Wavelengths"
+        case 1: return "How Galaxies Move"
+        case 2: return "Feedback for a 1920's Scientist"
+        case 3: return "Confidence in Your Conclusions"
+        case 4: return "Moving Away"
+        case 5: return "MATHJAX"
+        case 6: return "Remaining Galaxy Velocities"
         default: return "Complete"
       }
     },
