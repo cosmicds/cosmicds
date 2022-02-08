@@ -70,6 +70,9 @@ class ApplicationState(State):
     toggle_on = CallbackProperty('d-none')
     toggle_off = CallbackProperty('d-block')
 
+    # intro vs. main
+    stage = CallbackProperty("intro")
+
     # a bunch of snackbars
     gal_snackbar = CallbackProperty(0)
     dist_snackbar = CallbackProperty(0)

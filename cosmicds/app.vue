@@ -41,6 +41,7 @@
       <v-btn
         icon
         @click="
+          state.stage = 'intro'
           state.marker = 'sel_gal1';
           state.toggle_on = 'd-none';
           state.toggle_off = 'd-block';
@@ -56,6 +57,7 @@
       <v-btn
         icon
         @click="
+          state.stage = 'main'
           state.marker = 'nic_wor1';
           state.toggle_on = 'd-block';
           state.toggle_off = 'd-none';
@@ -63,10 +65,7 @@
           state.gals_total += 5;
           testing_add_data();
           state.spectrum_tool_visible = 1;
-          state.marker = '';
-          state.toggle_on = 'd-block';
-          state.toggle_off = 'd-none';
-          state.waveline_set = 0;
+          state.waveline_set = 1;
         "
       >
         <v-icon
@@ -96,7 +95,24 @@
       <v-container
         class="py-0"
       >
-        <v-row justify="center">
+        <v-row
+          :class="state.stage == 'intro' ? 'd-block' : 'd-none'"
+          justify="center"
+        >
+          <v-col cols="12">
+            <intro-windows
+              continue-text="get started"
+              @continue="
+                state.stage = 'main';
+              "
+            >
+            </intro-windows>
+          </v-col>
+        </v-row>
+        <v-row
+          :class="state.stage == 'main' ? 'd-block' : 'd-none'"
+          justify="center"
+        >
           <v-col cols="12" xl="8">
             <v-row justify="center">
               <v-col cols="2">
@@ -225,7 +241,8 @@
                               <v-alert
                                 :class="state.marker == 'sel_gal1' ? 'd-block' : 'd-none'"
                                 color="info"
-                                class="mb-4"
+                                class="mb-4 mx-auto"
+                                max-width="800"
                                 elevation="6"
                               >
                                 <h3
@@ -342,7 +359,7 @@
                                   </v-col>
                                   <v-col
                                     class="shrink"
-                                    :class="state.gals_total == 5 ? 'd-block' : 'd-none'"
+                                    :class="state.gals_total >= 5 ? 'd-block' : 'd-none'"
                                   >
                                     <v-btn
                                       class="black--text"
@@ -595,7 +612,6 @@
                                     color="success"
                                     elevation="2"
                                     @click="
-                                      state.gal_snackbar = 0;
                                       state.dist_snackbar = 0;
                                       state.marker_snackbar = 0;
                                       state.vel_snackbar = 0;
@@ -776,7 +792,6 @@
                                       :disabled="!state.measure_gal_selected || state.measured_ang_size === 0 || state.measuring_view_changing"
                                       @click="
                                         state.dist_measured = 1;
-                                        state.gal_snackbar = 0;
                                         state.dist_snackbar = 0;
                                         state.marker_snackbar = 0;
                                         state.vel_snackbar = 0;
@@ -844,9 +859,6 @@
                             </v-col>
                             <v-col>
                               <!-- TABLE for Galaxies and Velocity Measurements -->
-                              <!-- Probably delete dist-table, but need to check what c-distance-table is first -->
-                              <!-- <dist-table>
-                              </dist-table> -->
                               <c-distance-table/>
                               <todo-alert>
                                 <ul>

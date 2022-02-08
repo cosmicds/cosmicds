@@ -34,7 +34,7 @@
             {{ currentTitle }}
           </span>
           <span
-            @click="() => { $emit('close'); dialog = false; if (step == 7)  {step = 1}; }"
+            @click="() => { $emit('close'); dialog = false; if (step == 6)  {step = 0}; }"
           >
             <v-btn
               icon
@@ -49,22 +49,27 @@
         <v-window
           style="min-height: 250px;"
           v-model="step"
-          vertical
         >
-          <v-window-item :value="1">
+          <v-window-item :value="0" 
+            class="no-transition"
+          >
             <v-card-text>
               Galaxies emit light.
             </v-card-text>
           </v-window-item>
 
 
-          <v-window-item :value="2">
+          <v-window-item :value="1" 
+            class="no-transition"
+          >
             <v-card-text>
               Pass light through a spectrometer which will separate the light into its different colors (like a prism) and tell you how much light there is at each color (or wavelength).
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="3">
+          <v-window-item :value="2" 
+            class="no-transition"
+          >
             <v-card-text>
               <div>
                 Certain atoms and molecules absorb or emit light at very specific known wavelengths, creating bright spikes (emission lines) or faint dips (absorption lines) in the spectrum.
@@ -75,7 +80,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="4">
+          <v-window-item :value="3" 
+            class="no-transition"
+          >
             <v-card-text>
               <div>
                 In your galaxy data, you will be looking for a specific hydrogen emission line (known as H-alpha) that emits at 6563 Angstroms at rest;  or a magnesium absorption line (known as Mg-II) that absorbs at ____ .
@@ -83,7 +90,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="5">
+          <v-window-item :value="4" 
+            class="no-transition"
+          >
             <v-card-text>
               <div>
                 Firetruck siren - pitch gets higher when the truck is moving toward you; lower when truck is moving away.
@@ -91,7 +100,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="6">
+          <v-window-item :value="5" 
+            class="no-transition"
+          >
             <v-card-text>
               <div>
                 In the same way, wavelength of light gets shorter (bluer) when it’s moving toward you; longer (redder) when it’s moving away from you.
@@ -99,7 +110,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="7">
+          <v-window-item :value="6" 
+            class="no-transition"
+          >
             <div class="pa-4 text-center">
               <v-img
                 class="mb-4"
@@ -117,9 +130,11 @@
 
         <v-divider></v-divider>
 
-        <v-card-actions>
+        <v-card-actions
+          class="justify-space-between"
+        >
           <v-btn
-            :disabled="step === 1"
+            :disabled="step === 0"
             color="accent"
             text
             @click="step--"
@@ -127,20 +142,40 @@
             Back
           </v-btn>
           <v-spacer></v-spacer>
+          <v-item-group
+            v-model="step"
+            class="text-center"
+            mandatory
+          >
+            <v-item
+              v-for="n in length"
+              :key="`btn-${n}`"
+              v-slot="{ active, toggle }"
+            >
+              <v-btn
+                :input-value="active"
+                icon
+                @click="toggle"
+              >
+                <v-icon>mdi-record</v-icon>
+              </v-btn>
+            </v-item>
+          </v-item-group>
+          <v-spacer></v-spacer>
           <v-btn
-            :disabled="step === 7"
+            :disabled="step === 6"
             color="accent"
             text
             @click="step++;"
           >
-            {{ step < 7 ? 'next' : '' }}
+            {{ step < 6 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled="step < 7"
+            :disabled="step < 6"
             color="accent"
             class="black--text"
             depressed
-            @click="() => { $emit('close'); dialog = false; step = 1; }"
+            @click="() => { $emit('close'); dialog = false; step = 0; }"
           >
             {{ closeText }}
           </v-btn>
@@ -151,25 +186,34 @@
 </template>
 
 
+<style>
+
+.no-transition {
+  transition: none;
+}
+
+</style>
+
 
 <script>
 module.exports = {
   props: ["buttonText", "titleText", "closeText"],
   data: function () {
     return {
-      step: 1,
+      step: 0,
+      length: 7,
       dialog: false
     };
   },
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 1: return 'Light'
-        case 2: return 'Spectrometer'
-        case 3: return 'Atom & Molecule Emissions'
-        case 4: return 'Lines to Look For'
-        case 5: return 'Doppler, pt. I'
-        case 6: return 'Doppler, pt. II'
+        case 0: return 'Light'
+        case 1: return 'Spectrometer'
+        case 2: return 'Atom & Molecule Emissions'
+        case 3: return 'Lines to Look For'
+        case 4: return 'Doppler, pt. I'
+        case 5: return 'Doppler, pt. II'
         default: return 'Complete'
       }
     },
