@@ -162,3 +162,10 @@ class Table(VuetifyTemplate, HubListener):
             self._subset_message_pass = True
             self._subset_group.subset_state = state
 
+    def vue_handle_row_click(self, item, _data=None):
+        if self.single_select:
+            self.selected = [item]
+        elif item in self.items:
+            self.items.remove(item)
+        else:
+            self.items.append(item)

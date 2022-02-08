@@ -62,13 +62,9 @@
           state.toggle_on = 'd-block';
           state.toggle_off = 'd-none';
           state.gal_selected = 1;
-          state.spectrum_tool_visible = 1;
-          add_galaxy_data_point();
-          add_galaxy_data_point();
-          add_galaxy_data_point();
-          add_galaxy_data_point();
-          add_galaxy_data_point();
           state.gals_total += 5;
+          testing_add_data();
+          state.spectrum_tool_visible = 1;
           state.waveline_set = 1;
         "
       >
@@ -213,11 +209,11 @@
                                   class="wwt_widget"
                                 >
                                   <!-- WWT GALAXY PICKER as Jupyter Widget -- v-lazy loads when visible -->
-                                  <v-lazy>
+                                   <v-lazy>
                                     <jupyter-widget
-                                      :widget="viewers.wwt_viewer"
-                                    ></jupyter-widget>
-                                  </v-lazy>
+                                      :widget="widgets.wwt_widget"
+                                      ></jupyter-widget>
+                                    </v-lazy>
                                 </div>
                               </v-card>
                             </v-col>
@@ -304,23 +300,6 @@
                                 <div
                                   class="text-center my-8"
                                 >
-                                  <v-btn
-                                    class="black--text"
-                                    color="success"
-                                    elevation="2"
-                                    :disabled="state.gals_total == 5"
-                                    @click="
-                                      state.dist_snackbar = 0;
-                                      state.marker_snackbar = 0;
-                                      state.vel_snackbar = 0;
-                                      state.data_ready_snackbar = 0;
-                                      state.gal_selected = 1;
-                                      state.gals_total += 1;
-                                      add_galaxy_data_point();
-                                    "
-                                  >
-                                    select galaxy
-                                  </v-btn>
                                 </div>
                                 <div
                                   class="mb-2 mx-4"
@@ -368,7 +347,6 @@
                                   no-gutters
                                 >
                                   <v-spacer></v-spacer>
-                                  
                                   <v-col
                                     cols="3"
                                     class="shrink"
@@ -571,8 +549,7 @@
                                     class="black--text"
                                     color="success"
                                     elevation="2"
-                                    @click="
-                                    "
+                                    @click="add_current_restwave()"
                                   >
                                     click the label
                                   </v-btn>
@@ -603,18 +580,6 @@
                                   <p>
                                     Slide the vertical measuring tool until it aligns with the line you identified, and click to record the line’s observed wavelength in the table.
                                   </p>
-                                </div>
-
-                                <div class="text-center my-8">
-                                  <v-btn
-                                    class="black--text"
-                                    color="success"
-                                    elevation="2"
-                                    @click="
-                                    "
-                                  >
-                                    align tool to line
-                                  </v-btn>
                                 </div>
                               </scaffold-alert>
 
@@ -652,13 +617,26 @@
                                       state.vel_snackbar = 0;
                                       state.data_ready_snackbar = 0;
                                       state.marker_snackbar = 1;
-                                      state.waveline_set = 1;
                                     "
                                   >
                                     repeat 4 times
                                   </v-btn>
                                 </div>
                               </scaffold-alert>
+                              <v-alert
+                                border="left"
+                                color="indigo"
+                                dark
+                                elevation="2"
+                                class="mb-12">
+                                <v-btn
+                                  :disabled="!state.waveline_set"
+                                  class="white-text"
+                                  color="green"
+                                  @click="add_current_velocity()"
+                                >find velocity
+                                </v-btn>
+                              </v-alert>
 
                               <!-- GUIDANCE ALERT - Nice Work #1 -->
                               <scaffold-alert
