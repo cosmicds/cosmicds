@@ -181,6 +181,14 @@
                           class="pt-0"
                         >
                           <v-row>
+                            <v-btn
+                            @click="zoom_out_galaxy_widget()"
+                            >choose another galaxy</v-btn>
+                            <v-btn
+                              @click="reset_galaxy_widget()"
+                            >reset view</v-btn>
+                          </v-row>
+                          <v-row>
                             <v-col
                               cols="6"
                               class="wwt_column"

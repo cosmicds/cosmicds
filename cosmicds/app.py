@@ -277,10 +277,12 @@ class Application(v.VuetifyTemplate):
         wwt_widget = WWTJupyterWidget(hide_all_chrome=True)
         wwt_widget.background = 'Digitized Sky Survey (Color)'
         wwt_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
+        start_coordinates = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
+        wwt_widget.center_on_coordinates(start_coordinates, instant=False)
         df = read_csv(str(data_dir / "SDSS_all_sample_filtered.csv"))
         table = AstropyTable.from_pandas(df)
         layer = wwt_widget.layers.add_table_layer(table)
-        layer.size_scale = 35
+        layer.size_scale = 50
         layer.color = "#00FF00"
         def wwt_cb(wwt, updated):
             if 'most_recent_source' in updated:
@@ -874,6 +876,10 @@ class Application(v.VuetifyTemplate):
                 if component not in fields:
                     values.append(None)
 
+        wwt_widget = self.widgets["wwt_widget"].widget
+        coordinates = SkyCoord(float(galaxy["RA"]) * u.deg, float(galaxy["DEC"]) * u.deg, frame='icrs')
+        wwt_widget.center_on_coordinates(coordinates, fov=45 * u.arcmin, instant=False)
+
         new_data = Data(label='student_measurements', **component_dict)
         self.state.gals_total = new_data.size
         self._new_galaxy_data_update(new_data)
@@ -1293,12 +1299,22 @@ class Application(v.VuetifyTemplate):
             velocity[index] = velocity_value
             self._new_velocity_data_update(velocity)
 
-    def vue_reset_measurer(self, _args):
+    def vue_reset_measurer(self, args=None):
         self.components['c-measuring-tool'].reset_canvas()
 
-    def vue_toggle_measuring(self, _args):
+    def vue_toggle_measuring(self, args=None):
         measurer = self.components['c-measuring-tool']
         measurer.measuring = not measurer.measuring
+
+    def vue_zoom_out_galaxy_widget(self, args=None):
+        widget = self.widgets["wwt_widget"].widget
+        center = widget.get_center()
+        widget.center_on_coordinates(center, fov=60 * u.deg, instant=False)
+
+    def vue_reset_galaxy_widget(self, args=None):
+        widget = self.widgets["wwt_widget"].widget
+        start_coordinates = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
+        widget.center_on_coordinates(start_coordinates, fov = 60 * u.deg, instant=False)
 
     # These three properties provide convenient access to the slopes of the the fit lines
     # for the student's data, the class's data, and all of the data
