@@ -24,6 +24,10 @@ __all__ = [
 
 MILKY_WAY_SIZE_MPC = 0.03
 
+# Both in angstroms
+H_ALPHA_REST_LAMBDA = 6563
+MG_REST_LAMBDA = 5177
+
 # JC: I got this from https://stackoverflow.com/a/13151299
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):

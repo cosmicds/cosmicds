@@ -41,13 +41,7 @@
       <v-btn
         icon
         @click="
-          state.stage = 'intro'
-          state.marker = 'sel_gal1';
-          state.toggle_on = 'd-none';
-          state.toggle_off = 'd-block';
-          state.gal_selected = 0;
-          state.spectrum_tool_visible = 0;
-          state.waveline_set = 0;
+          reset_app()
         "
       >
         <v-icon
@@ -441,10 +435,17 @@
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-toolbar>
-                                  <v-lazy>
-                                    <jupyter-widget :widget="viewers.spectrum_viewer" >
-                                    </jupyter-widget>  
-                                  </v-lazy>
+                                <v-select
+                                  v-model="state.spectral_line"
+                                  :disabled="state.gal_selected == 0"
+                                  :items="['H-α', 'Mg I']"
+                                  label="Select element"
+                                ></v-select>
+                                <v-lazy>
+                                  <jupyter-widget
+                                    :widget="viewers.spectrum_viewer" >
+                                  </jupyter-widget>  
+                                </v-lazy>
                               </v-card>
                             </v-col>
                             <!-- SIDEBAR COLUMN for processing velocity data -->
@@ -665,6 +666,18 @@
                                   </p>
                                 </div>
                               </scaffold-alert>
+
+                              <v-row>
+                                <v-btn
+                                  id="show-lam-rest-button"
+                                  :disabled="!state.spectral_line"
+                                  @click.stop="(e) => {
+                                    console.log(e.target);
+                                    toggle_rest_wavelength_shown();
+                                    updateMathJax(e.target);
+                                  }"
+                                >{{ state.rest_wavelength_shown ? 'hide' : 'show' }} $$\:\lambda_{rest}$$</v-btn>
+                              </v-row>
 
                               <v-row>
                                 <v-col
@@ -1735,6 +1748,19 @@ export default {
     const observer = new MutationObserver(mathJaxCallback);
     const options = { childList: true, subtree: true };
     observer.observe(this.$el, options);
+  },
+
+  methods: {
+    updateMathJax: function(element) {
+      const container = element.querySelector("mjx-container");
+      if (container) {
+        const children = container.childNodes;
+        container.remove(children);
+        this.$nextTick(function() {
+          MathJax.typesetPromise([element]);
+        })
+      }
+    }
   }
 }
 </script>
@@ -1838,5 +1864,12 @@ input {
   font-family: 'Courier New';
 }
 
+/* There doesn't seem to be a built-in way to change the height of the pywwt
+   Jupyter widget, but since the screen 1 widget has a class attached, we can
+   do it here in the CSS. We need to mark it as important, or the pywwt styling
+   wins out. */
+.wwt_widget .p-Widget, .wwt_widget iframe {
+  height: 300px !important;
+}
 
 </style>
