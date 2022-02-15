@@ -176,11 +176,15 @@
                         >
                           <v-row>
                             <v-btn
-                            @click="zoom_out_galaxy_widget()"
+                              @click="zoom_out_galaxy_widget()"
                             >choose another galaxy</v-btn>
                             <v-btn
                               @click="reset_galaxy_widget()"
                             >reset view</v-btn>
+                            <v-btn
+                              color="green"
+                              @click="select_galaxies()"
+                            >select 5 galaxies</v-btn>
                           </v-row>
                           <v-row>
                             <v-col
@@ -435,12 +439,6 @@
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-toolbar>
-                                <v-select
-                                  v-model="state.spectral_line"
-                                  :disabled="state.gal_selected == 0"
-                                  :items="['H-α', 'Mg I']"
-                                  label="Select element"
-                                ></v-select>
                                 <v-lazy>
                                   <jupyter-widget
                                     :widget="viewers.spectrum_viewer" >
@@ -552,17 +550,6 @@
                                     One of the lines in your spectrum is labeled with an element symbol. Click the label to note the element line and its <strong>rest wavelength</strong> in your table.
                                   </p>
                                 </div>
-
-                                <div class="text-center my-8">
-                                  <v-btn
-                                    class="black--text"
-                                    color="success"
-                                    elevation="2"
-                                    @click="add_current_restwave()"
-                                  >
-                                    click the label
-                                  </v-btn>
-                                </div>
                               </scaffold-alert>
 
 
@@ -669,14 +656,17 @@
 
                               <v-row>
                                 <v-btn
+                                  id="hide-lam-rest-button"
+                                  :disabled="!state.spectral_line"
+                                  v-show="state.rest_wavelength_shown"
+                                  @click.stop="toggle_rest_wavelength_shown()"
+                                >hide $$\:\lambda_{rest}$$</v-btn>
+                                <v-btn
                                   id="show-lam-rest-button"
                                   :disabled="!state.spectral_line"
-                                  @click.stop="(e) => {
-                                    console.log(e.target);
-                                    toggle_rest_wavelength_shown();
-                                    updateMathJax(e.target);
-                                  }"
-                                >{{ state.rest_wavelength_shown ? 'hide' : 'show' }} $$\:\lambda_{rest}$$</v-btn>
+                                  v-show="!state.rest_wavelength_shown"
+                                  @click.stop="toggle_rest_wavelength_shown()"
+                                >show $$\:\lambda_{rest}$$</v-btn>
                               </v-row>
 
                               <v-row>

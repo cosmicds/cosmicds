@@ -85,7 +85,6 @@ class ApplicationState(State):
     # certain checkpoints
     gals_total = CallbackProperty(0)
     gal_selected = CallbackProperty(0)
-    spectrum_tool_visible = CallbackProperty(0)
     waveline_set = CallbackProperty(0)
     vel_win_unopened = CallbackProperty(1)
     vel_measured = CallbackProperty(0)
@@ -503,8 +502,8 @@ class Application(v.VuetifyTemplate):
             index = self._get_current_table_index(table)
             name = table.glue_data["ID"][index]
             gal_type = table.glue_data["Type"][index]
+            measwave = table.glue_data["measwave"][index]
             z = table.glue_data["Z"][index]
-            element = table.glue_data["Element"][index]
             if name is None or gal_type is None:
                 return
 
@@ -533,16 +532,25 @@ class Application(v.VuetifyTemplate):
                         layer.state.visible = False
             else:
                 self._spectrum_data.update_values_from_data(data)
-                spectrum_viewer.state.reset_limits()
+            
+            spectrum_viewer.state.reset_limits()
 
-            # Extra space for spectral line labels
-            spectrum_viewer.state.y_max = 1.40 * spectrum_viewer.state.y_max
-            spectrum_viewer.update_z(z)
-            spectrum_viewer.hide_rest_wavelength()
+            sdss_data = self.data_collection['SDSS_all_sample_filtered']
+            sdss_index = next((i for i in range(sdss_data.size) if sdss_data['ID'][i] == name), None)
+            if sdss_index is not None:
+                element = sdss_data['Element'][sdss_index]
+                spectrum_viewer.update_element(element)
+                spectrum_viewer.update_z(z)
+                spectrum_viewer.hide_rest_wavelength()
+                self.state.rest_wavelength_shown = False
 
-            self.state.gal_selected = len(selected) > 0
-            self.state.waveline_set = 0
-            self.state.spectral_line = element
+                self.state.gal_selected = len(selected) > 0
+                self.state.waveline_set = 0 if measwave is None else 1
+
+                self.state.spectral_line = element
+                restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
+                self._new_element_value_update(element, index)
+                self._new_restwave_value_update(restwave, index)
 
             # If this is the first selection we're making,
             # we want to move the app forward
@@ -595,29 +603,10 @@ class Application(v.VuetifyTemplate):
             # (I have a PR in to fix this)
             if event["event"] != 'click' or not spectrum_viewer.user_line.visible:
                 return
-            if spectrum_viewer.resolution < WORST_ACCEPTABLE_SPECRES:
-                value = round(event["domain"]["x"], 2)
-                self.add_measwave_data_point(value)
-                self.state.waveline_set = 1
-            else:
-                # TODO: We want to add an appropriate reaction here
-                pass
+            value = round(event["domain"]["x"], 2)
+            self.add_measwave_data_point(value)
+            self.state.waveline_set = 1
         spectrum_viewer.add_event_callback(on_spectrum_click, events=['click'])
-
-        # Set up the interactions with the spectrum viewer labels
-        def element_changed(element):
-            if element is None:
-                return
-            table = self.components['c-galaxy-table']
-            index = self._get_current_table_index(table)
-            if index is not None:
-                data = self.data_collection["student_measurements"]
-                elements = data["Element"]
-                elements[index] = element
-                self._new_element_data_update(elements)
-                self.vue_add_current_restwave()
-
-        add_callback(self.state, 'spectral_line', element_changed)
 
         # Any lines that we've obtained from fitting
         # Entries have the form (line, data label)
@@ -1184,32 +1173,38 @@ class Application(v.VuetifyTemplate):
             data.add_component(Component.autotyped(values), attribute)
         data.broadcast(attribute)
 
-    def _new_field_data_update(self, data_label, field_name, values):
+    def _new_field_data_update(self, data, field_name, values):
         # Update the Data object
-        data = self.data_collection[data_label]
         if len(values) > data.size:
             return
         self._update_data_component(data, field_name, values)
 
+    def _new_field_value_update(self, data_label, field_name, value, index):
+        data = self.data_collection[data_label]
+        values = data[field_name]
+        values[index] = value
+        self._new_field_data_update(data, field_name, values)
+
     def _new_measwave_data_update(self, measwave):
-        self._new_field_data_update('student_measurements', 'measwave', measwave)
+        data = self.data_collection['student_measurements']
+        self._new_field_data_update(data, 'measwave', measwave)
 
-    def _new_velocity_data_update(self, velocity):
-        self._new_field_data_update('student_measurements', 'velocity', velocity)
+    def _new_velocity_value_update(self, velocity, index):
+        self._new_field_value_update('student_measurements', 'velocity', velocity, index)
 
-    def _new_restwave_data_update(self, restwave):
-        self._new_field_data_update('student_measurements', 'restwave', restwave)
+    def _new_restwave_value_update(self, restwave, index):
+        self._new_field_value_update('student_measurements', 'restwave', restwave, index)
 
-    def _new_element_data_update(self, elements):
-        self._new_field_data_update('student_measurements', 'Element', elements)
+    def _new_element_value_update(self, elements, index):
+        self._new_field_value_update('student_measurements', 'Element', elements, index)
 
     def _new_dist_data_update(self, distance):
 
-        self._new_field_data_update('student_measurements', 'distance', distance)
+        data = self.data_collection['student_measurements']
+        self._new_field_data_update(data, 'distance', distance)
 
         # Create a new Data object from all of the 'finished' data points
         # and update to match that
-        data = self.data_collection['student_measurements']
         df = data.to_dataframe()
         df = df[df['distance'].notna() & df['velocity'].notna()]
 
@@ -1243,18 +1238,6 @@ class Application(v.VuetifyTemplate):
         for viewer_id in ['class_distr_viewer', 'all_distr_viewer', 'sandbox_distr_viewer']:
             viewer = self._viewer_handlers[viewer_id]
             viewer.figure.axes[0].label = 'Age (Gyr)'
-
-
-        #style_files = ["default_scatter.json", "comparison_scatter.json", "prodata_scatter.json"]
-        # for viewer_id, style_path in zip(viewer_ids, style_files):
-        #     style_path = str(Path(__file__).parent / "data" /
-        #                                 "styles" / style_path)
-        #     viewer = self._viewer_handlers[viewer_id]
-        #     viewer.state.reset_limits()
-        #     viewer.state.x_min = 0
-        #     viewer.state.y_min = 0
-        #     update_figure_css(viewer, style_path=style_path)
-        #     print(f"Updated figure CSS for {viewer_id}")
             
     def _new_galaxy_data_update(self, new_data):
         dc = self.data_collection
@@ -1336,22 +1319,17 @@ class Application(v.VuetifyTemplate):
 
         self.vue_show_fit_points()
 
+    def vue_select_galaxies(self, args=None):
+        dummy_data = self.data_collection["dummy_student_data"]
+        component_names = [x.label for x in dummy_data.main_components]
+        for index in range(dummy_data.size):
+            galaxy = { c : dummy_data[c][index] for c in component_names }
+            self._on_galaxy_selected(galaxy)
+
     def _get_current_table_index(self, table):
         state = table.subset_state_from_selected(table.selected)
         mask = state.to_mask(table.glue_data)
         return next((index for index in range(len(mask)) if mask[index]), None)
-
-    def vue_add_current_restwave(self, args=None):
-        data = self.data_collection['student_measurements']
-        table = self.components['c-galaxy-table']
-        index = self._get_current_table_index(table)
-        if index is not None:
-            restwave = data["restwave"]
-            element = data["Element"][index]
-            print(element)
-            restwave_value = MG_REST_LAMBDA if element == 'Mg I' else H_ALPHA_REST_LAMBDA
-            restwave[index] = restwave_value
-            self._new_restwave_data_update(restwave)
 
     def vue_add_current_velocity(self, args=None):
         data = self.data_collection['student_measurements']
@@ -1359,10 +1337,8 @@ class Application(v.VuetifyTemplate):
         index = self._get_current_table_index(table)
         if index is not None:
             z = data["Z"][index]
-            velocity_value = int(3 * (10 ** 5) * z)
-            velocity = data["velocity"]
-            velocity[index] = velocity_value
-            self._new_velocity_data_update(velocity)
+            velocity = int(3 * (10 ** 5) * z)
+            self._new_velocity_value_update(velocity, index)
 
     def vue_reset_measurer(self, args=None):
         self.components['c-measuring-tool'].reset_canvas()
@@ -1384,15 +1360,7 @@ class Application(v.VuetifyTemplate):
         if spectrum_viewer.rest_wavelength_shown:
             spectrum_viewer.hide_rest_wavelength()
         else:
-            table = self.components['c-galaxy-table']
-            index = self._get_current_table_index(table)
-            if index is not None:
-                data = self.data_collection["student_measurements"]
-                elements = data["Element"]
-                element = elements[index]
-                if element is not None:
-                    spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
-                    spectrum_viewer.show_rest_wavelength(element)
+            spectrum_viewer.show_rest_wavelength()
         self.state.rest_wavelength_shown = spectrum_viewer.rest_wavelength_shown
 
     def _reset_state(self):

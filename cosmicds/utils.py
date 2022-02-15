@@ -174,21 +174,27 @@ def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
     if not tool:
         return None
     
-    activate = tool.activate
-    deactivate = tool.deactivate
+    # Not every tool has both activate and deactivate functions
+    # e.g. the home tool doesn't have deactivate
+    activate = getattr(tool, 'activate', None)
+    deactivate = getattr(tool, 'deactivate', None)
 
     def extended_activate():
         if activate_cb:
             activate_cb()
-        activate()
+        if activate:
+            activate()
 
     def extended_deactivate():
-        deactivate()
+        if deactivate:
+            deactivate()
         if deactivate_cb:
             deactivate_cb()
     
-    tool.activate = extended_activate
-    tool.deactivate = extended_deactivate
+    if activate or extended_activate:
+        tool.activate = extended_activate
+    if deactivate or extended_activate:
+        tool.deactivate = extended_deactivate
 
 def format_fov(fov):
     return fov.to_string(unit=u.degree, sep=":", precision=0, pad=True) + " (dd:mm:ss)"
