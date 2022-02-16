@@ -298,7 +298,7 @@ class Application(v.VuetifyTemplate):
         fit_title = 'My Galaxies'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
-                                key_component='ID', names=galaxy_table_names, title=velocity_title, single_select=True),
+                                key_component='ID', names=galaxy_table_names, title=velocity_title, single_select=False),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
                                 key_component='ID', names=distance_table_names, title=distance_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
@@ -607,6 +607,11 @@ class Application(v.VuetifyTemplate):
             self.add_measwave_data_point(value)
             self.state.waveline_set = 1
         spectrum_viewer.add_event_callback(on_spectrum_click, events=['click'])
+
+        def on_marker_change(marker):
+            if marker == 'cho_row1':
+                self.components['c-galaxy-table'].single_select = True
+        add_callback(self.state, 'marker', on_marker_change)
 
         # Any lines that we've obtained from fitting
         # Entries have the form (line, data label)
