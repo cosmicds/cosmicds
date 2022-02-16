@@ -29,6 +29,7 @@ class SpectrumView(BqplotScatterView):
     show_line = Bool(True)
 
     observed_text = ' (observed)'
+    rest_text = ' (rest)'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -209,7 +210,7 @@ class SpectrumView(BqplotScatterView):
     def show_rest_wavelength(self):
         use_mg = self.element == 'Mg-I'
         lambda_rest = MG_REST_LAMBDA if use_mg else H_ALPHA_REST_LAMBDA
-        self.visible_wavelength_label.text = [self.element]
+        self.visible_wavelength_label.text = [self.element + self.rest_text]
         self.visible_wavelength_line.x = [lambda_rest, lambda_rest]
         self.visible_wavelength_label.x = [lambda_rest, lambda_rest]
         self.visible_wavelength_line.visible = True
