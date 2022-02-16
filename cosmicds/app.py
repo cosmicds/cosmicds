@@ -238,7 +238,8 @@ class Application(v.VuetifyTemplate):
 
         # Set up the measuring tool
         measuring_widget = WWTJupyterWidget(hide_all_chrome=True)
-        measuring_widget.background = 'Digitized Sky Survey (Color)'
+        # Temp update to set background to SDSS. Once we remove galaxies without SDSS WWT tiles from the catalog, make background DSS again, and set wwt.foreground_opacity = 0, per Peter Williams.
+        measuring_widget.background = 'SDSS: Sloan Digital Sky Survey (Optical)'
         measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
         measuring_tool = MeasuringTool(measuring_widget)
         def update_state_ang_size(change):
@@ -266,7 +267,8 @@ class Application(v.VuetifyTemplate):
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
         #  only intend to use the jupyter viewer.
         wwt_widget = WWTJupyterWidget(hide_all_chrome=True)
-        wwt_widget.background = 'Digitized Sky Survey (Color)'
+        # wwt_widget.background = 'Digitized Sky Survey (Color)'
+        wwt_widget.background = 'SDSS: Sloan Digital Sky Survey (Optical)'
         wwt_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
         wwt_widget.center_on_coordinates(WWT_START_COORDINATES, instant=False)
         df = read_csv(str(data_dir / "SDSS_all_sample_filtered.csv"))
