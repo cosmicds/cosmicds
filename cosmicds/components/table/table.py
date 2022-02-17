@@ -134,6 +134,10 @@ class Table(VuetifyTemplate, HubListener):
     def _on_data_updated(self, message=None):
         self._populate_table()
 
+    def update(self):
+        self._on_data_added()
+        self._populate_table()
+
     def _on_subset_updated(self, message=None):
         if self._subset_message_pass:
             self._subset_message_pass = False
