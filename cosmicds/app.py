@@ -1,39 +1,27 @@
-from os import sync
-from os.path import join
-from pathlib import Path
-
-from astropy.modeling import models, fitting
-from echo import CallbackProperty, DictCallbackProperty, add_callback
-from cosmicds.components.viewer_layout import ViewerLayout
-# from echo.containers import DictCallbackProperty
-from echo.core import add_callback
-from glue.core.state_objects import State
-from glue_jupyter.app import JupyterApplication
-from glue_jupyter.bqplot.histogram import BqplotHistogramView
-from glue_jupyter.bqplot.image import BqplotImageView
-from glue_jupyter.bqplot.scatter import BqplotScatterView
-from glue_jupyter.state_traitlets_helpers import GlueState
-from glue_wwt.viewer.jupyter_viewer import WWTJupyterViewer
 import ipyvuetify as v
+import pymongo
+import os
+from glue_jupyter.app import JupyterApplication
+from glue_jupyter.state_traitlets_helpers import GlueState
 from ipyvuetify import VuetifyTemplate
-from ipywidgets import widget_serialization
-from traitlets import Dict, List, Instance, Int, Bool, observe
-from .registries import story_registry, stage_registry
+from traitlets import Dict, Bool
+from glue.core import HubListener
 
-from voila.configuration import VoilaConfiguration
-from voila.app import Voila
-
+from .events import StepChangeMessage, WriteToDatabaseMessage
+from .registries import story_registry
 from .utils import load_template
-from .events import StepChangeMessage
-import uuid
 
 v.theme.dark = True
 
+# Setup database connections
+client = pymongo.MongoClient("mongodb://localhost:27017/")
+database = client['cosmicds']
 
-class Application(VuetifyTemplate):
+
+class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
     story_state = GlueState().tag(sync=True)
-    template = load_template("app.vue", __file__).tag(sync=True)
+    template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
     drawer = Bool(True).tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
@@ -41,6 +29,13 @@ class Application(VuetifyTemplate):
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session)
+
+        # Initialize from database
+        self._initialize_from_database()
+
+        # Subscribe to events
+        self.hub.subscribe(self, WriteToDatabaseMessage,
+                           handler=self._on_write_to_database)
 
     def reload(self):
         """
@@ -61,3 +56,35 @@ class Application(VuetifyTemplate):
         Underlying glue-jupyter application data collection instance.
         """
         return self._application_handler.data_collection
+
+    @property
+    def hub(self):
+        return self._application_handler.session.hub
+
+    def _initialize_from_database(self):
+        try:
+            # User information for a JupyterHub notebook session is stored in an
+            # environment  variable
+            user = os.environ['JUPYTERHUB_USER']
+            stories = database[self.story_state.name]
+            story_data = stories.find_one({
+                'name': self.story_state.name,
+                'student_user': user})
+
+            # Update story state with retrieved database data
+            if story_data is not None:
+                self.story_state.update_from_dict(story_data)
+        except:
+            pass
+
+    def _on_write_to_database(self, msg):
+        # User information for a JupyterHub notebook session is stored in an
+        # environment  variable
+        user = os.environ['JUPYTERHUB_USER']
+
+        # Connect to story's collection
+        stories = database[self.story_state.name]
+        story_data = self.story_state.as_dict()
+
+        stories.update_one({'student_user': user}, story_data, upsert=True)
+
