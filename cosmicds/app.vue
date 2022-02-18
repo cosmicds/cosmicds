@@ -1,18 +1,18 @@
 <template>
   <v-app id="inspire">
     <v-app-bar
-      app
-      color="primary"
-      dark
-      src="https://cdn.eso.org/images/screen/eso1738b.jpg"
-      clipped-right
-      flat
-      height="72"
+        app
+        color="primary"
+        dark
+        src="https://cdn.eso.org/images/screen/eso1738b.jpg"
+        clipped-right
+        flat
+        height="72"
     >
       <template v-slot:img="{ props }">
         <v-img
-          v-bind="props"
-          gradient="to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)"
+            v-bind="props"
+            gradient="to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)"
         ></v-img>
       </template>
 
@@ -22,17 +22,17 @@
         <h2>Hubble's Law</h2>
       </v-toolbar-title>
 
-      <v-toolbar-title> Cosmic Data Stories </v-toolbar-title>
+      <v-toolbar-title> Cosmic Data Stories</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
       <v-responsive max-width="156">
         <v-text-field
-          dense
-          flat
-          hide-details
-          rounded
-          solo-inverted
+            dense
+            flat
+            hide-details
+            rounded
+            solo-inverted
         ></v-text-field>
       </v-responsive>
     </v-app-bar>
@@ -44,14 +44,15 @@
           <v-list-item>
             <v-list-item-action>
               <v-avatar color="indigo">
-                <v-icon dark> mdi-account-circle </v-icon>
+                <v-icon dark> mdi-account-circle</v-icon>
               </v-avatar>
             </v-list-item-action>
 
             <v-list-item-content>
               <v-list-item-title>Nicholas Earl</v-list-item-title>
               <v-list-item-subtitle
-                >nearl@gluesolutions.io</v-list-item-subtitle
+              >nearl@gluesolutions.io
+              </v-list-item-subtitle
               >
             </v-list-item-content>
           </v-list-item>
@@ -109,12 +110,34 @@
       </v-stepper>
     </v-navigation-drawer>
 
-    <v-navigation-drawer app clipped right>
-      <v-list>
-        <v-list-item v-for="n in 5" :key="n" link>
-          <v-list-item-content>
-            <v-list-item-title>Item {{ n }}</v-list-item-title>
-          </v-list-item-content>
+    <v-navigation-drawer
+        app
+        clipped
+        right
+        permanent
+        expand-on-hover
+    >
+      <v-list
+          nav
+          dense
+      >
+        <v-list-item link>
+          <v-list-item-icon>
+            <v-icon>mdi-folder</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>My Files</v-list-item-title>
+        </v-list-item>
+        <v-list-item link>
+          <v-list-item-icon>
+            <v-icon>mdi-account-multiple</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Shared with me</v-list-item-title>
+        </v-list-item>
+        <v-list-item link>
+          <v-list-item-icon>
+            <v-icon>mdi-star</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Starred</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -124,13 +147,13 @@
         <v-container fluid>
           <v-tabs-items v-model="story_state.stage_index">
             <v-tab-item
-              v-for="(stage, key, index) in story_state.stages"
-              :key="index"
+                v-for="(stage, key, index) in story_state.stages"
+                :key="index"
             >
               <v-card flat>
                 <v-card-title>{{ stage.title }}</v-card-title>
                 <v-card-subtitle>{{ stage.subtitle }}</v-card-subtitle>
-                <jupyter-widget :widget="stage.model_id" />
+                <jupyter-widget :widget="stage.model_id"/>
               </v-card>
             </v-tab-item>
           </v-tabs-items>
@@ -138,9 +161,9 @@
       </v-content>
     </v-main>
 
-    <v-footer app color="primary lighten-2" padless inset>
+    <v-footer app padless inset>
       <v-row justify="center" no-gutters>
-        <v-col class="primary lighten-2 py-2 text-center white--text" cols="12">
+        <v-col class="primary darken py-2 text-center white--text" cols="12">
           {{ new Date().getFullYear() }} — <strong>CosmicDS</strong>
         </v-col>
       </v-row>
@@ -176,9 +199,11 @@ body {
   margin: 0;
   padding: 0;
 }
+
 #cosmicds-app {
   height: 100%;
 }
+
 #app {
   height: 100vh;
   margin: 0;
@@ -199,6 +224,7 @@ body {
 .wwt_column {
   overflow-y: hidden;
 }
+
 .wwt_widget .v-toolbar {
   display: none;
 }
