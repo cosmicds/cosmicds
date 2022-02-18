@@ -39,7 +39,7 @@ class StoryRegistry(UniqueDictRegistry):
     def __call__(self, name):
         def decorator(cls):
             # The class must inherit from `Widget` in order to be
-            # ingestible by the component initialization.
+            # ingested by the component initialization.
             if not issubclass(cls, State):
                 raise ValueError(
                     f"Unrecognized superclass for `{cls.__name__}`. All "
@@ -57,9 +57,10 @@ class StoryRegistry(UniqueDictRegistry):
 
         story_entry = self.members[name]
         story_state = story_entry['cls'](session)
+        story_state.name = name
 
         for k, v in story_entry['stages'].items():
-            stage = v['cls'](session)
+            stage = v['cls'](session, story_state)
             
             story_state.stages[k] = {"title": stage.title,
                                      "subtitle": stage.subtitle,
@@ -73,7 +74,7 @@ class StoryRegistry(UniqueDictRegistry):
     def register_stage(self, story, index, steps):
         def decorator(cls):
             # The class must inherit from `Widget` in order to be
-            # ingestible by the component initialization.
+            # ingested by the component initialization.
             if not issubclass(cls, VuetifyTemplate):
                 raise ValueError(
                     f"Unrecognized superclass for `{cls.__name__}`. All "
