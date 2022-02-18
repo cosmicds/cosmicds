@@ -61,19 +61,19 @@
 
       <!-- List of stages for this story -->
       <v-stepper
-        v-model="story_state.stage_index"
-        vertical
-        flat
-        non-linear
-        class="elevation-0"
-        @change="story_state.step_index = 0"
+          v-model="story_state.stage_index"
+          vertical
+          flat
+          non-linear
+          class="elevation-0"
+          @change="story_state.step_index = story_state.stages[story_state.stage_index].step_index"
       >
         <template v-for="(stage, key, index) in story_state.stages">
           <v-stepper-step
-            :key="index"
-            :complete="story_state.stage_index > index"
-            :step="index"
-            editable
+              :key="index"
+              :complete="story_state.stage_index > index"
+              :step="index"
+              editable
           >
             {{ stage.title }}
             <small>{{ stage.subtitle }}</small>
@@ -83,12 +83,12 @@
             <!-- Section containing each stage's individual steps -->
             <v-list dense nav>
               <v-list-item-group
-                v-model="story_state.step_index"
-                color="primary"
+                  v-model="story_state.step_index"
+                  color="primary"
               >
                 <v-list-item
-                  v-for="(step, i) in story_state.stages[key].steps"
-                  :key="i"
+                    v-for="(step, i) in story_state.stages[key].steps"
+                    :key="i"
                 >
                   <v-list-item-action>
                     <template v-if="step.completed">
