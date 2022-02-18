@@ -20,7 +20,7 @@ __all__ = [
 ]
 
 
-def load_template(file_name, path=None, traitlet=True):
+def load_template(file_name, path=None, traitlet=False):
     """
     Load a vue template file and instantiate the appropriate traitlet object.
 

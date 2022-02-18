@@ -1,5 +1,0 @@
-
-
-
-class Stage:
-    name = "Unnamed"
