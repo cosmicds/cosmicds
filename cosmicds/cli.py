@@ -30,6 +30,7 @@ def main(data_story):
     data_story : str
         The dictionary key id referencing the notebook path.
     """
+
     # Tornado Webserver py3.8 compatibility hotfix for windows
     if sys.platform == 'win32':
         import asyncio
@@ -41,11 +42,13 @@ def main(data_story):
     try:
         logging.getLogger('tornado.access').disabled = True
         Voila.notebook_path = filepath
-        Voila.tornado_settings = {'headers':{'Content-Security-Policy': 'frame-ancestors self *'}}
+        # Voila.tornado_settings = {'headers':{'Content-Security-Policy': 'frame-ancestors self *'}}
         VoilaConfiguration.template = 'cosmicds-default'
         VoilaConfiguration.enable_nbextensions = True
         VoilaConfiguration.file_whitelist = ['.*']
-        VoilaConfiguration.show_tracebacks
+        VoilaConfiguration.show_tracebacks = True
+        # VoilaConfiguration.connection_dir_root = jupyter_runtime_dir()
+        VoilaConfiguration.preheat_kernel = True
         sys.exit(Voila().launch_instance(argv=[]))
     finally:
         os.chdir(start_dir)
