@@ -7,7 +7,8 @@ from ...utils import load_template
 
 
 class ViewerLayout(VuetifyTemplate):
-    template = load_template("viewer_layout.vue", __file__).tag(sync=True)
+    template = load_template(
+        "viewer_layout.vue", __file__, traitlet=True).tag(sync=True)
     controls = Dict().tag(sync=True, **widget_serialization)
     figure = Instance(DOMWidget, allow_none=True).tag(sync=True, **widget_serialization)
     css_style = Dict().tag(sync=True)
