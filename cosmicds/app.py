@@ -1329,9 +1329,12 @@ class Application(v.VuetifyTemplate):
     def vue_select_galaxies(self, args=None):
         dummy_data = self.data_collection["dummy_student_data"]
         component_names = [x.label for x in dummy_data.main_components]
-        for index in range(dummy_data.size):
+        measurements_data = self.data_collection["student_measurements"]
+        index = 0
+        while (measurements_data.size < 5):
             galaxy = { c : dummy_data[c][index] for c in component_names }
             self._on_galaxy_selected(galaxy)
+            index += 1
 
     def _get_current_table_index(self, table):
         state = table.subset_state_from_selected(table.selected)
