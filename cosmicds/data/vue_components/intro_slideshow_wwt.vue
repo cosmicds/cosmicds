@@ -1,21 +1,25 @@
 <template>
-  <v-card>
+  <v-card
+    class="darken"
+  >
     <v-card-title
-      class="text-h6 font-weight-regular justify-space-between"
+      class="text-h6 font-weight-regular justify-space-between;"
     >
       <span>
+        <!--
         <v-avatar
           color="info"
           class="subheading white--text mr-4"
           size="24"
           v-text="step"
         ></v-avatar>
+        -->
         {{ currentTitle }}
       </span>
     </v-card-title>
 
     <v-window
-      style="min-height: 250px;"
+      style="min-height: 300px;"
       v-model="step"
     >
       <v-window-item :value="0" 
@@ -23,13 +27,15 @@
       >
         <v-card-text>
           <p>
-            Welcome to this Cosmic Data Story. In this activity, you will use real astronomical data to answer big questions about our universe, such as:
+            Welcome to the Cosmic Data Story about the Hubble Law. In this activity, you will use real astronomical data to answer these questions about our universe:
           </p>
-          <ul>
-            <li>Has the universe always existed? If not, how long ago did it form?</li>
-          </ul>
+          <p 
+            style="text-align:center; font-weight:600;"
+          >
+            Has the universe always existed? If not, how long ago did it form?
+          </p>
           <p>
-            While answering these big questions, you will learn techniques scientists use to assess how reliable they think a result is, based on their data. After all, when scientists collect data to answer new questions, there is no answer key that they can use to check their answers. They have to determine for themselves what conclusions can be drawn from their data.
+            While answering these questions, you will learn techniques scientists use to assess how reliable they think a result is, based on their data. After all, when scientists collect data to answer new questions, there is no answer key that they can use to check their answers. They have to determine for themselves what conclusions can be drawn from their data.
           </p>
           <p>
             You will do the same thing in this Data Story. Let’s get started!
@@ -45,9 +51,11 @@
           <p>
             Imagine that you are an astronomer living a century ago in the early 1920's. Pretty much all scientists of this time, including Albert Einstein, believed that the universe was static, unchanging, and eternal (meaning that the universe has always been and always will be). These ideas date back to ancient Greek times and were embraced by philosophers such as Aristotle.
           </p>
-          <ul>
-            <li>Pictures of old telescopes &amp; astronomers</li>
-          </ul>
+          <p
+            style="text-align:center;"
+          >
+            (Pictures of old telescopes &amp; astronomers)
+          </p>
         </v-card-text>
       </v-window-item>
 
@@ -93,8 +101,19 @@
               </v-col>
             </v-row>
           </div>
+          <!--
+          <div
+            class="wwt_widget"
+          >
+            <v-lazy>
+              <jupyter-widget
+                :widget="widgets.wwt_widget"
+              ></jupyter-widget>
+            </v-lazy>
+          </div>
+          --> 
         </v-card-text>
-      </v-window-item>
+       </v-window-item>
 
       <v-window-item :value="3" 
         class="no-transition"
@@ -114,7 +133,7 @@
       >
         <v-card-text>
           <p>
-            One particular type of nebulae, known as “spiral” nebulae because of their distinctive spiral shape, became of particular interest in the early 1900’s. In 1920, there was a “Great Debate” between astronomers Harlow Shapley &amp; Heber Curtis questioning whether the spiral nebulae were part of our own Milky Way galaxy or were “island universes” beyond our Milky Way. Do you think these nebulae you’ve observed are within the Milky Way or beyond it?
+            M31 is an example of a particular type of nebula that interested astronomers in the early 1900’s. They were known as “spiral” nebulae because of their distinctive spiral shape. In 1920, there was a “Great Debate” between astronomers Harlow Shapley and Heber Curtis questioning whether the spiral nebulae were part of our own Milky Way galaxy or were “island universes” beyond our Milky Way. Do you think the nebulae you’ve observed are within the Milky Way or beyond it?
           </p>
         </v-card-text>
       </v-window-item>
@@ -124,13 +143,28 @@
       >
         <v-card-text>
           <p>
-            Around this same time, astronomer Vesto Slipher was observing these spiral nebulae using a spectrograph. A spectrograph separates the light from a source into its distinct colors, as a prism does. By measuring the brightness of the light in each color (or wavelength), you can learn a lot about an object in space, like what it is made of or how fast it is moving toward or away from you.
+            Between 1907&#8211;1921, astronomer Henrietta Leavitt discovered and observed Cepheid variable stars. She noticed an important property about these stars, that there is a relationship between the intrinsic brightness of the Cepheids and how slowly or rapidly their brightness changes. This important discovery made it possible to determine distances to the nebulae and finally resolve the Shapley-Curtis Great Debate&#8212;many of the nebulae are far beyond the Milky Way and constitute individual galaxies in their own right.
+          </p>
+          <p
+            style="text-align:center;"
+          >
+            (Pictures of Henrietta's glass plates)
+          </p>
+        </v-card-text>
+      </v-window-item>
+
+      <v-window-item :value="6" 
+        class="no-transition"
+      >
+        <v-card-text>
+          <p>
+            Around this same time, astronomer Vesto Slipher observed galaxies using a spectrograph. Spectrographs can tell you a lot about an object in space, like what it is made of or how fast it is moving toward or away from you. 
           </p>
           <p>
-            Recall that the prevailing view in the early 1900’s was that that the universe is unchanging and eternal, so the expectation was that the nebulae are either not moving at all, or perhaps they are moving randomly.
+            Recall that the prevailing view in the early 1900’s was that that the universe is unchanging and eternal, so the expectation was that the galaxies are either not moving at all, or perhaps they are moving randomly. 
           </p>
           <p>
-            what Slipher found.
+            It’s time for you to collect some of your own data to learn what Slipher found.
           </p>
         </v-card-text>
       </v-window-item>
@@ -171,15 +205,15 @@
       </v-item-group>
       <v-spacer></v-spacer>
       <v-btn
-        :disabled="step === 5"
+        :disabled="step === 6"
         color="accent"
         text
         @click="step++;"
       >
-        {{ step < 5 ? 'next' : '' }}
+        {{ step < 6 ? 'next' : '' }}
       </v-btn>
       <v-btn
-        :disabled="step > 5"
+        :disabled="step > 6"
         color="accent"
         class="black--text"
         depressed
@@ -193,11 +227,20 @@
 
 
 <style>
-
 .no-transition {
   transition: none;
 }
-
+.darken {
+  background-image: 
+    linear-gradient(
+      rgba(0, 0, 0, 0.7),
+      rgba(0, 0, 0, 0.7)
+    ),
+    url(https://astropix.ipac.caltech.edu/archive/noirlab/stsci-gallery-1427a-2000x960/noirlab_stsci-gallery-1427a-2000x960_1600.jpg);
+}
+.v-card__text{
+  padding: 0px 15px 0px;
+}
 </style>
 
 
@@ -207,19 +250,20 @@ module.exports = {
   data: function () {
     return {
       step: 0,
-      length: 6,
+      length: 7,
       dialog: false
     };
   },
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 0: return 'Intro 1'
-        case 1: return 'Intro 2'
-        case 2: return 'Intro 3'
-        case 3: return 'Intro 4'
-        case 4: return 'Intro 5'
-        default: return 'Intro 6'
+        case 0: return 'Hubble Data Story Goal'
+        case 1: return "1920's Astronomy"
+        case 2: return 'Explore the Night Sky'
+        case 3: return 'What Are Nebulae?'
+        case 4: return 'Spiral Nebulae'
+        case 5: return "Henrietta Leavitt's Discovery"
+        default: return 'Galaxy Velocities'
       }
     },
   },
