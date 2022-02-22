@@ -103,6 +103,7 @@ class ApplicationState(State):
     #step 1 alerts
     galaxy_table_visible = CallbackProperty(0)
     spectrum_tool_visible = CallbackProperty(0)
+    current_galaxy = CallbackProperty(None)
 
     #state variables for reflections
     draw_on = CallbackProperty(0)
@@ -286,7 +287,7 @@ class Application(v.VuetifyTemplate):
                 default_zoom = 45 * u.arcsec
                 if wwt.get_fov() > default_zoom:
                     wwt.center_on_coordinates(coordinates, fov=default_zoom, instant=False)
-                self._on_galaxy_selected(galaxy)
+                self.state.current_galaxy = galaxy
         wwt_widget.set_selection_change_callback(wwt_cb)
         self.wwt_sdss_layer = layer
         self.wwt_selected_layer = None
@@ -502,12 +503,21 @@ class Application(v.VuetifyTemplate):
             table = self.components['c-galaxy-table']
             selected = change["new"]
             index = self._get_current_table_index(table)
-            name = table.glue_data["ID"][index]
-            gal_type = table.glue_data["Type"][index]
-            measwave = table.glue_data["measwave"][index]
-            z = table.glue_data["Z"][index]
+
+            glue_data = table.glue_data
+            name = glue_data["ID"][index]
+            gal_type = glue_data["Type"][index]
+            measwave = glue_data["measwave"][index]
+            ra = glue_data["RA"][index]
+            dec = glue_data["DEC"][index]
+            z = glue_data["Z"][index]
             if name is None or gal_type is None:
                 return
+
+            # Show the galaxy in the WWT widget
+            wwt = self.widgets["wwt_widget"].widget
+            coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
+            wwt.center_on_coordinates(coordinates, fov=45*u.arcsec, instant=True)
 
             # Load the spectrum data, if necessary
             filename = name
@@ -648,6 +658,8 @@ class Application(v.VuetifyTemplate):
         # Store a front-end accessible collection of renderable ipywidgets
         self.viewers = { k : ViewerLayout(v) for k, v in self._viewer_handlers.items() }
         self.widgets = { 'wwt_widget' : WidgetLayout(wwt_widget) }
+
+        self.viewers["spectrum_viewer"].show_toolbar = False
 
         # Make sure that the initial layer visibilities match the state
         self._hubble_comparison_selection_update(self.state.hubble_comparison_selections)
@@ -911,6 +923,10 @@ class Application(v.VuetifyTemplate):
                 data = self.data_collection['HubbleSummary_Overall']
                 viewer.add_data(data)
                 viewer.x_att = data.id['age']
+
+    def vue_select_current_galaxy(self, args=None):
+        if self.state.current_galaxy:
+            self._on_galaxy_selected(self.state.current_galaxy)
 
     def _on_galaxy_selected(self, galaxy):
         fields = ['RA', 'DEC', 'ID', 'Type', 'Z']
@@ -1326,6 +1342,8 @@ class Application(v.VuetifyTemplate):
 
         self.vue_show_fit_points()
 
+        self.components['c-galaxy-table'].single_select = True
+
     def vue_select_galaxies(self, args=None):
         dummy_data = self.data_collection["dummy_student_data"]
         component_names = [x.label for x in dummy_data.main_components]
@@ -1364,6 +1382,7 @@ class Application(v.VuetifyTemplate):
 
     def vue_reset_galaxy_widget(self, args=None):
         self._reset_wwt_widget()
+        self.state.current_galaxy = None
 
     def vue_toggle_rest_wavelength_shown(self, args=None):
         spectrum_viewer = self._viewer_handlers['spectrum_viewer']
@@ -1372,6 +1391,24 @@ class Application(v.VuetifyTemplate):
         else:
             spectrum_viewer.show_rest_wavelength()
         self.state.rest_wavelength_shown = spectrum_viewer.rest_wavelength_shown
+
+    def vue_spectrum_tool_home(self, args=None):
+        spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
+        home_tool = spectrum_viewer.toolbar.tools.get("bqplot:home")
+        home_tool.activate()
+        spectrum_viewer.toolbar.active_tool = None
+
+    def vue_spectrum_tool_toggle_zoom(self, args=None):
+        spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
+        toolbar = spectrum_viewer.toolbar
+        zoom_tool = toolbar.tools.get("bqplot:xzoom")
+        active_tool = toolbar.active_tool
+        if active_tool == zoom_tool:
+            zoom_tool.deactivate()
+        else:
+            zoom_tool.activate()
+            toolbar.active_tool = zoom_tool
+
 
     def _reset_state(self):
         self.state.stage = 'intro'

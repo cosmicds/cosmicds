@@ -176,12 +176,6 @@
                         >
                           <v-row>
                             <v-btn
-                              @click="zoom_out_galaxy_widget()"
-                            >choose another galaxy</v-btn>
-                            <v-btn
-                              @click="reset_galaxy_widget()"
-                            >reset view</v-btn>
-                            <v-btn
                               color="green"
                               @click="select_galaxies()"
                             >select 5 galaxies</v-btn>
@@ -205,6 +199,31 @@
                                   <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
 
                                   <v-spacer></v-spacer>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="reset_galaxy_widget()">
+                                        <v-icon>mdi-home</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Reset view
+                                  </v-tooltip>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        :disabled="!state.current_galaxy"
+                                        @click="select_current_galaxy()">
+                                        <v-icon>mdi-plus</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Add to my dataset
+                                  </v-tooltip>
 
                                   <v-btn icon>
                                     <v-icon>mdi-information-outline</v-icon>
@@ -435,6 +454,42 @@
 
                                   <v-spacer></v-spacer>
 
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="spectrum_tool_home()">
+                                        <v-icon>mdi-home</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Reset view
+                                  </v-tooltip>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="spectrum_tool_toggle_zoom()">
+                                        <v-icon>mdi-magnify</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Zoom in on x-axis
+                                  </v-tooltip>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="toggle_rest_wavelength_shown()">
+                                        <v-icon>mdi-lambda</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    {{ state.rest_wavelength_shown ? 'Hide rest wavelength' : 'Show rest wavelength'}}
+                                  </v-tooltip>
+
                                   <v-btn icon>
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
@@ -653,21 +708,6 @@
                                   </p>
                                 </div>
                               </scaffold-alert>
-
-                              <v-row>
-                                <v-btn
-                                  id="hide-lam-rest-button"
-                                  :disabled="!state.spectral_line"
-                                  v-show="state.rest_wavelength_shown"
-                                  @click.stop="toggle_rest_wavelength_shown()"
-                                >hide $$\:\lambda_{rest}$$</v-btn>
-                                <v-btn
-                                  id="show-lam-rest-button"
-                                  :disabled="!state.spectral_line"
-                                  v-show="!state.rest_wavelength_shown"
-                                  @click.stop="toggle_rest_wavelength_shown()"
-                                >show $$\:\lambda_{rest}$$</v-btn>
-                              </v-row>
 
                               <v-row>
                                 <v-col
