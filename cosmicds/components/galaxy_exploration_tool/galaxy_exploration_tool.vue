@@ -2,7 +2,7 @@
   <div id="measurer-root">
     <jupyter-widget
       :widget="widget"
-      id="widget"
+      id="exploration-widget"
     />
   </div>
 </template>

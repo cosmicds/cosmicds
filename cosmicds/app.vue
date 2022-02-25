@@ -94,13 +94,12 @@
           justify="center"
         >
           <v-col cols="12">
-            <intro-slideshow-wwt
-              continue-text="get started"
+            <c-intro-slideshow
               @continue="
                 state.stage = 'main';
               "
             >
-            </intro-slideshow-wwt>
+            </c-intro-slideshow>
           </v-col>
         </v-row>
         <v-row

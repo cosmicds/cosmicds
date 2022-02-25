@@ -20,7 +20,8 @@ from pandas import read_csv
 from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, List
 
-from cosmicds.components.measuring_tool.measuring_tool import MeasuringTool
+from .components.intro_slideshow.intro_slideshow import IntroSlideShow
+from .components.measuring_tool.measuring_tool import MeasuringTool
 
 from .components.footer import Footer
 # When we have multiple components, change above to
@@ -306,7 +307,8 @@ class Application(v.VuetifyTemplate):
                                 key_component='ID', names=distance_table_names, title=distance_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
                                 key_component='ID', names=fit_table_names, title=fit_title),
-                            'c-measuring-tool': measuring_tool
+                            'c-measuring-tool': measuring_tool,
+                            'c-intro-slideshow': IntroSlideShow()
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
                         #        self,
