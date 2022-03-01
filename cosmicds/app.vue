@@ -771,13 +771,23 @@
                                   dark
                                   dense
                                 >
-                                  <v-icon left>
-                                    mdi-ruler
-                                  </v-icon>
-
                                   <v-toolbar-title>Estimate Distance</v-toolbar-title>
 
                                   <v-spacer></v-spacer>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        :disabled="!state.measure_gal_selected || state.measuring_view_changing"
+                                        @click="toggle_measuring()"
+                                      >
+                                        <v-icon>mdi-ruler</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Zoom in on x-axis
+                                  </v-tooltip>
 
                                   <v-btn icon>
                                     <v-icon>mdi-information-outline</v-icon>
@@ -869,13 +879,6 @@
                               style="color: red;"
                             >This angular size seems much larger than expected. Are you sure your measurements are lined up with a galaxy? Please try again.
                             </p>
-                            <v-btn
-                              class="white--text"
-                              color="purple darken-2"
-                              :disabled="!state.measure_gal_selected || state.measuring_view_changing"
-                              @click="toggle_measuring()"
-                            >{{ state.measuring_on ? "Stop Measuring" : "Start Measuring" }}
-                            </v-btn>
                           </v-row>
                           <v-row>
                             <!-- SIDEBAR COLUMN for giving Instructions -->
