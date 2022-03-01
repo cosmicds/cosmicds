@@ -38,6 +38,8 @@ from .viewers.spectrum_view import SpectrumView
 MEASUREMENT_THRESHOLD = 1800 # arcseconds
 WWT_START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 WORST_ACCEPTABLE_SPECRES = 1
+GALAXY_FOV = 1.5 * u.arcmin
+FULL_FOV = 60 * u.deg
 
 v.theme.dark = True
 v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
@@ -281,9 +283,8 @@ class Application(v.VuetifyTemplate):
                 if self.state.gals_total >= 5:
                     return
                 coordinates = SkyCoord(float(galaxy["RA"]) * u.deg, float(galaxy["DEC"]) * u.deg, frame='icrs')
-                default_zoom = 45 * u.arcsec
-                if wwt.get_fov() > default_zoom:
-                    wwt.center_on_coordinates(coordinates, fov=default_zoom, instant=False)
+                if wwt.get_fov() > GALAXY_FOV:
+                    wwt.center_on_coordinates(coordinates, fov=GALAXY_FOV, instant=False)
                 self.state.current_galaxy = galaxy
         wwt_widget.set_selection_change_callback(wwt_cb)
         self.wwt_sdss_layer = layer
@@ -515,7 +516,7 @@ class Application(v.VuetifyTemplate):
             # Show the galaxy in the WWT widget
             wwt = self.widgets["wwt_widget"].widget
             coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
-            wwt.center_on_coordinates(coordinates, fov=45*u.arcsec, instant=True)
+            wwt.center_on_coordinates(coordinates, fov=GALAXY_FOV, instant=True)
 
             # Load the spectrum data, if necessary
             filename = name
@@ -595,7 +596,7 @@ class Application(v.VuetifyTemplate):
                 coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
                 ## TODO: Once we have it, specify the correct fov for each point
                 use_instant = self.motions_left <= 0
-                widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=use_instant)
+                widget.center_on_coordinates(coordinates, fov=GALAXY_FOV, instant=use_instant)
                 if not use_instant:
                     self.motions_left -= 1
                 self.state.distance_name = name
@@ -690,7 +691,7 @@ class Application(v.VuetifyTemplate):
 
     def _reset_wwt_widget(self):
         wwt_widget = self.widgets["wwt_widget"].widget
-        wwt_widget.center_on_coordinates(WWT_START_COORDINATES, fov=60 * u.deg, instant=True)
+        wwt_widget.center_on_coordinates(WWT_START_COORDINATES, fov=FULL_FOV, instant=True)
         if self.wwt_selected_layer is not None:
             wwt_widget.layers.remove_layer(self.wwt_selected_layer)
             self.wwt_selected_layer = None
@@ -1376,7 +1377,7 @@ class Application(v.VuetifyTemplate):
     def vue_zoom_out_galaxy_widget(self, args=None):
         widget = self.widgets["wwt_widget"].widget
         center = widget.get_center()
-        widget.center_on_coordinates(center, fov=60 * u.deg, instant=False)
+        widget.center_on_coordinates(center, fov=FULL_FOV, instant=False)
 
     def vue_reset_galaxy_widget(self, args=None):
         self._reset_wwt_widget()
