@@ -239,11 +239,7 @@ class Application(v.VuetifyTemplate):
         self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
         # Set up the measuring tool
-        measuring_widget = WWTJupyterWidget(hide_all_chrome=True)
-        # Temp update to set background to SDSS. Once we remove galaxies without SDSS WWT tiles from the catalog, make background DSS again, and set wwt.foreground_opacity = 0, per Peter Williams.
-        measuring_widget.background = 'SDSS: Sloan Digital Sky Survey (Optical)'
-        measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
-        measuring_tool = MeasuringTool(measuring_widget)
+        measuring_tool = MeasuringTool()
         def update_state_ang_size(change):
             ang_size = change["new"]
             ang_size_deg = ang_size.value if self.state.measuring_on else 0
@@ -615,7 +611,7 @@ class Application(v.VuetifyTemplate):
             # we need to check for the event, even though we specify
             # it in `add_event_callback``
             # (I have a PR in to fix this)
-            if event["event"] != 'click' or not spectrum_viewer.user_line.visible:
+            if spectrum_viewer.user_line.visible:
                 return
             value = round(event["domain"]["x"], 2)
             self.add_measwave_data_point(value)
