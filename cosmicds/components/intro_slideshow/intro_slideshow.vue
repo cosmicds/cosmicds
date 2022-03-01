@@ -99,7 +99,17 @@
               <v-col
                 cols="6"
               >
-            <c-exploration-tool>
+              <v-btn
+                @click="go_to_location({
+                    ra: 83.63,
+                    dec: 22.01,
+                    fov: 350, // optional, in arcseconds, default is 90
+                    instant: false // also optional, false by default
+                  })"
+              >
+                Example Messier button (M1)
+              </v-btn>
+              <c-exploration-tool>
               </v-col>
             </v-row>
           </div>

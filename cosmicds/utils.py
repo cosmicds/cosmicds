@@ -28,6 +28,9 @@ MILKY_WAY_SIZE_MPC = 0.03
 H_ALPHA_REST_LAMBDA = 6563
 MG_REST_LAMBDA = 5177
 
+GALAXY_FOV = 1.5 * u.arcmin
+FULL_FOV = 60 * u.deg
+
 # JC: I got this from https://stackoverflow.com/a/13151299
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):

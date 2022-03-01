@@ -16,8 +16,8 @@ def angle_to_json(angle, _widget):
 def angle_from_json(jsn, _widget):
     return jsn["value"] * u.Unit(jsn["unit"])
 
-class MeasuringTool(v.VueTemplate):
-    template = load_template("measuring_tool.vue", __file__).tag(sync=True)
+class DistanceTool(v.VueTemplate):
+    template = load_template("distance_tool.vue", __file__).tag(sync=True)
     widget = Instance(DOMWidget, allow_none=True).tag(sync=True, **widget_serialization)
     measuring = Bool().tag(sync=True)
     measuredDistance = Float().tag(sync=True)

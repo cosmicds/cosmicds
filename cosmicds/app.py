@@ -30,7 +30,7 @@ from .components.viewer_layout import ViewerLayout
 from .components.widget_layout import WidgetLayout
 from .histogram_listener import HistogramListener
 from .line_draw_handler import LineDrawHandler
-from .utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA, MILKY_WAY_SIZE_MPC, age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
+from .utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA, MILKY_WAY_SIZE_MPC, GALAXY_FOV, FULL_FOV, age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
 from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
@@ -38,8 +38,6 @@ from .viewers.spectrum_view import SpectrumView
 MEASUREMENT_THRESHOLD = 1800 # arcseconds
 WWT_START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 WORST_ACCEPTABLE_SPECRES = 1
-GALAXY_FOV = 1.5 * u.arcmin
-FULL_FOV = 60 * u.deg
 
 v.theme.dark = True
 v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
@@ -299,7 +297,7 @@ class Application(v.VuetifyTemplate):
         fit_title = 'My Galaxies'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
-                                key_component='ID', names=galaxy_table_names, title=velocity_title, single_select=False),
+                                key_component='ID', names=galaxy_table_names, title=velocity_title, single_select=True),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
                                 key_component='ID', names=distance_table_names, title=distance_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
@@ -525,7 +523,16 @@ class Application(v.VuetifyTemplate):
             if data_name not in self.data_collection:
                 self._load_spectrum_data(filename, gal_type)
 
-            # Update the data in the spectrum viewer
+            # If this is the first selection we're making,
+            # we want to move the app forward
+            if self.state.marker == 'cho_row1':
+                self.state.spectrum_tool_visible = 1
+                self.state.marker = 'mee_spe1'
+
+            # Update the data in the spectrum viewer,
+            # if we're fare enough in the story
+            if self.state.spectrum_tool_visible != 1:
+                return
             spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
             dc = self.data_collection
             data = dc[data_name]
@@ -563,12 +570,6 @@ class Application(v.VuetifyTemplate):
                 self._new_element_value_update(element, index)
                 self._new_restwave_value_update(restwave, index)
 
-            # If this is the first selection we're making,
-            # we want to move the app forward
-            if self.state.marker == 'cho_row1':
-                self.state.spectrum_tool_visible = 1
-                self.state.marker = 'mee_spe1'
-
         galaxy_table.observe(galaxy_table_selected_changed, names=['selected'])
 
         # When we select an item in the distance table, we want the WWT viewer to go there
@@ -604,7 +605,6 @@ class Application(v.VuetifyTemplate):
             
         distance_table.observe(distance_table_selected_changed, names=['selected'])
 
-
         # Set up the interaction where the student clicking on the spectrum viewer adds
         # their measured wavelength to the data
         def on_spectrum_click(event):
@@ -621,7 +621,7 @@ class Application(v.VuetifyTemplate):
 
         def on_marker_change(marker):
             if marker == 'cho_row1':
-                self.components['c-galaxy-table'].single_select = True
+                self.state.show_spectrum_on_select = True
         add_callback(self.state, 'marker', on_marker_change)
 
         # Any lines that we've obtained from fitting

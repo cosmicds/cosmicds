@@ -1,7 +1,8 @@
 import ipyvuetify as v
-from echo import CallbackProperty
+import astropy.units as u
+from astropy.coordinates import SkyCoord
 from traitlets import Int, Bool, Unicode
-from cosmicds.utils import load_template
+from cosmicds.utils import load_template, GALAXY_FOV
 from cosmicds.components.galaxy_exploration_tool import GalaxyExplorationTool
 
 class IntroSlideShow(v.VuetifyTemplate):
@@ -19,7 +20,7 @@ class IntroSlideShow(v.VuetifyTemplate):
         "What Are Nebulae?",
         "Spiral Nebulae",
         "Henrietta Leavitt's Discovery"
-    ],
+    ]
     _default_title = "Galaxy Velocities"
 
     def __init__(self, *args, **kwargs):
@@ -43,3 +44,12 @@ class IntroSlideShow(v.VuetifyTemplate):
         exploration_tool.observe(update_exploration_complete, names=["exploration_complete"])
 
         super().__init__(*args, **kwargs)
+
+    
+    def vue_go_to_location(self, args):
+        coordinates = SkyCoord(args["ra"] * u.deg, args["dec"] * u.deg, frame='icrs')
+        wwt = self.components['c-exploration-tool'].widget
+        instant = args.get("instant") or False
+        fov_as = args.get("fov", None)
+        fov = fov_as * u.arcsec if fov_as else GALAXY_FOV
+        wwt.center_on_coordinates(coordinates, fov=fov, instant=instant)
