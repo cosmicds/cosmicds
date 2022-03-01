@@ -21,7 +21,7 @@ from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, List
 
 from .components.intro_slideshow.intro_slideshow import IntroSlideShow
-from .components.measuring_tool.measuring_tool import MeasuringTool
+from .components.distance_tool.distance_tool import DistanceTool
 
 from .components.footer import Footer
 # When we have multiple components, change above to
@@ -122,12 +122,12 @@ class ApplicationState(State):
 
     measured_ang_size_str = CallbackProperty("-")
     measured_ang_size = CallbackProperty(0)
-    measuring_on = CallbackProperty(False)
+    distance_measuring_on = CallbackProperty(False)
     measure_gal_selected = CallbackProperty(False)
-    measuring_name = CallbackProperty("")
-    measuring_type = CallbackProperty("")
-    measuring_tool_height = CallbackProperty("")
-    measuring_view_changing = CallbackProperty(False)
+    distance_name = CallbackProperty("")
+    distance_type = CallbackProperty("")
+    distance_tool_height = CallbackProperty("")
+    distance_view_changing = CallbackProperty(False)
     warn_size = CallbackProperty(False)
     galaxy_dist = CallbackProperty("")
     spectral_line = CallbackProperty(None)
@@ -238,28 +238,28 @@ class Application(v.VuetifyTemplate):
         self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
         self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
-        # Set up the measuring tool
-        measuring_tool = MeasuringTool()
+        # Set up the distance measuring tool
+        distance_tool = DistanceTool()
         def update_state_ang_size(change):
             ang_size = change["new"]
-            ang_size_deg = ang_size.value if self.state.measuring_on else 0
+            ang_size_deg = ang_size.value if self.state.distance_measuring_on else 0
             ang_size_asec = int(ang_size_deg * 3600)
             self.state.measured_ang_size = ang_size_asec
             self.state.measured_ang_size_str = format_measured_angle(ang_size) if ang_size_deg != 0 else "-"
             self.state.galaxy_dist = ""
-        measuring_tool.observe(update_state_ang_size, names=["angular_size"])
+        distance_tool.observe(update_state_ang_size, names=["angular_size"])
         def update_state_measuring(change):
-            self.state.measuring_on = change["new"]
+            self.state.distance_measuring_on = change["new"]
             self.state.warn_size = False
             self.state.galaxy_dist = ""
-        def update_measuring_height(change):
-            self.state.measuring_tool_height = format_fov(change["new"])
-        def update_measuring_view_changing(change):
-            self.state.measuring_view_changing = change["new"]
-        self.state.measuring_tool_height = format_fov(measuring_tool.angular_height)
-        measuring_tool.observe(update_measuring_height, names=["angular_height"])
-        measuring_tool.observe(update_state_measuring, names=["measuring"])
-        measuring_tool.observe(update_measuring_view_changing, names=["view_changing"])
+        def update_distance_height(change):
+            self.state.distance_tool_height = format_fov(change["new"])
+        def update_distance_view_changing(change):
+            self.state.distance_view_changing = change["new"]
+        self.state.distance_tool_height = format_fov(distance_tool.angular_height)
+        distance_tool.observe(update_distance_height, names=["angular_height"])
+        distance_tool.observe(update_state_measuring, names=["measuring"])
+        distance_tool.observe(update_distance_view_changing, names=["view_changing"])
         self.motions_left = 2
 
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
@@ -303,7 +303,7 @@ class Application(v.VuetifyTemplate):
                                 key_component='ID', names=distance_table_names, title=distance_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
                                 key_component='ID', names=fit_table_names, title=fit_title),
-                            'c-measuring-tool': measuring_tool,
+                            'c-distance-tool': distance_tool,
                             'c-intro-slideshow': IntroSlideShow()
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
@@ -583,23 +583,23 @@ class Application(v.VuetifyTemplate):
             gal_type = next((x for index, x in enumerate(data["Type"]) if mask[index]), None)
             self.state.measure_gal_selected = len(selected) > 0
             self.state.haro_on = 'd-block'
-            self.components['c-measuring-tool'].reset_canvas()
+            self.components['c-distance-tool'].reset_canvas()
             if not self.state.measure_gal_selected:
-                self.state.measuring_name = None
-                self.state.measuring_type = None
+                self.state.distance_name = None
+                self.state.distance_type = None
                 return
             name = selected[0]["ID"]
             if ra is not None and dec is not None:
-                measuring_tool = self.components['c-measuring-tool']
-                widget = measuring_tool.widget
+                distance_tool = self.components['c-distance-tool']
+                widget = distance_tool.widget
                 coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
                 ## TODO: Once we have it, specify the correct fov for each point
                 use_instant = self.motions_left <= 0
                 widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=use_instant)
                 if not use_instant:
                     self.motions_left -= 1
-                self.state.measuring_name = name
-                self.state.measuring_type = gal_type.capitalize()
+                self.state.distance_name = name
+                self.state.distance_type = gal_type.capitalize()
             
         distance_table.observe(distance_table_selected_changed, names=['selected'])
 
@@ -1367,10 +1367,10 @@ class Application(v.VuetifyTemplate):
             self._new_velocity_value_update(velocity, index)
 
     def vue_reset_measurer(self, args=None):
-        self.components['c-measuring-tool'].reset_canvas()
+        self.components['c-distance-tool'].reset_canvas()
 
     def vue_toggle_measuring(self, args=None):
-        measurer = self.components['c-measuring-tool']
+        measurer = self.components['c-distance-tool']
         measurer.measuring = not measurer.measuring
 
     def vue_zoom_out_galaxy_widget(self, args=None):

@@ -783,7 +783,7 @@
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-app-bar>
-                                <c-measuring-tool
+                                <c-distance-tool
                                   class="wwt_measuring_tool"
                                 />
                               </v-card>
