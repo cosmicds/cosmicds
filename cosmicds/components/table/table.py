@@ -54,6 +54,8 @@ class Table(VuetifyTemplate, HubListener):
 
         self._subset_message_pass = False
 
+        self._row_click_callback = None
+
         # Populate the table with the current data in the collection
         self._populate_table()
 
@@ -166,7 +168,15 @@ class Table(VuetifyTemplate, HubListener):
             self._subset_message_pass = True
             self._subset_group.subset_state = state
 
-    def vue_handle_row_click(self, item, _data=None):
+    def set_row_click_callback(self, cb):
+        self._row_click_callback = cb
+
+    def vue_handle_row_click(self, item, data=None):
+        print("Clicked!")
+        print(item)
+        print(self._row_click_callback)
+        if self._row_click_callback:
+            self._row_click_callback(item, data)
         if self.single_select:
             self.selected = [item]
         elif item in self.items:

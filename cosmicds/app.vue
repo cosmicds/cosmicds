@@ -780,13 +780,13 @@
                                       <v-btn icon
                                         v-bind="attrs"
                                         v-on="on"
-                                        :disabled="!state.measure_gal_selected || state.measuring_view_changing"
+                                        :disabled="!state.measure_gal_selected || state.distance_view_changing"
                                         @click="toggle_measuring()"
                                       >
                                         <v-icon>mdi-ruler</v-icon>
                                       </v-btn>
                                     </template>
-                                    Zoom in on x-axis
+                                    {{ state.distance_measuring_on ? 'Stop measuring' : 'Start measuring'}}
                                   </v-tooltip>
 
                                   <v-btn icon>
@@ -808,14 +808,14 @@
                                   color="warning"
                                   width="100%"
                                 >
-                                  <v-card-title>{{state.measuring_name || "Galaxy Name"}}</v-card-title>
+                                  <v-card-title>{{state.distance_name || "Galaxy Name"}}</v-card-title>
                                   <v-card-text>
                                     <v-divider></v-divider>
                                     <v-list
                                       color="warning"
                                     >
                                       <v-list-item-content>
-                                        <v-list-item-title>{{state.measuring_type || "Galaxy Type"}}</v-list-item-title>
+                                        <v-list-item-title>{{state.distance_type || "Galaxy Type"}}</v-list-item-title>
                                         <v-list-item-subtitle>type</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
@@ -823,7 +823,7 @@
                                         <v-list-item-subtitle>assumed size</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
-                                        <v-list-item-title>{{state.measuring_tool_height}}</v-list-item-title>
+                                        <v-list-item-title>{{state.distance_tool_height}}</v-list-item-title>
                                         <v-list-item-subtitle>field of view</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
@@ -849,7 +849,7 @@
                                       dark
                                       class="px-auto"
                                       max-width="100%"
-                                      :disabled="!state.measure_gal_selected || state.measured_ang_size === 0 || state.measuring_view_changing"
+                                      :disabled="!state.measure_gal_selected || state.measured_ang_size === 0 || state.distance_view_changing"
                                       @click="
                                         state.dist_measured = 1;
                                         state.dist_snackbar = 0;

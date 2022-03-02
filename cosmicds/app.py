@@ -297,7 +297,7 @@ class Application(v.VuetifyTemplate):
         fit_title = 'My Galaxies'
         self.components = {'c-footer': Footer(self),
                             'c-galaxy-table': Table(self.session, measurement_data, glue_components=self._galaxy_table_components,
-                                key_component='ID', names=galaxy_table_names, title=velocity_title, single_select=True),
+                                key_component='ID', names=galaxy_table_names, title=velocity_title, single_select=False),
                             'c-distance-table': Table(self.session, measurement_data, glue_components=self._distance_table_components,
                                 key_component='ID', names=distance_table_names, title=distance_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
@@ -499,29 +499,19 @@ class Application(v.VuetifyTemplate):
             # and grab the name and galaxy_type
             table = self.components['c-galaxy-table']
             selected = change["new"]
-            index = self._get_current_table_index(table)
+            index = self._current_table_index(table)
 
             glue_data = table.glue_data
             name = glue_data["ID"][index]
             gal_type = glue_data["Type"][index]
             measwave = glue_data["measwave"][index]
-            ra = glue_data["RA"][index]
-            dec = glue_data["DEC"][index]
             z = glue_data["Z"][index]
             if name is None or gal_type is None:
                 return
 
-            # Show the galaxy in the WWT widget
-            wwt = self.widgets["wwt_widget"].widget
-            coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
-            wwt.center_on_coordinates(coordinates, fov=GALAXY_FOV, instant=True)
-
             # Load the spectrum data, if necessary
             filename = name
-            spectrum_name = filename.split(".")[0]
-            data_name = spectrum_name + '[COADD]'
-            if data_name not in self.data_collection:
-                self._load_spectrum_data(filename, gal_type)
+            self._load_spectrum_data(filename, gal_type)
 
             # If this is the first selection we're making,
             # we want to move the app forward
@@ -530,11 +520,13 @@ class Application(v.VuetifyTemplate):
                 self.state.marker = 'mee_spe1'
 
             # Update the data in the spectrum viewer,
-            # if we're fare enough in the story
+            # if we're far enough in the story
             if self.state.spectrum_tool_visible != 1:
                 return
             spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
             dc = self.data_collection
+            spectrum_name = filename.split(".")[0]
+            data_name = spectrum_name + '[COADD]'
             data = dc[data_name]
             if self._spectrum_data is None:
                 main_comps = [x.label for x in data.main_components]
@@ -571,6 +563,26 @@ class Application(v.VuetifyTemplate):
                 self._new_restwave_value_update(restwave, index)
 
         galaxy_table.observe(galaxy_table_selected_changed, names=['selected'])
+
+        def on_galaxy_table_click(item, _data=None):
+            # Convert the selected item (as a length-1 list) to a subset state
+            # and grab the name and galaxy_type
+            table = self.components['c-galaxy-table']
+            index = self._index_from_items(table, [item])
+
+            glue_data = table.glue_data
+            name = glue_data["ID"][index]
+            gal_type = glue_data["Type"][index]
+            ra = glue_data["RA"][index]
+            dec = glue_data["DEC"][index]
+            if name is None or gal_type is None:
+                return
+
+            # Show the galaxy in the WWT widget
+            wwt = self.widgets["wwt_widget"].widget
+            coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
+            wwt.center_on_coordinates(coordinates, fov=GALAXY_FOV, instant=True)
+        self.components['c-galaxy-table'].set_row_click_callback(on_galaxy_table_click)
 
         # When we select an item in the distance table, we want the WWT viewer to go there
         distance_table = self.components['c-distance-table']
@@ -621,7 +633,7 @@ class Application(v.VuetifyTemplate):
 
         def on_marker_change(marker):
             if marker == 'cho_row1':
-                self.state.show_spectrum_on_select = True
+                self.components['c-galaxy-table'].single_select = True
         add_callback(self.state, 'marker', on_marker_change)
 
         # Any lines that we've obtained from fitting
@@ -959,10 +971,7 @@ class Application(v.VuetifyTemplate):
             self.vue_first_galaxy_selected()
 
         filename = galaxy['ID']
-        spectrum_name = filename.split(".")[0]
-        data_name = spectrum_name + '[COADD]'
-        if data_name not in self.data_collection:
-            self._load_spectrum_data(filename, galaxy['Type'])
+        self._load_spectrum_data(filename, galaxy['Type'])
 
     def _scatter_selection_update(self, viewer_id, data, selections):
         viewer = self._viewer_handlers[viewer_id]
@@ -1180,12 +1189,15 @@ class Application(v.VuetifyTemplate):
         spectra_path = Path(__file__).parent / "data" / "spectra"
         type_folder = spectra_path / type_folders[gal_type]
         filepath = str(type_folder / filename)
-        self._application_handler.load_data(filepath, label=spectrum_name)
         data_name = spectrum_name + '[COADD]'
-        data = dc[data_name]
-        data['lambda'] = 10 ** data['loglam']
-        dc.remove(dc[spectrum_name + '[SPECOBJ]'])
-        dc.remove(dc[spectrum_name + '[SPZLINE]'])
+
+        # Don't load data that we've already loaded
+        if data_name not in self.data_collection:
+            self._application_handler.load_data(filepath, label=spectrum_name)
+            data = dc[data_name]
+            data['lambda'] = 10 ** data['loglam']
+            dc.remove(dc[spectrum_name + '[SPECOBJ]'])
+            dc.remove(dc[spectrum_name + '[SPZLINE]'])
                 
 
     def _update_data_component(self, data, attribute, values):
@@ -1353,15 +1365,18 @@ class Application(v.VuetifyTemplate):
             self._on_galaxy_selected(galaxy)
             index += 1
 
-    def _get_current_table_index(self, table):
-        state = table.subset_state_from_selected(table.selected)
+    def _index_from_items(self, table, items):
+        state = table.subset_state_from_selected(items)
         mask = state.to_mask(table.glue_data)
         return next((index for index in range(len(mask)) if mask[index]), None)
 
+    def _current_table_index(self, table):
+        return self._index_from_items(table, table.selected)
+    
     def vue_add_current_velocity(self, args=None):
         data = self.data_collection['student_measurements']
         table = self.components['c-galaxy-table']
-        index = self._get_current_table_index(table)
+        index = self._current_table_index(table)
         if index is not None:
             z = data["Z"][index]
             velocity = int(3 * (10 ** 5) * z)
