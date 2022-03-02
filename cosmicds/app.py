@@ -624,7 +624,8 @@ class Application(v.VuetifyTemplate):
             # we need to check for the event, even though we specify
             # it in `add_event_callback``
             # (I have a PR in to fix this)
-            if spectrum_viewer.user_line.visible:
+            print(event)
+            if event["event"] != "click" or not spectrum_viewer.user_line.visible:
                 return
             value = round(event["domain"]["x"], 2)
             self.add_measwave_data_point(value)

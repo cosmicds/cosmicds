@@ -172,9 +172,6 @@ class Table(VuetifyTemplate, HubListener):
         self._row_click_callback = cb
 
     def vue_handle_row_click(self, item, data=None):
-        print("Clicked!")
-        print(item)
-        print(self._row_click_callback)
         if self._row_click_callback:
             self._row_click_callback(item, data)
         if self.single_select:
