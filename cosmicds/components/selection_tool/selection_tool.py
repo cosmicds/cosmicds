@@ -48,12 +48,17 @@ class SelectionTool(v.VueTemplate):
                 self.widget.layers.remove_layer(self.selected_layer)
             self.selected_layer = layer
 
-            if self._on_galaxy_selected:
-                self._on_galaxy_selected(galaxy)
+            if self.on_galaxy_selected is not None:
+                self.on_galaxy_selected(galaxy)
 
         self.widget.set_selection_change_callback(wwt_cb)
 
         super().__init__(*args, **kwargs)
 
+    @property
+    def on_galaxy_selected(self):
+        return self._on_galaxy_selected
+
+    @on_galaxy_selected.setter
     def on_galaxy_selected(self, cb):
         self._on_galaxy_selected = cb
