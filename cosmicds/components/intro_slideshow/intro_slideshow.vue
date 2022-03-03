@@ -240,7 +240,7 @@
       rgba(0, 0, 0, 0.7),
       rgba(0, 0, 0, 0.7)
     ),
-    url(https://astropix.ipac.caltech.edu/archive/noirlab/stsci-gallery-1427a-2000x960/noirlab_stsci-gallery-1427a-2000x960_1600.jpg);
+    /* url(https://astropix.ipac.caltech.edu/archive/noirlab/stsci-gallery-1427a-2000x960/noirlab_stsci-gallery-1427a-2000x960_1600.jpg); */
 }
 .v-card__text{
   padding: 0px 15px 0px;

@@ -15,7 +15,7 @@ class IntroSlideShow(v.VuetifyTemplate):
 
     _titles = [
         "Hubble Data Story Goal",
-        "19280's Astronomy",
+        "1920's Astronomy",
         "Explore the Night Sky",
         "What Are Nebulae?",
         "Spiral Nebulae",
