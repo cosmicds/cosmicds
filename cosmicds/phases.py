@@ -97,6 +97,12 @@ class Stage(TemplateMixin):
         data = self.data_collection[dc_name]
         return data.id[id]
 
+    def update_data_value(self, dc_name, comp_name, value, index):
+        data = self.data_collection[dc_name]
+        values = data[comp_name]
+        values[index] = value
+        data.update_components({data.id[comp_name] : values})
+
     def vue_set_step_index(self, value):
         self.story_state.step_index = value
 

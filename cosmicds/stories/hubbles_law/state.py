@@ -72,3 +72,24 @@ class HubblesLaw(Story):
                for x in ["ID", "RA", "DEC", "Z", "Type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
                          "Element"]}))
+
+    def load_spectrum_data(self, spectrum, gal_type):
+        type_folders = {
+            "Sp" : "spirals_spectra",
+            "E" : "ellipticals_spectra",
+            "Ir" : "irregulars_spectra"
+        }
+        name = spectrum.split(".")[0]
+        spectra_path = Path(__file__).parent / "data" / "spectra"
+        folder = spectra_path / type_folders[gal_type]
+        path = str(folder / spectrum)
+        data_name = name + '[COADD]'
+
+        # Don't load data that we've already loaded
+        dc = self.data_collection
+        if data_name not in dc:
+            self.app.load_data(path, label=name)
+            data = dc[name]
+            data['lambda'] = 10 ** data['loglam']
+            dc.remove(dc[name + '[SPECOBJ'])
+            dc.remove(dc[name + '[SPZLINE]'])
