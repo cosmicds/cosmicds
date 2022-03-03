@@ -1,22 +1,11 @@
 import json
 import os
 
-from astropy import units as u
-from bqplot.scales import LinearScale
-from bqplot_image_gl import LinesGL
-from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
-from glue_jupyter.bqplot.scatter.layer_artist import BqplotScatterLayerArtist
 import numpy as np
 from traitlets import Unicode
 
-try:
-    from astropy.cosmology import Planck18 as planck
-except ImportError:
-    from astropy.cosmology import Planck15 as planck
-
 __all__ = [
-    'age_in_gyr', 'load_template', 'update_figure_css',
-    'extend_tool', 'line_mark', 'vertical_line_mark'
+    'load_template', 'update_figure_css', 'extend_tool'
 ]
 
 
