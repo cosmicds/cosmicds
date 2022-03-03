@@ -42,8 +42,7 @@
           </p>
         </v-card-text>
       </v-window-item>
-
-
+ 
       <v-window-item :value="1" 
         class="no-transition"
       >
@@ -68,7 +67,99 @@
           </p>
           <div
             class="mb-2 mx-4"
-          >
+          >    
+            <v-row>
+              <v-col
+                cols="8"
+              >
+                <v-card
+                  outlined
+                  color="info"
+                  class="pa-1"
+                >
+                  <v-toolbar
+                    color="secondary"
+                    dense
+                    dark
+                  >
+                    <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
+                    <!--<v-tooltip top>-->
+                      <div class="text-center">
+                        <v-dialog
+                          v-model="dialog"
+                          width="600"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                              <v-btn 
+                                icon
+                                right
+                                v-bind="attrs"
+                                v-on="on"
+                              >
+                                <v-icon>mdi-information-outline</v-icon>
+                              </v-btn>
+                          </template>
+                          <v-card>
+                            <v-card-title>
+                              Data Tool and Imagery credits
+                            </v-card-title>
+                            <v-card-text>
+                              lorem ipsum
+                            </v-card-text>
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn
+                                text
+                                @click="dialog = false"
+                              >
+                              Close
+                              </v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-dialog>
+                      </div>
+                      <!--
+                      Data tool and imagery credits
+                    </v-tooltip>-->
+                    <v-spacer></v-spacer>   
+                  </v-toolbar>         
+                    <c-exploration-tool>
+                </v-card>
+              </v-col>
+              <v-col
+                cols="4"
+              >
+                <v-row>
+                  <v-col
+                    cols="4"
+                  >
+                    <strong>Pan</strong>
+                  </v-col>
+                  <v-col
+                    cols="8"
+                  >
+                    <strong>click + drag</strong><br>
+                    (or use the <strong class="codeFont">I-J-K-L</strong> keys)
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                    cols="4"
+                  >
+                     <strong>Zoom</strong>
+                  </v-col>
+                  <v-col
+                    cols="8"
+                  >
+                    <strong>scroll in and out</strong><br>
+                    (or use the <strong class="codeFont">Z-X</strong> keys for finer zoom)
+                  </v-col>
+                </v-row>
+              </v-col>
+            </div>                                        
+            
+
+<!--
             <v-row
               no-gutters
               class="mb-3"
@@ -112,6 +203,8 @@
               <c-exploration-tool>
               </v-col>
             </v-row>
+
+-->
           </div>
         </v-card-text>
        </v-window-item>
