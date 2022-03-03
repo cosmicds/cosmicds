@@ -79,6 +79,7 @@
                 >
                   <v-toolbar
                     color="secondary"
+                    height="40px"
                     dense
                     dark
                   >
@@ -123,7 +124,7 @@
                     </v-tooltip>-->
                     <v-spacer></v-spacer>   
                   </v-toolbar>         
-                    <c-exploration-tool id="exploration tool">
+                    <c-exploration-tool id="exploration-tool">
                 </v-card>
               </v-col>
               <v-col
@@ -340,7 +341,7 @@
 }
 
 #exploration-tool {
-  height: 100px;
+  height: 350px;
 }
 </style>
 

@@ -1,15 +1,19 @@
 <template>
-  <div id="measurer-root">
+<v-lazy>
+  <div id="exploration-root">
     <jupyter-widget
       :widget="widget"
       id="exploration-widget"
     />
   </div>
+</v-lazy>
 </template>
 
 <style scoped>
-.p-Widget {
-  height: 100% !important;
-  width: 100% !important;
+#exploration-widget .p-Widget, #exploration-widget iframe {
+  height: 350px !important;
 }
 </style>
+
+</template>
+
