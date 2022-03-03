@@ -4,6 +4,7 @@ import astropy.units as u
 from astropy.table import Table
 from astropy.coordinates import SkyCoord
 from cosmicds.utils import load_template
+from cosmicds.stories.hubbles_law.utils import FULL_FOV, GALAXY_FOV
 from ipywidgets import DOMWidget, widget_serialization
 from pandas import DataFrame
 from pywwt.jupyter import WWTJupyterWidget
@@ -27,9 +28,11 @@ class SelectionTool(v.VueTemplate):
         layer.size_scale = 50
         layer.color = "#00FF00"
         self.sdss_layer = layer
+        self.motions_left = 2
 
         self.selected_data = DataFrame()
         self.selected_layer = None
+        self.current_galaxy = None
         self._on_galaxy_selected = None
 
         def wwt_cb(wwt, updated):
@@ -39,6 +42,7 @@ class SelectionTool(v.VueTemplate):
             source = wwt.most_recent_source
             galaxy = source["layerData"]
 
+            self.current_galaxy = galaxy
             self.selected_data.append(galaxy)
             table = Table.from_pandas(df)
             layer = self.widget.layers.add_table_layer(table)
@@ -62,3 +66,14 @@ class SelectionTool(v.VueTemplate):
     @on_galaxy_selected.setter
     def on_galaxy_selected(self, cb):
         self._on_galaxy_selected = cb
+
+    def reset(self):
+        self.widget.center_on_coordinates(self.START_COORDINATES, fov=FULL_FOV, instant=True)
+        self.current_galaxy = None
+
+    def go_to_galaxy(self, ra, dec, fov=GALAXY_FOV):
+        coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
+        instant = self.motions_left <= 0
+        if not instant:
+            self.motions_left -= 1
+        self.widget.center_on_coordinates(coordinates, fov=fov, instant=instant)
