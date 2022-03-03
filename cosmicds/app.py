@@ -1299,7 +1299,7 @@ class Application(v.VuetifyTemplate):
         index = next((index for index in range(len(mask)) if mask[index]), None)
         if index is not None:
             measwave = data["measwave"]
-            measwave[index] = value
+            measwave[index] = round(value)
             self._new_measwave_data_update(measwave)
 
     def vue_add_distance_data_point(self, args=None):
