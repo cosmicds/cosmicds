@@ -2,8 +2,10 @@ import ipyvuetify as v
 import astropy.units as u
 from astropy.coordinates import SkyCoord
 from traitlets import Int, Bool, Unicode
-from cosmicds.utils import load_template, GALAXY_FOV
+from cosmicds.utils import load_template, GALAXY_FOV, theme_colors
 from cosmicds.components.galaxy_exploration_tool import GalaxyExplorationTool
+
+theme_colors()
 
 class IntroSlideShow(v.VuetifyTemplate):
     template = load_template("intro_slideshow.vue", __file__).tag(sync=True)
