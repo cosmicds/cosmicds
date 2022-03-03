@@ -2,6 +2,7 @@ import ipyvue as v
 from astropy.coordinates import Angle
 import astropy.units as u
 from cosmicds.utils import RepeatedTimer, load_template
+from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Instance, Bool, Float, Int, observe
 from ipywidgets import DOMWidget, widget_serialization
 from datetime import datetime
@@ -15,8 +16,8 @@ def angle_to_json(angle, _widget):
 def angle_from_json(jsn, _widget):
     return jsn["value"] * u.Unit(jsn["unit"])
 
-class MeasuringTool(v.VueTemplate):
-    template = load_template("measuring_tool.vue", __file__).tag(sync=True)
+class DistanceTool(v.VueTemplate):
+    template = load_template("distance_tool.vue", __file__).tag(sync=True)
     widget = Instance(DOMWidget, allow_none=True).tag(sync=True, **widget_serialization)
     measuring = Bool().tag(sync=True)
     measuredDistance = Float().tag(sync=True)
@@ -30,8 +31,9 @@ class MeasuringTool(v.VueTemplate):
 
     UPDATE_TIME = 1 #seconds
 
-    def __init__(self, wwt, *args, **kwargs):
-        self.widget = wwt
+    def __init__(self, *args, **kwargs):
+        self.widget = WWTJupyterWidget(hide_all_chrome=True)
+        self._setup_widget()
         self.measuring = kwargs.get('measuring', False)
         self.angular_size = Angle(0, u.deg)
         self.angular_height = Angle(60, u.deg)
@@ -39,6 +41,11 @@ class MeasuringTool(v.VueTemplate):
         self.last_update = datetime.now()
         self._rt = RepeatedTimer(self.UPDATE_TIME, self._check_measuring_allowed)
         super().__init__(*args, **kwargs)
+
+    def _setup_widget(self):
+        # Temp update to set background to SDSS. Once we remove galaxies without SDSS WWT tiles from the catalog, make background DSS again, and set wwt.foreground_opacity = 0, per Peter Williams.
+        self.widget.background = 'SDSS: Sloan Digital Sky Survey (Optical)'
+        self.widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
 
     def reset_canvas(self):
         self.send({"method": "reset", "args": []})

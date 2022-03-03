@@ -5,6 +5,7 @@ import astropy.units as u
 from cosmicds.utils import RepeatedTimer, load_template
 from datetime import datetime
 from ipywidgets import DOMWidget, widget_serialization
+from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Bool, Instance, Int
 
 class GalaxyExplorationTool(v.VueTemplate):
@@ -21,8 +22,8 @@ class GalaxyExplorationTool(v.VueTemplate):
 
     UPDATE_TIME = 1 #seconds
 
-    def __init__(self, wwt, *args, **kwargs):
-        self.widget = wwt
+    def __init__(self, *args, **kwargs):
+        self.widget = WWTJupyterWidget(hide_all_chrome=True)
         self.widget._set_message_type_callback('wwt_view_state', self._handle_view_message)
         self.last_update = datetime.now()
         self._rt = RepeatedTimer(self.UPDATE_TIME, self._update_if_needed)
@@ -58,7 +59,7 @@ class GalaxyExplorationTool(v.VueTemplate):
         self._dec = dec
         self._fov = fov
         self.last_update = datetime.now()
-        if self.pan_count >= 0 and self.zoom_count >= 0:
+        if self.pan_count >= 3 and self.zoom_count >= 3:
             self.exploration_complete = True
             self.widget._set_message_type_callback('wwt_view_state', None)
 
