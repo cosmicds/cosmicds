@@ -109,7 +109,7 @@
               >
                 Example Messier button (M1)
               </v-btn>
-              <c-exploration-tool>
+              <c-exploration-tool id="exploration-tool">
               </v-col>
             </v-row>
           </div>
@@ -246,8 +246,8 @@
   padding: 0px 15px 0px;
 }
 
-#exploration-widget {
-  height: 300px !important;
+#exploration-tool {
+  height: 300px;
 }
 </style>
 

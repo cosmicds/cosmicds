@@ -6,3 +6,10 @@
     />
   </div>
 </template>
+
+<style scoped>
+.p-Widget {
+  height: 100% !important;
+  width: 100% !important;
+}
+</style>
