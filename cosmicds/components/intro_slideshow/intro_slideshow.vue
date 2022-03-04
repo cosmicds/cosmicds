@@ -179,30 +179,73 @@
               <v-col
                 cols="4"
               >
-                <v-row>
                   <v-btn
                     @click="go_to_location({
                         ra: 83.63,
-                        dec: 22.01,
+                        dec: 22.014,
                         fov: 350, // optional, in arcseconds, default is 90
                         instant: false // also optional, false by default
                       })"
+                    color="info"
                   >
                     M1
                   </v-btn>
-                </v-row>
-                <v-row>
+                  <v-btn
+                    @click="go_to_location({
+                        ra: 250.4,
+                        dec: 36.46,
+                        fov: 700, // optional, in arcseconds, default is 90
+                        instant: false // also optional, false by default
+                      })"
+                    color="info"
+                  >
+                    M13
+                  </v-btn>
                   <v-btn
                     @click="go_to_location({
                         ra: 10.63,
                         dec: 41.27,
-                        fov: 5400, // optional, in arcseconds, default is 90
+                        fov: 6000, // optional, in arcseconds, default is 90
                         instant: false // also optional, false by default
                       })"
+                    color="info"
                   >
                     M31
                   </v-btn>
-                </v-row>
+                  <p>
+                  <v-btn
+                    @click="go_to_location({
+                        ra: 202.47,
+                        dec: 47.195,
+                        fov: 700, // optional, in arcseconds, default is 90
+                        instant: false // also optional, false by default
+                      })"
+                    color="info"
+                  >
+                    M51
+                  </v-btn>
+                  <v-btn
+                    @click="go_to_location({
+                        ra: 83.82,
+                        dec: -5.39,
+                        fov:7500, // optional, in arcseconds, default is 90
+                        instant: false // also optional, false by default
+                      })"
+                    color="info"
+                  >
+                    M42
+                  </v-btn>
+                  <v-btn
+                    @click="go_to_location({
+                        ra: 148.97,
+                        dec: 69.68,
+                        fov: 400, // optional, in arcseconds, default is 90
+                        instant: false // also optional, false by default
+                      })"
+                    color="info"
+                  >
+                    M82
+                  </v-btn>
               </v-col>
             </div>         
         </v-card-text>
