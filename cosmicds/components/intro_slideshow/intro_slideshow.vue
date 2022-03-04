@@ -72,7 +72,7 @@
               <v-col
                 cols="8"
               >   
-                    <c-exploration-tool id="exploration-tool">
+                <c-exploration-tool id="exploration-tool">
               </v-col>
               <v-col
                 cols="4"
@@ -104,56 +104,8 @@
                   </v-col>
                 </v-row>
               </v-col>
-            </div>                                        
-            
-
-<!--
-            <v-row
-              no-gutters
-              class="mb-3"
-            >
-            
-              <v-col
-                cols="3"
-              >
-                <strong>Pan</strong>
-              </v-col>
-              <v-col
-                cols="3"
-              >
-                <strong>click + drag</strong><br>
-                (or use the <strong class="codeFont">I-J-K-L</strong> keys)
-              </v-col>
-              <v-col
-                cols="3"
-              >
-                <strong>Zoom</strong>
-              </v-col>
-              <v-col
-                cols="3"
-              >
-                <strong>scroll in and out</strong><br>
-                (or use the <strong class="codeFont">Z-X</strong> keys for finer zoom)
-              </v-col>
-              <v-col
-                cols="6"
-              >
-              <v-btn
-                @click="go_to_location({
-                    ra: 83.63,
-                    dec: 22.01,
-                    fov: 350, // optional, in arcseconds, default is 90
-                    instant: false // also optional, false by default
-                  })"
-              >
-                Example Messier button (M1)
-              </v-btn>
-              <c-exploration-tool id="exploration-tool">
-              </v-col>
             </v-row>
-
--->
-          </div>
+          </div>                                        
         </v-card-text>
        </v-window-item>
 
@@ -179,75 +131,76 @@
               <v-col
                 cols="4"
               >
-                  <v-btn
-                    @click="go_to_location({
-                        ra: 83.63,
-                        dec: 22.014,
-                        fov: 350, // optional, in arcseconds, default is 90
-                        instant: false // also optional, false by default
-                      })"
-                    color="info"
-                  >
-                    M1
-                  </v-btn>
-                  <v-btn
-                    @click="go_to_location({
-                        ra: 250.4,
-                        dec: 36.46,
-                        fov: 700, // optional, in arcseconds, default is 90
-                        instant: false // also optional, false by default
-                      })"
-                    color="info"
-                  >
-                    M13
-                  </v-btn>
-                  <v-btn
-                    @click="go_to_location({
-                        ra: 10.63,
-                        dec: 41.27,
-                        fov: 6000, // optional, in arcseconds, default is 90
-                        instant: false // also optional, false by default
-                      })"
-                    color="info"
-                  >
-                    M31
-                  </v-btn>
-                  <p>
-                  <v-btn
-                    @click="go_to_location({
-                        ra: 202.47,
-                        dec: 47.195,
-                        fov: 700, // optional, in arcseconds, default is 90
-                        instant: false // also optional, false by default
-                      })"
-                    color="info"
-                  >
-                    M51
-                  </v-btn>
-                  <v-btn
-                    @click="go_to_location({
-                        ra: 83.82,
-                        dec: -5.39,
-                        fov:7500, // optional, in arcseconds, default is 90
-                        instant: false // also optional, false by default
-                      })"
-                    color="info"
-                  >
-                    M42
-                  </v-btn>
-                  <v-btn
-                    @click="go_to_location({
-                        ra: 148.97,
-                        dec: 69.68,
-                        fov: 400, // optional, in arcseconds, default is 90
-                        instant: false // also optional, false by default
-                      })"
-                    color="info"
-                  >
-                    M82
-                  </v-btn>
+                <v-btn
+                  @click="go_to_location({
+                      ra: 83.63,
+                      dec: 22.014,
+                      fov: 350, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M1
+                </v-btn>
+                <v-btn
+                  @click="go_to_location({
+                      ra: 250.4,
+                      dec: 36.46,
+                      fov: 700, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M13
+                </v-btn>
+                <v-btn
+                  @click="go_to_location({
+                      ra: 10.63,
+                      dec: 41.27,
+                      fov: 6000, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M31
+                </v-btn>
+                <p>
+                <v-btn
+                  @click="go_to_location({
+                      ra: 83.82,
+                      dec: -5.39,
+                      fov:7500, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M42
+                </v-btn>
+                <v-btn
+                  @click="go_to_location({
+                      ra: 202.47,
+                      dec: 47.195,
+                      fov: 700, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M51
+                </v-btn>
+                <v-btn
+                  @click="go_to_location({
+                      ra: 148.97,
+                      dec: 69.68,
+                      fov: 400, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M82
+                </v-btn>
               </v-col>
-            </div>         
+            </v-row>
+          </div>         
         </v-card-text>
       </v-window-item>
 
