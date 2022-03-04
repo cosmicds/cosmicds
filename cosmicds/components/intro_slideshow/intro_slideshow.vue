@@ -3,17 +3,9 @@
     class="darken"
   >
     <v-card-title
-      class="text-h6 font-weight-regular justify-space-between;"
+      class="text-h6 text-uppercase font-weight-regular justify-space-between;"
     >
       <span>
-        <!--
-        <v-avatar
-          color="info"
-          class="subheading white--text mr-4"
-          size="24"
-          v-text="step"
-        ></v-avatar>
-        -->
         {{ currentTitle }}
       </span>
     </v-card-title>
@@ -25,27 +17,45 @@
       <v-window-item :value="0" 
         class="no-transition"
       >
-        <v-card-text>
-          <p>
-            Welcome to the Cosmic Data Story about the Hubble Law. In this activity, you will use real astronomical data to answer these questions about our universe:
-          </p>
-          <p 
-            style="text-align:center; font-weight:600;"
-          >
-            Has the universe always existed? If not, how long ago did it form?
-          </p>
-          <p>
-            While answering these questions, you will learn techniques scientists use to assess how reliable they think a result is, based on their data. After all, when scientists collect data to answer new questions, there is no answer key that they can use to check their answers. They have to determine for themselves what conclusions can be drawn from their data.
-          </p>
-          <p>
-            You will do the same thing in this Data Story. Let’s get started!
-          </p>
-        </v-card-text>
+        <v-div>
+          <v-row>
+            <v-col cols="7">
+              <v-card-text>
+                <p>
+                  Welcome to the Cosmic Data Story about the Hubble Law. In this activity, you will use real astronomical data to answer these questions about our universe:
+                </p>
+                  <v-card
+                    class="d-flex justify-center pa-2 info"
+                    style="font-weight:600;"
+                  >
+                    Has the universe always existed? If not, how long ago did it form?
+                  </v-card>
+                <p></p>
+                <p>
+                  While answering these questions, you will learn techniques scientists use to assess how reliable they think a result is, based on their data. After all, when scientists collect data to answer new questions, there is no answer key that they can use to check their answers. They have to determine for themselves what conclusions can be drawn from their data.
+                </p>
+                <p>
+                  You will do the same thing in this Data Story. Let’s get started!
+                </p>
+              </v-card-text>
+            </v-col>
+            <v-col cols="5">
+              <v-div>
+                This is supposed to be an image of galaxies, but they are not showing up.
+                <v-img
+                  lazy-src="url(https://astropix.ipac.caltech.edu/archive/esahubble/heic0406a/esahubble_heic0406a_320.jpg)"
+                  max-width="100"
+                  src="url(https://astropix.ipac.caltech.edu/archive/esahubble/heic0406a/esahubble_heic0406a_320.jpg)"
+                ></v-img>
+              </v-div>
+            </v-col>
+          <v-row>
+        </v-div>
       </v-window-item>
- 
+      
       <v-window-item :value="1" 
         class="no-transition"
-      >
+       >
         <v-card-text>
           <p>
             Imagine that you are an astronomer living a century ago in the early 1920's. Pretty much all scientists of this time, including Albert Einstein, believed that the universe was static, unchanging, and eternal (meaning that the universe has always been and always will be). These ideas date back to ancient Greek times and were embraced by philosophers such as Aristotle.
@@ -63,7 +73,7 @@
       >
         <v-card-text>
           <p>
-            This window provides a view of the "night sky." You can explore this view and see what is in the night sky, as astronomers have been doing for centuries.
+            This window provides a view of the "night sky," based on actual telescopic data. You can explore this view, as astronomers have been doing for centuries.
           </p>
           <div
             class="mb-2 mx-4"
@@ -114,10 +124,10 @@
       >
         <v-card-text>
           <p>
-            As you pan through the sky, you may see stars and fuzzy blobs called nebulae. Astronomers in the early 1900’s wondered whether these nebulae are contained within our Milky Way galaxy or located beyond it.
+            As you pan through the sky, you may see stars and fuzzy blobs called nebulae. In the 1700's, French astronomer Charles Messier cataloged as many nebulae as he could find. They are known as "Messier Objects" and are identified by their catalog number.
           </p>
           <p>
-            Click on the thumbnails to go directly to some different nebulae catalogued by French astronomer Charles Messier in the 1700’s:
+            Click on the thumbnails to go directly to some Messier Objects:
           </p>
           <div
             class="mb-2 mx-4"

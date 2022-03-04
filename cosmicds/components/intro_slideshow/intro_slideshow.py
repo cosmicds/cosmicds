@@ -16,14 +16,15 @@ class IntroSlideShow(v.VuetifyTemplate):
     exploration_complete = Bool(False).tag(sync=True)
 
     _titles = [
-        "Hubble Data Story Goal",
+        "Hubble Data Story",
         "1920's Astronomy",
         "Explore the Night Sky",
         "What Are Nebulae?",
         "Spiral Nebulae",
-        "Henrietta Leavitt's Discovery"
+        "Henrietta Leavitt's Discovery",
+        "Vesto Slipher and Spectra"
     ]
-    _default_title = "Galaxy Velocities"
+    _default_title = "Hubble Data Story"
 
     def __init__(self, *args, **kwargs):
         exploration_tool = GalaxyExplorationTool()
