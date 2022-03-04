@@ -5,7 +5,7 @@ from traitlets import Int, Bool, Unicode
 from cosmicds.utils import load_template, GALAXY_FOV, theme_colors
 from cosmicds.components.galaxy_exploration_tool import GalaxyExplorationTool
 
-theme_colors()
+#theme_colors()
 
 class IntroSlideShow(v.VuetifyTemplate):
     template = load_template("intro_slideshow.vue", __file__).tag(sync=True)
@@ -27,8 +27,10 @@ class IntroSlideShow(v.VuetifyTemplate):
 
     def __init__(self, *args, **kwargs):
         exploration_tool = GalaxyExplorationTool()
+        exploration_tool2 = GalaxyExplorationTool()
         self.components = {
-            'c-exploration-tool': exploration_tool
+            'c-exploration-tool': exploration_tool,
+            'c-exploration-tool2': exploration_tool2
         }
         self.currentTitle = self._default_title
 
@@ -50,7 +52,7 @@ class IntroSlideShow(v.VuetifyTemplate):
     
     def vue_go_to_location(self, args):
         coordinates = SkyCoord(args["ra"] * u.deg, args["dec"] * u.deg, frame='icrs')
-        wwt = self.components['c-exploration-tool'].widget
+        wwt = self.components['c-exploration-tool2'].widget
         instant = args.get("instant") or False
         fov_as = args.get("fov", None)
         fov = fov_as * u.arcsec if fov_as else GALAXY_FOV

@@ -71,61 +71,8 @@
             <v-row>
               <v-col
                 cols="8"
-              >
-                <v-card
-                  outlined
-                  color="info"
-                  class="pa-1"
-                >
-                  <v-toolbar
-                    color="secondary"
-                    height="40px"
-                    dense
-                    dark
-                  >
-                    <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
-                    <!--<v-tooltip top>-->
-                      <div class="text-center">
-                        <v-dialog
-                          v-model="dialog"
-                          width="600"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                              <v-btn 
-                                icon
-                                right
-                                v-bind="attrs"
-                                v-on="on"
-                              >
-                                <v-icon>mdi-information-outline</v-icon>
-                              </v-btn>
-                          </template>
-                          <v-card>
-                            <v-card-title>
-                              Data Tool and Imagery credits
-                            </v-card-title>
-                            <v-card-text>
-                              lorem ipsum
-                            </v-card-text>
-                            <v-card-actions>
-                              <v-spacer></v-spacer>
-                              <v-btn
-                                text
-                                @click="dialog = false"
-                              >
-                              Close
-                              </v-btn>
-                            </v-card-actions>
-                          </v-card>
-                        </v-dialog>
-                      </div>
-                      <!--
-                      Data tool and imagery credits
-                    </v-tooltip>-->
-                    <v-spacer></v-spacer>   
-                  </v-toolbar>         
+              >   
                     <c-exploration-tool id="exploration-tool">
-                </v-card>
               </v-col>
               <v-col
                 cols="4"
@@ -220,6 +167,44 @@
           <p>
             Click on the thumbnails to go directly to some different nebulae catalogued by French astronomer Charles Messier in the 1700’s:
           </p>
+          <div
+            class="mb-2 mx-4"
+          >    
+            <v-row>
+              <v-col
+                cols="8"
+              >   
+                <c-exploration-tool2 id="exploration-tool2">
+              </v-col>
+              <v-col
+                cols="4"
+              >
+                <v-row>
+                  <v-btn
+                    @click="go_to_location({
+                        ra: 83.63,
+                        dec: 22.01,
+                        fov: 350, // optional, in arcseconds, default is 90
+                        instant: false // also optional, false by default
+                      })"
+                  >
+                    M1
+                  </v-btn>
+                </v-row>
+                <v-row>
+                  <v-btn
+                    @click="go_to_location({
+                        ra: 10.63,
+                        dec: 41.27,
+                        fov: 5400, // optional, in arcseconds, default is 90
+                        instant: false // also optional, false by default
+                      })"
+                  >
+                    M31
+                  </v-btn>
+                </v-row>
+              </v-col>
+            </div>         
         </v-card-text>
       </v-window-item>
 
@@ -340,9 +325,10 @@
   padding: 0px 15px 0px;
 }
 
-#exploration-tool {
-  height: 350px;
+#exploration-tool, #exploration-tool2 {
+  height: 400px;
 }
+
 </style>
 
 
