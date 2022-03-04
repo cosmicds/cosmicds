@@ -209,8 +209,90 @@
       >
         <v-card-text>
           <p>
-            M31 is an example of a particular type of nebula that interested astronomers in the early 1900’s. They were known as “spiral” nebulae because of their distinctive spiral shape. In 1920, there was a “Great Debate” between astronomers Harlow Shapley and Heber Curtis questioning whether the spiral nebulae were part of our own Milky Way galaxy or were “island universes” beyond our Milky Way. Do you think the nebulae you’ve observed are within the Milky Way or beyond it?
+            M31 and M51 are examples of a particular type of nebula that interested astronomers in the early 1900’s. They were known as “spiral” nebulae because of their distinctive spiral shape. In 1920, there was a “Great Debate” between astronomers Harlow Shapley and Heber Curtis questioning whether the spiral nebulae were part of our own Milky Way galaxy or were “island universes” beyond our Milky Way. Do you think the nebulae you’ve observed are within the Milky Way or beyond it?
           </p>
+          <div
+            class="mb-2 mx-4"
+          >    
+            <v-row>
+              <v-col
+                cols="8"
+              >   
+                <c-exploration-tool3 id="exploration-tool3">
+              </v-col>
+              <v-col
+                cols="4"
+              >
+                <v-btn
+                  @click="go_to_location3({
+                      ra: 83.63,
+                      dec: 22.014,
+                      fov: 350, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M1
+                </v-btn>
+                <v-btn
+                  @click="go_to_location3({
+                      ra: 250.4,
+                      dec: 36.46,
+                      fov: 700, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M13
+                </v-btn>
+                <v-btn
+                  @click="go_to_location3({
+                      ra: 10.63,
+                      dec: 41.27,
+                      fov: 6000, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M31
+                </v-btn>
+                <p>
+                <v-btn
+                  @click="go_to_location3({
+                      ra: 83.82,
+                      dec: -5.39,
+                      fov:7500, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M42
+                </v-btn>
+                <v-btn
+                  @click="go_to_location3({
+                      ra: 202.47,
+                      dec: 47.195,
+                      fov: 700, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M51
+                </v-btn>
+                <v-btn
+                  @click="go_to_location3({
+                      ra: 148.97,
+                      dec: 69.68,
+                      fov: 400, // optional, in arcseconds, default is 90
+                      instant: false // also optional, false by default
+                    })"
+                  color="info"
+                >
+                  M82
+                </v-btn>
+              </v-col>
+            </v-row>
+          </div>     
         </v-card-text>
       </v-window-item>
 
@@ -321,7 +403,7 @@
   padding: 0px 15px 0px;
 }
 
-#exploration-tool, #exploration-tool2 {
+#exploration-tool, #exploration-tool2, #exploration-tool3 {
   height: 400px;
 }
 
