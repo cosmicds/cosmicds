@@ -94,13 +94,12 @@
           justify="center"
         >
           <v-col cols="12">
-            <intro-slideshow-wwt
-              continue-text="get started"
+            <c-intro-slideshow
               @continue="
                 state.stage = 'main';
               "
             >
-            </intro-slideshow-wwt>
+            </c-intro-slideshow>
           </v-col>
         </v-row>
         <v-row
@@ -176,12 +175,6 @@
                         >
                           <v-row>
                             <v-btn
-                              @click="zoom_out_galaxy_widget()"
-                            >choose another galaxy</v-btn>
-                            <v-btn
-                              @click="reset_galaxy_widget()"
-                            >reset view</v-btn>
-                            <v-btn
                               color="green"
                               @click="select_galaxies()"
                             >select 5 galaxies</v-btn>
@@ -205,6 +198,31 @@
                                   <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
 
                                   <v-spacer></v-spacer>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="reset_galaxy_widget()">
+                                        <v-icon>mdi-home</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Reset view
+                                  </v-tooltip>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        :disabled="!state.current_galaxy"
+                                        @click="select_current_galaxy()">
+                                        <v-icon>mdi-plus</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Add to my dataset
+                                  </v-tooltip>
 
                                   <v-btn icon>
                                     <v-icon>mdi-information-outline</v-icon>
@@ -435,6 +453,42 @@
 
                                   <v-spacer></v-spacer>
 
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="spectrum_tool_home()">
+                                        <v-icon>mdi-home</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Reset view
+                                  </v-tooltip>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="spectrum_tool_toggle_zoom()">
+                                        <v-icon>mdi-magnify</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Zoom in on x-axis
+                                  </v-tooltip>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="toggle_rest_wavelength_shown()">
+                                        <v-icon>mdi-lambda</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    {{ state.rest_wavelength_shown ? 'Hide rest wavelength' : 'Show rest wavelength'}}
+                                  </v-tooltip>
+
                                   <v-btn icon>
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
@@ -655,21 +709,6 @@
                               </scaffold-alert>
 
                               <v-row>
-                                <v-btn
-                                  id="hide-lam-rest-button"
-                                  :disabled="!state.spectral_line"
-                                  v-show="state.rest_wavelength_shown"
-                                  @click.stop="toggle_rest_wavelength_shown()"
-                                >hide $$\:\lambda_{rest}$$</v-btn>
-                                <v-btn
-                                  id="show-lam-rest-button"
-                                  :disabled="!state.spectral_line"
-                                  v-show="!state.rest_wavelength_shown"
-                                  @click.stop="toggle_rest_wavelength_shown()"
-                                >show $$\:\lambda_{rest}$$</v-btn>
-                              </v-row>
-
-                              <v-row>
                                 <v-col
                                   cols="6"
                                 >
@@ -732,19 +771,29 @@
                                   dark
                                   dense
                                 >
-                                  <v-icon left>
-                                    mdi-ruler
-                                  </v-icon>
-
                                   <v-toolbar-title>Estimate Distance</v-toolbar-title>
 
                                   <v-spacer></v-spacer>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        :disabled="!state.measure_gal_selected || state.distance_view_changing"
+                                        @click="toggle_measuring()"
+                                      >
+                                        <v-icon>mdi-ruler</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    {{ state.distance_measuring_on ? 'Stop measuring' : 'Start measuring'}}
+                                  </v-tooltip>
 
                                   <v-btn icon>
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-app-bar>
-                                <c-measuring-tool
+                                <c-distance-tool
                                   class="wwt_measuring_tool"
                                 />
                               </v-card>
@@ -759,14 +808,14 @@
                                   color="warning"
                                   width="100%"
                                 >
-                                  <v-card-title>{{state.measuring_name || "Galaxy Name"}}</v-card-title>
+                                  <v-card-title>{{state.distance_name || "Galaxy Name"}}</v-card-title>
                                   <v-card-text>
                                     <v-divider></v-divider>
                                     <v-list
                                       color="warning"
                                     >
                                       <v-list-item-content>
-                                        <v-list-item-title>{{state.measuring_type || "Galaxy Type"}}</v-list-item-title>
+                                        <v-list-item-title>{{state.distance_type || "Galaxy Type"}}</v-list-item-title>
                                         <v-list-item-subtitle>type</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
@@ -774,7 +823,7 @@
                                         <v-list-item-subtitle>assumed size</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
-                                        <v-list-item-title>{{state.measuring_tool_height}}</v-list-item-title>
+                                        <v-list-item-title>{{state.distance_tool_height}}</v-list-item-title>
                                         <v-list-item-subtitle>field of view</v-list-item-subtitle>
                                       </v-list-item-content>
                                       <v-list-item-content>
@@ -800,7 +849,7 @@
                                       dark
                                       class="px-auto"
                                       max-width="100%"
-                                      :disabled="!state.measure_gal_selected || state.measured_ang_size === 0 || state.measuring_view_changing"
+                                      :disabled="!state.measure_gal_selected || state.measured_ang_size === 0 || state.distance_view_changing"
                                       @click="
                                         state.dist_measured = 1;
                                         state.dist_snackbar = 0;
@@ -830,13 +879,6 @@
                               style="color: red;"
                             >This angular size seems much larger than expected. Are you sure your measurements are lined up with a galaxy? Please try again.
                             </p>
-                            <v-btn
-                              class="white--text"
-                              color="purple darken-2"
-                              :disabled="!state.measure_gal_selected || state.measuring_view_changing"
-                              @click="toggle_measuring()"
-                            >{{ state.measuring_on ? "Stop Measuring" : "Start Measuring" }}
-                            </v-btn>
                           </v-row>
                           <v-row>
                             <!-- SIDEBAR COLUMN for giving Instructions -->

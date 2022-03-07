@@ -73,45 +73,46 @@
               no-gutters
               class="mb-3"
             >
+            
               <v-col
                 cols="3"
               >
                 <strong>Pan</strong>
               </v-col>
               <v-col
-                cols="9"
+                cols="3"
               >
                 <strong>click + drag</strong><br>
                 (or use the <strong class="codeFont">I-J-K-L</strong> keys)
               </v-col>
-            </v-row>
-            <v-row
-              no-gutters
-            >
               <v-col
                 cols="3"
               >
                 <strong>Zoom</strong>
               </v-col>
               <v-col
-                cols="9"
+                cols="3"
               >
                 <strong>scroll in and out</strong><br>
                 (or use the <strong class="codeFont">Z-X</strong> keys for finer zoom)
               </v-col>
+              <v-col
+                cols="6"
+              >
+              <v-btn
+                @click="go_to_location({
+                    ra: 83.63,
+                    dec: 22.01,
+                    fov: 350, // optional, in arcseconds, default is 90
+                    instant: false // also optional, false by default
+                  })"
+              >
+                Example Messier button (M1)
+              </v-btn>
+              <c-exploration-tool id="exploration-tool">
+              </v-col>
             </v-row>
           </div>
-          <!--
-          <div
-            class="wwt_widget"
-          >
-            <v-lazy>
-              <jupyter-widget
-                :widget="widgets.wwt_widget"
-              ></jupyter-widget>
-            </v-lazy>
-          </div>
-          --> 
         </v-card-text>
        </v-window-item>
 
@@ -205,7 +206,7 @@
       </v-item-group>
       <v-spacer></v-spacer>
       <v-btn
-        :disabled="step === 6"
+        :disabled="step === 6 || (step === 2 && !exploration_complete)"
         color="accent"
         text
         @click="step++;"
@@ -217,9 +218,12 @@
         color="accent"
         class="black--text"
         depressed
-        @click="() => { $emit('continue'); step = 0; }"
+        @click="() => { 
+          $emit('continue');
+          step = 0;
+        }"
       >
-        {{ continueText }}
+        get started
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -236,10 +240,14 @@
       rgba(0, 0, 0, 0.7),
       rgba(0, 0, 0, 0.7)
     ),
-    url(https://astropix.ipac.caltech.edu/archive/noirlab/stsci-gallery-1427a-2000x960/noirlab_stsci-gallery-1427a-2000x960_1600.jpg);
+    /* url(https://astropix.ipac.caltech.edu/archive/noirlab/stsci-gallery-1427a-2000x960/noirlab_stsci-gallery-1427a-2000x960_1600.jpg); */
 }
 .v-card__text{
   padding: 0px 15px 0px;
+}
+
+#exploration-tool {
+  height: 300px;
 }
 </style>
 
@@ -247,26 +255,6 @@
 <script>
 module.exports = {
   props: ["continueText"],
-  data: function () {
-    return {
-      step: 0,
-      length: 7,
-      dialog: false
-    };
-  },
-  computed: {
-    currentTitle () {
-      switch (this.step) {
-        case 0: return 'Hubble Data Story Goal'
-        case 1: return "1920's Astronomy"
-        case 2: return 'Explore the Night Sky'
-        case 3: return 'What Are Nebulae?'
-        case 4: return 'Spiral Nebulae'
-        case 5: return "Henrietta Leavitt's Discovery"
-        default: return 'Galaxy Velocities'
-      }
-    },
-  },
 };
 </script>
 

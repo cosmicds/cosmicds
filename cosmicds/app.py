@@ -20,7 +20,8 @@ from pandas import read_csv
 from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, List
 
-from cosmicds.components.measuring_tool.measuring_tool import MeasuringTool
+from .components.intro_slideshow.intro_slideshow import IntroSlideShow
+from .components.distance_tool.distance_tool import DistanceTool
 
 from .components.footer import Footer
 # When we have multiple components, change above to
@@ -29,7 +30,7 @@ from .components.viewer_layout import ViewerLayout
 from .components.widget_layout import WidgetLayout
 from .histogram_listener import HistogramListener
 from .line_draw_handler import LineDrawHandler
-from .utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA, MILKY_WAY_SIZE_MPC, age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
+from .utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA, MILKY_WAY_SIZE_MPC, GALAXY_FOV, FULL_FOV, age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
 from .components.dialog import Dialog
 from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
@@ -103,6 +104,7 @@ class ApplicationState(State):
     #step 1 alerts
     galaxy_table_visible = CallbackProperty(0)
     spectrum_tool_visible = CallbackProperty(0)
+    current_galaxy = CallbackProperty(None)
 
     #state variables for reflections
     draw_on = CallbackProperty(0)
@@ -120,12 +122,12 @@ class ApplicationState(State):
 
     measured_ang_size_str = CallbackProperty("-")
     measured_ang_size = CallbackProperty(0)
-    measuring_on = CallbackProperty(False)
+    distance_measuring_on = CallbackProperty(False)
     measure_gal_selected = CallbackProperty(False)
-    measuring_name = CallbackProperty("")
-    measuring_type = CallbackProperty("")
-    measuring_tool_height = CallbackProperty("")
-    measuring_view_changing = CallbackProperty(False)
+    distance_name = CallbackProperty("")
+    distance_type = CallbackProperty("")
+    distance_tool_height = CallbackProperty("")
+    distance_view_changing = CallbackProperty(False)
     warn_size = CallbackProperty(False)
     galaxy_dist = CallbackProperty("")
     spectral_line = CallbackProperty(None)
@@ -236,32 +238,28 @@ class Application(v.VuetifyTemplate):
         self._line_draw_handler = LineDrawHandler(self, hub_fit_viewer)
         self._original_hub_fit_interaction = hub_fit_viewer.figure.interaction
 
-        # Set up the measuring tool
-        measuring_widget = WWTJupyterWidget(hide_all_chrome=True)
-        # Temp update to set background to SDSS. Once we remove galaxies without SDSS WWT tiles from the catalog, make background DSS again, and set wwt.foreground_opacity = 0, per Peter Williams.
-        measuring_widget.background = 'SDSS: Sloan Digital Sky Survey (Optical)'
-        measuring_widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
-        measuring_tool = MeasuringTool(measuring_widget)
+        # Set up the distance measuring tool
+        distance_tool = DistanceTool()
         def update_state_ang_size(change):
             ang_size = change["new"]
-            ang_size_deg = ang_size.value if self.state.measuring_on else 0
+            ang_size_deg = ang_size.value if self.state.distance_measuring_on else 0
             ang_size_asec = int(ang_size_deg * 3600)
             self.state.measured_ang_size = ang_size_asec
             self.state.measured_ang_size_str = format_measured_angle(ang_size) if ang_size_deg != 0 else "-"
             self.state.galaxy_dist = ""
-        measuring_tool.observe(update_state_ang_size, names=["angular_size"])
+        distance_tool.observe(update_state_ang_size, names=["angular_size"])
         def update_state_measuring(change):
-            self.state.measuring_on = change["new"]
+            self.state.distance_measuring_on = change["new"]
             self.state.warn_size = False
             self.state.galaxy_dist = ""
-        def update_measuring_height(change):
-            self.state.measuring_tool_height = format_fov(change["new"])
-        def update_measuring_view_changing(change):
-            self.state.measuring_view_changing = change["new"]
-        self.state.measuring_tool_height = format_fov(measuring_tool.angular_height)
-        measuring_tool.observe(update_measuring_height, names=["angular_height"])
-        measuring_tool.observe(update_state_measuring, names=["measuring"])
-        measuring_tool.observe(update_measuring_view_changing, names=["view_changing"])
+        def update_distance_height(change):
+            self.state.distance_tool_height = format_fov(change["new"])
+        def update_distance_view_changing(change):
+            self.state.distance_view_changing = change["new"]
+        self.state.distance_tool_height = format_fov(distance_tool.angular_height)
+        distance_tool.observe(update_distance_height, names=["angular_height"])
+        distance_tool.observe(update_state_measuring, names=["measuring"])
+        distance_tool.observe(update_distance_view_changing, names=["view_changing"])
         self.motions_left = 2
 
         # TO DO: Currently, the glue-wwt package requires qt binding even if we
@@ -283,10 +281,9 @@ class Application(v.VuetifyTemplate):
                 if self.state.gals_total >= 5:
                     return
                 coordinates = SkyCoord(float(galaxy["RA"]) * u.deg, float(galaxy["DEC"]) * u.deg, frame='icrs')
-                default_zoom = 45 * u.arcsec
-                if wwt.get_fov() > default_zoom:
-                    wwt.center_on_coordinates(coordinates, fov=default_zoom, instant=False)
-                self._on_galaxy_selected(galaxy)
+                if wwt.get_fov() > GALAXY_FOV:
+                    wwt.center_on_coordinates(coordinates, fov=GALAXY_FOV, instant=False)
+                self.state.current_galaxy = galaxy
         wwt_widget.set_selection_change_callback(wwt_cb)
         self.wwt_sdss_layer = layer
         self.wwt_selected_layer = None
@@ -305,7 +302,8 @@ class Application(v.VuetifyTemplate):
                                 key_component='ID', names=distance_table_names, title=distance_title, single_select=True),
                             'c-fit-table': Table(self.session, student_data, glue_components=self._fit_table_components,
                                 key_component='ID', names=fit_table_names, title=fit_title),
-                            'c-measuring-tool': measuring_tool
+                            'c-distance-tool': distance_tool,
+                            'c-intro-slideshow': IntroSlideShow()
                         # THE FOLLOWING REPLACED WITH video_dialog.vue component in data/vue_components
                         #    'c-dialog-vel': Dialog(
                         #        self,
@@ -501,24 +499,34 @@ class Application(v.VuetifyTemplate):
             # and grab the name and galaxy_type
             table = self.components['c-galaxy-table']
             selected = change["new"]
-            index = self._get_current_table_index(table)
-            name = table.glue_data["ID"][index]
-            gal_type = table.glue_data["Type"][index]
-            measwave = table.glue_data["measwave"][index]
-            z = table.glue_data["Z"][index]
+            index = self._current_table_index(table)
+
+            glue_data = table.glue_data
+            name = glue_data["ID"][index]
+            gal_type = glue_data["Type"][index]
+            measwave = glue_data["measwave"][index]
+            z = glue_data["Z"][index]
             if name is None or gal_type is None:
                 return
 
             # Load the spectrum data, if necessary
             filename = name
-            spectrum_name = filename.split(".")[0]
-            data_name = spectrum_name + '[COADD]'
-            if data_name not in self.data_collection:
-                self._load_spectrum_data(filename, gal_type)
+            self._load_spectrum_data(filename, gal_type)
 
-            # Update the data in the spectrum viewer
+            # If this is the first selection we're making,
+            # we want to move the app forward
+            if self.state.marker == 'cho_row1':
+                self.state.spectrum_tool_visible = 1
+                self.state.marker = 'mee_spe1'
+
+            # Update the data in the spectrum viewer,
+            # if we're far enough in the story
+            if self.state.spectrum_tool_visible != 1:
+                return
             spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
             dc = self.data_collection
+            spectrum_name = filename.split(".")[0]
+            data_name = spectrum_name + '[COADD]'
             data = dc[data_name]
             if self._spectrum_data is None:
                 main_comps = [x.label for x in data.main_components]
@@ -554,13 +562,27 @@ class Application(v.VuetifyTemplate):
                 self._new_element_value_update(element, index)
                 self._new_restwave_value_update(restwave, index)
 
-            # If this is the first selection we're making,
-            # we want to move the app forward
-            if self.state.marker == 'cho_row1':
-                self.state.spectrum_tool_visible = 1
-                self.state.marker = 'mee_spe1'
-
         galaxy_table.observe(galaxy_table_selected_changed, names=['selected'])
+
+        def on_galaxy_table_click(item, _data=None):
+            # Convert the selected item (as a length-1 list) to a subset state
+            # and grab the name and galaxy_type
+            table = self.components['c-galaxy-table']
+            index = self._index_from_items(table, [item])
+
+            glue_data = table.glue_data
+            name = glue_data["ID"][index]
+            gal_type = glue_data["Type"][index]
+            ra = glue_data["RA"][index]
+            dec = glue_data["DEC"][index]
+            if name is None or gal_type is None:
+                return
+
+            # Show the galaxy in the WWT widget
+            wwt = self.widgets["wwt_widget"].widget
+            coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
+            wwt.center_on_coordinates(coordinates, fov=GALAXY_FOV, instant=True)
+        self.components['c-galaxy-table'].set_row_click_callback(on_galaxy_table_click)
 
         # When we select an item in the distance table, we want the WWT viewer to go there
         distance_table = self.components['c-distance-table']
@@ -575,26 +597,25 @@ class Application(v.VuetifyTemplate):
             gal_type = next((x for index, x in enumerate(data["Type"]) if mask[index]), None)
             self.state.measure_gal_selected = len(selected) > 0
             self.state.haro_on = 'd-block'
-            self.components['c-measuring-tool'].reset_canvas()
+            self.components['c-distance-tool'].reset_canvas()
             if not self.state.measure_gal_selected:
-                self.state.measuring_name = None
-                self.state.measuring_type = None
+                self.state.distance_name = None
+                self.state.distance_type = None
                 return
             name = selected[0]["ID"]
             if ra is not None and dec is not None:
-                measuring_tool = self.components['c-measuring-tool']
-                widget = measuring_tool.widget
+                distance_tool = self.components['c-distance-tool']
+                widget = distance_tool.widget
                 coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
                 ## TODO: Once we have it, specify the correct fov for each point
                 use_instant = self.motions_left <= 0
-                widget.center_on_coordinates(coordinates, fov=0.016 * u.deg, instant=use_instant)
+                widget.center_on_coordinates(coordinates, fov=GALAXY_FOV, instant=use_instant)
                 if not use_instant:
                     self.motions_left -= 1
-                self.state.measuring_name = name
-                self.state.measuring_type = gal_type.capitalize()
+                self.state.distance_name = name
+                self.state.distance_type = gal_type.capitalize()
             
         distance_table.observe(distance_table_selected_changed, names=['selected'])
-
 
         # Set up the interaction where the student clicking on the spectrum viewer adds
         # their measured wavelength to the data
@@ -603,7 +624,7 @@ class Application(v.VuetifyTemplate):
             # we need to check for the event, even though we specify
             # it in `add_event_callback``
             # (I have a PR in to fix this)
-            if event["event"] != 'click' or not spectrum_viewer.user_line.visible:
+            if event["event"] != "click" or not spectrum_viewer.user_line.visible:
                 return
             value = round(event["domain"]["x"], 2)
             self.add_measwave_data_point(value)
@@ -649,6 +670,8 @@ class Application(v.VuetifyTemplate):
         self.viewers = { k : ViewerLayout(v) for k, v in self._viewer_handlers.items() }
         self.widgets = { 'wwt_widget' : WidgetLayout(wwt_widget) }
 
+        self.viewers["spectrum_viewer"].show_toolbar = False
+
         # Make sure that the initial layer visibilities match the state
         self._hubble_comparison_selection_update(self.state.hubble_comparison_selections)
         self._class_histogram_selection_update(self.state.class_histogram_selections)
@@ -680,7 +703,7 @@ class Application(v.VuetifyTemplate):
 
     def _reset_wwt_widget(self):
         wwt_widget = self.widgets["wwt_widget"].widget
-        wwt_widget.center_on_coordinates(WWT_START_COORDINATES, fov=60 * u.deg, instant=True)
+        wwt_widget.center_on_coordinates(WWT_START_COORDINATES, fov=FULL_FOV, instant=True)
         if self.wwt_selected_layer is not None:
             wwt_widget.layers.remove_layer(self.wwt_selected_layer)
             self.wwt_selected_layer = None
@@ -912,6 +935,10 @@ class Application(v.VuetifyTemplate):
                 viewer.add_data(data)
                 viewer.x_att = data.id['age']
 
+    def vue_select_current_galaxy(self, args=None):
+        if self.state.current_galaxy:
+            self._on_galaxy_selected(self.state.current_galaxy)
+
     def _on_galaxy_selected(self, galaxy):
         fields = ['RA', 'DEC', 'ID', 'Type', 'Z']
         data = self.data_collection['student_measurements']
@@ -944,10 +971,7 @@ class Application(v.VuetifyTemplate):
             self.vue_first_galaxy_selected()
 
         filename = galaxy['ID']
-        spectrum_name = filename.split(".")[0]
-        data_name = spectrum_name + '[COADD]'
-        if data_name not in self.data_collection:
-            self._load_spectrum_data(filename, galaxy['Type'])
+        self._load_spectrum_data(filename, galaxy['Type'])
 
     def _scatter_selection_update(self, viewer_id, data, selections):
         viewer = self._viewer_handlers[viewer_id]
@@ -1165,12 +1189,15 @@ class Application(v.VuetifyTemplate):
         spectra_path = Path(__file__).parent / "data" / "spectra"
         type_folder = spectra_path / type_folders[gal_type]
         filepath = str(type_folder / filename)
-        self._application_handler.load_data(filepath, label=spectrum_name)
         data_name = spectrum_name + '[COADD]'
-        data = dc[data_name]
-        data['lambda'] = 10 ** data['loglam']
-        dc.remove(dc[spectrum_name + '[SPECOBJ]'])
-        dc.remove(dc[spectrum_name + '[SPZLINE]'])
+
+        # Don't load data that we've already loaded
+        if data_name not in self.data_collection:
+            self._application_handler.load_data(filepath, label=spectrum_name)
+            data = dc[data_name]
+            data['lambda'] = 10 ** data['loglam']
+            dc.remove(dc[spectrum_name + '[SPECOBJ]'])
+            dc.remove(dc[spectrum_name + '[SPZLINE]'])
                 
 
     def _update_data_component(self, data, attribute, values):
@@ -1272,7 +1299,7 @@ class Application(v.VuetifyTemplate):
         index = next((index for index in range(len(mask)) if mask[index]), None)
         if index is not None:
             measwave = data["measwave"]
-            measwave[index] = value
+            measwave[index] = round(value)
             self._new_measwave_data_update(measwave)
 
     def vue_add_distance_data_point(self, args=None):
@@ -1326,41 +1353,50 @@ class Application(v.VuetifyTemplate):
 
         self.vue_show_fit_points()
 
+        self.components['c-galaxy-table'].single_select = True
+
     def vue_select_galaxies(self, args=None):
         dummy_data = self.data_collection["dummy_student_data"]
         component_names = [x.label for x in dummy_data.main_components]
-        for index in range(dummy_data.size):
+        measurements_data = self.data_collection["student_measurements"]
+        index = 0
+        while (measurements_data.size < 5):
             galaxy = { c : dummy_data[c][index] for c in component_names }
             self._on_galaxy_selected(galaxy)
+            index += 1
 
-    def _get_current_table_index(self, table):
-        state = table.subset_state_from_selected(table.selected)
+    def _index_from_items(self, table, items):
+        state = table.subset_state_from_selected(items)
         mask = state.to_mask(table.glue_data)
         return next((index for index in range(len(mask)) if mask[index]), None)
 
+    def _current_table_index(self, table):
+        return self._index_from_items(table, table.selected)
+    
     def vue_add_current_velocity(self, args=None):
         data = self.data_collection['student_measurements']
         table = self.components['c-galaxy-table']
-        index = self._get_current_table_index(table)
+        index = self._current_table_index(table)
         if index is not None:
             z = data["Z"][index]
             velocity = int(3 * (10 ** 5) * z)
             self._new_velocity_value_update(velocity, index)
 
     def vue_reset_measurer(self, args=None):
-        self.components['c-measuring-tool'].reset_canvas()
+        self.components['c-distance-tool'].reset_canvas()
 
     def vue_toggle_measuring(self, args=None):
-        measurer = self.components['c-measuring-tool']
+        measurer = self.components['c-distance-tool']
         measurer.measuring = not measurer.measuring
 
     def vue_zoom_out_galaxy_widget(self, args=None):
         widget = self.widgets["wwt_widget"].widget
         center = widget.get_center()
-        widget.center_on_coordinates(center, fov=60 * u.deg, instant=False)
+        widget.center_on_coordinates(center, fov=FULL_FOV, instant=False)
 
     def vue_reset_galaxy_widget(self, args=None):
         self._reset_wwt_widget()
+        self.state.current_galaxy = None
 
     def vue_toggle_rest_wavelength_shown(self, args=None):
         spectrum_viewer = self._viewer_handlers['spectrum_viewer']
@@ -1369,6 +1405,24 @@ class Application(v.VuetifyTemplate):
         else:
             spectrum_viewer.show_rest_wavelength()
         self.state.rest_wavelength_shown = spectrum_viewer.rest_wavelength_shown
+
+    def vue_spectrum_tool_home(self, args=None):
+        spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
+        home_tool = spectrum_viewer.toolbar.tools.get("bqplot:home")
+        home_tool.activate()
+        spectrum_viewer.toolbar.active_tool = None
+
+    def vue_spectrum_tool_toggle_zoom(self, args=None):
+        spectrum_viewer = self._viewer_handlers["spectrum_viewer"]
+        toolbar = spectrum_viewer.toolbar
+        zoom_tool = toolbar.tools.get("bqplot:xzoom")
+        active_tool = toolbar.active_tool
+        if active_tool == zoom_tool:
+            zoom_tool.deactivate()
+        else:
+            zoom_tool.activate()
+            toolbar.active_tool = zoom_tool
+
 
     def _reset_state(self):
         self.state.stage = 'intro'
