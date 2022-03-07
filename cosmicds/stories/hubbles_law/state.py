@@ -6,6 +6,7 @@ from cosmicds.phases import Story
 from cosmicds.registries import story_registry
 import numpy as np
 from glue.core import Data
+import ipyvuetify as v
 
 
 @story_registry(name="hubbles_law")
@@ -45,6 +46,8 @@ class HubblesLaw(Story):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self._set_theme()
+
         # Load data needed for Hubble's Law
         data_dir = Path(__file__).parent / "data"
         output_dir = data_dir / "hubble_simulation" / "output"
@@ -73,6 +76,23 @@ class HubblesLaw(Story):
                          "restwave", "student_id", "velocity", "distance",
                          "Element"]}))
 
+    def _set_theme(self):
+        v.theme.dark = True
+        v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
+        v.theme.themes.light.primary = 'colors.lightBlue.darken3'
+        v.theme.themes.dark.secondary = 'colors.lightBlue.darken4'
+        v.theme.themes.light.secondary = 'colors.lightBlue.darken4'
+        v.theme.themes.dark.accent = 'colors.amber.accent2'
+        v.theme.themes.light.accent = 'colors.amber.accent3'
+        v.theme.themes.dark.info = 'colors.deepOrange.darken3'
+        v.theme.themes.light.info = 'colors.deepOrange.lighten2'
+        v.theme.themes.dark.success = 'colors.green.accent2'
+        v.theme.themes.light.success = 'colors.green.accent2'
+        v.theme.themes.dark.warning = 'colors.lightBlue.darken4'
+        v.theme.themes.light.warning = 'colors.lightBlue.lighten4'
+        v.theme.themes.dark.anchor = ''
+        v.theme.themes.light.anchor = ''
+
     def load_spectrum_data(self, spectrum, gal_type):
         type_folders = {
             "Sp" : "spirals_spectra",
@@ -93,3 +113,16 @@ class HubblesLaw(Story):
             data['lambda'] = 10 ** data['loglam']
             dc.remove(dc[name + '[SPECOBJ'])
             dc.remove(dc[name + '[SPZLINE]'])
+
+    def update_data(self, label, data):
+        dc = self.data_collection
+        if label in dc:
+            spec_data = dc[label]
+            spec_data.update_values_from_data(data)
+        else:
+            main_comps = [x.label for x in data.main_components]
+            components = { col: list(data[col]) for col in main_comps }
+            spec_data = Data(label=label, **components)
+            dc.append(spec_data)
+
+

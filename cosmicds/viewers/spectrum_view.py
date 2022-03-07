@@ -4,7 +4,10 @@ from glue_jupyter.bqplot.scatter import BqplotScatterView
 from bqplot.marks import Lines
 from bqplot import Label
 from echo import add_callback, delay_callback
+from glue.config import viewer_tool
+from glue.viewers.common.utils import get_viewer_tools
 from traitlets import Bool
+from cosmicds.components.toolbar import Toolbar
 from cosmicds.stories.hubbles_law.utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
 # We need to import this so that it gets loaded into the registry first
@@ -27,6 +30,7 @@ class SpectrumView(BqplotScatterView):
     tools = ['bqplot:home', 'bqplot:xzoom']
     _state_cls = SpectrumViewerState
     show_line = Bool(True)
+    LABEL = "Spectrum Viewer"
 
     observed_text = ' (observed)'
     rest_text = ' (rest)'
@@ -208,6 +212,20 @@ class SpectrumView(BqplotScatterView):
         self.mg_tick.x = [self.mg_shifted, self.mg_shifted]
         self.mg_label.x = [self.mg_shifted]
 
+    def update(self, element, z):
+        self.update_element(element)
+        self.update_z(z)
+        self.hide_rest_wavelength()
+
+    def add_data(self, data):
+        super().add_data(data)
+        self.state.x_att = data.id['lambda']
+        self.state.y_att = data.id['flux']
+        self.layers[0].state.attribute = data.id['flux']
+        for layer in self.layers:
+            if layer.state.layer.label != data.label:
+                layer.state.visible = False
+
     def show_rest_wavelength(self):
         use_mg = self.element == 'Mg-I'
         lambda_rest = MG_REST_LAMBDA if use_mg else H_ALPHA_REST_LAMBDA
@@ -225,7 +243,21 @@ class SpectrumView(BqplotScatterView):
         self.visible_wavelength_label.visible = False
         if self.observed_label is not None:
             self.observed_label.text = [self.observed_label.text[0][:-len(self.observed_text)]]
-            
+
+    def initialize_toolbar(self):
+        self.toolbar = Toolbar(self)
+
+        tool_ids, subtool_ids = get_viewer_tools(self.__class__)
+
+        if subtool_ids:
+            raise ValueError('subtools are not yet supported in Jupyter viewers')
+
+        for tool_id in tool_ids:
+            mode_cls = viewer_tool.members[tool_id]
+            mode = mode_cls(self)
+            self.toolbar.add_tool(mode)
+
     @property
     def rest_wavelength_shown(self):
         return self.visible_wavelength_line.visible
+

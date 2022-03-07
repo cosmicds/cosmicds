@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <p> This is a test</p>
+    <v-row>
+      <v-btn
+        color="green"
+        @click="select_galaxies()"
+      >select 5 galaxies</v-btn>
+    </v-row>
     <v-row>
       <v-col>
         <v-card>
@@ -15,6 +20,11 @@
           </v-card-actions>
         </v-card>
       </v-col>
+    </v-row>
+    <v-row>
+      <v-card>
+        <jupyter-widget :widget="viewers.spectrum_viewer"/>
+      </v-card>
     </v-row>
   </v-container>
 </template>

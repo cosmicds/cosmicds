@@ -38,8 +38,7 @@ class SelectionTool(v.VueTemplate):
         self._on_galaxy_selected = None
 
         def wwt_cb(wwt, updated):
-            print(self.selected_data.shape)
-            if 'most_recent_source' not in updated or self.selected_data.shape[1] >= self.gals_max:
+            if 'most_recent_source' not in updated or self.selected_data.shape[0] >= self.gals_max:
                 return
 
             source = wwt.most_recent_source
@@ -63,8 +62,8 @@ class SelectionTool(v.VueTemplate):
     def on_galaxy_selected(self, cb):
         self._on_galaxy_selected = cb
 
-    def vue_select_current_galaxy(self, _args=None):
-        self.selected_data = self.selected_data.append(self.current_galaxy, ignore_index=True)
+    def select_galaxy(self, galaxy):
+        self.selected_data = self.selected_data.append(galaxy, ignore_index=True)
         table = Table.from_pandas(self.selected_data)
         layer = self.widget.layers.add_table_layer(table)
         layer.size_scale = 100
@@ -73,7 +72,10 @@ class SelectionTool(v.VueTemplate):
             self.widget.layers.remove_layer(self.selected_layer)
         self.selected_layer = layer
         if self._on_galaxy_selected is not None:
-            self._on_galaxy_selected(self.current_galaxy)
+            self._on_galaxy_selected(galaxy)
+
+    def vue_select_current_galaxy(self, _args=None):
+        self.select_galaxy(self.current_galaxy)
         self.current_galaxy = {}
 
     def vue_reset(self, _args=None):
