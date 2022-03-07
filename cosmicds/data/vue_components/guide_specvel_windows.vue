@@ -15,14 +15,14 @@
     <v-dialog
         v-model="dialog"
         persistent
-        max-width="800px"
+        max-width="1000px"
     >
       <v-card
         class="mx-auto"
-        max-width="800"
       >
         <v-card-title
           class="text-h6 font-weight-regular justify-space-between"
+          dense
         >
           <span>
             <v-avatar
@@ -47,14 +47,70 @@
         </v-card-title>
 
         <v-window
-          style="min-height: 250px;"
           v-model="step"
+          style="height: 70vh;"
+          class="overflow-auto"
         >
           <v-window-item :value="0" 
             class="no-transition"
           >
             <v-card-text>
-              Galaxies emit light.
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="6" 
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Spectrum images and graphs
+                    </h3>
+                    <div>
+                      <p>
+                        These graphics show sample spectra for two different types of light bulbs.
+                      </p>
+                      <p>
+                        The spectrum images (top) show what the light looks like when it is separated into its colors by the spectrograph. 
+                      </p>
+                      <p>
+                        The spectrum graphs (bottom) represent how bright the light is at each specific wavelength.
+                      </p>
+                    </div>
+                    <v-card
+                      class="mt-auto white--text"
+                      flat
+                      color="secondary"
+                    > 
+                      <v-card-text>
+                        A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Light spectrum for LED bulb
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      src="../data/images/LED_White_spectool.png"
+                    ></v-img>
+                    <h4>
+                      Light spectrum for sodium vapor bulb
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../data/images/Sodium_Vapor_spectool.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
@@ -63,7 +119,56 @@
             class="no-transition"
           >
             <v-card-text>
-              Pass light through a spectrometer which will separate the light into its different colors (like a prism) and tell you how much light there is at each color (or wavelength).
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="6" 
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Interpreting spectrum graphs
+                    </h3>
+                    <div>
+                      <p>
+                        At wavelengths where the spectrum graph has a <strong>high brightness</strong> value, the spectrum image is <strong>brightly lit</strong> at the corresponding wavelengths.
+                      </p>
+                    </div>
+                    <v-card
+                      class="mt-auto white--text"
+                      flat
+                      color="secondary"
+                    > 
+                      <v-card-text>
+                        A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Light spectrum for LED bulb
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      src="../data/images/LED_White_w_highlight_spectool.png"
+                    ></v-img>
+                    <h4>
+                      Light spectrum for sodium vapor bulb
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../data/images/Sodium_Vapor_w_highlight_spectool.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
@@ -71,22 +176,99 @@
             class="no-transition"
           >
             <v-card-text>
-              <div>
-                Certain atoms and molecules absorb or emit light at very specific known wavelengths, creating bright spikes (emission lines) or faint dips (absorption lines) in the spectrum.
-              </div>
-              <div>
-                (Show images of sample spectra)
-              </div>
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="6" 
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Interpreting spectrum graphs
+                    </h3>
+                    <div>
+                      <p>
+                        At wavelengths where the spectrum graph has a <strong>low brightness</strong> value, the spectrum image is <strong>dim</strong> or <strong>dark</strong> at the corresponding wavelengths.
+                      </p>
+                    </div>
+                    <v-card
+                      class="mt-auto white--text"
+                      flat
+                      color="secondary"
+                    > 
+                      <v-card-text>
+                        A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Light spectrum for LED bulb
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      src="../data/images/LED_White_w_neghighlight_spectool.png"
+                    ></v-img>
+                    <h4>
+                      Light spectrum for sodium vapor bulb
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../data/images/Sodium_Vapor_w_neghighlight_spectool.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
           <v-window-item :value="3" 
             class="no-transition"
           >
-            <v-card-text>
-              <div>
-                In your galaxy data, you will be looking for a specific hydrogen emission line (known as H-alpha) that emits at 6563 Angstroms at rest;  or a magnesium absorption line (known as Mg-II) that absorbs at ____ .
-              </div>
+           <v-card-text>
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="6" 
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      How do spectra tell us about a source's motion?
+                    </h3>
+                    <div>
+                      <p>
+                        You have probably heard the pitch of a fire truck siren change as the truck is moving toward or away from you. When the truck is moving toward you, the siren’s pitch is higher, and when the truck is moving away from you, the siren’s pitch is lower. The faster the truck is moving, the bigger the change in pitch.
+                      </p>
+                      <p>
+                        This is due to a phenomenon called the <strong>Doppler Shift<strong>, where the observed properties of a sound wave change due to the motion of the object emitting the sound.
+                      </p>
+                    </div>
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Doppler Effect
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../data/images/siren_moving.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
@@ -208,8 +390,8 @@ module.exports = {
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 0: return 'Light'
-        case 1: return 'Spectrometer'
+        case 0: return 'Light and Spectra'
+        case 1: return 'Light and Spectra'
         case 2: return 'Atom & Molecule Emissions'
         case 3: return 'Lines to Look For'
         case 4: return 'Doppler, pt. I'
