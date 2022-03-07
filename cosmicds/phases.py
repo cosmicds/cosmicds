@@ -5,6 +5,7 @@ from cosmicds.components.viewer_layout import ViewerLayout
 
 from cosmicds.mixins import TemplateMixin, HubMixin
 from cosmicds.utils import load_template
+from glue.core import Data
 from glue.core.state_objects import State
 from echo import DictCallbackProperty, CallbackProperty, add_callback
 
@@ -54,10 +55,12 @@ class Stage(TemplateMixin):
         self._session = session
         self.story_state = story_state
 
-    def add_viewer(self, cls, label, data=None, layout=ViewerLayout):
+    def add_viewer(self, cls, label, data=None, layout=ViewerLayout, show_toolbar=False):
         viewer = self.app.new_data_viewer(cls, data=data, show=False)
         current_viewers = {k: v for k, v in self.viewers.items()}
-        current_viewers.update({label: layout(viewer)})
+        viewer_layout = layout(viewer)
+        viewer_layout.show_toolbar = show_toolbar
+        current_viewers.update({label: viewer_layout})
         self.viewers = current_viewers
 
         return viewer
@@ -102,6 +105,15 @@ class Stage(TemplateMixin):
         values = data[comp_name]
         values[index] = value
         data.update_components({data.id[comp_name] : values})
+
+    def add_data_values(self, dc_name, values):
+        data = self.data_collection[dc_name]
+        main_components = [x.label for x in data.main_components]
+        component_dict = {c : list(data[c]) for c in main_components}
+        for component, vals in component_dict.items():
+            vals.append(values.get(component, None))
+        new_data = Data(label=data.label, **component_dict)
+        data.update_values_from_data(new_data)
 
     def vue_set_step_index(self, value):
         self.story_state.step_index = value

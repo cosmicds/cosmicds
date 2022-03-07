@@ -1,3 +1,4 @@
+from echo import CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_jupyter.bqplot.scatter import BqplotScatterView
@@ -12,14 +13,15 @@ from cosmicds.viewers.spectrum_view import SpectrumView
 from cosmicds.events import StepChangeMessage
 from cosmicds.phases import Stage
 from cosmicds.components.table import Table
+from cosmicds.components.selection_tool import SelectionTool
 
 import logging
 log = logging.getLogger()
 
 
 class StageState(State):
-    pass
-
+    gals_total = CallbackProperty(0)
+    gals_max = CallbackProperty(5)
 
 @register_stage(story="hubbles_law", index=0, steps=[
     "Explore celestial sky",
@@ -47,9 +49,10 @@ class StageOne(Stage):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        print(self)
 
         # Setup viewers
-        self.add_viewer(SpectrumView, label="spectrum_viewer")
+        self.add_viewer(SpectrumView, label="spectrum_viewer", show_toolbar=False)
 
         for label in ['hub_const_viewer', 'hub_fit_viewer',
                       'hub_comparison_viewer', 'hub_students_viewer',
@@ -76,5 +79,25 @@ class StageOne(Stage):
                              single_select=False)
         self.add_widget(galaxy_table, label="galaxy_table")
 
-        wwt_viewer = WWTJupyterWidget()
-        self.add_widget(wwt_viewer, label='wwt_viewer')
+        # Setup components
+        sdss_data = self.get_data("SDSS_all_sample_filtered")
+        selection_tool = SelectionTool(data=sdss_data)
+        self.add_component(selection_tool, label='c-selection-tool')
+        selection_tool.on_galaxy_selected = self._on_galaxy_selected
+
+
+    def _on_galaxy_selected(self, galaxy):
+        data = self.get_data("student_measurements")
+        print(galaxy['ID'])
+        print(data['ID'])
+        already_present = galaxy['ID'] in data['ID'] # Avoid duplicates
+        if already_present:
+            # To do nothing
+            return
+
+            # If instead we wanted to remove the point from the student's selection
+            # index = next(idx for idx, val in enumerate(component_dict['ID']) if val == galaxy['ID'])
+            # for component, values in component_dict.items():
+            #     values.pop(index)
+        else:
+            self.add_data_values("student_measurements", galaxy)

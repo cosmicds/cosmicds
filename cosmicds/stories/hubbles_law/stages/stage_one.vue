@@ -4,7 +4,7 @@
     <v-row>
       <v-col>
         <v-card>
-          <jupyter-widget :widget="widgets.wwt_viewer"/>
+          <c-selection-tool/>
         </v-card>
       </v-col>
       <v-col>

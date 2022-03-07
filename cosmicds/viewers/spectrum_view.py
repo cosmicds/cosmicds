@@ -5,7 +5,7 @@ from bqplot.marks import Lines
 from bqplot import Label
 from echo import add_callback, delay_callback
 from traitlets import Bool
-from cosmicds.utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
+from cosmicds.stories.hubbles_law.utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
 # We need to import this so that it gets loaded into the registry first
 from cosmicds.tools import BqplotXZoom
