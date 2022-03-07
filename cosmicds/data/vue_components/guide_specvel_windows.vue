@@ -232,16 +232,11 @@
           <v-window-item :value="3" 
             class="no-transition"
           >
-           <v-card-text>
+            <v-card-text>
               <v-container>
-                <v-row
-                >
+                <v-row>
                   <v-col
-                    cols="6" 
-                    class="d-flex flex-column"
-                    height="100%"
-                    flat
-                    tile
+                    cols="6"
                   >
                     <h3
                       class="mb-4"
@@ -253,18 +248,18 @@
                         You have probably heard the pitch of a fire truck siren change as the truck is moving toward or away from you. When the truck is moving toward you, the siren’s pitch is higher, and when the truck is moving away from you, the siren’s pitch is lower. The faster the truck is moving, the bigger the change in pitch.
                       </p>
                       <p>
-                        This is due to a phenomenon called the <strong>Doppler Shift<strong>, where the observed properties of a sound wave change due to the motion of the object emitting the sound.
+                        This is due to a phenomenon called the <strong>Doppler shift</strong>, where the observed properties of a sound wave change due to the motion of the object emitting the sound.
                       </p>
                     </div>
                   </v-col>
                   <v-col cols="6">
                     <h4>
-                      Doppler Effect
+                      Doppler Shift
                     </h4>
                     <v-img
                       class="mx-a"
                       contain
-                      src="../data/images/siren_moving.png"
+                      src="../data/images/siren_moving_white.png"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -276,9 +271,40 @@
             class="no-transition"
           >
             <v-card-text>
-              <div>
-                Firetruck siren - pitch gets higher when the truck is moving toward you; lower when truck is moving away.
-              </div>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="6"
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      How do spectra tell us about a source's motion?
+                    </h3>
+                    <div>
+                      <p>
+                        The same <strong>Doppler shift</strong> happens with <strong>light</strong> (and all other wave phenomena), but a light source has to be moving very fast for you to notice these changes!
+                      </p>
+                      <p>
+                        When a light source moves <strong>away from you</strong>, you observe the light to have a <strong>longer (redder)</strong> wavelength than you would if the object were not moving. This effect is called <strong>redshift</strong>.
+                      </p>
+                      <p>
+                        When a light source moves <strong>toward you</strong>, you observe the light to have a <strong>shorter (bluer)</strong> wavelength than you would if the object were not moving. This effect is called <strong>blueshift</strong>.
+                      </p>
+                    </div>
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Doppler Shift
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../data/images/doppler_shift_light_white.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
@@ -286,9 +312,90 @@
             class="no-transition"
           >
             <v-card-text>
-              <div>
-                In the same way, wavelength of light gets shorter (bluer) when it’s moving toward you; longer (redder) when it’s moving away from you.
-              </div>
+              <v-container>
+                <v-row>
+                  <v-col>
+                    <h3
+                      class="mb-4"
+                    >
+                      How do we know the wavelength of the light when the source is at rest?
+                    </h3>
+                    <div>
+                      <p>
+                        A key to using the Doppler shift to determine the velocity of an astronomical source is to know the wavelength of its light when it is <strong>not</strong> moving. (This is called the <strong>rest wavelength</strong> of light).
+                      </p>
+                      <p>
+                        Luckily, elements emit and absorb light at specific wavelengths that are unique to those elements, providing “chemical fingerprints” that we can use to identify the presence of an element in an astronomical source (like a star or a gas cloud). 
+                      </p>
+                      <p>
+                        This image shows the pattern of emission lines that are produced by four different elements. The emission line patterns are unique to each element.
+                      </p>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="2">
+                    <v-row>
+                      <v-col>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../data/images/doppler_shift_light_white.png"
+                    ></v-img>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../data/images/doppler_shift_light_white.png"
+                    ></v-img>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col
+                    cols="8"
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      How do spectra tell us about a source's motion?
+                    </h3>
+                    <div>
+                      <p>
+                        The same <strong>Doppler shift</strong> happens with <strong>light</strong> (and all other wave phenomena), but a light source has to be moving very fast for you to notice these changes!
+                      </p>
+                      <p>
+                        When a light source moves <strong>away from you</strong>, you observe the light to have a <strong>longer (redder)</strong> wavelength than you would if the object were not moving. This effect is called <strong>redshift</strong>.
+                      </p>
+                      <p>
+                        When a light source moves <strong>toward you</strong>, you observe the light to have a <strong>shorter (bluer)</strong> wavelength than you would if the object were not moving. This effect is called <strong>blueshift</strong>.
+                      </p>
+                    </div>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-row>
+                      <v-col>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../data/images/doppler_shift_light_white.png"
+                    ></v-img>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../data/images/doppler_shift_light_white.png"
+                    ></v-img>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
