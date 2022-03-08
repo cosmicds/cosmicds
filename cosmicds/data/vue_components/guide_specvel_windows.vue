@@ -21,16 +21,9 @@
         class="mx-auto"
       >
         <v-card-title
-          class="text-h6 font-weight-regular justify-space-between"
-          dense
+          class="text-h6 font-weight-regular justify-space-between my-0"
         >
           <span>
-            <v-avatar
-              color="info"
-              class="subheading white--text mr-4"
-              size="24"
-              v-text="step"
-            ></v-avatar>
             {{ currentTitle }}
           </span>
           <span
@@ -52,6 +45,56 @@
           class="overflow-auto"
         >
           <v-window-item :value="0" 
+            class="no-transition"
+          >
+            <v-card-text>
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="9" 
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Refraction and Diffraction
+                    </h3>
+                    <div>
+                      <p>
+                        The figure illustrates light passing through a diffraction grating (1) and a prism (2).
+                      </p>
+                      <p>
+                        Diffraction gratings and prisms &emdash; and raindrops, bubbles, and oil slicks &emdash; create spectra because they bend light of different colors by different amounts. See link for more details.
+                      </p>
+                    </div>
+                    <v-card
+                      class="mt-auto white--text"
+                      flat
+                      color="secondary"
+                    > 
+                      <v-card-text>
+                        A spectrum is created when you pass light from a source through a spectrograph, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      src="../data/images/refraction_diffraction_spectra.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-window-item>
+
+
+          <v-window-item :value="1" 
             class="no-transition"
           >
             <v-card-text>
@@ -115,7 +158,7 @@
           </v-window-item>
 
 
-          <v-window-item :value="1" 
+          <v-window-item :value="2" 
             class="no-transition"
           >
             <v-card-text>
@@ -172,7 +215,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="2" 
+          <v-window-item :value="3" 
             class="no-transition"
           >
             <v-card-text>
@@ -180,7 +223,7 @@
                 <v-row
                 >
                   <v-col
-                    cols="6" 
+                    cols="6"
                     class="d-flex flex-column"
                     height="100%"
                     flat
@@ -229,7 +272,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="3" 
+          <v-window-item :value="4" 
             class="no-transition"
           >
             <v-card-text>
@@ -267,7 +310,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="4" 
+          <v-window-item :value="5" 
             class="no-transition"
           >
             <v-card-text>
@@ -308,12 +351,12 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="5" 
+          <v-window-item :value="6" 
             class="no-transition"
           >
             <v-card-text>
               <v-container>
-                <v-row>
+                <v-row no-gutters>
                   <v-col>
                     <h3
                       class="mb-4"
@@ -322,7 +365,7 @@
                     </h3>
                     <div>
                       <p>
-                        A key to using the Doppler shift to determine the velocity of an astronomical source is to know the wavelength of its light when it is <strong>not</strong> moving. (This is called the <strong>rest wavelength</strong> of light).
+                        A key to using the Doppler Shift to determine the velocity of an astronomical source is to know the wavelength of its light when it is <strong>not</strong> moving. (This is called the <strong>rest wavelength</strong> of light).
                       </p>
                       <p>
                         Luckily, elements emit and absorb light at specific wavelengths that are unique to those elements, providing “chemical fingerprints” that we can use to identify the presence of an element in an astronomical source (like a star or a gas cloud). 
@@ -334,63 +377,52 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="2">
-                    <v-row>
-                      <v-col>
+                  <v-col
+                    cols="2"
+                    class="d-flex flex-column"
+                    height="100%"
+                  >
                     <v-img
                       class="mx-a"
                       contain
-                      src="../data/images/doppler_shift_light_white.png"
+                      src="../data/images/carbon_atom_model.png"
                     ></v-img>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col>
                     <v-img
-                      class="mx-a"
+                      class="mt-auto mx-a"
                       contain
-                      src="../data/images/doppler_shift_light_white.png"
+                      src="../data/images/nitrogen_atom_model.png"
                     ></v-img>
-                      </v-col>
-                    </v-row>
                   </v-col>
                   <v-col
                     cols="8"
                   >
-                    <h3
-                      class="mb-4"
-                    >
-                      How do spectra tell us about a source's motion?
-                    </h3>
-                    <div>
-                      <p>
-                        The same <strong>Doppler shift</strong> happens with <strong>light</strong> (and all other wave phenomena), but a light source has to be moving very fast for you to notice these changes!
-                      </p>
-                      <p>
-                        When a light source moves <strong>away from you</strong>, you observe the light to have a <strong>longer (redder)</strong> wavelength than you would if the object were not moving. This effect is called <strong>redshift</strong>.
-                      </p>
-                      <p>
-                        When a light source moves <strong>toward you</strong>, you observe the light to have a <strong>shorter (bluer)</strong> wavelength than you would if the object were not moving. This effect is called <strong>blueshift</strong>.
-                      </p>
-                    </div>
-                  </v-col>
-                  <v-col cols="2">
-                    <v-row>
-                      <v-col>
                     <v-img
                       class="mx-a"
                       contain
-                      src="../data/images/doppler_shift_light_white.png"
+                      src="../data/images/stsci_spectrum_element_montage.jpg"
                     ></v-img>
+                  </v-col>
+                  <v-col
+                    cols="2"
+                    class="d-flex flex-column"
+                    height="100%"
+                  >
+                    <v-row>
+                      <v-col>
+                        <v-img
+                          class="mx-a"
+                          contain
+                          src="../data/images/oxygen_atom_model.png"
+                        ></v-img>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      src="../data/images/doppler_shift_light_white.png"
-                    ></v-img>
+                        <v-img
+                          class="mt-auto mx-a"
+                          contain
+                          src="../data/images/iron_atom_model.png"
+                        ></v-img>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -399,10 +431,74 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="6" 
+
+          <v-window-item :value="7" 
             class="no-transition"
           >
-            <div class="pa-4 text-center">
+            <v-card-text>
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="6" 
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Emission and absorption lines in spectra
+                    </h3>
+                    <div>
+                      <p>
+                        The top spectrum shows <strong>emission lines</strong> from a source containing hydrogen.
+                      </p>
+                      <p>
+                        The bottom spectrum shows <strong>absorption lines</strong> due to hydrogen.
+                      </p>
+                      <p>
+                        Notice that in both spectra, the emission and absorption lines are present at the same combination of wavelengths (hydrogen’s “chemical fingerprint”).
+                      </p>
+                    </div>
+                    <v-card
+                      class="mt-auto white--text"
+                      flat
+                      color="secondary"
+                    > 
+                      <v-card-text>
+                        Elements emit light at specific wavelengths, and they can also absorb light at the same wavelengths, depending on the conditions associated with a light source.
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Hydrogen emission spectrum
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      src="../data/images/hydrogen_emission_spectool.png"
+                    ></v-img>
+                    <h4>
+                      Hydrogen absorption spectrum
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../data/images/hydrogen_absorption_spectool.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="8" 
+            class="no-transition"
+          >
+            <div class="pa-4 text-center my-auto">
               <v-img
                 class="mb-4"
                 contain
@@ -490,19 +586,21 @@ module.exports = {
   data: function () {
     return {
       step: 0,
-      length: 7,
+      length: 9,
       dialog: false
     };
   },
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 0: return 'Light and Spectra'
-        case 1: return 'Light and Spectra'
-        case 2: return 'Atom & Molecule Emissions'
-        case 3: return 'Lines to Look For'
-        case 4: return 'Doppler, pt. I'
-        case 5: return 'Doppler, pt. II'
+        case 0: return "Light and Spectra"
+        case 1: return "Light and Spectra"
+        case 2: return "Light and Spectra"
+        case 3: return "Light and Spectra"
+        case 4: return "Doppler Shift"
+        case 5: return "Doppler Shift"
+        case 6: return "Atom & Molecule Emissions"
+        case 7: return "Emission & Absorption"
         default: return 'Complete'
       }
     },
