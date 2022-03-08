@@ -8,17 +8,18 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-card>
+        <v-card
+            color="info"
+            class="pa-1"
+          >
           <c-selection-tool/>
+          <!-- <v-card-actions>
+            <v-btn @click="story_state.step_index += 1; story_state.step_complete = true">Next Step</v-btn>
+          </v-card-actions> -->
         </v-card>
       </v-col>
       <v-col>
-        <v-card>
           <jupyter-widget :widget="widgets.galaxy_table"/>
-          <v-card-actions>
-            <v-btn @click="story_state.step_index += 1; story_state.step_complete = true">Next Step</v-btn>
-          </v-card-actions>
-        </v-card>
       </v-col>
     </v-row>
     <v-row>

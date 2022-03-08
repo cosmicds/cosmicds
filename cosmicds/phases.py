@@ -71,7 +71,7 @@ class Stage(TemplateMixin):
         self.widgets = current_widget
 
     def get_viewer(self, label):
-        return self.viewers[label]
+        return self.viewers[label].viewer
 
     def get_widget(self, label):
         return self.widgets[label]
@@ -96,6 +96,9 @@ class Stage(TemplateMixin):
         current_components.update({label: component})
         self.components = current_components
 
+    def get_component(self, label):
+        return self.components[label]
+
     def get_data(self, dc_name):
         return self.data_collection[dc_name]
 
@@ -116,6 +119,7 @@ class Stage(TemplateMixin):
         for component, vals in component_dict.items():
             vals.append(values.get(component, None))
         new_data = Data(label=data.label, **component_dict)
+        self.story_state.make_data_writeable(new_data)
         data.update_values_from_data(new_data)
 
     def vue_set_step_index(self, value):

@@ -76,6 +76,14 @@ class HubblesLaw(Story):
                          "restwave", "student_id", "velocity", "distance",
                          "Element"]}))
 
+        # Make all data writeable
+        for data in self.data_collection:
+            self.make_data_writeable(data)
+
+    def make_data_writeable(self, data):
+        for comp in data.main_components:
+            data[comp.label].setflags(write=True)
+
     def _set_theme(self):
         v.theme.dark = True
         v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
@@ -108,11 +116,14 @@ class HubblesLaw(Story):
         # Don't load data that we've already loaded
         dc = self.data_collection
         if data_name not in dc:
-            self.app.load_data(path, label=name)
-            data = dc[name]
+            self.app.load_data(path, label=data_name)
+            data = dc[data_name]
             data['lambda'] = 10 ** data['loglam']
-            dc.remove(dc[name + '[SPECOBJ'])
+            dc.remove(dc[name + '[SPECOBJ]'])
             dc.remove(dc[name + '[SPZLINE]'])
+            data = dc[data_name]
+            self.make_data_writeable(data)
+        return dc[data_name]
 
     def update_data(self, label, data):
         dc = self.data_collection
@@ -122,7 +133,8 @@ class HubblesLaw(Story):
         else:
             main_comps = [x.label for x in data.main_components]
             components = { col: list(data[col]) for col in main_comps }
-            spec_data = Data(label=label, **components)
-            dc.append(spec_data)
+            new_data = Data(label=label, **components)
+            self.make_data_writeable(new_data) 
+            dc.append(new_data)
 
 

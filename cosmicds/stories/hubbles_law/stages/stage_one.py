@@ -54,7 +54,8 @@ class StageOne(Stage):
         super().__init__(*args, **kwargs)
 
         # Setup viewers
-        self.add_viewer(SpectrumView, label="spectrum_viewer")
+        spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
+        spectrum_viewer.add_event_callback(self.on_spectrum_click, events=['click'])
 
         for label in ['hub_const_viewer', 'hub_fit_viewer',
                       'hub_comparison_viewer', 'hub_students_viewer',
@@ -63,7 +64,7 @@ class StageOne(Stage):
 
         # Setup widgets
         galaxy_table = Table(self.session,
-                             data=self.get_data("student_measurements"),
+                             data=self.get_data('student_measurements'),
                              glue_components=['ID',
                                               'Element',
                                               'restwave',
@@ -78,16 +79,16 @@ class StageOne(Stage):
                                     'Distance (Mpc)',
                                     'Galaxy Type'],
                              title='My Galaxies | Velocity Measurements',
-                             single_select=False)
-        self.add_component(galaxy_table, label="c-galaxy-table")
+                             single_select=True) # True for now
+        self.add_widget(galaxy_table, label="galaxy_table")
         galaxy_table.row_click_callback = self.on_galaxy_row_click
+        galaxy_table.observe(self.galaxy_table_selected_change, names=["selected"])
 
         # Setup components
         sdss_data = self.get_data("SDSS_all_sample_filtered")
         selection_tool = SelectionTool(data=sdss_data)
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
-
 
     def _on_galaxy_selected(self, galaxy):
         data = self.get_data("student_measurements")
@@ -107,7 +108,7 @@ class StageOne(Stage):
         components = [x.label for x in data.main_components]
         measurements = self.get_data("student_measurements")
         need = self.selection_tool.gals_max - measurements.size
-        indices = sample(range(1, data.size + 1), need)
+        indices = sample(range(data.size), need)
         for index in indices:
             galaxy = { c: data[c][index] for c in components }
             self.selection_tool.select_galaxy(galaxy)
@@ -117,17 +118,19 @@ class StageOne(Stage):
         specview = self.get_viewer("spectrum_viewer")
         spec_name = filename.split(".")[0]
         data_name = spec_name + '[COADD]'
-        self.story_state.update_spectrum_data(data_name)
-        specview.reset_limits()
+        spec_data = self.get_data(data_name)
+        self.story_state.update_data("spectrum_data", spec_data)
+        specview.state.reset_limits()
 
         sdss = self.get_data("SDSS_all_sample_filtered")
-        index = next((i for i in range(sdss.size) if sdss["ID"][i] == name), None)
-        if index is not None:
-            element = sdss['Element'][index]
+        sdss_index = next((i for i in range(sdss.size) if sdss["ID"][i] == name), None)
+        if sdss_index is not None:
+            element = sdss['Element'][sdss_index]
             specview.update(element, z)
             restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
-            self.update_data_value("student_measurements", "Element", element)
-            self.update_data_value("student_measurements", "restwave", restwave)
+            index = self.get_widget("galaxy_table").index
+            self.update_data_value("student_measurements", "Element", element, index)
+            self.update_data_value("student_measurements", "restwave", restwave, index)
 
 
     def galaxy_table_selected_change(self, change):
@@ -136,15 +139,15 @@ class StageOne(Stage):
 
         index = self.galaxy_table.index
         data = self.galaxy_table.glue_data
-        galaxy = { x : data[x][index] for x in data.main_components }
-        name = galaxy["name"]
+        galaxy = { x.label : data[x][index] for x in data.main_components }
+        name = galaxy["ID"]
         gal_type = galaxy["Type"]
         if name is None or gal_type is None:
             return
 
         # Load the spectrum data, if necessary
         filename = name
-        self.story_state.load_spectrum_data(self, filename, gal_type)
+        spec_data = self.story_state.load_spectrum_data(filename, gal_type)
 
         # If this is the first selection we're making
         # we want to move the app forward
@@ -154,17 +157,20 @@ class StageOne(Stage):
         # if we're far enough in the story
         # TODO: Express this condition in the right way
         z = galaxy["Z"]
+        self.story_state.update_data("spectrum_data", spec_data)
+        specview = self.get_viewer("spectrum_viewer")
+        if len(specview.layers) == 0:
+            specview.add_data(spec_data)
         self.update_spectrum_viewer(name, z)
 
     def on_galaxy_row_click(self, item, _data=None):
-        index = self.galaxy_table.index
+        index = self.galaxy_table.indices_from_items([item])[0]
         data = self.galaxy_table.glue_data
         name = data["ID"][index]
         gal_type = data["Type"][index]
         if name is None or gal_type is None:
             return
-
-        self.selection_tool.go_to_galaxy(data["RA"][index], data["DEC"][index], fov=GALAXY_FOV, instant=True)
+        self.selection_tool.go_to_galaxy(data["RA"][index], data["DEC"][index], fov=GALAXY_FOV)
 
     def on_spectrum_click(self, event):
         if event["event"] != "click":

@@ -163,12 +163,15 @@ class Table(VuetifyTemplate, HubListener):
         else:
             self._subset_message_pass = True
             self._subset_group.subset_state = state
+            
+    def indices_from_items(self, items):
+        state = self.subset_state_from_selected(items)
+        mask = state.to_mask(self.glue_data)
+        return [index for index in range(len(mask)) if mask[index]]
 
     @property
     def indices(self):
-        state = self.subset_state_from_selected(self.items)
-        mask = state.to_mask(self.glue_data)
-        return [index for index in range(len(mask)) if mask[index]]
+        return self.indices_from_items(self.items)
 
     @property
     def index(self):

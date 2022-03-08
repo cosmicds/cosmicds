@@ -1,8 +1,6 @@
 <template>
-  <v-card
+  <div
     id="selection-root"
-    color="info"
-    class="pa-1"
   >
   <v-toolbar
     color="secondary"
@@ -46,5 +44,5 @@
       :widget="widget"
       id="widget"
     />
-  </v-card>
+  </div>
 </template>

@@ -1,7 +1,6 @@
 <template>
   <v-card flat>
-    <v-toolbar flat short
-      v-if="show_toolbar">
+    <v-toolbar flat short v-if="show_toolbar">
       <v-toolbar-items>
         <jupyter-widget :widget="controls.toolbar_selection_tools"></jupyter-widget>
       </v-toolbar-items>

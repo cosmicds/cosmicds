@@ -22,7 +22,7 @@ class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
     story_state = GlueState().tag(sync=True)
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
-    drawer = Bool(True).tag(sync=True)
+    drawer = Bool(False).tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)

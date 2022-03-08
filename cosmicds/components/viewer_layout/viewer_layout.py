@@ -17,6 +17,7 @@ class ViewerLayout(VuetifyTemplate):
     def __init__(self, viewer, style=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.viewer = viewer
         self.show_toolbar = kwargs.get("show_toolbar", True)
         self.controls = dict(
             toolbar_selection_tools=viewer.toolbar_selection_tools,

@@ -205,6 +205,7 @@ class SpectrumView(BqplotScatterView):
         self.mg_tick.visible = use_mg
 
     def update_z(self, z):
+        self.z = z
         self.h_alpha_shifted = H_ALPHA_REST_LAMBDA * (1 + z)
         self.mg_shifted = MG_REST_LAMBDA * (1 + z)
         self.h_alpha_tick.x = [self.h_alpha_shifted, self.h_alpha_shifted]
@@ -213,8 +214,8 @@ class SpectrumView(BqplotScatterView):
         self.mg_label.x = [self.mg_shifted]
 
     def update(self, element, z):
-        self.update_element(element)
-        self.update_z(z)
+        self.element = element
+        self.z = z
         self.hide_rest_wavelength()
 
     def add_data(self, data):
