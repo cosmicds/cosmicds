@@ -25,7 +25,7 @@
                   Welcome to the Cosmic Data Story about the Hubble Law. In this activity, you will use real astronomical data to answer these questions about our universe:
                 </p>
                   <v-card
-                    class="d-flex justify-center pa-2 info"
+                    class="d-flex justify-center h5 pa-3 info"
                     style="font-weight:600;"
                   >
                     Has the universe always existed? If not, how long ago did it form?
@@ -40,14 +40,11 @@
               </v-card-text>
             </v-col>
             <v-col cols="5">
-              <v-div>
-                This is supposed to be an image of galaxies, but they are not showing up.
                 <v-img
-                  lazy-src="url(https://astropix.ipac.caltech.edu/archive/esahubble/heic0406a/esahubble_heic0406a_320.jpg)"
-                  max-width="100"
-                  src="url(https://astropix.ipac.caltech.edu/archive/esahubble/heic0406a/esahubble_heic0406a_320.jpg)"
+                  lazy-src="https://astropix.ipac.caltech.edu/archive/esahubble/heic0406a/esahubble_heic0406a_320.jpg"
+                  src="https://astropix.ipac.caltech.edu/archive/esahubble/heic0406a/esahubble_heic0406a_320.jpg"
+                  alt="Image of distant galaxies taken by the Hubble Space Telescope"
                 ></v-img>
-              </v-div>
             </v-col>
           <v-row>
         </v-div>
