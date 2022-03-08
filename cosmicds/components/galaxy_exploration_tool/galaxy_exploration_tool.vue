@@ -1,15 +1,51 @@
 <template>
-  <div id="measurer-root">
-    <jupyter-widget
-      :widget="widget"
-      id="exploration-widget"
-    />
-  </div>
+  <v-card outlined color="info" class="pa-1">
+    <v-toolbar color="secondary" height="40px" dense dark class="text-uppercase">
+      <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
+      <v-spacer></v-spacer>          
+      <div class="text-center">
+        <v-dialog v-model="dialog" width="600">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn 
+              icon
+              right
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-information-outline</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              Data Tool and Imagery credits
+            </v-card-title>
+            <v-card-text>
+              lorem ipsum
+            </v-card-text>
+            <v-card-actions>
+               <v-spacer></v-spacer>
+              <v-btn
+                text
+                @click="dialog = false"
+              >
+                Close
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </div>
+    </v-toolbar>         
+    <div id="exploration-root">
+      <jupyter-widget
+        :widget="widget"
+        id="exploration-widget"
+      >
+    </div>
+  </v-card>
 </template>
 
 <style scoped>
-.p-Widget {
-  height: 100% !important;
-  width: 100% !important;
+#exploration-widget .p-Widget, iframe {
+    height: 350px !important;
 }
 </style>

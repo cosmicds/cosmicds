@@ -30,7 +30,8 @@ from .components.viewer_layout import ViewerLayout
 from .components.widget_layout import WidgetLayout
 from .histogram_listener import HistogramListener
 from .line_draw_handler import LineDrawHandler
-from .utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA, MILKY_WAY_SIZE_MPC, GALAXY_FOV, FULL_FOV, age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
+from .utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA, MILKY_WAY_SIZE_MPC, GALAXY_FOV, FULL_FOV, theme_colors, age_in_gyr, extend_tool, format_fov, format_measured_angle, line_mark, load_template, update_figure_css, vertical_line_mark
+#from .utils import *
 from .components.dialog import Dialog
 from .components.table import Table
 from .viewers.spectrum_view import SpectrumView
@@ -39,22 +40,7 @@ MEASUREMENT_THRESHOLD = 1800 # arcseconds
 WWT_START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 WORST_ACCEPTABLE_SPECRES = 1
 
-v.theme.dark = True
-v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
-v.theme.themes.light.primary = 'colors.lightBlue.darken3'
-v.theme.themes.dark.secondary = 'colors.lightBlue.darken4'
-v.theme.themes.light.secondary = 'colors.lightBlue.darken4'
-v.theme.themes.dark.accent = 'colors.amber.accent2'
-v.theme.themes.light.accent = 'colors.amber.accent3'
-v.theme.themes.dark.info = 'colors.deepOrange.darken3'
-v.theme.themes.light.info = 'colors.deepOrange.lighten2'
-v.theme.themes.dark.success = 'colors.green.accent2'
-v.theme.themes.light.success = 'colors.green.accent2'
-v.theme.themes.dark.warning = 'colors.lightBlue.darken4'
-v.theme.themes.light.warning = 'colors.lightBlue.lighten4'
-v.theme.themes.dark.anchor = ''
-v.theme.themes.light.anchor = ''
-
+theme_colors()
 
 # Within ipywidgets - update calls only happen in certain instances.
 # Tom added this glue state to allow 2-way binding and force communication that we want explicitly controlled between front end and back end.
