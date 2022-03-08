@@ -10,6 +10,7 @@ class Toolbar(VuetifyTemplate):
     TOOL_ICONS = {
         'bqplot:xzoom' : 'mdi-magnify',
         'bqplot:home' : 'mdi-home',
+        'bqplot:restwave' : 'mdi-lambda'
     }
 
     template = load_template("toolbar.vue", __file__, traitlet=True).tag(sync=True)
