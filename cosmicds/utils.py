@@ -1,6 +1,7 @@
 import json
 import os
 
+import ipyvuetify as v
 from astropy import units as u
 from bqplot.scales import LinearScale
 from bqplot_image_gl import LinesGL
@@ -30,6 +31,23 @@ MG_REST_LAMBDA = 5177
 
 GALAXY_FOV = 1.5 * u.arcmin
 FULL_FOV = 60 * u.deg
+
+def theme_colors():
+    v.theme.dark = True
+    v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
+    v.theme.themes.light.primary = 'colors.lightBlue.darken3'
+    v.theme.themes.dark.secondary = 'colors.lightBlue.darken4'
+    v.theme.themes.light.secondary = 'colors.lightBlue.darken4'
+    v.theme.themes.dark.accent = 'colors.amber.accent2'
+    v.theme.themes.light.accent = 'colors.amber.accent3'
+    v.theme.themes.dark.info = 'colors.deepOrange.darken3'
+    v.theme.themes.light.info = 'colors.deepOrange.lighten2'
+    v.theme.themes.dark.success = 'colors.green.accent2'
+    v.theme.themes.light.success = 'colors.green.accent2'
+    v.theme.themes.dark.warning = 'colors.lightBlue.darken4'
+    v.theme.themes.light.warning = 'colors.lightBlue.lighten4'
+    v.theme.themes.dark.anchor = ''
+    v.theme.themes.light.anchor = ''
 
 # JC: I got this from https://stackoverflow.com/a/13151299
 class RepeatedTimer(object):

@@ -2,11 +2,13 @@ import ipyvue as v
 
 from astropy.coordinates import Angle
 import astropy.units as u
-from cosmicds.utils import RepeatedTimer, load_template
+from cosmicds.utils import RepeatedTimer, load_template, theme_colors
 from datetime import datetime
 from ipywidgets import DOMWidget, widget_serialization
 from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Bool, Instance, Int
+
+theme_colors()
 
 class GalaxyExplorationTool(v.VueTemplate):
     template = load_template("galaxy_exploration_tool.vue", __file__).tag(sync=True)
@@ -14,13 +16,14 @@ class GalaxyExplorationTool(v.VueTemplate):
     pan_count = Int(0).tag(sync=True)
     zoom_count = Int(0).tag(sync=True)
     exploration_complete = Bool(False).tag(sync=True)
+    dialog = Bool(False).tag(sync=True)
     _fov = Angle(0 * u.deg)
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
     _panning = False
     _zooming = False
 
-    UPDATE_TIME = 1 #seconds
+    UPDATE_TIME = 0.2 #seconds
 
     def __init__(self, *args, **kwargs):
         self.widget = WWTJupyterWidget(hide_all_chrome=True)
@@ -34,7 +37,7 @@ class GalaxyExplorationTool(v.VueTemplate):
         if delta.total_seconds() >= self.UPDATE_TIME:
             self._update_zooming(False)
             self._update_panning(False)
-
+            self._check_if_complete()
 
     def _update_zooming(self, zooming):
         if not zooming and self._zooming:
@@ -45,6 +48,11 @@ class GalaxyExplorationTool(v.VueTemplate):
         if not panning and self._panning:
             self.pan_count += 1
         self._panning = panning
+
+    def _check_if_complete(self):
+        if self.pan_count >= 3 and self.zoom_count >= 2:
+            self.exploration_complete = True
+            self.widget._set_message_type_callback('wwt_view_state', None)
 
     def _handle_view_message(self, _wwt, _updated):
         fov = Angle(self.widget.get_fov())
@@ -59,8 +67,5 @@ class GalaxyExplorationTool(v.VueTemplate):
         self._dec = dec
         self._fov = fov
         self.last_update = datetime.now()
-        if self.pan_count >= 3 and self.zoom_count >= 3:
-            self.exploration_complete = True
-            self.widget._set_message_type_callback('wwt_view_state', None)
-
+        self._check_if_complete()
 
