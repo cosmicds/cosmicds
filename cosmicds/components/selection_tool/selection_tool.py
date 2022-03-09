@@ -8,12 +8,13 @@ from cosmicds.stories.hubbles_law.utils import FULL_FOV, GALAXY_FOV
 from ipywidgets import DOMWidget, widget_serialization
 from pandas import DataFrame
 from pywwt.jupyter import WWTJupyterWidget
-from traitlets import Dict, Instance
+from traitlets import Dict, Instance, Int
 
 class SelectionTool(v.VueTemplate):
     template = load_template("selection_tool.vue", __file__, traitlet=True).tag(sync=True)
     widget = Instance(DOMWidget, allow_none=True).tag(sync=True, **widget_serialization)
     current_galaxy = Dict().tag(sync=True)
+    selected_count = Int().tag(sync=True)
 
     START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 
@@ -47,7 +48,7 @@ class SelectionTool(v.VueTemplate):
                 galaxy[k] = float(galaxy[k])
             self.current_galaxy = galaxy
             fov = min(wwt.get_fov(), GALAXY_FOV)
-            self.go_to_galaxy(galaxy["RA"], galaxy["DEC"], fov=fov)
+            self.go_to_location(galaxy["RA"], galaxy["DEC"], fov=fov)
             self.current_galaxy = galaxy
 
         self.widget.set_selection_change_callback(wwt_cb)
@@ -64,6 +65,7 @@ class SelectionTool(v.VueTemplate):
 
     def select_galaxy(self, galaxy):
         self.selected_data = self.selected_data.append(galaxy, ignore_index=True)
+        self.selected_count = self.selected_data.shape[0]
         table = Table.from_pandas(self.selected_data)
         layer = self.widget.layers.add_table_layer(table)
         layer.size_scale = 100
@@ -82,7 +84,7 @@ class SelectionTool(v.VueTemplate):
         self.widget.center_on_coordinates(self.START_COORDINATES, fov=FULL_FOV, instant=True)
         self.current_galaxy = {}
 
-    def go_to_galaxy(self, ra, dec, fov=GALAXY_FOV):
+    def go_to_location(self, ra, dec, fov=GALAXY_FOV):
         coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
         instant = self.motions_left <= 0
         if not instant:
