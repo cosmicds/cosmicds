@@ -1,18 +1,12 @@
-from unicodedata import name
 from echo import CallbackProperty
 from glue.core.state_objects import State
-from glue_jupyter.state_traitlets_helpers import GlueState
 from glue_jupyter.bqplot.scatter import BqplotScatterView
-from ipywidgets import widget_serialization
-from pywwt.jupyter import WWTJupyterWidget
 from random import sample
-from traitlets import Dict, Unicode, default
+from traitlets import default
 
-from cosmicds.mixins import TemplateMixin
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
 from cosmicds.viewers.spectrum_view import SpectrumView
-from cosmicds.events import StepChangeMessage
 from cosmicds.phases import Stage
 from cosmicds.components.table import Table
 from cosmicds.components.selection_tool import SelectionTool
