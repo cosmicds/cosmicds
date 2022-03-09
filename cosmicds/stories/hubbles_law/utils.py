@@ -3,7 +3,6 @@ from bqplot.scales import LinearScale
 from bqplot_image_gl import LinesGL
 from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
 from glue_jupyter.bqplot.scatter.layer_artist import BqplotScatterLayerArtist
-from threading import Timer
 
 try:
     from astropy.cosmology import Planck18 as planck
@@ -11,7 +10,9 @@ except ImportError:
     from astropy.cosmology import Planck15 as planck
 
 __all__ = [
-    'MILKY_WAY_SIZE_MPC', 'RepeatedTimer',
+    'MILKY_WAY_SIZE_MPC', 'H_ALPHA_REST_LAMBDA',
+    'MG_REST_LAMBDA', 'GALAXY_FOV', 'FULL_FOV',
+    'angle_to_json', 'angle_from_json',
     'age_in_gyr', 'format_fov', 'format_measured_angle',
     'line_mark', 'vertical_line_mark',
 ]
@@ -25,31 +26,14 @@ MG_REST_LAMBDA = 5177
 GALAXY_FOV = 1.5 * u.arcmin
 FULL_FOV = 60 * u.deg
 
-# JC: I got this from https://stackoverflow.com/a/13151299
-class RepeatedTimer(object):
-    def __init__(self, interval, function, *args, **kwargs):
-        self._timer     = None
-        self.interval   = interval
-        self.function   = function
-        self.args       = args
-        self.kwargs     = kwargs
-        self.is_running = False
-        self.start()
+def angle_to_json(angle, _widget):
+    return {
+        "value": angle.value,
+        "unit": angle.unit.name
+    }
 
-    def _run(self):
-        self.is_running = False
-        self.start()
-        self.function(*self.args, **self.kwargs)
-
-    def start(self):
-        if not self.is_running:
-            self._timer = Timer(self.interval, self._run)
-            self._timer.start()
-            self.is_running = True
-
-    def stop(self):
-        self._timer.cancel()
-        self.is_running = False
+def angle_from_json(jsn, _widget):
+    return jsn["value"] * u.Unit(jsn["unit"])
 
 def age_in_gyr(H0):
     """

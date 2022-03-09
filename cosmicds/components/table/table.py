@@ -171,7 +171,7 @@ class Table(VuetifyTemplate, HubListener):
 
     @property
     def indices(self):
-        return self.indices_from_items(self.items)
+        return self.indices_from_items(self.selected)
 
     @property
     def index(self):

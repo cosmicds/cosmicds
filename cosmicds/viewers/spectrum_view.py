@@ -28,7 +28,7 @@ class SpectrumViewerState(ScatterViewerState):
 class SpectrumView(BqplotScatterView):
 
     inherit_tools = False
-    tools = ['bqplot:home', 'bqplot:xzoom', 'bqplot:restwave']
+    tools = ['bqplot:home', 'bqplot:xzoom', 'hubble:restwave']
     _state_cls = SpectrumViewerState
     show_line = Bool(True)
     LABEL = "Spectrum Viewer"
@@ -39,9 +39,6 @@ class SpectrumView(BqplotScatterView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.h_alpha_shifted = None
-        self.mg_shifted = None
-        self.observed_label = None
         self.resolution = 0
         self.element = None
         
@@ -74,8 +71,7 @@ class SpectrumView(BqplotScatterView):
             scales={
                 'x': self.scales['x'],
                 'y': self.scales['y'],
-            },
-            visible=False)
+            })
 
         self.element_label = Label(
             text=["H-α"],
@@ -87,8 +83,7 @@ class SpectrumView(BqplotScatterView):
             scales={
                 'x': self.scales['x'],
                 'y': self.scales['y'],
-            },
-            visible=False)
+            })
         
         self.figure.marks += [self.user_line, self.user_line_label,
                               self.element_tick, self.element_label]
@@ -98,14 +93,20 @@ class SpectrumView(BqplotScatterView):
 
         add_callback(self.state, 'y_min', self._on_view_change)
         add_callback(self.state, 'y_max', self._on_view_change)
+        self.toolbar.observe(self._active_tool_change, names=['active_tool'])
+
+    def _active_tool_change(self, change):
+        is_tool_active = change.new is not None
+        self.user_line.visible = not is_tool_active
+        self.user_line_label.visible = not is_tool_active
 
     def _on_view_change(self, event=None):
-        scales = self.scales['y']
+        scale = self.scales['y']
+        ymin, ymax = scale.min, scale.max
         
-        if scales.min is None or scales.max is None:
+        if ymin is None or ymax is None:
             return
         
-        ymin, ymax = self.scales['y'].min, self.scales['y'].max
         line_bounds = [ymin, ymax / 1.4]
         tick_bounds = [ymax * 0.78, ymax * 0.83]
         bottom_label_position = ymax * 0.88
@@ -134,6 +135,7 @@ class SpectrumView(BqplotScatterView):
         rest = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
         self.shifted = rest * (1 + z)
         self.element_label.x = [self.shifted, self.shifted]
+        self.element_label.text = [element]
         self.element_tick.x = [self.shifted, self.shifted]
         self._on_view_change()
 
@@ -160,6 +162,6 @@ class SpectrumView(BqplotScatterView):
             self.toolbar.add_tool(mode)
 
     @property
-    def rest_wavelength_shown(self):
-        return self.visible_wavelength_line.visible
+    def line_visible(self):
+        return self.user_line.visible
 

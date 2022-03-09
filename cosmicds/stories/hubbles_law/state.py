@@ -116,25 +116,25 @@ class HubblesLaw(Story):
         # Don't load data that we've already loaded
         dc = self.data_collection
         if data_name not in dc:
-            self.app.load_data(path, label=data_name)
+            self.app.load_data(path, label=name)
             data = dc[data_name]
             data['lambda'] = 10 ** data['loglam']
             dc.remove(dc[name + '[SPECOBJ]'])
             dc.remove(dc[name + '[SPZLINE]'])
-            data = dc[data_name]
             self.make_data_writeable(data)
         return dc[data_name]
 
-    def update_data(self, label, data):
+    def update_data(self, label, new_data):
         dc = self.data_collection
         if label in dc:
-            spec_data = dc[label]
-            spec_data.update_values_from_data(data)
+            data = dc[label]
+            data.update_values_from_data(new_data)
+            data.label = label
         else:
-            main_comps = [x.label for x in data.main_components]
-            components = { col: list(data[col]) for col in main_comps }
-            new_data = Data(label=label, **components)
-            self.make_data_writeable(new_data) 
-            dc.append(new_data)
+            main_comps = [x.label for x in new_data.main_components]
+            components = { col: list(new_data[col]) for col in main_comps }
+            data = Data(label=label, **components)
+            self.make_data_writeable(data) 
+            dc.append(data)
 
 

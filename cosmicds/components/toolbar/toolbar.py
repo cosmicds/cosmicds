@@ -10,7 +10,7 @@ class Toolbar(VuetifyTemplate):
     TOOL_ICONS = {
         'bqplot:xzoom' : 'mdi-magnify',
         'bqplot:home' : 'mdi-home',
-        'bqplot:restwave' : 'mdi-lambda'
+        'hubble:restwave' : 'mdi-lambda'
     }
 
     template = load_template("toolbar.vue", __file__, traitlet=True).tag(sync=True)
@@ -18,11 +18,9 @@ class Toolbar(VuetifyTemplate):
                                      default_value=None)
     tools_data = Dict(default_value={}).tag(sync=True)
     active_tool_id = Any().tag(sync=True)
-    title = Unicode().tag(sync=True)
 
     def __init__(self, viewer, *args, **kwargs):
         self.tools = {}
-        self.title = viewer.LABEL
         if viewer._default_mouse_mode_cls is not None:
             self._default_mouse_mode = viewer._default_mouse_mode_cls(viewer)
             self._default_mouse_mode.activate()

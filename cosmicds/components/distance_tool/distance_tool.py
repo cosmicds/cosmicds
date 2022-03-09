@@ -1,20 +1,12 @@
 import ipyvue as v
-from astropy.coordinates import Angle
+from astropy.coordinates import Angle, SkyCoord
 import astropy.units as u
 from cosmicds.utils import RepeatedTimer, load_template
+from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, angle_to_json, angle_from_json
 from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Instance, Bool, Float, Int, observe
 from ipywidgets import DOMWidget, widget_serialization
 from datetime import datetime
-
-def angle_to_json(angle, _widget):
-    return {
-        "value": angle.value,
-        "unit": angle.unit.name
-    }
-
-def angle_from_json(jsn, _widget):
-    return jsn["value"] * u.Unit(jsn["unit"])
 
 class DistanceTool(v.VueTemplate):
     template = load_template("distance_tool.vue", __file__, traitlet=True).tag(sync=True)
@@ -25,7 +17,8 @@ class DistanceTool(v.VueTemplate):
     angular_height = Instance(Angle).tag(sync=True, to_json=angle_to_json, from_json=angle_from_json)
     height = Int().tag(sync=True)
     width = Int().tag(sync=True)
-    view_changing = Bool().tag(sync=True)
+    view_changing = Bool(False).tag(sync=True)
+    measuring_allowed = Bool(False).tag(sync=True)
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
 
@@ -39,7 +32,7 @@ class DistanceTool(v.VueTemplate):
         self.angular_height = Angle(60, u.deg)
         self.widget._set_message_type_callback('wwt_view_state', self._handle_view_message)
         self.last_update = datetime.now()
-        self._rt = RepeatedTimer(self.UPDATE_TIME, self._check_measuring_allowed)
+        self._rt = RepeatedTimer(self.UPDATE_TIME, self._check_view_changing)
         super().__init__(*args, **kwargs)
 
     def _setup_widget(self):
@@ -57,11 +50,14 @@ class DistanceTool(v.VueTemplate):
     # so every second, if the view is marked as changing, 
     # we check when the last update that we got is
     # If it's more than a second old, mark the view as not changing
-    def _check_measuring_allowed(self):
+    def _check_view_changing(self):
         if self.view_changing:
             delta = datetime.now() - self.last_update
             if delta.total_seconds() >= self.UPDATE_TIME:
                 self.view_changing = False
+
+    def vue_toggle_measuring(self, _args=None):
+        self.measuring = not self.measuring
 
     @observe('measuredDistance')
     def _on_measured_distance_changed(self, change):
@@ -85,3 +81,7 @@ class DistanceTool(v.VueTemplate):
         self._dec = dec
         self.view_changing = changing
         self.last_update = datetime.now()
+
+    def go_to_location(self, ra, dec, fov=GALAXY_FOV):
+        coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
+        self.widget.center_on_coordinates(coordinates, fov=fov, instant=True)

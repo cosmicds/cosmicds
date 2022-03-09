@@ -16,6 +16,7 @@ from cosmicds.events import StepChangeMessage
 from cosmicds.phases import Stage
 from cosmicds.components.table import Table
 from cosmicds.components.selection_tool import SelectionTool
+from cosmicds.stories.hubbles_law.components.select_galaxies_guidance import SelectGalaxiesGuidance
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
 import logging
@@ -75,9 +76,7 @@ class StageOne(Stage):
                                     'Element',
                                     'Rest Wavelength (Å)',
                                     'Observed Wavelength (Å)',
-                                    'Velocity (km/s)',
-                                    'Distance (Mpc)',
-                                    'Galaxy Type'],
+                                    'Velocity (km/s)'],
                              title='My Galaxies | Velocity Measurements',
                              single_select=True) # True for now
         self.add_widget(galaxy_table, label="galaxy_table")
@@ -90,6 +89,12 @@ class StageOne(Stage):
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
 
+        self.add_component(SelectGalaxiesGuidance(self.stage_state), label='c-select-guidance')
+
+        def update_count(change):
+            self.stage_state.gals_total = change["new"]
+        selection_tool.observe(update_count, names=['selected_count'])
+
     def _on_galaxy_selected(self, galaxy):
         data = self.get_data("student_measurements")
         already_present = galaxy['ID'] in data['ID'] # Avoid duplicates
@@ -101,6 +106,9 @@ class StageOne(Stage):
             # for component, values in component_dict.items():
             #     values.pop(index)
         else:
+            filename = galaxy['ID']
+            gal_type = galaxy['Type']
+            self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
 
     def vue_select_galaxies(self, _args=None):
@@ -114,12 +122,16 @@ class StageOne(Stage):
             self.selection_tool.select_galaxy(galaxy)
 
     def update_spectrum_viewer(self, name, z):
-        filename = name
         specview = self.get_viewer("spectrum_viewer")
+        specview.toolbar.active_tool = None
+        filename = name
         spec_name = filename.split(".")[0]
         data_name = spec_name + '[COADD]'
-        spec_data = self.get_data(data_name)
-        self.story_state.update_data("spectrum_data", spec_data)
+        data = self.get_data(data_name)
+        self.story_state.update_data("spectrum_data", data)
+        if len(specview.layers) == 0:
+            spec_data = self.get_data("spectrum_data")
+            specview.add_data(spec_data)
         specview.state.reset_limits()
 
         sdss = self.get_data("SDSS_all_sample_filtered")
@@ -158,9 +170,6 @@ class StageOne(Stage):
         # TODO: Express this condition in the right way
         z = galaxy["Z"]
         self.story_state.update_data("spectrum_data", spec_data)
-        specview = self.get_viewer("spectrum_viewer")
-        if len(specview.layers) == 0:
-            specview.add_data(spec_data)
         self.update_spectrum_viewer(name, z)
 
     def on_galaxy_row_click(self, item, _data=None):
@@ -170,10 +179,11 @@ class StageOne(Stage):
         gal_type = data["Type"][index]
         if name is None or gal_type is None:
             return
-        self.selection_tool.go_to_galaxy(data["RA"][index], data["DEC"][index], fov=GALAXY_FOV)
+        self.selection_tool.go_to_location(data["RA"][index], data["DEC"][index], fov=GALAXY_FOV)
 
     def on_spectrum_click(self, event):
-        if event["event"] != "click":
+        specview = self.get_viewer("spectrum_viewer")
+        if event["event"] != "click" or not specview.line_visible:
             return
         value = round(event["domain"]["x"], 2)
         self.update_data_value("student_measurements", "measwave", value, self.galaxy_table.index)
