@@ -1,6 +1,6 @@
 import logging
 
-from echo import CallbackProperty
+from echo import CallbackProperty, add_callback
 from glue.core.state_objects import State
 from traitlets import default
 from cosmicds.components.distance_sidebar.distance_sidebar import DistanceSidebar
@@ -16,6 +16,8 @@ log = logging.getLogger()
 
 class StageState(State):
     selected_galaxy = CallbackProperty({})
+    make_measurement = CallbackProperty(False)
+    marker = CallbackProperty("")
 
 @register_stage(story="hubbles_law", index=1, steps=[
     "Explore celestial sky",
@@ -46,6 +48,8 @@ class StageTwo(Stage):
 
         self.add_component(DistanceTool(), label="c-distance-tool")
 
+        self.stage_state.marker = "sel_gal1"
+
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
                                glue_components=['ID',
@@ -63,6 +67,8 @@ class StageTwo(Stage):
         self.add_component(DistanceSidebar(self.stage_state), label="c-distance-sidebar")
         self.distance_tool.observe(self._angular_size_update, names=["angular_size"])
         self.distance_tool.observe(self._angular_height_update, names=["angular_height"])
+
+        add_callback(self.stage_state, 'make_measurement', self._make_measurement)
 
     def distance_table_selected_change(self, change):
         selected = change["new"]
@@ -82,6 +88,12 @@ class StageTwo(Stage):
 
     def _angular_height_update(self, change):
         self.distance_sidebar.angular_height = format_measured_angle(change["new"])
+
+    def _make_measurement(self, value):
+        if not value:
+            return
+
+        
 
     @property
     def distance_sidebar(self):

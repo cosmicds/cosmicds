@@ -1,4 +1,4 @@
-from echo import CallbackProperty
+from echo import add_callback, CallbackDict, CallbackList, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from random import sample
@@ -10,7 +10,7 @@ from cosmicds.viewers.spectrum_view import SpectrumView
 from cosmicds.phases import Stage
 from cosmicds.components.table import Table
 from cosmicds.components.selection_tool import SelectionTool
-from cosmicds.stories.hubbles_law.components.select_galaxies_guidance import SelectGalaxiesGuidance
+from cosmicds.stories.hubbles_law.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
 import logging
@@ -20,6 +20,37 @@ log = logging.getLogger()
 class StageState(State):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
+    spectrum_tool_visible = CallbackProperty(0)
+    waveline_set = CallbackProperty(False)
+    marker = CallbackProperty("")
+
+    markers = CallbackProperty([
+        #'exp_sky',
+        'sel_gal1',
+        'cho_row1',
+        'mee_spe1',
+        'res_wav1',
+        'obs_wav1',
+        'rep_rem1'
+    ])
+
+    step_markers = CallbackProperty({
+        'exp_sky' : 0,
+        'sel_gal1' : 1,
+        'mee_spe1' : 2
+    })
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.marker_index = 0
+        self.marker = self.markers[0]
+
+    def move_marker_forward(self):
+        self.marker_index = min(self.marker_index + 1, len(self.markers) - 1)
+        self.marker = self.markers[self.marker_index]
+
+    def index(self, marker):
+        return self.markers.index(marker)
 
 @register_stage(story="hubbles_law", index=0, steps=[
     "Explore celestial sky",
@@ -83,11 +114,31 @@ class StageOne(Stage):
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
 
-        self.add_component(SelectGalaxiesGuidance(self.stage_state), label='c-select-guidance')
+        # These names should match the names of the .vue files
+        # just without the extensions
+        state_components = [
+            "restwave_alert",
+            "obswave_alert",
+            "remaining_gals_alert",
+            "select_galaxies_guidance",
+            "spectrum_guidance",
+            "choose_row_alert",
+            "nice_work_alert"
+        ]
+        for component in state_components:
+            label = f"c-{component}".replace("_", "-")
+            self.add_component(GenericStateComponent(component, self.stage_state), label=label)
 
         def update_count(change):
             self.stage_state.gals_total = change["new"]
         selection_tool.observe(update_count, names=['selected_count'])
+
+        add_callback(self.stage_state, 'marker', self._on_marker_update)
+
+
+    def _on_marker_update(self, marker):
+        if marker in self.stage_state.step_markers:
+            self.story_state.step_index = self.stage_state.step_markers[marker]
 
     def _on_galaxy_selected(self, galaxy):
         data = self.get_data("student_measurements")
@@ -165,6 +216,10 @@ class StageOne(Stage):
         z = galaxy["Z"]
         self.story_state.update_data("spectrum_data", spec_data)
         self.update_spectrum_viewer(name, z)
+
+        if self.stage_state.marker == 'cho_row1':
+            self.stage_state.spectrum_tool_visible = 1
+            self.stage_state.marker = 'mee_spe1'
 
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]

@@ -1,0 +1,67 @@
+from glue.core import Data
+from glue.core.state_objects import State
+from traitlets import default
+
+from cosmicds.components.table import Table
+from cosmicds.registries import register_stage
+from cosmicds.phases import Stage
+from cosmicds.utils import load_template
+
+class StageState(State):
+    pass
+
+@register_stage(story="hubbles_law", index=2, steps=[
+    "My data",
+    "Class data",
+    "Galaxy Type",
+    "Professional Science Data"
+])
+class StageThree(Stage):
+    @default('stage_state')
+    def _default_state(self):
+        return StageState()
+
+    @default('template')
+    def _default_template(self):
+        return load_template("stage_three.vue", __file__)
+    
+    @default('title')
+    def _default_title(self):
+        return "Explore Data"
+
+    @default('subtitle')
+    def _default_subtitle(self):
+        return "Perhaps a small blurb about this stage"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        measurements = self.get_data("student_measurements")
+        fit_table = Table(self.session,
+                          data=measurements,
+                          glue_components=['ID',
+                                          'Type',
+                                          'velocity',
+                                          'distance'],
+                          key_component='ID',
+                          names=['Galaxy Name',
+                              'Galaxy Type',
+                              'Velocity (km/s)',
+                              'Distance (Mpc)'],
+                          title='My Galaxies')
+        self.add_widget(fit_table, label="fit_table")
+
+        student_dc_name = "student_data"
+        student_cols = [x.label for x in measurements.main_components]
+        dummy_data = {x : ['X'] if x in ['ID', 'Element', 'Type'] else [0] for x in student_cols}
+        student_data = Data(label=student_dc_name, **dummy_data)
+
+        class_dc_name = "HubbleData_ClassSample"
+        all_dc_name = "HubbleData_All"
+        class_data = self.get_data(class_dc_name)
+        for component in class_data.components:
+            field = component.label
+            self.add_link(class_dc_name, field, all_dc_name, field)
+            if component.label in student_data.component_ids():
+                self.add_link(student_dc_name, field, class_dc_name, field)
+        
