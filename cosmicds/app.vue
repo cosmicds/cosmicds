@@ -336,7 +336,7 @@
                                   </p>
                                 </div>
                                 <div
-                                  :class="state.gals_total == 5 ? 'd-block' : 'd-none'"
+                                  :class="state.gals_total >= 5 ? 'd-block' : 'd-none'"
                                   class="mb-4"
                                 >
                                   <p>
@@ -346,7 +346,9 @@
                                     Now you can start making measurements from your data.
                                   </p>
                                 </div>
-                                <div>
+                                <div
+                                  :class="state.gals_total < 5 ? 'd-block' : 'd-none'"
+                                >
                                   <p>
                                     Select {{ 5 - state.gals_total }} more <span :class="state.gals_total < 4 ? 'd-inline' : 'd-none'">galaxies</span><span :class="state.gals_total == 4 ? 'd-inline' : 'd-none'">galaxy</span> to move on.
                                   </p>
@@ -718,17 +720,18 @@
                             >
 
                               <!-- GUIDANCE ALERT - Request specific galaxy to work with -->
-                              <scaffold-alert
+                              <v-alert
                                 :class="state.marker == 'cho_row1' ? 'd-block' : 'd-none'"
-                                header-text="Choose a Row"
-                                @back="
-                                  state.marker = 'sel_gal1';
-                                "
-                                @next="
-                                  state.spectrum_tool_visible = 1;
-                                  state.marker = 'mee_spe1';
-                                "
+                                class="mb-4"
+                                color="info"
+                                elevation="6"
+                                height="100%"
                               >
+                                <h3
+                                  class="mb-4"
+                                >
+                                  Choose a Row
+                                </h3>
                                 <div
                                   class="mb-4"
                                 >
@@ -739,7 +742,31 @@
                                     Click on a row in your table to choose that galaxy.
                                   </p>
                                 </div>
-                              </scaffold-alert>
+                                <v-divider
+                                  class="my-4"
+                                >
+                                </v-divider>
+
+                                <v-row
+                                  align="center"
+                                  no-gutters
+                                >
+                                  <v-col>
+                                    <v-btn
+                                      class="black--text"
+                                      color="accent"
+                                      elevation="2"
+                                      @click="
+                                        state.marker = 'sel_gal2';
+                                      "
+                                    >
+                                      back
+                                    </v-btn>
+                                  </v-col>
+                                  <v-spacer></v-spacer>
+                                </v-row>
+                              </v-alert>
+
                             </v-col>
                           </v-row>
                         </v-container>
