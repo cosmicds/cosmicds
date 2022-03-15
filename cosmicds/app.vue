@@ -175,7 +175,8 @@
                         >
                           <v-row>
                             <v-col
-                              cols="8"
+                              cols="12"
+                              lg="8"
                               class="wwt_column"
                             >
                               <!-- The CARD to hold the WWT VIEWER and where students Select Galaxies -->
@@ -236,7 +237,8 @@
                               </v-card>
                             </v-col>
                             <v-col
-                              cols="4"
+                              cols="12"
+                              lg="4"
                             >
 
                               <!-- GUIDANCE ALERT - Show students how to select galaxies -->
@@ -408,7 +410,8 @@
                             :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
                           >
                             <v-col
-                              cols="12" md="8"
+                              cols="12"
+                              lg="8"
                               class="align-stretch"
                             >
                               <!-- The CARD to hold the SPECTRUM TOOL and where students Measure Velocity -->
@@ -476,7 +479,10 @@
                               </v-card>
                             </v-col>
                             <!-- SIDEBAR COLUMN for processing velocity data -->
-                            <v-col cols="12" md="4">
+                            <v-col
+                              cols="12"
+                              lg="4"
+                            >
 
                               <!-- GUIDANCE ALERT - Spectrum Tool #1 -->
                               <v-alert
@@ -528,6 +534,7 @@
                                     cols="6"
                                     class="shrink"
                                     :class="state.vel_win_unopened ? 'd-block' : 'd-none'"
+                                    class="text-right"
                                   >
                                     <div
                                     >
@@ -702,7 +709,8 @@
                           </v-row>
                           <v-row>
                             <v-col
-                              cols="8"
+                              cols="12"
+                              lg="8"
                               class="galtable_column"
                             >
                               <!-- The CARD to hold the WWT VIEWER and where students Select Galaxies -->
@@ -716,7 +724,8 @@
                               </v-card>
                             </v-col>
                             <v-col
-                              cols="4"
+                              cols="12"
+                              lg="4"
                             >
 
                               <!-- GUIDANCE ALERT - Request specific galaxy to work with -->
