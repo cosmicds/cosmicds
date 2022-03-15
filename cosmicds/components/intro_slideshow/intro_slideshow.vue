@@ -18,14 +18,14 @@
         class="no-transition"
       >
         <v-div>
-          <v-row>
-            <v-col cols="7">
-              <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="7">
                 <p>
                   Welcome to the Cosmic Data Story about the Hubble Law. In this activity, you will use real astronomical data to answer these questions about our universe:
                 </p>
                   <v-card
-                    class="d-flex justify-center h5 pa-3 info"
+                    class="d-flex justify-center h5 pa-3 mx-12 info"
                     style="font-weight:600;"
                   >
                     Has the universe always existed? If not, how long ago did it form?
@@ -37,16 +37,16 @@
                 <p>
                   You will do the same thing in this Data Story. Let’s get started!
                 </p>
-              </v-card-text>
-            </v-col>
-            <v-col cols="5">
+              </v-col>
+              <v-col cols="5">
                 <v-img
                   lazy-src="https://astropix.ipac.caltech.edu/archive/esahubble/heic0406a/esahubble_heic0406a_320.jpg"
                   src="https://astropix.ipac.caltech.edu/archive/esahubble/heic0406a/esahubble_heic0406a_320.jpg"
                   alt="Image of distant galaxies taken by the Hubble Space Telescope"
                 ></v-img>
-            </v-col>
-          <v-row>
+              </v-col>
+            <v-row>
+          </v-container>
         </v-div>
       </v-window-item>
       
@@ -138,73 +138,100 @@
               <v-col
                 cols="4"
               >
-                <v-btn
-                  @click="go_to_location({
-                      ra: 83.63,
-                      dec: 22.014,
-                      fov: 350, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
+                <v-row
+                  justify="space-between"
                 >
-                  M1
-                </v-btn>
-                <v-btn
-                  @click="go_to_location({
-                      ra: 250.4,
-                      dec: 36.46,
-                      fov: 700, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
+                  <v-col>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 83.63,
+                          dec: 22.014,
+                          fov: 350, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M1
+                    </v-btn>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 250.4,
+                          dec: 36.46,
+                          fov: 700, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M13
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-row
+                  justify="space-between"
                 >
-                  M13
-                </v-btn>
-                <v-btn
-                  @click="go_to_location({
-                      ra: 10.63,
-                      dec: 41.27,
-                      fov: 6000, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
-                >
-                  M31
-                </v-btn>
-                <p>
-                <v-btn
-                  @click="go_to_location({
-                      ra: 83.82,
-                      dec: -5.39,
-                      fov:7500, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
-                >
-                  M42
-                </v-btn>
-                <v-btn
-                  @click="go_to_location({
-                      ra: 202.47,
-                      dec: 47.195,
-                      fov: 700, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
-                >
-                  M51
-                </v-btn>
-                <v-btn
-                  @click="go_to_location({
-                      ra: 148.97,
-                      dec: 69.68,
-                      fov: 400, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
-                >
-                  M82
-                </v-btn>
+                  <v-col>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 10.63,
+                          dec: 41.27,
+                          fov: 6000, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M31
+                    </v-btn>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 83.82,
+                          dec: -5.39,
+                          fov:7500, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M42
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 202.47,
+                          dec: 47.195,
+                          fov: 700, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M51
+                    </v-btn>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 148.97,
+                          dec: 69.68,
+                          fov: 400, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M82
+                    </v-btn>
+                  </v-col>
+                </v-row>
               </v-col>
             </v-row>
           </div>         
@@ -230,73 +257,100 @@
               <v-col
                 cols="4"
               >
-                <v-btn
-                  @click="go_to_location3({
-                      ra: 83.63,
-                      dec: 22.014,
-                      fov: 350, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
+                <v-row
+                  justify="space-between"
                 >
-                  M1
-                </v-btn>
-                <v-btn
-                  @click="go_to_location3({
-                      ra: 250.4,
-                      dec: 36.46,
-                      fov: 700, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
+                  <v-col>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 83.63,
+                          dec: 22.014,
+                          fov: 350, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M1
+                    </v-btn>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 250.4,
+                          dec: 36.46,
+                          fov: 700, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M13
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-row
+                  justify="space-between"
                 >
-                  M13
-                </v-btn>
-                <v-btn
-                  @click="go_to_location3({
-                      ra: 10.63,
-                      dec: 41.27,
-                      fov: 6000, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
-                >
-                  M31
-                </v-btn>
-                <p>
-                <v-btn
-                  @click="go_to_location3({
-                      ra: 83.82,
-                      dec: -5.39,
-                      fov:7500, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
-                >
-                  M42
-                </v-btn>
-                <v-btn
-                  @click="go_to_location3({
-                      ra: 202.47,
-                      dec: 47.195,
-                      fov: 700, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
-                >
-                  M51
-                </v-btn>
-                <v-btn
-                  @click="go_to_location3({
-                      ra: 148.97,
-                      dec: 69.68,
-                      fov: 400, // optional, in arcseconds, default is 90
-                      instant: false // also optional, false by default
-                    })"
-                  color="info"
-                >
-                  M82
-                </v-btn>
+                  <v-col>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 10.63,
+                          dec: 41.27,
+                          fov: 6000, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M31
+                    </v-btn>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 83.82,
+                          dec: -5.39,
+                          fov:7500, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M42
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 202.47,
+                          dec: 47.195,
+                          fov: 700, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M51
+                    </v-btn>
+                    <v-btn
+                      @click="go_to_location({
+                          ra: 148.97,
+                          dec: 69.68,
+                          fov: 400, // optional, in arcseconds, default is 90
+                          instant: false // also optional, false by default
+                        })"
+                      color="info"
+                      width="70px"
+                      class="mx-2"
+                    >
+                      M82
+                    </v-btn>
+                  </v-col>
+                </v-row>
               </v-col>
             </v-row>
           </div>     
