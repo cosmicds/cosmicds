@@ -1,19 +1,21 @@
 <template>
   <v-btn
-      color="success"
-      class="black--text"
-      @click.stop="dialog = true"
+    block
+    color="info"
+    dark
+    @click.stop="dialog = true"
   >
     <v-icon
       class="mr-4"
     >
-      mdi-video
+      mdi-pen
     </v-icon>
     {{ buttonText }}
 
     <v-dialog
-        v-model="dialog"
-        max-width="500"
+      v-model="dialog"
+      persistent
+      max-width="800px"
     >
       <v-card>
         <v-card-title class="text-h5">
@@ -28,9 +30,9 @@
           <v-spacer></v-spacer>
 
           <v-btn
-              color="green darken-1"
-              text
-              @click="() => { $emit('close'); dialog = false } "
+            color="green darken-1"
+            text
+            @click="() => { $emit('close'); dialog = false } "
           >
             {{ closeText }}
           </v-btn>

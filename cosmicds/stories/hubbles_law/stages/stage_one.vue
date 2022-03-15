@@ -3,7 +3,7 @@
     <v-row>
       <v-btn
         color="green"
-        @click="select_galaxies()"
+        @click="select_galaxies();"
       >select 5 galaxies</v-btn>
     </v-row>
     <v-row>
@@ -29,8 +29,8 @@
       </v-col>
     </v-row>
     <v-row
-      :class="stage_state.marker == 'sel_gal1' | stage_state.marker == 'cho_row1' ? 'd-block' : 'd-none'">
-      <c-select-guidance
+      :class="stage_state.marker == 'sel_gal1' || stage_state.marker == 'cho_row1' ? 'd-block' : 'd-none'">
+      <c-select-galaxies-guidance
         v-if="stage_state.marker == 'sel_gal1'" />
       <c-choose-row-alert
         v-if="stage_state.marker == 'cho_row1'" />
@@ -40,7 +40,9 @@
         cols="6">
         <v-card
           color="info"
-          class="pa-1">
+          class="pa-1"
+          v-if="stage_state.spectrum_tool_visible"
+          >
           <jupyter-widget :widget="viewers.spectrum_viewer"/>
         </v-card>
       </v-col>

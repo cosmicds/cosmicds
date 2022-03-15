@@ -1,4 +1,4 @@
-from echo import add_callback, CallbackDict, CallbackList, CallbackProperty
+from echo import add_callback, delay_callback, CallbackDict, CallbackList, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from random import sample
@@ -20,7 +20,7 @@ log = logging.getLogger()
 class StageState(State):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
-    spectrum_tool_visible = CallbackProperty(0)
+    spectrum_tool_visible = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     marker = CallbackProperty("")
 
@@ -49,20 +49,20 @@ class StageState(State):
         self.marker_index = min(self.marker_index + 1, len(self.markers) - 1)
         self.marker = self.markers[self.marker_index]
 
+    def vue_move_marker_forward(self, _args=None):
+        self.move_marker_forward()
+
     def index(self, marker):
         return self.markers.index(marker)
 
 @register_stage(story="hubbles_law", index=0, steps=[
-    "Explore celestial sky",
+    #"Explore celestial sky",
     "Collect galaxy data",
     "Measure spectra",
     "Reflect",
     "Calculate velocities"
 ])
 class StageOne(Stage):
-    @default('stage_state')
-    def _default_state(self):
-        return StageState()
 
     @default('template')
     def _default_template(self):
@@ -78,6 +78,8 @@ class StageOne(Stage):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.stage_state = StageState()
 
         # Setup viewers
         spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
@@ -127,7 +129,8 @@ class StageOne(Stage):
         ]
         for component in state_components:
             label = f"c-{component}".replace("_", "-")
-            self.add_component(GenericStateComponent(component, self.stage_state), label=label)
+            component = GenericStateComponent(component, self.stage_state)
+            self.add_component(component, label=label)
 
         def update_count(change):
             self.stage_state.gals_total = change["new"]
@@ -178,6 +181,7 @@ class StageOne(Stage):
             spec_data = self.get_data("spectrum_data")
             specview.add_data(spec_data)
         specview.state.reset_limits()
+        self.stage_state.waveline_set = False
 
         sdss = self.get_data("SDSS_all_sample_filtered")
         sdss_index = next((i for i in range(sdss.size) if sdss["ID"][i] == name), None)
@@ -218,8 +222,8 @@ class StageOne(Stage):
         self.update_spectrum_viewer(name, z)
 
         if self.stage_state.marker == 'cho_row1':
-            self.stage_state.spectrum_tool_visible = 1
-            self.stage_state.marker = 'mee_spe1'
+            self.stage_state.spectrum_tool_visible = True
+            self.stage_state.move_marker_forward()
 
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]
@@ -235,6 +239,7 @@ class StageOne(Stage):
         if event["event"] != "click" or not specview.line_visible:
             return
         value = round(event["domain"]["x"], 2)
+        self.stage_state.waveline_set = True
         self.update_data_value("student_measurements", "measwave", value, self.galaxy_table.index)
 
     @property

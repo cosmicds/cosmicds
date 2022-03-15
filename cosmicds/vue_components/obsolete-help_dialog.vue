@@ -1,14 +1,9 @@
 <template>
   <v-btn
-      color="success"
-      class="black--text"
+      color="primary"
+      dark
       @click.stop="dialog = true"
   >
-    <v-icon
-      class="mr-4"
-    >
-      mdi-video
-    </v-icon>
     {{ buttonText }}
 
     <v-dialog
@@ -26,13 +21,19 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn
+              text
+              @click="dialog = false"
+          >
+            {{ cancelText }}
+          </v-btn>
 
           <v-btn
               color="green darken-1"
               text
-              @click="() => { $emit('close'); dialog = false } "
+              @click="() => { $emit('accept'); dialog = false } "
           >
-            {{ closeText }}
+            {{ acceptText }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -42,7 +43,7 @@
 
 <script>
 module.exports = {
-  props: ["buttonText", "titleText", "closeText"],
+  props: ["buttonText", "titleText", "acceptText", "cancelText"],
   data: function () {
     return {
       dialog: false,
