@@ -83,36 +83,54 @@
             <v-row>
               <v-col
                 cols="8"
+                offset-lg="1"
               >   
                 <c-exploration-tool id="exploration-tool">
               </v-col>
               <v-col
                 cols="4"
+                lg="3"
               >
                 <v-row>
                   <v-col
-                    cols="4"
+                    cols="12"
+                    lg="4"
                   >
-                    <strong>Pan</strong>
+                    <v-chip
+                      label
+                      outlined
+                    >
+                      Pan
+                    </v-chip>
                   </v-col>
                   <v-col
-                    cols="8"
+                    cols="12"
+                    lg="8"
+                    class="pt-2"
                   >
                     <strong>click + drag</strong><br>
-                    (or use the <strong class="codeFont">I-J-K-L</strong> keys)
+                    (or use <strong class="codeFont">I-J-K-L</strong> keys)
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col
-                    cols="4"
+                    cols="12"
+                    lg="4"
                   >
-                     <strong>Zoom</strong>
+                    <v-chip
+                      label
+                      outlined
+                    >
+                      Zoom
+                    </v-chip>
                   </v-col>
                   <v-col
-                    cols="8"
+                    cols="12"
+                    lg="8"
+                    class="pt-2"
                   >
                     <strong>scroll in and out</strong><br>
-                    (or use the <strong class="codeFont">Z-X</strong> keys for finer zoom)
+                    (or use <strong class="codeFont">Z-X</strong> keys)
                   </v-col>
                 </v-row>
               </v-col>
@@ -141,16 +159,21 @@
             <v-row>
               <v-col
                 cols="8"
+                offset-lg="1"
               >   
                 <c-exploration-tool2 id="exploration-tool2">
               </v-col>
               <v-col
                 cols="4"
+                lg="2"
               >
                 <v-row
                   justify="space-between"
                 >
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool2({
                           ra: 83.63,
@@ -159,11 +182,16 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M1
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool2({
                           ra: 250.4,
@@ -172,17 +200,16 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M13
                     </v-btn>
                   </v-col>
-                </v-row>
-                <v-row
-                  justify="space-between"
-                >
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool2({
                           ra: 10.63,
@@ -191,11 +218,16 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M31
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool2({
                           ra: 83.82,
@@ -204,15 +236,16 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M42
                     </v-btn>
                   </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool2({
                           ra: 202.47,
@@ -221,11 +254,16 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M51
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool2({
                           ra: 148.97,
@@ -234,7 +272,7 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M82
@@ -264,16 +302,21 @@
             <v-row>
               <v-col
                 cols="8"
+                offset-lg="1"
               >   
                 <c-exploration-tool3 id="exploration-tool3">
               </v-col>
               <v-col
                 cols="4"
+                lg="2"
               >
                 <v-row
                   justify="space-between"
                 >
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool3({
                           ra: 83.63,
@@ -287,6 +330,11 @@
                     >
                       M1
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool3({
                           ra: 250.4,
@@ -301,11 +349,10 @@
                       M13
                     </v-btn>
                   </v-col>
-                </v-row>
-                <v-row
-                  justify="space-between"
-                >
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool3({
                           ra: 10.63,
@@ -319,6 +366,11 @@
                     >
                       M31
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool3({
                           ra: 83.82,
@@ -333,9 +385,10 @@
                       M42
                     </v-btn>
                   </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool3({
                           ra: 202.47,
@@ -349,6 +402,11 @@
                     >
                       M51
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
                       @click="go_to_location_tool3({
                           ra: 148.97,
