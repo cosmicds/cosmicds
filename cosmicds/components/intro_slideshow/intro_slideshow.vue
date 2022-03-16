@@ -446,7 +446,7 @@
       </v-btn>
       <v-btn
         :disabled="step > 6"
-        color="accent"
+        color="success"
         class="black--text"
         depressed
         @click="() => { 
