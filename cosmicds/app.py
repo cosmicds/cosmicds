@@ -44,6 +44,7 @@ theme_colors()
 
 # Within ipywidgets - update calls only happen in certain instances.
 # Tom added this glue state to allow 2-way binding and force communication that we want explicitly controlled between front end and back end.
+
 class ApplicationState(State):
     # set the darkmode state
     darkmode = CallbackProperty(1)
@@ -306,8 +307,10 @@ class Application(v.VuetifyTemplate):
         }
 
         # Set up the scatter viewers
+        spectrum_style_path = str(Path(__file__).parent / "data" /
+                                        "styles" / "default_spectrum_dark.json")
         default_style_path = str(Path(__file__).parent / "data" /
-                                        "styles" / "default_scatter.json")
+                                        "styles" / "default_scatter_dark.json")
         comparison_style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "comparison_scatter.json")
         prodata_style_path = str(Path(__file__).parent / "data" /
@@ -547,6 +550,7 @@ class Application(v.VuetifyTemplate):
                 restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
                 self._new_element_value_update(element, index)
                 self._new_restwave_value_update(restwave, index)
+            update_figure_css(spectrum_viewer, style_path=spectrum_style_path)
 
         galaxy_table.observe(galaxy_table_selected_changed, names=['selected'])
 

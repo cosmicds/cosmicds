@@ -13,22 +13,30 @@
       {
         "tick_style": {
           "font-family": "Gill Sans",
-          "font-size": 14
+          "font-size": 14,
+          "color": "Black"
         },
         "label_offset": "50px",
-        "label": "Distance (Mpc)"
+        "label": "Distance (Mpc)",
+        "color": "Black",
+        "label_color": "Black",
+        "grid_color": "Black"
       },
       {
         "tick_format": ",.0f",
         "tick_style": {
           "font-family": "Gill Sans",
-          "font-size": 14
+          "font-size": 14,
+          "color": "Black"
         },
         "label_offset": "75px",
         "label_style": {
           "font-family": "Times New Roman"
         },
-        "label": "Velocity (km/s)"
+        "label": "Velocity (km/s)",
+        "color": "Black",
+        "label_color": "Black",
+        "grid_color": "Black"
       }
     ]
   },
