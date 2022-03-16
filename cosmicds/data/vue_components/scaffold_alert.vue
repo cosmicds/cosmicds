@@ -3,6 +3,7 @@
     class="mb-4"
     color="info"
     elevation="6"
+    height="100%"
   >
     <h3
       class="mb-4"
