@@ -23,6 +23,7 @@ class StageState(State):
     spectrum_tool_visible = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     marker = CallbackProperty("")
+    advance_marker = CallbackProperty(True)
 
     markers = CallbackProperty([
         #'exp_sky',
@@ -44,13 +45,11 @@ class StageState(State):
         super().__init__(*args, **kwargs)
         self.marker_index = 0
         self.marker = self.markers[0]
+        add_callback(self, 'advance_marker', self.move_marker_forward)
 
-    def move_marker_forward(self):
+    def move_marker_forward(self, _value=None):
         self.marker_index = min(self.marker_index + 1, len(self.markers) - 1)
         self.marker = self.markers[self.marker_index]
-
-    def vue_move_marker_forward(self, _args=None):
-        self.move_marker_forward()
 
     def index(self, marker):
         return self.markers.index(marker)

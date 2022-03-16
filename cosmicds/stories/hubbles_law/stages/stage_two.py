@@ -18,18 +18,33 @@ class StageState(State):
     selected_galaxy = CallbackProperty({})
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
+    advance_marker = CallbackProperty(True)
+
+    markers = CallbackProperty([
+
+    ])
+
+    step_markers = CallbackProperty({
+
+    })
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.marker_index = 0
+        self.marker = self.markers[0]
+        add_callback(self, 'advance_marker', self.move_marker_forward)
+
+    def move_marker_forward(self, _value=None):
+        self.marker_index = min(self.marker_index + 1, len(self.markers) - 1)
+        self.marker = self.markers[self.marker_index]
+
+    def index(self, marker):
+        return self.markers.index(marker)
 
 @register_stage(story="hubbles_law", index=1, steps=[
-    "Explore celestial sky",
-    "Collect galaxy data",
-    "Measure spectra",
-    "Reflect",
-    "Calculate velocities"
+    "Measure distances"
 ])
 class StageTwo(Stage):
-    @default('stage_state')
-    def _default_state(self):
-        return StageState()
 
     @default('template')
     def _default_template(self):
@@ -46,9 +61,9 @@ class StageTwo(Stage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.add_component(DistanceTool(), label="c-distance-tool")
+        self.stage_state = StageState()
 
-        self.stage_state.marker = "sel_gal1"
+        self.add_component(DistanceTool(), label="c-distance-tool")
 
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
