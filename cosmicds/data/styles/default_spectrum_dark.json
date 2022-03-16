@@ -38,12 +38,12 @@
   "viewer": {
     "scatter": {
       "marker": "circle",
-      "stroke": "Black",
+      "stroke": "None",
       "enable_hover": true
     },
     "state": {
       "size": 3,
-      "color": ["Black"]
+      "color": "Black"
     }
   }
 }
