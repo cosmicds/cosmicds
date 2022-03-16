@@ -5,6 +5,9 @@
         color="green"
         @click="select_galaxies();"
       >select 5 galaxies</v-btn>
+      <v-btn
+        @click="console.log(stage_state)"
+      >State</v-btn>
     </v-row>
     <v-row>
       <v-col
@@ -41,7 +44,7 @@
         <v-card
           color="info"
           class="pa-1"
-          v-if="stage_state.spectrum_tool_visible"
+          v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
           >
           <jupyter-widget :widget="viewers.spectrum_viewer"/>
         </v-card>

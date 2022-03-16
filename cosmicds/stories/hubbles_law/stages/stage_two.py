@@ -21,7 +21,7 @@ class StageState(State):
     advance_marker = CallbackProperty(True)
 
     markers = CallbackProperty([
-
+        "test"
     ])
 
     step_markers = CallbackProperty({
@@ -41,7 +41,7 @@ class StageState(State):
     def index(self, marker):
         return self.markers.index(marker)
 
-@register_stage(story="hubbles_law", index=1, steps=[
+@register_stage(story="hubbles_law", index=2, steps=[
     "Measure distances"
 ])
 class StageTwo(Stage):

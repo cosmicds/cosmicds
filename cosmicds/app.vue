@@ -89,6 +89,7 @@
                 <v-list-item
                     v-for="(step, i) in story_state.stages[key].steps"
                     :key="i"
+                    :disabled="i > 0 && !story_state.stages[key].steps[i-1].completed"
                 >
                   <v-list-item-action>
                     <template v-if="step.completed">

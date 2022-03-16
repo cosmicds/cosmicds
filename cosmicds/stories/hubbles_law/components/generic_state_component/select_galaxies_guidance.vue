@@ -127,7 +127,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.advance_marker = true;
+            state.marker = 'cho_row1'
           "
         >
           next

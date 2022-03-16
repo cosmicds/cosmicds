@@ -86,7 +86,7 @@ class Stage(TemplateMixin):
         from_dc = self.data_collection[from_dc_name]
         to_dc = self.data_collection[to_dc_name]
 
-        self.app.link_data(from_dc, from_att, to_dc, to_att)
+        self.app.add_link(from_dc, from_att, to_dc, to_att)
 
     def add_component(self, component, label):
         if self.components is None:
@@ -98,6 +98,9 @@ class Stage(TemplateMixin):
 
     def get_component(self, label):
         return self.components[label]
+
+    def add_data(self, data):
+        self.data_collection.append(data)
 
     def get_data(self, dc_name):
         return self.data_collection[dc_name]

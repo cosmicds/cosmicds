@@ -10,7 +10,7 @@ from cosmicds.utils import load_template
 class StageState(State):
     pass
 
-@register_stage(story="hubbles_law", index=2, steps=[
+@register_stage(story="hubbles_law", index=3, steps=[
     "My data",
     "Class data",
     "Galaxy Type",
@@ -51,11 +51,14 @@ class StageThree(Stage):
                           title='My Galaxies')
         self.add_widget(fit_table, label="fit_table")
 
+        # Set up for student/class/all data
+        measurements = self.get_data("student_measurements")
         student_dc_name = "student_data"
         student_cols = [x.label for x in measurements.main_components]
         dummy_data = {x : ['X'] if x in ['ID', 'Element', 'Type'] else [0] for x in student_cols}
         student_data = Data(label=student_dc_name, **dummy_data)
-
+        self.add_data(student_data)
+    
         class_dc_name = "HubbleData_ClassSample"
         all_dc_name = "HubbleData_All"
         class_data = self.get_data(class_dc_name)

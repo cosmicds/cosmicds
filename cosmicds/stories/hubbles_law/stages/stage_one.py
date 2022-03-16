@@ -1,4 +1,4 @@
-from echo import add_callback, delay_callback, CallbackDict, CallbackList, CallbackProperty
+from echo import add_callback, remove_callback, ignore_callback, CallbackDict, CallbackList, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from random import sample
@@ -23,7 +23,9 @@ class StageState(State):
     spectrum_tool_visible = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     marker = CallbackProperty("")
-    advance_marker = CallbackProperty(True)
+    indices = CallbackProperty({})
+    advance_marker = CallbackProperty(False)
+    retreat_marker = CallbackProperty(False)
 
     markers = CallbackProperty([
         #'exp_sky',
@@ -35,26 +37,34 @@ class StageState(State):
         'rep_rem1'
     ])
 
-    step_markers = CallbackProperty({
-        'exp_sky' : 0,
-        'sel_gal1' : 1,
-        'mee_spe1' : 2
-    })
+    step_markers = CallbackProperty([
+        #'exp_sky',
+        'sel_gal1',
+        'mee_spe1'
+    ])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.marker_index = 0
         self.marker = self.markers[0]
+        self.indices = { marker : idx for idx, marker in enumerate(self.markers) }
         add_callback(self, 'advance_marker', self.move_marker_forward)
+        add_callback(self, 'retreat_marker', self.move_marker_backward)
 
-    def move_marker_forward(self, _value=None):
-        self.marker_index = min(self.marker_index + 1, len(self.markers) - 1)
-        self.marker = self.markers[self.marker_index]
+    def move_marker_forward(self, value=None):
+        index = min(self.current_index(), len(self.markers)-1)
+        self.marker = self.markers[index]
+
+    def move_marker_backward(self, value=None):
+        index = max(self.current_index() - 1, 0)
+        self.marker = self.markers[index]
 
     def index(self, marker):
-        return self.markers.index(marker)
+        return self.indices[marker]
 
-@register_stage(story="hubbles_law", index=0, steps=[
+    def current_index(self):
+        return self.index(self.marker)
+
+@register_stage(story="hubbles_law", index=1, steps=[
     #"Explore celestial sky",
     "Collect galaxy data",
     "Measure spectra",
@@ -135,12 +145,30 @@ class StageOne(Stage):
             self.stage_state.gals_total = change["new"]
         selection_tool.observe(update_count, names=['selected_count'])
 
-        add_callback(self.stage_state, 'marker', self._on_marker_update)
+        add_callback(self.stage_state, 'marker', self._on_marker_update, echo_old=True)
+        add_callback(self.story_state, 'step_index', self._on_step_index_update)
+        self.trigger_marker_update_cb = True
 
+    def _on_marker_update(self, old, new):
+        print("In _on_marker_update", old, new)
+        if not self.trigger_marker_update_cb:
+            return
+        markers = self.stage_state.markers
+        advancing = markers.index(new) > markers.index(old)
+        # step_item = self.story_state.stages[self.story_state.stage_index]['steps'][self.story_state.step_index]
+        # completed = step_item['completed']
+        if new in self.stage_state.step_markers and advancing:
+            self.story_state.step_complete = True
+            self.story_state.step_index = self.stage_state.step_markers.index(new)
 
-    def _on_marker_update(self, marker):
-        if marker in self.stage_state.step_markers:
-            self.story_state.step_index = self.stage_state.step_markers[marker]
+    def _on_step_index_update(self, index):
+        print("In _on_step_index_update", index)
+        
+        # We can't just use ignore_callback, since other stuff (i.e. the frontend)
+        # may depend on marker callbacks
+        self.trigger_marker_update_cb = False
+        self.stage_state.marker = self.stage_state.step_markers[index]
+        self.trigger_marker_update_cb = True
 
     def _on_galaxy_selected(self, galaxy):
         data = self.get_data("student_measurements")
@@ -221,8 +249,7 @@ class StageOne(Stage):
         self.update_spectrum_viewer(name, z)
 
         if self.stage_state.marker == 'cho_row1':
-            self.stage_state.spectrum_tool_visible = True
-            self.stage_state.move_marker_forward()
+            self.stage_state.marker = 'mee_spe1'
 
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]
@@ -240,6 +267,14 @@ class StageOne(Stage):
         value = round(event["domain"]["x"], 2)
         self.stage_state.waveline_set = True
         self.update_data_value("student_measurements", "measwave", value, self.galaxy_table.index)
+
+    def vue_add_current_velocity(self, _args=None):
+        data = self.get_data("student_measurements")
+        index = self.get_component('galaxy_table').index
+        if index is not None:
+            z = data["Z"][index]
+            velocity = int(3 * (10 ** 5) * z)
+            self.update_data_value("student_measurements", "velocity", velocity, index)
 
     @property
     def selection_tool(self):
