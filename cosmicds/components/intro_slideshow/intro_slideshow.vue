@@ -150,7 +150,7 @@
               As you pan through the sky, you may see stars and fuzzy blobs called nebulae. In the 1700's, French astronomer Charles Messier cataloged as many nebulae as he could find. They are known as "Messier Objects" and are identified by their catalog number.
             </p>
             <p>
-              Click on the thumbnails to go directly to some Messier Objects:
+              Click on the thumbnails to view some Messier Objects:
             </p>
           </div>
           <div
