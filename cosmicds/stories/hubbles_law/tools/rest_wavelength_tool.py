@@ -60,7 +60,7 @@ class RestWavelengthTool(CheckableTool):
         self.viewer.element_label.text = [self.viewer.element_label.text[0] + self.observed_text]
         self.active = True
         self._on_view_change()
-        self.viewer.figure.marks += self.marks
+        self.viewer.figure.marks = self.viewer.figure.marks + self.marks
 
     def deactivate(self):
         self.viewer.user_line.visible = True
