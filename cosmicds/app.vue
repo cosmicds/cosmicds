@@ -1615,35 +1615,6 @@
                 </v-card>
               </v-col>
             </v-row>
-            <v-row
-              class="mt-8"
-            >
-              <v-col cols="12">
-                <!-- Sample DIALOGS/ALERTS for Learning Experience -->
-                <v-divider
-                  class="my-4"
-                >
-                </v-divider>
-                <hinttext-alert>
-                  This is for marginal hint text
-                </hinttext-alert>
-                <snackbar-alert>
-                  This is for guidance snackbars
-                </snackbar-alert>
-                <infodialog-alert>
-                  This is for informative dialog pop-ups
-                </infodialog-alert>
-                <responsedialog-alert>
-                  This is for student reflection pop-ups
-                </responsedialog-alert>
-                <todo-alert>
-                  This is for tasks that still need to be completed
-                </todo-alert>
-                <teamaside-alert>
-                  This is for notes to the team that won't be exposed to the user in finished DS
-                </teamaside-alert>
-              </v-col>
-            </v-row>
           </v-col>
         </v-row>
         <c-footer />
