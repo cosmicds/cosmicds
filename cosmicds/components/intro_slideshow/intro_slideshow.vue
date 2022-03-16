@@ -152,7 +152,7 @@
                 >
                   <v-col>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 83.63,
                           dec: 22.014,
                           fov: 350, // optional, in arcseconds, default is 90
@@ -165,7 +165,7 @@
                       M1
                     </v-btn>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 250.4,
                           dec: 36.46,
                           fov: 700, // optional, in arcseconds, default is 90
@@ -184,7 +184,7 @@
                 >
                   <v-col>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 10.63,
                           dec: 41.27,
                           fov: 6000, // optional, in arcseconds, default is 90
@@ -197,7 +197,7 @@
                       M31
                     </v-btn>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 83.82,
                           dec: -5.39,
                           fov:7500, // optional, in arcseconds, default is 90
@@ -214,7 +214,7 @@
                 <v-row>
                   <v-col>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 202.47,
                           dec: 47.195,
                           fov: 700, // optional, in arcseconds, default is 90
@@ -227,7 +227,7 @@
                       M51
                     </v-btn>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 148.97,
                           dec: 69.68,
                           fov: 400, // optional, in arcseconds, default is 90
@@ -275,7 +275,7 @@
                 >
                   <v-col>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 83.63,
                           dec: 22.014,
                           fov: 350, // optional, in arcseconds, default is 90
@@ -288,7 +288,7 @@
                       M1
                     </v-btn>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 250.4,
                           dec: 36.46,
                           fov: 700, // optional, in arcseconds, default is 90
@@ -307,7 +307,7 @@
                 >
                   <v-col>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 10.63,
                           dec: 41.27,
                           fov: 6000, // optional, in arcseconds, default is 90
@@ -320,7 +320,7 @@
                       M31
                     </v-btn>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 83.82,
                           dec: -5.39,
                           fov:7500, // optional, in arcseconds, default is 90
@@ -337,7 +337,7 @@
                 <v-row>
                   <v-col>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 202.47,
                           dec: 47.195,
                           fov: 700, // optional, in arcseconds, default is 90
@@ -350,7 +350,7 @@
                       M51
                     </v-btn>
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 148.97,
                           dec: 69.68,
                           fov: 400, // optional, in arcseconds, default is 90
