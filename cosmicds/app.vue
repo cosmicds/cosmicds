@@ -176,68 +176,6 @@
                           <v-row>
                             <v-col
                               cols="12"
-                              lg="8"
-                              class="wwt_column"
-                            >
-                              <!-- The CARD to hold the WWT VIEWER and where students Select Galaxies -->
-                              <v-card
-                                
-                                :color="state.marker == 'sel_gal1' ? 'info' : 'none'"
-                                :class="state.marker == 'sel_gal1' ? 'pa-1' : 'pa-0'"
-                              >
-                                <v-toolbar
-                                  color="secondary"
-                                  dense
-                                  dark
-                                >
-                                  <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
-
-                                  <v-spacer></v-spacer>
-
-                                  <v-tooltip top>
-                                    <template v-slot:activator="{ on, attrs }">
-                                      <v-btn icon
-                                        v-bind="attrs"
-                                        v-on="on"
-                                        @click="reset_galaxy_widget()">
-                                        <v-icon>mdi-home</v-icon>
-                                      </v-btn>
-                                    </template>
-                                    Reset view
-                                  </v-tooltip>
-
-                                  <v-tooltip top>
-                                    <template v-slot:activator="{ on, attrs }">
-                                      <v-btn icon
-                                        v-bind="attrs"
-                                        v-on="on"
-                                        :disabled="!state.current_galaxy"
-                                        @click="select_current_galaxy()">
-                                        <v-icon>mdi-plus</v-icon>
-                                      </v-btn>
-                                    </template>
-                                    Add to my dataset
-                                  </v-tooltip>
-
-                                  <v-btn icon>
-                                    <v-icon>mdi-information-outline</v-icon>
-                                  </v-btn>
-                                </v-toolbar>
-                                <!-- WIDGET for WWT galaxy selection -->
-                                <div
-                                  class="wwt_widget"
-                                >
-                                  <!-- WWT GALAXY PICKER as Jupyter Widget -- v-lazy loads when visible -->
-                                   <v-lazy>
-                                    <jupyter-widget
-                                      :widget="widgets.wwt_widget"
-                                      ></jupyter-widget>
-                                    </v-lazy>
-                                </div>
-                              </v-card>
-                            </v-col>
-                            <v-col
-                              cols="12"
                               lg="4"
                             >
 
@@ -405,29 +343,23 @@
                                 </v-row>
                               </v-alert>
                             </v-col>
-                          </v-row>
-                          <v-row
-                            :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
-                          >
                             <v-col
                               cols="12"
                               lg="8"
-                              class="align-stretch"
+                              class="wwt_column"
                             >
-                              <!-- The CARD to hold the SPECTRUM TOOL and where students Measure Velocity -->
+                              <!-- The CARD to hold the WWT VIEWER and where students Select Galaxies -->
                               <v-card
-                                :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
-                                min-height="300px"
-                                outlined
-                                color="info"
-                                class="pa-1"
+                                
+                                :color="state.marker == 'sel_gal1' ? 'info' : 'none'"
+                                :class="state.marker == 'sel_gal1' ? 'pa-1' : 'pa-0'"
                               >
                                 <v-toolbar
                                   color="secondary"
                                   dense
                                   dark
                                 >
-                                  <v-toolbar-title>Spectrum Tool</v-toolbar-title>
+                                  <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
 
                                   <v-spacer></v-spacer>
 
@@ -436,7 +368,7 @@
                                       <v-btn icon
                                         v-bind="attrs"
                                         v-on="on"
-                                        @click="spectrum_tool_home()">
+                                        @click="reset_galaxy_widget()">
                                         <v-icon>mdi-home</v-icon>
                                       </v-btn>
                                     </template>
@@ -448,36 +380,35 @@
                                       <v-btn icon
                                         v-bind="attrs"
                                         v-on="on"
-                                        @click="spectrum_tool_toggle_zoom()">
-                                        <v-icon>mdi-magnify</v-icon>
+                                        :disabled="!state.current_galaxy"
+                                        @click="select_current_galaxy()">
+                                        <v-icon>mdi-plus</v-icon>
                                       </v-btn>
                                     </template>
-                                    Zoom in on x-axis
-                                  </v-tooltip>
-
-                                  <v-tooltip top>
-                                    <template v-slot:activator="{ on, attrs }">
-                                      <v-btn icon
-                                        v-bind="attrs"
-                                        v-on="on"
-                                        @click="toggle_rest_wavelength_shown()">
-                                        <v-icon>mdi-lambda</v-icon>
-                                      </v-btn>
-                                    </template>
-                                    {{ state.rest_wavelength_shown ? 'Hide rest wavelength' : 'Show rest wavelength'}}
+                                    Add to my dataset
                                   </v-tooltip>
 
                                   <v-btn icon>
                                     <v-icon>mdi-information-outline</v-icon>
                                   </v-btn>
                                 </v-toolbar>
-                                <v-lazy>
-                                  <jupyter-widget
-                                    :widget="viewers.spectrum_viewer" >
-                                  </jupyter-widget>  
-                                </v-lazy>
+                                <!-- WIDGET for WWT galaxy selection -->
+                                <div
+                                  class="wwt_widget"
+                                >
+                                  <!-- WWT GALAXY PICKER as Jupyter Widget -- v-lazy loads when visible -->
+                                   <v-lazy>
+                                    <jupyter-widget
+                                      :widget="widgets.wwt_widget"
+                                      ></jupyter-widget>
+                                    </v-lazy>
+                                </div>
                               </v-card>
                             </v-col>
+                          </v-row>
+                          <v-row
+                            :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
+                          >
                             <!-- SIDEBAR COLUMN for processing velocity data -->
                             <v-col
                               cols="12"
@@ -490,6 +421,7 @@
                                 class="mb-4"
                                 color="info"
                                 elevation="6"
+                                height="100%"
                               >
                                 <h3
                                   class="mb-4"
@@ -500,7 +432,7 @@
                                   class="mb-4"
                                 >
                                   <p>
-                                    To the left is a spectrum of light from your chosen galaxy.
+                                    To the right is a spectrum of light from your chosen galaxy.
                                   </p>
                                   <p>
                                     Let’s learn how a spectrum can tell us if an object is moving toward or away from us.
@@ -653,12 +585,83 @@
                                 </div>
                               </scaffold-alert>
                             </v-col>
+                            <v-col
+                              cols="12"
+                              lg="8"
+                              class="align-stretch"
+                            >
+                              <!-- The CARD to hold the SPECTRUM TOOL and where students Measure Velocity -->
+                              <v-card
+                                :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
+                                min-height="300px"
+                                outlined
+                                color="info"
+                                class="pa-1"
+                              >
+                                <v-toolbar
+                                  color="secondary"
+                                  dense
+                                  dark
+                                >
+                                  <v-toolbar-title>Spectrum Tool</v-toolbar-title>
+
+                                  <v-spacer></v-spacer>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="spectrum_tool_home()">
+                                        <v-icon>mdi-home</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Reset view
+                                  </v-tooltip>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="spectrum_tool_toggle_zoom()">
+                                        <v-icon>mdi-magnify</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    Zoom in on x-axis
+                                  </v-tooltip>
+
+                                  <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="toggle_rest_wavelength_shown()">
+                                        <v-icon>mdi-lambda</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    {{ state.rest_wavelength_shown ? 'Hide rest wavelength' : 'Show rest wavelength'}}
+                                  </v-tooltip>
+
+                                  <v-btn icon>
+                                    <v-icon>mdi-information-outline</v-icon>
+                                  </v-btn>
+                                </v-toolbar>
+                                <v-lazy>
+                                  <jupyter-widget
+                                    :widget="viewers.spectrum_viewer" >
+                                  </jupyter-widget>  
+                                </v-lazy>
+                              </v-card>
+                            </v-col>
                           </v-row>
                           <v-row
                             :class="state.spectrum_tool_visible ? 'd-block' : 'd-none'"
                           >
                             <v-col
-                              cols="8"
+                              cols="12"
+                              lg="8"
+                              offset-lg="4"
                             >
                               <v-row>
                                 <v-col
@@ -708,21 +711,6 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                            <v-col
-                              cols="12"
-                              lg="8"
-                              class="galtable_column"
-                            >
-                              <!-- The CARD to hold the WWT VIEWER and where students Select Galaxies -->
-                              <v-card
-                                
-                                :color="state.marker == 'cho_row1' ? 'info' : 'none'"
-                                :class="state.marker == 'cho_row1' ? 'pa-1' : 'pa-0'"
-                              >
-                                <!-- TABLE to hold Selected Galaxies -->
-                                <c-galaxy-table />
-                              </v-card>
-                            </v-col>
                             <v-col
                               cols="12"
                               lg="4"
@@ -776,6 +764,21 @@
                                 </v-row>
                               </v-alert>
 
+                            </v-col>
+                            <v-col
+                              cols="12"
+                              lg="8"
+                              class="galtable_column"
+                            >
+                              <!-- The CARD to hold the WWT VIEWER and where students Select Galaxies -->
+                              <v-card
+                                
+                                :color="state.marker == 'cho_row1' ? 'info' : 'none'"
+                                :class="state.marker == 'cho_row1' ? 'pa-1' : 'pa-0'"
+                              >
+                                <!-- TABLE to hold Selected Galaxies -->
+                                <c-galaxy-table />
+                              </v-card>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -1610,35 +1613,6 @@
                     </v-btn>
                   </v-card-actions>
                 </v-card>
-              </v-col>
-            </v-row>
-            <v-row
-              class="mt-8"
-            >
-              <v-col cols="12">
-                <!-- Sample DIALOGS/ALERTS for Learning Experience -->
-                <v-divider
-                  class="my-4"
-                >
-                </v-divider>
-                <hinttext-alert>
-                  This is for marginal hint text
-                </hinttext-alert>
-                <snackbar-alert>
-                  This is for guidance snackbars
-                </snackbar-alert>
-                <infodialog-alert>
-                  This is for informative dialog pop-ups
-                </infodialog-alert>
-                <responsedialog-alert>
-                  This is for student reflection pop-ups
-                </responsedialog-alert>
-                <todo-alert>
-                  This is for tasks that still need to be completed
-                </todo-alert>
-                <teamaside-alert>
-                  This is for notes to the team that won't be exposed to the user in finished DS
-                </teamaside-alert>
               </v-col>
             </v-row>
           </v-col>

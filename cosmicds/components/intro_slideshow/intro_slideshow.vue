@@ -83,36 +83,54 @@
             <v-row>
               <v-col
                 cols="8"
+                offset-lg="1"
               >   
                 <c-exploration-tool id="exploration-tool">
               </v-col>
               <v-col
                 cols="4"
+                lg="3"
               >
                 <v-row>
                   <v-col
-                    cols="4"
+                    cols="12"
+                    lg="4"
                   >
-                    <strong>Pan</strong>
+                    <v-chip
+                      label
+                      outlined
+                    >
+                      Pan
+                    </v-chip>
                   </v-col>
                   <v-col
-                    cols="8"
+                    cols="12"
+                    lg="8"
+                    class="pt-2"
                   >
                     <strong>click + drag</strong><br>
-                    (or use the <strong class="codeFont">I-J-K-L</strong> keys)
+                    (or use <strong class="codeFont">I-J-K-L</strong> keys)
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col
-                    cols="4"
+                    cols="12"
+                    lg="4"
                   >
-                     <strong>Zoom</strong>
+                    <v-chip
+                      label
+                      outlined
+                    >
+                      Zoom
+                    </v-chip>
                   </v-col>
                   <v-col
-                    cols="8"
+                    cols="12"
+                    lg="8"
+                    class="pt-2"
                   >
                     <strong>scroll in and out</strong><br>
-                    (or use the <strong class="codeFont">Z-X</strong> keys for finer zoom)
+                    (or use <strong class="codeFont">Z-X</strong> keys)
                   </v-col>
                 </v-row>
               </v-col>
@@ -132,7 +150,7 @@
               As you pan through the sky, you may see stars and fuzzy blobs called nebulae. In the 1700's, French astronomer Charles Messier cataloged as many nebulae as he could find. They are known as "Messier Objects" and are identified by their catalog number.
             </p>
             <p>
-              Click on the thumbnails to go directly to some Messier Objects:
+              Click on the thumbnails to view some Messier Objects:
             </p>
           </div>
           <div
@@ -141,100 +159,120 @@
             <v-row>
               <v-col
                 cols="8"
+                offset-lg="1"
               >   
                 <c-exploration-tool2 id="exploration-tool2">
               </v-col>
               <v-col
                 cols="4"
+                lg="2"
               >
                 <v-row
                   justify="space-between"
                 >
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 83.63,
                           dec: 22.014,
                           fov: 350, // optional, in arcseconds, default is 90
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M1
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 250.4,
                           dec: 36.46,
                           fov: 700, // optional, in arcseconds, default is 90
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M13
                     </v-btn>
                   </v-col>
-                </v-row>
-                <v-row
-                  justify="space-between"
-                >
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 10.63,
                           dec: 41.27,
                           fov: 6000, // optional, in arcseconds, default is 90
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M31
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 83.82,
                           dec: -5.39,
                           fov:7500, // optional, in arcseconds, default is 90
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M42
                     </v-btn>
                   </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 202.47,
                           dec: 47.195,
                           fov: 700, // optional, in arcseconds, default is 90
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M51
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool2({
                           ra: 148.97,
                           dec: 69.68,
                           fov: 400, // optional, in arcseconds, default is 90
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M82
@@ -264,18 +302,23 @@
             <v-row>
               <v-col
                 cols="8"
+                offset-lg="1"
               >   
                 <c-exploration-tool3 id="exploration-tool3">
               </v-col>
               <v-col
                 cols="4"
+                lg="2"
               >
                 <v-row
                   justify="space-between"
                 >
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 83.63,
                           dec: 22.014,
                           fov: 350, // optional, in arcseconds, default is 90
@@ -287,8 +330,13 @@
                     >
                       M1
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 250.4,
                           dec: 36.46,
                           fov: 700, // optional, in arcseconds, default is 90
@@ -301,13 +349,12 @@
                       M13
                     </v-btn>
                   </v-col>
-                </v-row>
-                <v-row
-                  justify="space-between"
-                >
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 10.63,
                           dec: 41.27,
                           fov: 6000, // optional, in arcseconds, default is 90
@@ -319,8 +366,13 @@
                     >
                       M31
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 83.82,
                           dec: -5.39,
                           fov:7500, // optional, in arcseconds, default is 90
@@ -333,11 +385,12 @@
                       M42
                     </v-btn>
                   </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 202.47,
                           dec: 47.195,
                           fov: 700, // optional, in arcseconds, default is 90
@@ -349,8 +402,13 @@
                     >
                       M51
                     </v-btn>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    lg="6"
+                  >
                     <v-btn
-                      @click="go_to_location({
+                      @click="go_to_location_tool3({
                           ra: 148.97,
                           dec: 69.68,
                           fov: 400, // optional, in arcseconds, default is 90
@@ -444,8 +502,22 @@
       >
         {{ step < 6 ? 'next' : '' }}
       </v-btn>
+      <!-- first button below just being used for testing, delete when using live with students -->
+      <v-btn
+        :class="step < 6 ? 'd-block' : 'd-none'"
+        color="success"
+        class="black--text"
+        depressed
+        @click="() => { 
+          $emit('continue');
+          step = 0;
+        }"
+      >
+        get started
+      </v-btn>
       <v-btn
         :disabled="step > 6"
+        :class="step >= 6 ? 'd-block' : 'd-none'"
         color="accent"
         class="black--text"
         depressed

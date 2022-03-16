@@ -53,7 +53,7 @@ class IntroSlideShow(v.VuetifyTemplate):
         super().__init__(*args, **kwargs)
 
     
-    def vue_go_to_location(self, args):
+    def vue_go_to_location_tool2(self, args):
         coordinates = SkyCoord(args["ra"] * u.deg, args["dec"] * u.deg, frame='icrs')
         wwt = self.components['c-exploration-tool2'].widget
         instant = args.get("instant") or False
@@ -61,7 +61,7 @@ class IntroSlideShow(v.VuetifyTemplate):
         fov = fov_as * u.arcsec if fov_as else GALAXY_FOV
         wwt.center_on_coordinates(coordinates, fov=fov, instant=instant)
 
-    def vue_go_to_location3(self, args):
+    def vue_go_to_location_tool3(self, args):
         coordinates = SkyCoord(args["ra"] * u.deg, args["dec"] * u.deg, frame='icrs')
         wwt = self.components['c-exploration-tool3'].widget
         instant = args.get("instant") or False
