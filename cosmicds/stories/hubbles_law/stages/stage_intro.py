@@ -35,6 +35,14 @@ class StageIntro(Stage):
         self.add_component(intro_slideshow, label='c-intro-slideshow')
         intro_slideshow.observe(self._on_slideshow_complete, names=['intro_complete'])
 
+    @property
+    def slideshow(self):
+        return self.get_component('c-intro-slideshow')
+
     def _on_slideshow_complete(self, change):
         if change["new"]:
-            self.story_state.stage_index += 1
+            self.story_state.stage_index = 1
+
+            # We need to do this so that the stage will be moved forward every
+            # time the button is clicked, not just the first
+            self.slideshow.intro_complete = False
