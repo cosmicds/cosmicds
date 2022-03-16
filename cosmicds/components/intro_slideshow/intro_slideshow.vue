@@ -444,9 +444,23 @@
       >
         {{ step < 6 ? 'next' : '' }}
       </v-btn>
+      <!-- first button below just being used for testing, delete when using live with students -->
+      <v-btn
+        :class="step < 6 ? 'd-block' : 'd-none'"
+        color="success"
+        class="black--text"
+        depressed
+        @click="() => { 
+          $emit('continue');
+          step = 0;
+        }"
+      >
+        get started
+      </v-btn>
       <v-btn
         :disabled="step > 6"
-        color="success"
+        :class="step >= 6 ? 'd-block' : 'd-none'"
+        color="accent"
         class="black--text"
         depressed
         @click="() => { 
