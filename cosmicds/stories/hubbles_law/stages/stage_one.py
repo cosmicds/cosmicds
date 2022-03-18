@@ -1,8 +1,7 @@
-from os import listdir
 from os.path import join
 from pathlib import Path
 
-from echo import add_callback, remove_callback, ignore_callback, CallbackDict, CallbackList, CallbackProperty
+from echo import add_callback, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from random import sample
@@ -114,12 +113,20 @@ class StageOne(Stage):
 
         # Set up the generic state components
         state_components_dir = str(Path(__file__).parent.parent / "components" / "generic_state_components")
-        state_component_files = [ f for f in listdir(state_components_dir) if f.endswith(".vue") ]
-        ext_len = len(".vue")
         path = join(state_components_dir, "")
-        for filename in state_component_files:
-            label = f"c-{filename}"[:-ext_len].replace("_", "-")
-            component = GenericStateComponent(filename, path, self.stage_state)
+        state_components = [
+            "choose_row_alert",
+            "nice_work_alert",
+            "obswave_alert",
+            "remaining_gals_alert",
+            "restwave_alert",
+            "select_galaxies_guidance",
+            "spectrum_guidance"
+        ]
+        ext = ".vue"
+        for comp in state_components:
+            label = f"c-{comp}".replace("_", "-")
+            component = GenericStateComponent(comp + ext, path, self.stage_state)
             self.add_component(component, label=label)
 
         # Callbacks
