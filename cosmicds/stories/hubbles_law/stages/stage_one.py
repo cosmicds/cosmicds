@@ -9,7 +9,7 @@ from traitlets import default
 
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
-from cosmicds.viewers.spectrum_view import SpectrumView
+from cosmicds.stories.hubbles_law.viewers import SpectrumView
 from cosmicds.phases import Stage
 from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
