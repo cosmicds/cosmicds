@@ -817,7 +817,7 @@ class Application(v.VuetifyTemplate):
             start_x, end_x = x
             start_y, end_y = y
             slope_value = fitted_line.slope.value
-            label = 'Slope = %.0f ks / s / Mpc' % slope_value if not isnan(slope_value) else None
+            label = 'Slope = %.0f km / s / Mpc' % slope_value if not isnan(slope_value) else None
             line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color, label)
             lines_and_labels.append((line, data.label))
             
