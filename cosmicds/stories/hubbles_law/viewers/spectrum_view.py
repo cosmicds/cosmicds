@@ -7,12 +7,9 @@ from echo import add_callback, delay_callback
 from glue.config import viewer_tool
 from glue.viewers.common.utils import get_viewer_tools
 from traitlets import Bool
+
 from cosmicds.components.toolbar import Toolbar
 from cosmicds.stories.hubbles_law.utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
-
-# We need to import these so that they get loaded into the registry first
-from cosmicds.tools import BqplotXZoom, InfoTool
-from cosmicds.stories.hubbles_law.tools.rest_wavelength_tool import RestWavelengthTool
 
 __all__ = ['SpectrumView', 'SpectrumViewerState']
 

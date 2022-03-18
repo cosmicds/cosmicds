@@ -16,6 +16,7 @@ for comp_path in vue_comp_dir.iterdir():
             value=comp_path.read_text())
 
 from .stories import *
+from .tools import *
 
 # Monkey-patch pywwt kernel connection function
 from pywwt import jupyter_relay

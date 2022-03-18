@@ -56,8 +56,7 @@ class RestWavelengthTool(CheckableTool):
         self.line.x = [rest, rest]
         self.label.x = [rest, rest]
         self.label.text = [self.viewer.element + self.rest_text]
-        self.viewer.element_tick.text = [self.viewer.element + self.observed_text]
-        self.viewer.element_label.text = [self.viewer.element_label.text[0] + self.observed_text]
+        self.viewer.element_label.text = [self.viewer.element + self.observed_text]
         self.active = True
         self._on_view_change()
         self.viewer.figure.marks = self.viewer.figure.marks + self.marks
@@ -66,8 +65,7 @@ class RestWavelengthTool(CheckableTool):
         self.viewer.user_line.visible = True
         self.viewer.user_line_label.visible = True
         self.viewer.figure.marks = [mark for mark in self.viewer.figure.marks if mark not in self.marks]
-        self.viewer.element_tick.text = [self.viewer.element]
-        self.viewer.element_label.text = [self.viewer.element_label.text[0][:-len(self.observed_text)]]
+        self.viewer.element_label.text = [self.viewer.element]
         self.active = False
 
     def _on_view_change(self, event=None):
