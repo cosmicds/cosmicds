@@ -13,8 +13,9 @@
       <v-col
         cols="6">
         <v-card
-          color="info"
-          class="pa-1">
+          :color="stage_state.marker == 'sel_gal1' ? 'info' : 'none'"
+          :class="stage_state.marker == 'sel_gal1' ? 'pa-1' : 'pa-0'"
+        >
           <c-selection-tool/>
           <!-- <v-card-actions>
             <v-btn @click="story_state.step_index += 1; story_state.step_complete = true">Next Step</v-btn>
