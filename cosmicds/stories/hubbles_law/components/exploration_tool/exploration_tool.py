@@ -14,6 +14,7 @@ class ExplorationTool(v.VueTemplate):
     pan_count = Int(0).tag(sync=True)
     zoom_count = Int(0).tag(sync=True)
     exploration_complete = Bool(False).tag(sync=True)
+    dialog = Bool(False).tag(sync=True)
     _fov = Angle(0 * u.deg)
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
