@@ -146,6 +146,7 @@ class Application(v.VuetifyTemplate):
         add_callback(self.state, 'sandbox_histogram_selections', self._sandbox_histogram_selection_update)
         add_callback(self.state, 'morphology_selections', self._morphology_selection_update)
         add_callback(self.state, 'hubble_prodata_selections', self._hubble_prodata_selection_update)
+        add_callback(self.state, 'darkmode', self._theme_toggle)
 
         # Load the galaxy position data
         # This adds the file to the glue data collection at the top level
@@ -306,19 +307,19 @@ class Application(v.VuetifyTemplate):
                         #        accept_button_text="Close")
         }
 
-        # Set up the scatter viewers
-        spectrum_style_path = str(Path(__file__).parent / "data" /
+        # Set up the viewer styles
+        self.spectrum_style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "default_spectrum_dark.json")
-        default_style_path = str(Path(__file__).parent / "data" /
+        self.default_style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "default_scatter_dark.json")
-        comparison_style_path = str(Path(__file__).parent / "data" /
+        self.comparison_style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "comparison_scatter.json")
-        prodata_style_path = str(Path(__file__).parent / "data" /
+        self.prodata_style_path = str(Path(__file__).parent / "data" /
                                         "styles" / "prodata_scatter.json")
         for viewer in hub_viewers[:-3]:
 
             # Update the viewer CSS
-            update_figure_css(viewer, style_path=default_style_path)
+            update_figure_css(viewer, style_path=self.default_style_path)
         
         # Set up the viewer that will listen to the histogram
         class_data = self.class_data
@@ -326,7 +327,7 @@ class Application(v.VuetifyTemplate):
         hub_students_viewer.state.x_att = class_data.id['distance']
         hub_students_viewer.state.y_att = class_data.id['velocity']
         hub_students_viewer.layers[-1].state.zorder = 2
-        update_figure_css(hub_students_viewer, style_path=comparison_style_path)
+        update_figure_css(hub_students_viewer, style_path=self.comparison_style_path)
 
         # The Hubble comparison viewer should get the class and all public data as well
         all_data = self.all_data
@@ -338,7 +339,7 @@ class Application(v.VuetifyTemplate):
         hub_comparison_viewer.state.x_att = all_data.id['distance']
         hub_comparison_viewer.state.y_att = all_data.id['velocity']
         hub_comparison_viewer.state.reset_limits()
-        update_figure_css(hub_comparison_viewer, style_path=comparison_style_path)
+        update_figure_css(hub_comparison_viewer, style_path=self.comparison_style_path)
 
         # Set up the professional data viewer
         student_data = self.student_data
@@ -354,7 +355,7 @@ class Application(v.VuetifyTemplate):
         hub_prodata_viewer.add_data(hstkp_data)
         hub_prodata_viewer.add_data(hubble1929)
         
-        update_figure_css(hub_prodata_viewer, style_path=prodata_style_path)
+        update_figure_css(hub_prodata_viewer, style_path=self.prodata_style_path)
 
         # For convenience, we attach the relevant data sets to the application instance
         self.all_data = all_data
@@ -419,7 +420,7 @@ class Application(v.VuetifyTemplate):
         self._irregular_subset = irregular_subset
         hub_morphology_viewer.state.x_att = galaxy_data.id['EstDist_Mpc']
         hub_morphology_viewer.state.y_att = galaxy_data.id['velocity_km_s']
-        update_figure_css(hub_morphology_viewer, style_path=default_style_path)
+        update_figure_css(hub_morphology_viewer, style_path=self.default_style_path)
 
         # Set up the listener to sync the histogram <--> scatter viewers
         meas_data = self.data_collection["HubbleData_ClassSample"]
@@ -550,7 +551,7 @@ class Application(v.VuetifyTemplate):
                 restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
                 self._new_element_value_update(element, index)
                 self._new_restwave_value_update(restwave, index)
-            update_figure_css(spectrum_viewer, style_path=spectrum_style_path)
+            update_figure_css(spectrum_viewer, style_path=self.spectrum_style_path)
 
         galaxy_table.observe(galaxy_table_selected_changed, names=['selected'])
 
@@ -743,8 +744,8 @@ class Application(v.VuetifyTemplate):
         """
         return self._application_handler.data_collection
 
-    def vue_toggle_darkmode(self, args):
-        v.theme.dark = not v.theme.dark
+    def _theme_toggle(self, darkmode):
+        v.theme.dark = darkmode
 
     def vue_fit_lines(self, args):
         """
