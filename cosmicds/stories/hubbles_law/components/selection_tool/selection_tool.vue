@@ -76,6 +76,6 @@
 
 .wwt-widget .p-Widget, .wwt-widget iframe {
   height: 400px !important;
-  width: 100%;
+  width: 100% !important;
 }
 </style>
