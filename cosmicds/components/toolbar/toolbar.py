@@ -8,8 +8,13 @@ from glue.viewers.common.tool import Tool, CheckableTool
 class Toolbar(VuetifyTemplate):
 
     TOOL_ICONS = {
-        'bqplot:xzoom' : 'mdi-magnify',
+        'bqplot:xzoom' : 'mdi-select-search',
+        'bqplot:yzoom': 'mdi-select-search',
+        'bqplot:rectzoom': 'mdi-select-search',
         'bqplot:home' : 'mdi-home',
+        'bqplot:xrange': 'mdi-select-drag',
+        'bqplot:yrange': 'mdi-select-drag',
+        'bqplot:rectangle': 'mdi-select-drag',
         'hubble:restwave' : 'mdi-lambda'
     }
 
