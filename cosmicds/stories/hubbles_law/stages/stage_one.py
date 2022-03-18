@@ -1,3 +1,7 @@
+from os import listdir
+from os.path import join
+from pathlib import Path
+
 from echo import add_callback, remove_callback, ignore_callback, CallbackDict, CallbackList, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
@@ -9,8 +13,8 @@ from cosmicds.utils import load_template
 from cosmicds.viewers.spectrum_view import SpectrumView
 from cosmicds.phases import Stage
 from cosmicds.components.table import Table
-from cosmicds.components.selection_tool import SelectionTool
-from cosmicds.stories.hubbles_law.components.generic_state_component import GenericStateComponent
+from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
+from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
 import logging
@@ -20,49 +24,32 @@ log = logging.getLogger()
 class StageState(State):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
-    spectrum_tool_visible = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     marker = CallbackProperty("")
     indices = CallbackProperty({})
-    advance_marker = CallbackProperty(False)
-    retreat_marker = CallbackProperty(False)
 
     markers = CallbackProperty([
-        #'exp_sky',
         'sel_gal1',
         'cho_row1',
         'mee_spe1',
         'res_wav1',
         'obs_wav1',
-        'rep_rem1'
+        'rep_rem1',
+        'nic_wor1'
     ])
 
     step_markers = CallbackProperty([
-        #'exp_sky',
         'sel_gal1',
-        'mee_spe1'
+        'mee_spe1',
     ])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.marker = self.markers[0]
         self.indices = { marker : idx for idx, marker in enumerate(self.markers) }
-        add_callback(self, 'advance_marker', self.move_marker_forward)
-        add_callback(self, 'retreat_marker', self.move_marker_backward)
 
-    def move_marker_forward(self, value=None):
-        index = min(self.current_index(), len(self.markers)-1)
-        self.marker = self.markers[index]
-
-    def move_marker_backward(self, value=None):
-        index = max(self.current_index() - 1, 0)
-        self.marker = self.markers[index]
-
-    def index(self, marker):
-        return self.indices[marker]
-
-    def current_index(self):
-        return self.index(self.marker)
+    def marker_before(self, marker):
+        return self.indices[self.marker] < self.indices[marker]
 
 @register_stage(story="hubbles_law", index=1, steps=[
     #"Explore celestial sky",
@@ -90,7 +77,7 @@ class StageOne(Stage):
 
         self.stage_state = StageState()
 
-        # Setup viewers
+        # Set up viewers
         spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
         spectrum_viewer.add_event_callback(self.on_spectrum_click, events=['click'])
 
@@ -99,7 +86,7 @@ class StageOne(Stage):
                       'hub_morphology_viewer', 'hub_prodata_viewer']:
             self.add_viewer(BqplotScatterView, label=label)
 
-        # Setup widgets
+        # Set up widgets
         galaxy_table = Table(self.session,
                              data=self.get_data('student_measurements'),
                              glue_components=['ID',
@@ -119,51 +106,41 @@ class StageOne(Stage):
         galaxy_table.row_click_callback = self.on_galaxy_row_click
         galaxy_table.observe(self.galaxy_table_selected_change, names=["selected"])
 
-        # Setup components
+        # Set up components
         sdss_data = self.get_data("SDSS_all_sample_filtered")
         selection_tool = SelectionTool(data=sdss_data)
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
 
-        # These names should match the names of the .vue files
-        # just without the extensions
-        state_components = [
-            "restwave_alert",
-            "obswave_alert",
-            "remaining_gals_alert",
-            "select_galaxies_guidance",
-            "spectrum_guidance",
-            "choose_row_alert",
-            "nice_work_alert"
-        ]
-        for component in state_components:
-            label = f"c-{component}".replace("_", "-")
-            component = GenericStateComponent(component, self.stage_state)
+        # Set up the generic state components
+        state_components_dir = str(Path(__file__).parent.parent / "components" / "generic_state_components")
+        state_component_files = [ f for f in listdir(state_components_dir) if f.endswith(".vue") ]
+        ext_len = len(".vue")
+        path = join(state_components_dir, "")
+        for filename in state_component_files:
+            label = f"c-{filename}"[:-ext_len].replace("_", "-")
+            component = GenericStateComponent(filename, path, self.stage_state)
             self.add_component(component, label=label)
 
+        # Callbacks
         def update_count(change):
             self.stage_state.gals_total = change["new"]
         selection_tool.observe(update_count, names=['selected_count'])
-
         add_callback(self.stage_state, 'marker', self._on_marker_update, echo_old=True)
         add_callback(self.story_state, 'step_index', self._on_step_index_update)
         self.trigger_marker_update_cb = True
 
     def _on_marker_update(self, old, new):
-        print("In _on_marker_update", old, new)
         if not self.trigger_marker_update_cb:
             return
         markers = self.stage_state.markers
         advancing = markers.index(new) > markers.index(old)
-        # step_item = self.story_state.stages[self.story_state.stage_index]['steps'][self.story_state.step_index]
-        # completed = step_item['completed']
         if new in self.stage_state.step_markers and advancing:
             self.story_state.step_complete = True
             self.story_state.step_index = self.stage_state.step_markers.index(new)
 
     def _on_step_index_update(self, index):
-        print("In _on_step_index_update", index)
-        
+        # Change the marker without firing the associated stage callback
         # We can't just use ignore_callback, since other stuff (i.e. the frontend)
         # may depend on marker callbacks
         self.trigger_marker_update_cb = False
@@ -237,13 +214,6 @@ class StageOne(Stage):
         filename = name
         spec_data = self.story_state.load_spectrum_data(filename, gal_type)
 
-        # If this is the first selection we're making
-        # we want to move the app forward
-        # TODO
-
-        # Update the data in the spectrum viewer,
-        # if we're far enough in the story
-        # TODO: Express this condition in the right way
         z = galaxy["Z"]
         self.story_state.update_data("spectrum_data", spec_data)
         self.update_spectrum_viewer(name, z)

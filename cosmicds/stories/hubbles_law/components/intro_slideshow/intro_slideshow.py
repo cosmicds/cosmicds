@@ -4,7 +4,7 @@ from astropy.coordinates import SkyCoord
 from traitlets import Int, Bool, Unicode
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV
-from cosmicds.components.exploration_tool import ExplorationTool
+from cosmicds.stories.hubbles_law.components.exploration_tool import ExplorationTool
 
 #theme_colors()
 

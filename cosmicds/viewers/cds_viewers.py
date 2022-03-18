@@ -7,8 +7,8 @@ from glue_jupyter.bqplot.histogram import BqplotHistogramView
 
 from cosmicds.components.toolbar import Toolbar
 
-def cds_viewer(ViewerClass, viewer_tools):
-    class CDSViewer(ViewerClass):
+def cds_viewer(viewer_class, viewer_tools):
+    class CDSViewer(viewer_class):
 
         inherit_tools = False
         tools = viewer_tools

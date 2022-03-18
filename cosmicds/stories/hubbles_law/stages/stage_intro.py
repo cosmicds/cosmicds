@@ -1,6 +1,5 @@
 from glue.core.state_objects import State
 from traitlets import default
-from cosmicds.stories.hubbles_law.components import intro_slideshow
 
 from cosmicds.stories.hubbles_law.components.intro_slideshow import IntroSlideshow
 from cosmicds.phases import Stage

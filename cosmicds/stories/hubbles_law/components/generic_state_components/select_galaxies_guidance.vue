@@ -1,6 +1,5 @@
 <template>
   <v-alert
-    :class="state.marker == 'sel_gal1' ? 'd-block' : 'd-none'"
     color="info"
     class="mb-4 mx-auto"
     max-width="800"

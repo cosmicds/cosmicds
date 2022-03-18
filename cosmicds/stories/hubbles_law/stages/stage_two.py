@@ -3,9 +3,9 @@ import logging
 from echo import CallbackProperty, add_callback
 from glue.core.state_objects import State
 from traitlets import default
-from cosmicds.components.distance_sidebar.distance_sidebar import DistanceSidebar
 
-from cosmicds.components.distance_tool import DistanceTool
+from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSidebar
+from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
 from cosmicds.phases import Stage
 from cosmicds.registries import register_stage

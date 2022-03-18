@@ -32,7 +32,8 @@
       </v-col>
     </v-row>
     <v-row
-      :class="stage_state.marker == 'sel_gal1' || stage_state.marker == 'cho_row1' ? 'd-block' : 'd-none'">
+      :class="stage_state.marker == 'sel_gal1' || stage_state.marker == 'cho_row1' ? 'd-block' : 'd-none'"
+      >
       <c-select-galaxies-guidance
         v-if="stage_state.marker == 'sel_gal1'" />
       <c-choose-row-alert
@@ -71,7 +72,9 @@
             :disabled="!stage_state.waveline_set"
             class="white-text"
             color="green"
-            @click="add_current_velocity()"
+            @click="
+              add_current_velocity();
+            "
           >find velocity
           </v-btn>
         </v-alert>
@@ -105,6 +108,7 @@
                 button-text="do"
                 close-text="submit"
                 @submit="
+                  stage_state.marker = story_state.stage_index = 2;
                   console.log('Submit button was clicked.');
                 "
               >
