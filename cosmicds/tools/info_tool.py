@@ -6,7 +6,7 @@ from traitlets import Bool
 @viewer_tool
 class InfoTool(Tool):
 
-    tool_id = "hubble:info"
+    tool_id = "cds:info"
     action_text = "Show information"
     tool_tip = "Show informational dialog"
 

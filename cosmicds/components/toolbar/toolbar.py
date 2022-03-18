@@ -15,6 +15,7 @@ class Toolbar(VuetifyTemplate):
         'bqplot:xrange': 'mdi-select-drag',
         'bqplot:yrange': 'mdi-select-drag',
         'bqplot:rectangle': 'mdi-select-drag',
+        'cds:info': 'mdi-information-outline',
         'hubble:restwave' : 'mdi-lambda'
     }
 

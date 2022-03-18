@@ -11,7 +11,7 @@ from cosmicds.components.toolbar import Toolbar
 from cosmicds.stories.hubbles_law.utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
 # We need to import these so that they get loaded into the registry first
-from cosmicds.tools import BqplotXZoom
+from cosmicds.tools import BqplotXZoom, InfoTool
 from cosmicds.stories.hubbles_law.tools.rest_wavelength_tool import RestWavelengthTool
 
 __all__ = ['SpectrumView', 'SpectrumViewerState']
@@ -27,7 +27,7 @@ class SpectrumViewerState(ScatterViewerState):
 class SpectrumView(BqplotScatterView):
 
     inherit_tools = False
-    tools = ['bqplot:home', 'bqplot:xzoom', 'hubble:restwave']
+    tools = ['bqplot:home', 'bqplot:xzoom', 'hubble:restwave', 'cds:info']
     _state_cls = SpectrumViewerState
     show_line = Bool(True)
     LABEL = "Spectrum Viewer"
