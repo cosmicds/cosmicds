@@ -6,6 +6,7 @@ from cosmicds.phases import Story
 from cosmicds.registries import story_registry
 import numpy as np
 from glue.core import Data
+import ipyvuetify as v
 
 
 @story_registry(name="hubbles_law")
@@ -45,6 +46,8 @@ class HubblesLaw(Story):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self._set_theme()
+
         # Load data needed for Hubble's Law
         data_dir = Path(__file__).parent / "data"
         output_dir = data_dir / "hubble_simulation" / "output"
@@ -72,3 +75,66 @@ class HubblesLaw(Story):
                for x in ["ID", "RA", "DEC", "Z", "Type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
                          "Element"]}))
+
+        # Make all data writeable
+        for data in self.data_collection:
+            self.make_data_writeable(data)
+
+    def make_data_writeable(self, data):
+        for comp in data.main_components:
+            data[comp.label].setflags(write=True)
+
+    def _set_theme(self):
+        v.theme.dark = True
+        v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
+        v.theme.themes.light.primary = 'colors.lightBlue.darken3'
+        v.theme.themes.dark.secondary = 'colors.lightBlue.darken4'
+        v.theme.themes.light.secondary = 'colors.lightBlue.darken4'
+        v.theme.themes.dark.accent = 'colors.amber.accent2'
+        v.theme.themes.light.accent = 'colors.amber.accent3'
+        v.theme.themes.dark.info = 'colors.deepOrange.darken3'
+        v.theme.themes.light.info = 'colors.deepOrange.lighten2'
+        v.theme.themes.dark.success = 'colors.green.accent2'
+        v.theme.themes.light.success = 'colors.green.accent2'
+        v.theme.themes.dark.warning = 'colors.lightBlue.darken4'
+        v.theme.themes.light.warning = 'colors.lightBlue.lighten4'
+        v.theme.themes.dark.anchor = ''
+        v.theme.themes.light.anchor = ''
+
+    def load_spectrum_data(self, spectrum, gal_type):
+        type_folders = {
+            "Sp" : "spirals_spectra",
+            "E" : "ellipticals_spectra",
+            "Ir" : "irregulars_spectra"
+        }
+        name = spectrum.split(".")[0]
+        spectra_path = Path(__file__).parent / "data" / "spectra"
+        folder = spectra_path / type_folders[gal_type]
+        path = str(folder / spectrum)
+        data_name = name + '[COADD]'
+
+        # Don't load data that we've already loaded
+        dc = self.data_collection
+        if data_name not in dc:
+            self.app.load_data(path, label=name)
+            data = dc[data_name]
+            data['lambda'] = 10 ** data['loglam']
+            dc.remove(dc[name + '[SPECOBJ]'])
+            dc.remove(dc[name + '[SPZLINE]'])
+            self.make_data_writeable(data)
+        return dc[data_name]
+
+    def update_data(self, label, new_data):
+        dc = self.data_collection
+        if label in dc:
+            data = dc[label]
+            data.update_values_from_data(new_data)
+            data.label = label
+        else:
+            main_comps = [x.label for x in new_data.main_components]
+            components = { col: list(new_data[col]) for col in main_comps }
+            data = Data(label=label, **components)
+            self.make_data_writeable(data) 
+            dc.append(data)
+
+

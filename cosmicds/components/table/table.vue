@@ -14,12 +14,12 @@
     <v-data-table
       dense
       v-model="selected"
+      @click:row="(item, data) => handle_row_click(item, data)"
       :headers="headers"
       :items="items"
       :search="search"
       :single-select="single_select"
       :item-key="key_component"
-      show-select
       hide-default-footer
     >
     </v-data-table>

@@ -89,6 +89,7 @@
                 <v-list-item
                     v-for="(step, i) in story_state.stages[key].steps"
                     :key="i"
+                    :disabled="i > 0 && !story_state.stages[key].steps[i-1].completed"
                 >
                   <v-list-item-action>
                     <template v-if="step.completed">
@@ -172,7 +173,90 @@
 </template>
 
 <script>
-module.exports = {
+export default {
+  mounted() {
+    if (this.$data.story_state.use_mathjax) {
+      window.MathJax = {
+        tex: {packages: {'[+]': ['input']}},
+        startup: {
+          ready() {
+            const Configuration = MathJax._.input.tex.Configuration.Configuration;
+            const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+            const TEXCLASS = MathJax._.core.MmlTree.MmlNode.TEXCLASS;
+            
+            new CommandMap('input', {input: 'Input'}, {
+              Input(parser, name) {
+                const xml = parser.create('node', 'XML');
+                const id = parser.GetBrackets(name, '');
+                const cls = parser.GetBrackets(name, '');
+                const value = parser.GetArgument(name);
+                xml.setXML(MathJax.startup.adaptor.node('input', {
+                  id: id, class: cls, value: value, xmlns: 'http://www.w3.org/1999/xhtml'
+                }), MathJax.startup.adaptor);
+                xml.getSerializedXML = function () {
+                  return this.adaptor.outerHTML(this.xml) + '</input>';
+                }
+                parser.Push(
+                  parser.create('node', 'TeXAtom', [
+                    parser.create('node', 'semantics', [
+                      parser.create('node', 'annotation-xml', [
+                        xml
+                      ], {encoding: 'application/xhtml+xml'})
+                    ])
+                  ], {texClass: TEXCLASS.ORD})
+                );
+              }
+            });
+            Configuration.create('input', {handler: {macro: ['input']}});
+
+            MathJax.startup.defaultReady();
+          }
+        }
+      };
+
+      // Grab MathJax itself
+      const mathJaxScript = document.createElement('script');
+      mathJaxScript.async = false;
+      mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
+      document.head.appendChild(mathJaxScript);
+
+      // Not all of our elements are initially in the DOM,
+      // so we need to account for that in order to get MathJax
+      // to render their formulae properly
+      const mathJaxOpeningDelimiters = [ "$$", "\\(", "\\[" ];
+      const containsMathJax = node => mathJaxOpeningDelimiters.some(delim => node.innerHTML.includes(delim));
+      const elementToScan = node => node.nodeType === Node.ELEMENT_NODE;
+      const mathJaxCallback = function(mutationList, _observer) {
+        mutationList.forEach(mutation => {
+          if (mutation.type === 'childList') {
+
+            const needTypesetting = [];
+            mutation.addedNodes.forEach(node => {
+              if (elementToScan(node) && containsMathJax(node)) {
+                needTypesetting.push(node);
+              }
+            });
+            if (needTypesetting.length > 0) {
+              MathJax.typesetPromise(needTypesetting);
+            }
+
+            const toClear = [];
+            mutation.removedNodes.forEach(node => {
+              if (elementToScan(node) && containsMathJax(node)) {
+                toClear.push(node);
+              }
+            })
+            if (toClear.length > 0) {
+              MathJax.typesetClear(toClear);
+            }
+          }
+        });
+      }
+      const observer = new MutationObserver(mathJaxCallback);
+      const options = { childList: true, subtree: true };
+      observer.observe(this.$el, options);
+    }
+  },
   methods: {
     getCurrentStage: function () {
       return this.$data.story_state.stages[this.$data.story_state.stage_index];

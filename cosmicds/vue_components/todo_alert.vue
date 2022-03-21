@@ -6,6 +6,9 @@
     icon="mdi-wrench-outline"
     class="pa-5 my-2 text-body-2"
   >
+    <div>
+      <strong>To Do Burst</strong>
+    </div>
     <slot></slot>
   </v-alert>
 </template>

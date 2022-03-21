@@ -5,6 +5,7 @@ from cosmicds.components.viewer_layout import ViewerLayout
 
 from cosmicds.mixins import TemplateMixin, HubMixin
 from cosmicds.utils import load_template
+from glue.core import Data
 from glue.core.state_objects import State
 from echo import DictCallbackProperty, CallbackProperty, add_callback
 
@@ -54,10 +55,12 @@ class Stage(TemplateMixin):
         self._session = session
         self.story_state = story_state
 
-    def add_viewer(self, cls, label, data=None, layout=ViewerLayout):
+    def add_viewer(self, cls, label, data=None, layout=ViewerLayout, show_toolbar=True):
         viewer = self.app.new_data_viewer(cls, data=data, show=False)
         current_viewers = {k: v for k, v in self.viewers.items()}
-        current_viewers.update({label: layout(viewer)})
+        viewer_layout = layout(viewer)
+        viewer_layout.show_toolbar = show_toolbar
+        current_viewers.update({label: viewer_layout})
         self.viewers = current_viewers
 
         return viewer
@@ -68,7 +71,10 @@ class Stage(TemplateMixin):
         self.widgets = current_widget
 
     def get_viewer(self, label):
-        return self.viewers[label]
+        return self.viewers[label].viewer
+
+    def get_widget(self, label):
+        return self.widgets[label]
 
     def set_viewer_attributes(self, viewer, dc_name, **kwargs):
         data = self.data_collection[dc_name]
@@ -80,7 +86,7 @@ class Stage(TemplateMixin):
         from_dc = self.data_collection[from_dc_name]
         to_dc = self.data_collection[to_dc_name]
 
-        self.app.link_data(from_dc, from_att, to_dc, to_att)
+        self.app.add_link(from_dc, from_att, to_dc, to_att)
 
     def add_component(self, component, label):
         if self.components is None:
@@ -90,12 +96,34 @@ class Stage(TemplateMixin):
         current_components.update({label: component})
         self.components = current_components
 
+    def get_component(self, label):
+        return self.components[label]
+
+    def add_data(self, data):
+        self.data_collection.append(data)
+
     def get_data(self, dc_name):
         return self.data_collection[dc_name]
 
     def get_data_component(self, dc_name, id):
         data = self.data_collection[dc_name]
         return data.id[id]
+
+    def update_data_value(self, dc_name, comp_name, value, index):
+        data = self.data_collection[dc_name]
+        values = data[comp_name]
+        values[index] = value
+        data.update_components({data.id[comp_name] : values})
+
+    def add_data_values(self, dc_name, values):
+        data = self.data_collection[dc_name]
+        main_components = [x.label for x in data.main_components]
+        component_dict = {c : list(data[c]) for c in main_components}
+        for component, vals in component_dict.items():
+            vals.append(values.get(component, None))
+        new_data = Data(label=data.label, **component_dict)
+        self.story_state.make_data_writeable(new_data)
+        data.update_values_from_data(new_data)
 
     def vue_set_step_index(self, value):
         self.story_state.step_index = value

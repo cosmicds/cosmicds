@@ -1,14 +1,43 @@
 <template>
-  <div id="measurer-root">
-    <canvas
-      v-show="measuring"
-      id="canvas"
-      ref="canvas">
-    </canvas>
-    <jupyter-widget
-      :widget="widget"
-      id="widget"
-    />
+  <div id="distance-root">
+    <v-toolbar
+      color="secondary"
+      dense
+      dark
+    >
+      <v-toolbar-title>Estimate Distance</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon
+            v-bind="attrs"
+            v-on="on"
+            :disabled="!measuring_allowed || view_changing"
+            @click="toggle_measuring()"
+          >
+            <v-icon>mdi-ruler</v-icon>
+          </v-btn>
+        </template>
+        {{ measuring ? 'Stop measuring' : 'Start measuring'}}
+      </v-tooltip>
+
+      <v-btn icon>
+        <v-icon>mdi-information-outline</v-icon>
+      </v-btn>
+    </v-toolbar>
+    <div class="distance-content">
+      <canvas
+        v-show="measuring"
+        class="distance-canvas"
+        ref="canvas">
+      </canvas>
+      <v-lazy>
+        <jupyter-widget
+          :widget="widget"
+          class="wwt-widget"
+        />
+      </v-lazy>
+    </div>
   </div>
 </template>
 
@@ -81,11 +110,14 @@ export default {
 
     addInitialPoint: function(event) {
 
+      console.log(this.canvas);
+
       // If we haven't put the first point down
       const coordinates = this.position(event);
       if (this.startPoint == null) {
         this.startPoint = coordinates;
         this.drawPoint(this.startPoint, 1);
+        console.log(`Drew startPoint: ${JSON.stringify(this.startPoint)}`);
         this.canvas.onmousemove = (e) => this.lineFollow(e, false);
 
       // If we haven't put the second point down
@@ -158,10 +190,14 @@ export default {
     handleResize: function() {
       const oldWidth = this.canvas.width;
       const oldHeight = this.canvas.height;
-      this.canvas.width = this.$el.clientWidth;
-      this.canvas.height = this.$el.clientHeight;
-      const newWidth = this.$el.clientWidth;
-      const newHeight = this.$el.clientHeight;
+      const referenceElement = this.canvas.parentElement;
+      this.canvas.width = referenceElement.clientWidth;
+      this.canvas.height = referenceElement.clientHeight;
+      console.log("Resize");
+      console.log(referenceElement.clientWidth);
+      console.log(referenceElement.clientHeight);
+      const newWidth = referenceElement.clientWidth;
+      const newHeight = referenceElement.clientHeight;
       if (newWidth === 0 || newHeight === 0) {
         this.canvas.width = oldWidth;
         this.canvas.height = oldHeight;
@@ -294,25 +330,33 @@ export default {
 </script>
 
 <style scoped>
-#measurer-root {
-  height: 400px;
+#selection-root {
+  --toolbar-height: 48px;
+  --widget-height: 400px;
+  height: calc(var(--toolbar-height) + var(--widget-height));
   width: 100%;
-  position: relative;
 }
 
-#widget {
+.distance-content {
   width: 100%;
-  height: 100%;
+  height: 400px;
+}
+
+.wwt-widget, .distance-canvas {
+  height: 400px;
+  width: 100%;
+  position: absolute;
+}
+
+.wwt-widget .p-Widget, .wwt-widget iframe {
+  height: 400px !important;
+  width: 100%;
   z-index: 15;
 }
 
-#canvas {
+.distance-canvas {
   background: transparent;
   z-index: 20;
-}
-
-#widget, #canvas {
-  position: absolute;
 }
 
 .pointer {

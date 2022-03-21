@@ -3,11 +3,11 @@
     text
     prominent
     color="pink darken-1"
-    icon="mdi-format-list-numbered"
+    icon="mdi-head-snowflake"
     class="pa-5 my-2 text-body-2"
   >
     <div>
-      <strong>Worksheet Form Dialog</strong>
+      <strong>Reflection Dialog</strong>
     </div>
     <slot></slot>
   </v-alert>

@@ -1,24 +1,40 @@
 import json
 import os
 
-from astropy import units as u
-from bqplot.scales import LinearScale
-from bqplot_image_gl import LinesGL
-from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
-from glue_jupyter.bqplot.scatter.layer_artist import BqplotScatterLayerArtist
 import numpy as np
+from threading import Timer
 from traitlets import Unicode
 
-try:
-    from astropy.cosmology import Planck18 as planck
-except ImportError:
-    from astropy.cosmology import Planck15 as planck
-
 __all__ = [
-    'age_in_gyr', 'load_template', 'update_figure_css',
-    'extend_tool', 'line_mark', 'vertical_line_mark'
+    'load_template', 'update_figure_css', 'extend_tool',
+    'RepeatedTimer'
 ]
 
+# JC: I got this from https://stackoverflow.com/a/13151299
+class RepeatedTimer(object):
+    def __init__(self, interval, function, *args, **kwargs):
+        self._timer     = None
+        self.interval   = interval
+        self.function   = function
+        self.args       = args
+        self.kwargs     = kwargs
+        self.is_running = False
+        self.start()
+
+    def _run(self):
+        self.is_running = False
+        self.start()
+        self.function(*self.args, **self.kwargs)
+
+    def start(self):
+        if not self.is_running:
+            self._timer = Timer(self.interval, self._run)
+            self._timer.start()
+            self.is_running = True
+
+    def stop(self):
+        self._timer.cancel()
+        self.is_running = False
 
 def load_template(file_name, path=None, traitlet=False):
     """

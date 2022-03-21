@@ -1,7 +1,7 @@
 <template>
   <v-btn
-      color="warning"
-      dark
+      color="success"
+      class="black--text"
       @click.stop="dialog = true"
   >
     <v-icon

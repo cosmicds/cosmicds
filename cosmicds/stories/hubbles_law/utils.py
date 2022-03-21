@@ -1,13 +1,8 @@
-import json
-import os
-
 from astropy import units as u
 from bqplot.scales import LinearScale
 from bqplot_image_gl import LinesGL
 from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
 from glue_jupyter.bqplot.scatter.layer_artist import BqplotScatterLayerArtist
-import numpy as np
-from traitlets import Unicode
 
 try:
     from astropy.cosmology import Planck18 as planck
@@ -15,9 +10,30 @@ except ImportError:
     from astropy.cosmology import Planck15 as planck
 
 __all__ = [
-    'age_in_gyr', 'extend_tool', 'line_mark', 'vertical_line_mark'
+    'MILKY_WAY_SIZE_MPC', 'H_ALPHA_REST_LAMBDA',
+    'MG_REST_LAMBDA', 'GALAXY_FOV', 'FULL_FOV',
+    'angle_to_json', 'angle_from_json',
+    'age_in_gyr', 'format_fov', 'format_measured_angle',
+    'line_mark', 'vertical_line_mark',
 ]
 
+MILKY_WAY_SIZE_MPC = 0.03
+
+# Both in angstroms
+H_ALPHA_REST_LAMBDA = 6563
+MG_REST_LAMBDA = 5177
+
+GALAXY_FOV = 1.5 * u.arcmin
+FULL_FOV = 60 * u.deg
+
+def angle_to_json(angle, _widget):
+    return {
+        "value": angle.value,
+        "unit": angle.unit.name
+    }
+
+def angle_from_json(jsn, _widget):
+    return jsn["value"] * u.Unit(jsn["unit"])
 
 def age_in_gyr(H0):
     """
@@ -39,53 +55,11 @@ def age_in_gyr(H0):
     return age.value * unit.to(u.Gyr)
 
 
-def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
-    """
-    This function extends the functionality of a tool on a viewer toolbar
-    by adding callbacks that are activate upon tool item activation
-    and deactivation.
-
-    Parameters
-    ----------
-    viewer: `~glue.viewers.common.viewer.Viewer`
-        The glue viewer whose tool we want to modify.
-    tool_id: str
-        The id of the tool that we want to modify - e.g. 'bqplot:xrange'
-    activate_cb:
-        The callback to be executed before the tool's `activate` method. Takes no arguments.
-    deactivate_cb:
-        The callback to be executed after the tool's `deactivate` method. Takes no arguments.
-
-    """
-
-    tool = viewer.toolbar.tools.get(tool_id, None)
-    if not tool:
-        return None
-
-    activate = tool.activate
-    deactivate = tool.deactivate
-
-    def extended_activate():
-        if activate_cb:
-            activate_cb()
-        activate()
-
-    def extended_deactivate():
-        deactivate()
-        if deactivate_cb:
-            deactivate_cb()
-
-    tool.activate = extended_activate
-    tool.deactivate = extended_deactivate
-
-
 def format_fov(fov):
     return fov.to_string(unit=u.degree, sep=":", precision=0, pad=True) + " (dd:mm:ss)"
 
-
 def format_measured_angle(angle):
     return angle.to_string(unit=u.arcsec, precision=0)[:-6] + " arcseconds"
-
 
 def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
     """
@@ -124,7 +98,6 @@ def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
                    labels=[label] if label is not None else [],
                    display_legend=label is not None,
                    labels_visibility='label')
-
 
 def vertical_line_mark(layer, x, color, label=None):
     """

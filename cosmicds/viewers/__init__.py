@@ -1,1 +1,1 @@
-from .spectrum_view import *
+from .cds_viewers import CDSHistogramView, CDSScatterView

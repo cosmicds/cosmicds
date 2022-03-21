@@ -4,6 +4,7 @@ import os
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.state_traitlets_helpers import GlueState
 from ipyvuetify import VuetifyTemplate
+from ipywidgets import widget_serialization
 from traitlets import Dict, Bool
 from glue.core import HubListener
 
@@ -22,7 +23,8 @@ class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
     story_state = GlueState().tag(sync=True)
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
-    drawer = Bool(True).tag(sync=True)
+    drawer = Bool(False).tag(sync=True)
+    vue_components = Dict().tag(sync=True, **widget_serialization)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)

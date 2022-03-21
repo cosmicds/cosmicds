@@ -54,6 +54,8 @@ class Table(VuetifyTemplate, HubListener):
 
         self._subset_message_pass = False
 
+        self._row_click_callback = None
+
         # Populate the table with the current data in the collection
         self._populate_table()
 
@@ -161,4 +163,36 @@ class Table(VuetifyTemplate, HubListener):
         else:
             self._subset_message_pass = True
             self._subset_group.subset_state = state
+            
+    def indices_from_items(self, items):
+        state = self.subset_state_from_selected(items)
+        mask = state.to_mask(self.glue_data)
+        return [index for index in range(len(mask)) if mask[index]]
 
+    @property
+    def indices(self):
+        return self.indices_from_items(self.selected)
+
+    @property
+    def index(self):
+        if self.single_select:
+            return self.indices[0]
+        return None
+
+    @property
+    def row_click_callback(self):
+        return self._row_click_callback
+
+    @row_click_callback.setter
+    def row_click_callback(self, cb):
+        self._row_click_callback = cb
+
+    def vue_handle_row_click(self, item, data=None):
+        if self.row_click_callback:
+            self.row_click_callback(item, data)
+        if self.single_select:
+            self.selected = [item]
+        elif item in self.items:
+            self.items.remove(item)
+        else:
+            self.items.append(item)
