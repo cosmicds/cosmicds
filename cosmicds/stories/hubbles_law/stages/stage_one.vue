@@ -88,6 +88,8 @@
             cols="6"
           >
             <!-- FORM DIALOG as template for reflections/MC -->
+            <c-spectrum-slideshow />
+            <!--
             <guide-specvel-windows
               button-text="info"
               close-text="done"
@@ -96,7 +98,7 @@
                 stage_state.vel_win_unopened = 0;
               "
             >
-            </guide-specvel-windows>
+            </guide-specvel-windows> -->
           </v-col>
           <v-col
             cols="6"

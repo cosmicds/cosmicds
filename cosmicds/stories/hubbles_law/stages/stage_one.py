@@ -13,6 +13,7 @@ from cosmicds.stories.hubbles_law.viewers import SpectrumView
 from cosmicds.phases import Stage
 from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
+from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
@@ -74,6 +75,10 @@ class StageOne(Stage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        spectrum_slideshow = SpectrumSlideshow()
+        self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
+        #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
+        
         self.stage_state = StageState()
 
         # Set up viewers
