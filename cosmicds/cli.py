@@ -13,7 +13,7 @@ from cosmicds import __version__
 CONFIGS_DIR = os.path.join(os.path.dirname(__file__), 'configs')
 
 STORY_PATHS = {
-    'hubble': Path(__file__).parent.parent / "notebooks" / "Example.ipynb"
+    'hubble': Path(__file__).parent.parent / "notebooks" / "CosmicDS.ipynb"
 }
 
 
