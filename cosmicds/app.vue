@@ -111,6 +111,7 @@
       </v-stepper>
     </v-navigation-drawer>
 
+    <!--
     <v-navigation-drawer
         app
         clipped
@@ -142,7 +143,8 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-
+    -->
+    
     <v-main>
       <v-content>
         <v-container fluid>
