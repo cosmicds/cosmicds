@@ -15,22 +15,15 @@
     <v-dialog
         v-model="dialog"
         persistent
-        max-width="800px"
+        max-width="1000px"
     >
       <v-card
         class="mx-auto"
-        max-width="800"
       >
         <v-card-title
-          class="text-h6 font-weight-regular justify-space-between"
+          class="text-h6 font-weight-regular justify-space-between my-0"
         >
           <span>
-            <v-avatar
-              color="info"
-              class="subheading white--text mr-4"
-              size="24"
-              v-text="step"
-            ></v-avatar>
             {{ currentTitle }}
           </span>
           <span
@@ -47,14 +40,59 @@
         </v-card-title>
 
         <v-window
-          style="min-height: 250px;"
           v-model="step"
+          style="height: 70vh;"
+          class="overflow-auto"
         >
           <v-window-item :value="0" 
             class="no-transition"
           >
             <v-card-text>
-              Galaxies emit light.
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="6" 
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Refraction and Diffraction
+                    </h3>
+                    <div>
+                    <v-card
+                      class="mt-auto white--text"
+                      flat
+                      color="secondary"
+                    >                  
+                      <v-card-text>
+                        A spectrum is created when you pass light from a source through a spectrograph, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
+                      </v-card-text>
+                    </v-card>
+                    <br>               
+                      <p>
+                        The figure illustrates light passing through a diffraction grating (1) and a prism (2).
+                      </p>
+                      <p>
+                        Diffraction gratings and prisms &#8212; and raindrops, bubbles, and oil slicks &#8212; create spectra because they bend light of different colors by different amounts. See link for more details.
+                      </p>
+                    </div>
+                  </v-col>
+                  <v-col cols="1">
+                  </v-col>
+                  <v-col cols="4">
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/refraction_diffraction_spectra.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
@@ -63,20 +101,124 @@
             class="no-transition"
           >
             <v-card-text>
-              Pass light through a spectrometer which will separate the light into its different colors (like a prism) and tell you how much light there is at each color (or wavelength).
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="6" 
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Spectrum images and graphs
+                    </h3>
+                    <div>                    
+                      <v-card
+                        class="mt-auto white--text"
+                        flat
+                        color="secondary"
+                      > 
+                        <v-card-text>
+                          A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
+                        </v-card-text>
+                      </v-card>
+                      <br>
+                      <p>
+                        These graphics show sample spectra for two different types of light bulbs.
+                      </p>
+                      <p>
+                        The spectrum images (top) show what the light looks like when it is separated into its colors by the spectrograph. 
+                      </p>
+                      <p>
+                        The spectrum graphs (bottom) represent how bright the light is at each specific wavelength.
+                      </p>
+                    </div>
+
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Light spectrum for LED bulb
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/LED_White_spectool.png"
+                    ></v-img>
+                    <h4>
+                      Light spectrum for sodium vapor bulb
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/Sodium_Vapor_spectool.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
+
 
           <v-window-item :value="2" 
             class="no-transition"
           >
             <v-card-text>
-              <div>
-                Certain atoms and molecules absorb or emit light at very specific known wavelengths, creating bright spikes (emission lines) or faint dips (absorption lines) in the spectrum.
-              </div>
-              <div>
-                (Show images of sample spectra)
-              </div>
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="6" 
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Interpreting spectrum graphs
+                    </h3>
+                    <div>
+                      <v-card
+                        class="mt-auto white--text"
+                        flat
+                        color="secondary"
+                      > 
+                        <v-card-text>
+                          A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
+                        </v-card-text>
+                      </v-card>
+                      <br>
+                      <p>
+                        At wavelengths where the spectrum graph has a <strong>high brightness</strong> value, the spectrum image is <strong>brightly lit</strong> at the corresponding wavelengths.
+                      </p>
+                    </div>
+
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Light spectrum for LED bulb
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/LED_White_w_highlight_spectool.png"
+                    ></v-img>
+                    <h4>
+                      Light spectrum for sodium vapor bulb
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/Sodium_Vapor_w_highlight_spectool.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
@@ -84,9 +226,58 @@
             class="no-transition"
           >
             <v-card-text>
-              <div>
-                In your galaxy data, you will be looking for a specific hydrogen emission line (known as H-alpha) that emits at 6563 Angstroms at rest;  or a magnesium absorption line (known as Mg-II) that absorbs at ____ .
-              </div>
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="6"
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Interpreting spectrum graphs
+                    </h3>
+                    <div>
+                      <v-card
+                        class="mt-auto white--text"
+                        flat
+                        color="secondary"
+                      > 
+                        <v-card-text>
+                          A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
+                        </v-card-text>
+                      </v-card>
+                      <br>
+                      <p>
+                        At wavelengths where the spectrum graph has a <strong>low brightness</strong> value, the spectrum image is <strong>dim</strong> or <strong>dark</strong> at the corresponding wavelengths.
+                      </p>
+                    </div>
+
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Light spectrum for LED bulb
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/LED_White_w_neghighlight_spectool.png"
+                    ></v-img>
+                    <h4>
+                      Light spectrum for sodium vapor bulb
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/Sodium_Vapor_w_neghighlight_spectool.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
@@ -94,9 +285,37 @@
             class="no-transition"
           >
             <v-card-text>
-              <div>
-                Firetruck siren - pitch gets higher when the truck is moving toward you; lower when truck is moving away.
-              </div>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="6"
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      How do spectra tell us about a source's motion?
+                    </h3>
+                    <div>
+                      <p>
+                        You have probably heard the pitch of a fire truck siren change as the truck is moving toward or away from you. When the truck is moving toward you, the siren’s pitch is higher, and when the truck is moving away from you, the siren’s pitch is lower. The faster the truck is moving, the bigger the change in pitch.
+                      </p>
+                      <p>
+                        This is due to a phenomenon called the <strong>Doppler shift</strong>, where the observed properties of a sound wave change due to the motion of the object emitting the sound.
+                      </p>
+                    </div>
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Doppler Shift
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/siren_moving_white.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
@@ -104,16 +323,191 @@
             class="no-transition"
           >
             <v-card-text>
-              <div>
-                In the same way, wavelength of light gets shorter (bluer) when it’s moving toward you; longer (redder) when it’s moving away from you.
-              </div>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="6"
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      How do spectra tell us about a source's motion?
+                    </h3>
+                    <div>
+                      <p>
+                        The same <strong>Doppler shift</strong> happens with <strong>light</strong> (and all other wave phenomena), but a light source has to be moving very fast for you to notice these changes!
+                      </p>
+                      <p>
+                        When a light source moves <strong>away from you</strong>, you observe the light to have a <strong>longer (redder)</strong> wavelength than you would if the object were not moving. This effect is called <strong>redshift</strong>.
+                      </p>
+                      <p>
+                        When a light source moves <strong>toward you</strong>, you observe the light to have a <strong>shorter (bluer)</strong> wavelength than you would if the object were not moving. This effect is called <strong>blueshift</strong>.
+                      </p>
+                    </div>
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Doppler Shift
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/doppler_shift_light_white.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-text>
           </v-window-item>
 
           <v-window-item :value="6" 
             class="no-transition"
           >
-            <div class="pa-4 text-center">
+            <v-card-text>
+              <v-container>
+                <v-row no-gutters>
+                  <v-col>
+                    <h3
+                      class="mb-4"
+                    >
+                      How do we know the wavelength of the light when the source is at rest?
+                    </h3>
+                    <div>
+                      <p>
+                        A key to using the Doppler Shift to determine the velocity of an astronomical source is to know the wavelength of its light when it is <strong>not</strong> moving. (This is called the <strong>rest wavelength</strong> of light).
+                      </p>
+                      <p>
+                        Luckily, elements emit and absorb light at specific wavelengths that are unique to those elements, providing “chemical fingerprints” that we can use to identify the presence of an element in an astronomical source (like a star or a gas cloud). 
+                      </p>
+                      <p>
+                        This image shows the pattern of emission lines that are produced by four different elements. The emission line patterns are unique to each element.
+                      </p>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                    cols="2"
+                    class="d-flex flex-column"
+                    height="100%"
+                  >
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/carbon_atom_model.png"
+                    ></v-img>
+                    <v-img
+                      class="mt-auto mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/nitrogen_atom_model.png"
+                    ></v-img>
+                  </v-col>
+                  <v-col
+                    cols="8"
+                  >
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/stsci_spectrum_element_montage.jpg"
+                    ></v-img>
+                  </v-col>
+                  <v-col
+                    cols="2"
+                    class="d-flex flex-column"
+                    height="100%"
+                  >
+                    <v-row>
+                      <v-col>
+                        <v-img
+                          class="mx-a"
+                          contain
+                          src="../cosmicds/stories/hubbles_law/data/images/oxygen_atom_model.png"
+                        ></v-img>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <v-img
+                          class="mt-auto mx-a"
+                          contain
+                          src="../cosmicds/stories/hubbles_law/data/images/iron_atom_model.png"
+                        ></v-img>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-window-item>
+
+
+          <v-window-item :value="7" 
+            class="no-transition"
+          >
+            <v-card-text>
+              <v-container>
+                <v-row
+                >
+                  <v-col
+                    cols="6" 
+                    class="d-flex flex-column"
+                    height="100%"
+                    flat
+                    tile
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Emission and absorption lines in spectra
+                    </h3>
+                    <div>
+                      <p>
+                        The top spectrum shows <strong>emission lines</strong> from a source containing hydrogen.
+                      </p>
+                      <p>
+                        The bottom spectrum shows <strong>absorption lines</strong> due to hydrogen.
+                      </p>
+                      <p>
+                        Notice that in both spectra, the emission and absorption lines are present at the same combination of wavelengths (hydrogen’s “chemical fingerprint”).
+                      </p>
+                    </div>
+                    <v-card
+                      class="mt-auto white--text"
+                      flat
+                      color="secondary"
+                    > 
+                      <v-card-text>
+                        Elements emit light at specific wavelengths, and they can also absorb light at the same wavelengths, depending on the conditions associated with a light source.
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="6">
+                    <h4>
+                      Hydrogen emission spectrum
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/hydrogen_emission_spectool.png"
+                    ></v-img>
+                    <h4>
+                      Hydrogen absorption spectrum
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      src="../cosmicds/stories/hubbles_law/data/images/hydrogen_absorption_spectool.png"
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="8" 
+            class="no-transition"
+          >
+            <div class="pa-4 text-center my-auto">
               <v-img
                 class="mb-4"
                 contain
@@ -201,19 +595,21 @@ module.exports = {
   data: function () {
     return {
       step: 0,
-      length: 7,
+      length: 9,
       dialog: false
     };
   },
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 0: return 'Light'
-        case 1: return 'Spectrometer'
-        case 2: return 'Atom & Molecule Emissions'
-        case 3: return 'Lines to Look For'
-        case 4: return 'Doppler, pt. I'
-        case 5: return 'Doppler, pt. II'
+        case 0: return "Light and Spectra"
+        case 1: return "Light and Spectra"
+        case 2: return "Light and Spectra"
+        case 3: return "Light and Spectra"
+        case 4: return "Doppler Shift"
+        case 5: return "Doppler Shift"
+        case 6: return "Atom & Molecule Emissions"
+        case 7: return "Emission & Absorption"
         default: return 'Complete'
       }
     },
