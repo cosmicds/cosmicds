@@ -22,9 +22,20 @@
         <h2>Hubble's Law</h2>
       </v-toolbar-title>
 
-      <v-toolbar-title> Cosmic Data Stories</v-toolbar-title>
+      <v-toolbar-title>Cosmic Data Stories</v-toolbar-title>
 
       <v-spacer></v-spacer>
+
+      <v-btn
+        icon
+        @click="
+          reset_app()
+        "
+      >
+        <v-icon>
+          mdi-replay
+        </v-icon>
+      </v-btn>
 
       <v-responsive max-width="156">
         <v-text-field
