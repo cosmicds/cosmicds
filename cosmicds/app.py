@@ -25,6 +25,7 @@ class Application(VuetifyTemplate, HubListener):
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
     drawer = Bool(False).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
+    darkmode = Bool(True).tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -38,6 +39,8 @@ class Application(VuetifyTemplate, HubListener):
         # Subscribe to events
         self.hub.subscribe(self, WriteToDatabaseMessage,
                            handler=self._on_write_to_database)
+
+        self.observe(self._theme_toggle, names=['darkmode'])
 
     def reload(self):
         """
@@ -90,3 +93,5 @@ class Application(VuetifyTemplate, HubListener):
 
         stories.update_one({'student_user': user}, story_data, upsert=True)
 
+    def _theme_toggle(self, change):
+        v.theme.dark = change["new"]

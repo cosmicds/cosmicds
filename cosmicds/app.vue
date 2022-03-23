@@ -29,8 +29,7 @@
       <v-btn
         icon
         @click="
-          toggle_darkmode()
-          state.darkmode = !state.darkmode
+          darkmode = !darkmode
         "
       >
         <v-icon
