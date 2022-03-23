@@ -29,6 +29,17 @@
       <v-btn
         icon
         @click="
+          toggle_darkmode()
+          state.darkmode = !state.darkmode
+        "
+      >
+        <v-icon
+        >mdi-brightness-6</v-icon>
+      </v-btn>
+
+      <v-btn
+        icon
+        @click="
           reset_app()
         "
       >
@@ -55,7 +66,7 @@
           <v-list-item>
             <v-list-item-action>
               <v-avatar color="indigo">
-                <v-icon dark> mdi-account-circle</v-icon>
+                <v-icon dark>mdi-account-circle</v-icon>
               </v-avatar>
             </v-list-item-action>
 
