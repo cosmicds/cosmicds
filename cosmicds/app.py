@@ -20,7 +20,7 @@ v.theme.dark = True
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 database = client['cosmicds']
 
-class AppState(State):
+class ApplicationState(State):
     using_voila = CallbackProperty(False)
     dark_mode = CallbackProperty(True)
 
@@ -30,7 +30,7 @@ class Application(VuetifyTemplate, HubListener):
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
     drawer = Bool(False).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
-    app_state = AppState()
+    app_state = ApplicationState()
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
