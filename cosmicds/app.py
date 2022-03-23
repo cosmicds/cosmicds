@@ -26,6 +26,8 @@ class Application(VuetifyTemplate, HubListener):
     drawer = Bool(False).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
 
+    using_voila = Bool(True).tag(sync=True)
+
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

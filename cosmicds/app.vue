@@ -180,14 +180,12 @@ export default {
   mounted() {
 
     // Based on the approach used here: https://github.com/widgetti/ipyvuetify/blob/master/js/src/jupyterEnvironment.js
-    window.usingVoila = function() {
-      const item = []
+    const item = []
       .slice
       .call(document.getElementsByTagName('script'))
       .map(e => e.src)
       .find(e => e.includes('voila/static'));
-      return item !== undefined;
-    }
+    this.using_voila = item !== undefined;
 
     if (this.$data.story_state.use_mathjax) {
       window.MathJax = {
