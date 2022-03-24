@@ -8,7 +8,6 @@ import numpy as np
 from glue.core import Data
 import ipyvuetify as v
 
-
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
     measurements = DictCallbackProperty({
@@ -136,5 +135,3 @@ class HubblesLaw(Story):
             data = Data(label=label, **components)
             self.make_data_writeable(data) 
             dc.append(data)
-
-

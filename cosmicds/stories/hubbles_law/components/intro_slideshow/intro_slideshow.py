@@ -1,6 +1,7 @@
 import ipyvuetify as v
 import astropy.units as u
 from astropy.coordinates import SkyCoord
+from glue_jupyter.state_traitlets_helpers import GlueState
 from traitlets import Int, Bool, Unicode
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV
@@ -16,6 +17,7 @@ class IntroSlideshow(v.VuetifyTemplate):
     currentTitle = Unicode("").tag(sync=True)
     exploration_complete = Bool(False).tag(sync=True)
     intro_complete = Bool(False).tag(sync=True)
+    state = GlueState().tag(sync=True)
 
     _titles = [
         "Hubble Data Story",
@@ -28,7 +30,8 @@ class IntroSlideshow(v.VuetifyTemplate):
     ]
     _default_title = "Hubble Data Story"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, state, *args, **kwargs):
+        self.state = state
         exploration_tool = ExplorationTool()
         exploration_tool2 = ExplorationTool()
         exploration_tool3 = ExplorationTool()
