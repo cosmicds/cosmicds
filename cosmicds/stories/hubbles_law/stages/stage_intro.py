@@ -1,3 +1,4 @@
+from echo import add_callback, CallbackProperty
 from glue.core.state_objects import State
 from traitlets import default
 
@@ -7,7 +8,7 @@ from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
 
 class StageState(State):
-    pass
+    image_location = CallbackProperty()
 
 @register_stage(story="hubbles_law", index=0, steps=[
     "Introduction"
@@ -30,9 +31,12 @@ class StageIntro(Stage):
         super().__init__(*args, **kwargs)
 
         self.stage_state = StageState()
-        intro_slideshow = IntroSlideshow()
+        intro_slideshow = IntroSlideshow(self.stage_state)
         self.add_component(intro_slideshow, label='c-intro-slideshow')
         intro_slideshow.observe(self._on_slideshow_complete, names=['intro_complete'])
+
+        self.stage_state.image_location = "data/images"
+        add_callback(self.app_state, 'using_voila', self._update_image_location)
 
     @property
     def slideshow(self):
@@ -45,3 +49,7 @@ class StageIntro(Stage):
             # We need to do this so that the stage will be moved forward every
             # time the button is clicked, not just the first
             self.slideshow.intro_complete = False
+
+    def _update_image_location(self, using_voila):
+        prepend = "voila/files/" if using_voila else ""
+        self.stage_state.image_location = prepend + "data/images"
