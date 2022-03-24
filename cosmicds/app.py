@@ -1,6 +1,8 @@
 import ipyvuetify as v
 import pymongo
 import os
+from echo import CallbackProperty
+from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.state_traitlets_helpers import GlueState
 from ipyvuetify import VuetifyTemplate
@@ -18,6 +20,16 @@ v.theme.dark = True
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 database = client['cosmicds']
 
+class GlobalState(State):
+    using_voila = CallbackProperty(False)
+    dark_mode = CallbackProperty(True)
+
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(GlobalState, cls).__new__(cls)
+        return cls._instance
 
 class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
@@ -25,8 +37,7 @@ class Application(VuetifyTemplate, HubListener):
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
     drawer = Bool(False).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
-
-    using_voila = Bool(True).tag(sync=True)
+    global_state = GlobalState()
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -30,7 +30,7 @@ class StageIntro(Stage):
         super().__init__(*args, **kwargs)
 
         self.stage_state = StageState()
-        intro_slideshow = IntroSlideshow()
+        intro_slideshow = IntroSlideshow(self.story_state)
         self.add_component(intro_slideshow, label='c-intro-slideshow')
         intro_slideshow.observe(self._on_slideshow_complete, names=['intro_complete'])
 

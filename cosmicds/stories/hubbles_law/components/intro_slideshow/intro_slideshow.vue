@@ -41,10 +41,13 @@
                 </p>
               </v-col>
               <v-col cols="5">
-                <v-img
+                <!-- <v-img
                   lazy-src="https://astropix.ipac.caltech.edu/archive/esahubble/heic0406a/esahubble_heic0406a_320.jpg"
                   src="https://astropix.ipac.caltech.edu/archive/esahubble/heic0406a/esahubble_heic0406a_320.jpg"
                   alt="Image of distant galaxies taken by the Hubble Space Telescope"
+                ></v-img> -->
+                <v-img
+                  :src="`${state.image_location}/carbon_atom_model.png`"
                 ></v-img>
               </v-col>
             </v-row>
