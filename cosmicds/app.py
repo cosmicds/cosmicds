@@ -20,16 +20,9 @@ v.theme.dark = True
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 database = client['cosmicds']
 
-class GlobalState(State):
+class AppState(State):
     using_voila = CallbackProperty(False)
     dark_mode = CallbackProperty(True)
-
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(GlobalState, cls).__new__(cls)
-        return cls._instance
 
 class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
@@ -37,13 +30,13 @@ class Application(VuetifyTemplate, HubListener):
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
     drawer = Bool(False).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
-    global_state = GlobalState()
+    app_state = AppState()
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._application_handler = JupyterApplication()
-        self.story_state = story_registry.setup_story(story, self.session)
+        self.story_state = story_registry.setup_story(story, self.session, self.app_state)
 
         # Initialize from database
         self._initialize_from_database()

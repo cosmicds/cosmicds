@@ -30,8 +30,8 @@ class IntroSlideshow(v.VuetifyTemplate):
     ]
     _default_title = "Hubble Data Story"
 
-    def __init__(self, story_state, *args, **kwargs):
-        self.state = story_state
+    def __init__(self, state, *args, **kwargs):
+        self.state = state
         exploration_tool = ExplorationTool()
         exploration_tool2 = ExplorationTool()
         exploration_tool3 = ExplorationTool()

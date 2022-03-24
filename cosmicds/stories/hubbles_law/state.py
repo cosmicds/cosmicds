@@ -1,14 +1,12 @@
 from pathlib import Path
 
-from echo import add_callback, CallbackProperty, DictCallbackProperty
+from echo import DictCallbackProperty
 
-from cosmicds.app import GlobalState
 from cosmicds.phases import Story
 from cosmicds.registries import story_registry
 import numpy as np
 from glue.core import Data
 import ipyvuetify as v
-
 
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
@@ -43,15 +41,11 @@ class HubblesLaw(Story):
             "finished": True
         }
     })
-    image_location = CallbackProperty()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._set_theme()
-
-        self.image_location = "data/images"
-        add_callback(GlobalState(), 'using_voila', self._update_image_location)
 
         # Load data needed for Hubble's Law
         data_dir = Path(__file__).parent / "data"
@@ -141,7 +135,3 @@ class HubblesLaw(Story):
             data = Data(label=label, **components)
             self.make_data_writeable(data) 
             dc.append(data)
-
-    def _update_image_location(self, using_voila):
-        prepend = "voila/files/" if using_voila else ""
-        self.image_location = prepend + "data/images"
