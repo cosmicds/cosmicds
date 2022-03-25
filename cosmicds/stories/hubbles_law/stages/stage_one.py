@@ -8,7 +8,7 @@ from random import sample
 from traitlets import default
 
 from cosmicds.registries import register_stage
-from cosmicds.utils import load_template
+from cosmicds.utils import load_template, update_figure_css
 from cosmicds.stories.hubbles_law.viewers import SpectrumView
 from cosmicds.phases import Stage
 from cosmicds.components.table import Table
@@ -79,6 +79,12 @@ class StageOne(Stage):
         # Set up viewers
         spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
         spectrum_viewer.add_event_callback(self.on_spectrum_click, events=['click'])
+
+        # Set up viewer style   
+        style_dir = Path(__file__).parent.parent / "data" / "styles"
+        self.spectrum_style_path = style_dir / "default_spectrum_dark.json"
+
+        update_figure_css(spectrum_viewer, style_path=self.spectrum_style_path)
 
         for label in ['hub_const_viewer', 'hub_fit_viewer',
                       'hub_comparison_viewer', 'hub_students_viewer',
@@ -192,6 +198,8 @@ class StageOne(Stage):
             spec_data = self.get_data("spectrum_data")
             specview.add_data(spec_data)
         specview.state.reset_limits()
+        update_figure_css(specview, style_path=self.spectrum_style_path)
+        
         self.stage_state.waveline_set = False
 
         sdss = self.get_data("SDSS_all_sample_filtered")
