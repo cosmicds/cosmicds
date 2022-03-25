@@ -206,7 +206,7 @@ export default {
       .call(document.getElementsByTagName('script'))
       .map(e => e.src)
       .find(e => e.includes('voila/static'));
-    this.using_voila = item !== undefined;
+    this.app_state.using_voila = item !== undefined;
 
     if (this.$data.story_state.use_mathjax) {
       window.MathJax = {
