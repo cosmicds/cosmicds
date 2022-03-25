@@ -22,9 +22,30 @@
         <h2>Hubble's Law</h2>
       </v-toolbar-title>
 
-      <v-toolbar-title> Cosmic Data Stories</v-toolbar-title>
+      <v-toolbar-title>Cosmic Data Stories</v-toolbar-title>
 
       <v-spacer></v-spacer>
+
+      <v-btn
+        icon
+        @click="
+          app_state.dark_mode = !app_state.dark_mode
+        "
+      >
+        <v-icon
+        >mdi-brightness-6</v-icon>
+      </v-btn>
+
+      <v-btn
+        icon
+        @click="
+          reset_app()
+        "
+      >
+        <v-icon>
+          mdi-replay
+        </v-icon>
+      </v-btn>
 
       <v-responsive max-width="156">
         <v-text-field
@@ -44,7 +65,7 @@
           <v-list-item>
             <v-list-item-action>
               <v-avatar color="indigo">
-                <v-icon dark> mdi-account-circle</v-icon>
+                <v-icon dark>mdi-account-circle</v-icon>
               </v-avatar>
             </v-list-item-action>
 
@@ -185,7 +206,7 @@ export default {
       .call(document.getElementsByTagName('script'))
       .map(e => e.src)
       .find(e => e.includes('voila/static'));
-    this.using_voila = item !== undefined;
+    this.app_state.using_voila = item !== undefined;
 
     if (this.$data.story_state.use_mathjax) {
       window.MathJax = {
