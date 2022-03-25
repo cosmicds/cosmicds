@@ -25,12 +25,6 @@
           class="text-h6 font-weight-regular justify-space-between"
         >
           <span>
-            <v-avatar
-              color="info"
-              class="subheading white--text mr-4"
-              size="24"
-              v-text="step"
-            ></v-avatar>
             {{ currentTitle }}
           </span>
           <span
