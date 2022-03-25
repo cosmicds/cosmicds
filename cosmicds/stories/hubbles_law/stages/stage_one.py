@@ -81,7 +81,7 @@ class StageOne(Stage):
         self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
         #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
         
-        self.stage_state.image_location = "data/images"
+        self.stage_state.image_location = "data/images/stage_one_spectrum"
         add_callback(self.app_state, 'using_voila', self._update_image_location)
 
         # Set up viewers
@@ -271,7 +271,7 @@ class StageOne(Stage):
     
     def _update_image_location(self, using_voila):
         prepend = "voila/files/" if using_voila else ""
-        self.stage_state.image_location = prepend + "data/images"
+        self.stage_state.image_location = prepend + "data/images/stage_one_spectrum"
 
     @property
     def galaxy_table(self):
