@@ -27,6 +27,7 @@ class StageState(State):
     waveline_set = CallbackProperty(False)
     marker = CallbackProperty("")
     indices = CallbackProperty({})
+    image_location = CallbackProperty()
 
     markers = CallbackProperty([
         'sel_gal1',
@@ -75,11 +76,13 @@ class StageOne(Stage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        spectrum_slideshow = SpectrumSlideshow()
+        self.stage_state = StageState()
+        spectrum_slideshow = SpectrumSlideshow(self.stage_state)
         self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
         #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
         
-        self.stage_state = StageState()
+        self.stage_state.image_location = "data/images"
+        add_callback(self.app_state, 'using_voila', self._update_image_location)
 
         # Set up viewers
         spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
@@ -263,5 +266,14 @@ class StageOne(Stage):
         return self.get_component("c-selection-tool")
 
     @property
+    def slideshow(self):
+        return self.get_component('c-spectrum-slideshow')
+    
+    def _update_image_location(self, using_voila):
+        prepend = "voila/files/" if using_voila else ""
+        self.stage_state.image_location = prepend + "data/images"
+
+    @property
     def galaxy_table(self):
         return self.get_widget("galaxy_table")
+

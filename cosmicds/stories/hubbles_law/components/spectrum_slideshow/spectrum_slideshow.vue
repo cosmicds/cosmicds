@@ -87,9 +87,8 @@
                   <v-col cols="4">
                     <v-img
                       class="mb-4 mx-a"
-                      contain
-                      src="../cosmicds/stories/hubbles_law/data/images/refraction_diffraction_spectra.png"
-                    ></v-img>
+                      contain                      
+                      :src="`${state.image_location}/refraction_diffraction_spectra.png`"></v-img>
                   </v-col>
                 </v-row>
               </v-container>
@@ -146,7 +145,7 @@
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/LED_White_spectool.png"
+                      :src="`${state.image_location}/LED_White_spectool.png`"
                     ></v-img>
                     <h4>
                       Light spectrum for sodium vapor bulb
@@ -154,7 +153,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/Sodium_Vapor_spectool.png"
+                      :src="`${state.image_location}/Sodium_Vapor_spectool.png`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -206,7 +205,7 @@
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/LED_White_w_highlight_spectool.png"
+                      :src="`${state.image_location}/LED_White_w_highlight_spectool.png`"
                     ></v-img>
                     <h4>
                       Light spectrum for sodium vapor bulb
@@ -214,7 +213,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/Sodium_Vapor_w_highlight_spectool.png"
+                      :src="`${state.image_location}/Sodium_Vapor_w_highlight_spectool.png`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -265,7 +264,7 @@
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/LED_White_w_neghighlight_spectool.png"
+                      :src="`${state.image_location}/LED_White_w_neghighlight_spectool.png`"
                     ></v-img>
                     <h4>
                       Light spectrum for sodium vapor bulb
@@ -273,7 +272,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/Sodium_Vapor_w_neghighlight_spectool.png"
+                      :src="`${state.image_location}/Sodium_Vapor_w_neghighlight_spectool.png`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -311,7 +310,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/siren_moving_white.png"
+                      :src="`${state.image_location}/siren_moving_white.png`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -352,7 +351,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/doppler_shift_light_white.png"
+                      :src="`${state.image_location}/doppler_shift_light_white.png`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -394,12 +393,12 @@
                     <v-img
                       class="mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/carbon_atom_model.png"
+                      :src="`${state.image_location}/carbon_atom_model.png`"
                     ></v-img>
                     <v-img
                       class="mt-auto mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/nitrogen_atom_model.png"
+                      :src="`${state.image_location}/nitrogen_atom_model.png`"
                     ></v-img>
                   </v-col>
                   <v-col
@@ -408,7 +407,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/stsci_spectrum_element_montage.jpg"
+                      :src="`${state.image_location}/stsci_spectrum_element_montage.jpg`"
                     ></v-img>
                   </v-col>
                   <v-col
@@ -421,7 +420,7 @@
                         <v-img
                           class="mx-a"
                           contain
-                          src="../cosmicds/stories/hubbles_law/data/images/oxygen_atom_model.png"
+                          :src="`${state.image_location}/oxygen_atom_model.png`"
                         ></v-img>
                       </v-col>
                     </v-row>
@@ -430,7 +429,7 @@
                         <v-img
                           class="mt-auto mx-a"
                           contain
-                          src="../cosmicds/stories/hubbles_law/data/images/iron_atom_model.png"
+                          :src="`${state.image_location}/iron_atom_model.png`"
                         ></v-img>
                       </v-col>
                     </v-row>
@@ -488,7 +487,7 @@
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/hydrogen_emission_spectool.png"
+                      :src="`${state.image_location}/hydrogen_emission_spectool.png`"
                     ></v-img>
                     <h4>
                       Hydrogen absorption spectrum
@@ -496,7 +495,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      src="../cosmicds/stories/hubbles_law/data/images/hydrogen_absorption_spectool.png"
+                      :src="`${state.image_location}/hydrogen_absorption_spectool.png`"
                     ></v-img>
                   </v-col>
                 </v-row>

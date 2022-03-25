@@ -2,6 +2,7 @@ import ipyvuetify as v
 from pathlib import Path
 from traitlets import Int, Bool, Unicode
 from cosmicds.utils import load_template
+from glue_jupyter.state_traitlets_helpers import GlueState
 
 
 #theme_colors()
@@ -12,6 +13,7 @@ class SpectrumSlideshow(v.VuetifyTemplate):
     length = Int(9).tag(sync=True)
     dialog = Bool(False).tag(sync=True)
     currentTitle = Unicode("").tag(sync=True)
+    state = GlueState().tag(sync=True)
     #exploration_complete = Bool(False).tag(sync=True)
     #intro_complete = Bool(False).tag(sync=True)
 
@@ -26,16 +28,10 @@ class SpectrumSlideshow(v.VuetifyTemplate):
         "Emission & Absorption"
     ]
     _default_title = "Light and Spectra"
-    _default_image1 = str(Path(__file__).parents[1] / "data" / "images" / "refraction_diffraction_spectra.png")
 
-    image_path = str(Path(__file__).parents[1] / "data" / "images" / "")
-    print(image_path)
-
-
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self, story_state, *args, **kwargs):
+        self.state = story_state
         self.currentTitle = self._default_title
-        self.currentImage1 = self._default_image1
 
         def update_title(change):
             index = change["new"]
