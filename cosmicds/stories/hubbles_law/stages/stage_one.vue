@@ -67,27 +67,6 @@
           v-if="stage_state.marker == 'obs_wav1'" />
         <c-remaining-gals-alert
           v-if="stage_state.marker == 'rep_rem1'" />
-
-        <!-- This alert is temporary -->
-        <v-alert
-          :class="stage_state.waveline_set ? 'd-block' : 'd-none'"
-          border="left"
-          color="indigo"
-          dark
-          elevation="2"
-          class="mb-12">
-          <v-btn
-            :disabled="!stage_state.waveline_set"
-            class="white-text"
-            color="green"
-            @click="
-              add_current_velocity();
-            "
-          >
-            find velocity
-          </v-btn>
-        </v-alert>
-
         <c-nice-work-alert
           v-if="stage_state.marker == 'nic_wor1'" />
       </v-col>
@@ -110,6 +89,22 @@
           <v-col
             cols="6"
           >
+            <!-- This alert is temporary -->
+            <v-btn
+              :disabled="!stage_state.waveline_set"
+              class="white-text px-a"
+              width="100%"
+              color="green"
+              @click="
+                add_current_velocity();
+              "
+            >
+              find velocity
+            </v-btn>
+          </v-col>
+          <v-col
+            cols="3"
+          >
             <!-- FORM DIALOG as template for reflections/MC -->
             <guide-specvel-windows
               button-text="info"
@@ -122,7 +117,7 @@
             </guide-specvel-windows>
           </v-col>
           <v-col
-            cols="6"
+            cols="3"
           >
             <span
               :class="stage_state.waveline_set ? 'd-block' : 'd-none'"
