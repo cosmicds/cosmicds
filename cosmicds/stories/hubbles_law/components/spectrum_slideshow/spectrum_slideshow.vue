@@ -586,13 +586,3 @@
 }
 
 </style>
-
-
-
-<style>
-
-div {
-  color: "purple";
-}
-
-</style>

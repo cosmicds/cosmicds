@@ -25,7 +25,8 @@ class SpectrumSlideshow(v.VuetifyTemplate):
         "Doppler Shift",
         "Doppler Shift",
         "Atom & Molecule Emissions",
-        "Emission & Absorption"
+        "Emission & Absorption",
+        "Complete"
     ]
     _default_title = "Light and Spectra"
 
