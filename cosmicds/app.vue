@@ -29,7 +29,7 @@
       <v-btn
         icon
         @click="
-          darkmode = !darkmode
+          app_state.dark_mode = !app_state.dark_mode
         "
       >
         <v-icon
