@@ -1,7 +1,7 @@
 import ipyvuetify as v
 import pymongo
 import os
-from echo import CallbackProperty
+from echo import add_callback, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.state_traitlets_helpers import GlueState
@@ -30,11 +30,12 @@ class Application(VuetifyTemplate, HubListener):
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
     drawer = Bool(False).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
-    app_state = ApplicationState()
+    app_state = GlueState().tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.app_state = ApplicationState()
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
 
@@ -44,6 +45,8 @@ class Application(VuetifyTemplate, HubListener):
         # Subscribe to events
         self.hub.subscribe(self, WriteToDatabaseMessage,
                            handler=self._on_write_to_database)
+
+        add_callback(self.app_state, 'dark_mode', self._theme_toggle)
 
     def reload(self):
         """
@@ -96,3 +99,5 @@ class Application(VuetifyTemplate, HubListener):
 
         stories.update_one({'student_user': user}, story_data, upsert=True)
 
+    def _theme_toggle(self, dark):
+        v.theme.dark = dark
