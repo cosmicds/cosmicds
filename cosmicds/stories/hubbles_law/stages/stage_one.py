@@ -23,6 +23,7 @@ log = logging.getLogger()
 class StageState(State):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
+    vel_win_opened = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     marker = CallbackProperty("")
     indices = CallbackProperty({})
@@ -117,15 +118,15 @@ class StageOne(Stage):
         state_components_dir = str(Path(__file__).parent.parent / "components" / "generic_state_components")
         path = join(state_components_dir, "")
         state_components = [
-            "choose_row_alert",
-            "nice_work_alert",
-            "obswave_alert",
-            "remaining_gals_alert",
-            "restwave_alert",
-            "restwave_2_alert",
             "select_galaxies_guidance",
             "select_galaxies_2_guidance",
-            "spectrum_guidance"
+            "choose_row_guidance",
+            "spectrum_guidance",
+            "restwave_alert",
+            "restwave_2_alert",
+            "obswave_alert",
+            "remaining_gals_alert",
+            "nice_work_alert"
         ]
         ext = ".vue"
         for comp in state_components:

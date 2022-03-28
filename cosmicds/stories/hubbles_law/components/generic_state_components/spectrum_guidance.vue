@@ -46,7 +46,7 @@
       <v-col
         cols="6"
         class="shrink"
-        v-if="!state.vel_win_unopened"
+        v-if="!state.vel_win_opened"
       >
         <div
         >
@@ -55,7 +55,7 @@
       </v-col>
       <v-col
         class="shrink"
-        v-if="!state.vel_win_unopened"
+        v-if="state.vel_win_opened"
       >
         <v-btn
           class="black--text"

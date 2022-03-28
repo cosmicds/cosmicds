@@ -41,7 +41,7 @@
         cols="12"
         lg="4"
       >
-        <c-choose-row-alert
+        <c-choose-row-guidance
           v-if="stage_state.marker == 'cho_row1'" />
       </v-col>
       <v-col
@@ -115,8 +115,8 @@
               button-text="info"
               close-text="done"
               @close="
-                console.log('Done button was clicked.');
-                stage_state.vel_win_unopened = 0;
+                console.log('Spec Vel: Done button was clicked.');
+                stage_state.vel_win_opened = true;
               "
             >
             </guide-specvel-windows>
@@ -125,7 +125,7 @@
             cols="3"
           >
             <span
-              :class="stage_state.waveline_set ? 'd-block' : 'd-none'"
+              v-if="stage_state.waveline_set"
             >
               <!-- FORM DIALOG as template for reflections/MC -->
               <reflect-velocity-windows
