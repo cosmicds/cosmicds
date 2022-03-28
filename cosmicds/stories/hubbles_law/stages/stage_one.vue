@@ -26,8 +26,8 @@
         lg="8"
       >
         <v-card
-          :color="stage_state.marker == 'sel_gal1' ? 'info' : 'none'"
-          :class="stage_state.marker == 'sel_gal1' ? 'pa-1' : 'pa-0'"
+          :color="stage_state.marker == 'sel_gal1' || stage_state.marker == 'sel_gal2' ? 'info' : 'black'"
+          class="pa-1"
         >
           <c-selection-tool/>
           <!-- <v-card-actions>
@@ -50,8 +50,9 @@
         class="galtable_column"
       >
         <v-card
-          :color="stage_state.marker == 'cho_row1' ? 'info' : 'none'"
-          :class="stage_state.marker == 'cho_row1' ? 'pa-1' : 'pa-0'">
+          :color="stage_state.marker == 'cho_row1' ? 'info' : 'black'"
+          class="pa-1"
+        >
           <jupyter-widget :widget="widgets.galaxy_table"/>
         </v-card>
       </v-col>
