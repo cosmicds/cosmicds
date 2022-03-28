@@ -1,6 +1,5 @@
  <template> 
   <scaffold-alert
-    :class="state.marker == 'rep_rem1' ? 'd-block' : 'd-none'"
     header-text="Repeat for Remaining Galaxies"
     @back="
       state.marker = 'obs_wav1';

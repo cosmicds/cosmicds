@@ -1,6 +1,5 @@
 <template>
   <scaffold-alert
-    :class="state.marker == 'res_wav2' ? 'd-block' : 'd-none'"
     header-text="Rest Wavelength"
     @back="
       state.marker = 'res_wav1';
