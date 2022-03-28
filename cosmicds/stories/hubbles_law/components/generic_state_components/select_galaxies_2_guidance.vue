@@ -82,9 +82,9 @@
       </v-col>
       <v-spacer></v-spacer>
       <v-col
+        v-if="state.gals_total < 5"
         cols="4"
         class="shrink"
-        v-if="state.gals_total < 5"
       >
         <div
         >
@@ -92,8 +92,8 @@
         </div>
       </v-col>
       <v-col
-        class="shrink"
         v-if="state.gals_total >= 5"
+        class="shrink"
       >
         <v-btn
           class="black--text"

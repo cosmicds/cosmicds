@@ -6,7 +6,7 @@
       state.marker = 'mee_spe1';
     "
     @next="
-      state.marker = 'obs_wav1';
+      state.marker = 'res_wav2';
     "
   >
     <div
@@ -20,9 +20,6 @@
       </p>
       <p>
         The faint dips are <strong>absorption lines</strong>.
-      </p>
-      <p>
-        One of the lines in your spectrum is labeled with an element symbol. Click the label to note the element line and its <strong>rest wavelength</strong> in your table.
       </p>
     </div>
   </scaffold-alert>

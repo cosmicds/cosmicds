@@ -2,7 +2,7 @@
   <scaffold-alert
     header-text="Choose a Row"
     @back="
-        state.marker = 'sel_gal1';
+        state.marker = 'sel_gal2';
     "
     @next="
         state.spectrum_tool_visible = 1;

@@ -33,6 +33,7 @@ class StageState(State):
         'cho_row1',
         'mee_spe1',
         'res_wav1',
+        'res_wav2',
         'obs_wav1',
         'rep_rem1',
         'nic_wor1'
@@ -121,6 +122,7 @@ class StageOne(Stage):
             "obswave_alert",
             "remaining_gals_alert",
             "restwave_alert",
+            "restwave_2_alert",
             "select_galaxies_guidance",
             "select_galaxies_2_guidance",
             "spectrum_guidance"
