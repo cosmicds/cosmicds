@@ -18,6 +18,8 @@
       >
         <c-select-galaxies-guidance
           v-if="stage_state.marker == 'sel_gal1'" />
+        <c-select-galaxies-2-guidance
+          v-if="stage_state.marker == 'sel_gal2'" />
       </v-col>
       <v-col
         cols="12"

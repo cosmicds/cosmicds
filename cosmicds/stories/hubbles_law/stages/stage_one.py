@@ -29,6 +29,7 @@ class StageState(State):
 
     markers = CallbackProperty([
         'sel_gal1',
+        'sel_gal2',
         'cho_row1',
         'mee_spe1',
         'res_wav1',
@@ -121,6 +122,7 @@ class StageOne(Stage):
             "remaining_gals_alert",
             "restwave_alert",
             "select_galaxies_guidance",
+            "select_galaxies_2_guidance",
             "spectrum_guidance"
         ]
         ext = ".vue"
