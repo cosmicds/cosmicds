@@ -13,7 +13,7 @@
       class="mb-4"
     >
       <p>
-        To the right is a spectrum of light from your chosen galaxy.
+        Here is a spectrum of light from your chosen galaxy.
       </p>
       <p>
         Let’s learn how a spectrum can tell us if an object is moving toward or away from us.

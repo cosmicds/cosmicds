@@ -24,7 +24,7 @@
           class="text-h6 font-weight-regular justify-space-between my-0"
         >
           <span>
-            {{ currentTitle }}
+            Light and Spectra
           </span>
           <span
             @click="() => { $emit('close'); dialog = false; if (step == 6)  {step = 0}; }"
@@ -70,7 +70,7 @@
                       color="secondary"
                     >                  
                       <v-card-text>
-                        A spectrum is created when you pass light from a source through a spectrograph, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
+                        A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
                       </v-card-text>
                     </v-card>
                     <br>               
@@ -582,7 +582,7 @@
 <style>
 
 .no-transition {
-  transition: none;
+  transition: none !important;
 }
 
 </style>
