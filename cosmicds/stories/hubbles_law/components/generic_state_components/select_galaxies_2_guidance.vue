@@ -11,7 +11,7 @@
       Select Five Galaxies
     </h3>
     <div
-      :class="state.gals_total == 0 ? 'd-block' : 'd-none'"
+      v-if="state.gals_total == 0"
       class="mb-4"
     >
       <p>
@@ -22,7 +22,7 @@
       </p>
     </div>
     <div
-      :class="state.gals_total == 1 ? 'd-block' : 'd-none'"
+      v-if="state.gals_total == 1"
       class="mb-4"
     >
       <p>
@@ -33,7 +33,7 @@
       </p>
     </div>
     <div
-      :class="state.gals_total > 1 & state.gals_total < 5 ? 'd-block' : 'd-none'"
+      v-if="state.gals_total > 1 & state.gals_total < 5"
       class="mb-4"
     >
       <p>
@@ -44,7 +44,7 @@
       </p>
     </div>
     <div
-      :class="state.gals_total == 5 ? 'd-block' : 'd-none'"
+      v-if="state.gals_total == 5"
       class="mb-4"
     >
       <p>
@@ -84,16 +84,16 @@
       <v-col
         cols="4"
         class="shrink"
-        :class="state.gals_total < 5 ? 'd-block' : 'd-none'"
+        v-if="state.gals_total < 5"
       >
         <div
         >
-          Select {{ 5 - state.gals_total }} more <span :class="state.gals_total < 4 ? 'd-inline' : 'd-none'">galaxies</span><span :class="state.gals_total == 4 ? 'd-inline' : 'd-none'">galaxy</span> before moving on.
+          Select {{ 5 - state.gals_total }} more <span v-if="state.gals_total < 4">galaxies</span><span v-if="state.gals_total == 4">galaxy</span> before moving on.
         </div>
       </v-col>
       <v-col
         class="shrink"
-        :class="state.gals_total >= 5 ? 'd-block' : 'd-none'"
+        v-if="state.gals_total >= 5"
       >
         <v-btn
           class="black--text"
