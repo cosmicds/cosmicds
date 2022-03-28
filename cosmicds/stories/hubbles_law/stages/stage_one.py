@@ -6,7 +6,6 @@ from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from random import sample
 from traitlets import default
-
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.viewers import SpectrumView
