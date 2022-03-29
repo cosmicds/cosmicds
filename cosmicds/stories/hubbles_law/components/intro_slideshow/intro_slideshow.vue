@@ -325,7 +325,7 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M1
@@ -343,7 +343,7 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M13
@@ -361,7 +361,7 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M31
@@ -379,7 +379,7 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M42
@@ -397,7 +397,7 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M51
@@ -415,7 +415,7 @@
                           instant: false // also optional, false by default
                         })"
                       color="info"
-                      width="70px"
+                      width="100%"
                       class="mx-2"
                     >
                       M82
