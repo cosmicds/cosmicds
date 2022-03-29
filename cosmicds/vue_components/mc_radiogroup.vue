@@ -54,7 +54,7 @@ module.exports = {
   methods: {
     selectChoice: function(index) {
       this.feedbackIndex = index;
-      if (this.selectedCallback !== null) {
+      if (this.selectedCallback != null) {
         this.selectedCallback(index);
       }
     }
