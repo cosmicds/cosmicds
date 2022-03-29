@@ -13,6 +13,7 @@ from cosmicds.stories.hubbles_law.viewers import SpectrumView
 from cosmicds.phases import Stage
 from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
+from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
@@ -27,6 +28,7 @@ class StageState(State):
     waveline_set = CallbackProperty(False)
     marker = CallbackProperty("")
     indices = CallbackProperty({})
+    image_location = CallbackProperty()
 
     markers = CallbackProperty([
         'sel_gal1',
@@ -78,6 +80,12 @@ class StageOne(Stage):
         super().__init__(*args, **kwargs)
 
         self.stage_state = StageState()
+        spectrum_slideshow = SpectrumSlideshow(self.stage_state)
+        self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
+        #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
+        
+        self.stage_state.image_location = "data/images/stage_one_spectrum"
+        add_callback(self.app_state, 'using_voila', self._update_image_location)
 
         # Set up viewers
         spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
@@ -263,5 +271,14 @@ class StageOne(Stage):
         return self.get_component("c-selection-tool")
 
     @property
+    def slideshow(self):
+        return self.get_component('c-spectrum-slideshow')
+    
+    def _update_image_location(self, using_voila):
+        prepend = "voila/files/" if using_voila else ""
+        self.stage_state.image_location = prepend + "data/images/stage_one_spectrum"
+
+    @property
     def galaxy_table(self):
         return self.get_widget("galaxy_table")
+
