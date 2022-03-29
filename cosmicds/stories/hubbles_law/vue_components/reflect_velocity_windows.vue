@@ -59,7 +59,6 @@
                   'Most or all of the galaxies have lines with smaller wavelengths than the lines at rest.',
                   'Most or all of the galaxies have lines with larger wavelengths than the lines at rest.'
                 ]"
-                :colors="['red', 'red', 'red', 'green']"
                 :feedbacks="['Try again.', 'Try again.', 'Try again.', 'That\'s right!']"
                 :answer-key="3"
               >
@@ -80,7 +79,6 @@
                   'Galaxies are mostly moving toward our galaxy.',
                   'Galaxies are mostly moving away from our galaxy.'
                 ]"
-                :colors="['red', 'red', 'red', 'green']"
                 :feedbacks="['Try again.', 'Try again.', 'Try again.', 'That\'s right!']"
                 :answer-key="3"
               >

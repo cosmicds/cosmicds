@@ -24,7 +24,6 @@
     >
       <div
         :class="feedbackIndex !== null ? 'd-block' : 'd-none'"
-        :color="colors[feedbackIndex]"
       >
         <span :class="answerKey === feedbackIndex ? 'green--text' : 'red--text'">
           {{ feedbacks[feedbackIndex] }}
@@ -39,7 +38,6 @@ module.exports = {
   props: [
     "radioOptions",
     "answerKey",
-    "colors",
     "feedbacks",
     "selectedCallback"
   ],
