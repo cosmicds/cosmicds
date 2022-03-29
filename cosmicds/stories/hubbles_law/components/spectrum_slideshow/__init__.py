@@ -1,0 +1,1 @@
+from .spectrum_slideshow import SpectrumSlideshow

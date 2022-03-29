@@ -1,6 +1,5 @@
 <template>
   <v-card
-    class="darken"
     id="slideshow-root"
   >
     <v-card-title
@@ -536,15 +535,7 @@
 
 <style>
 .no-transition {
-  transition: none;
-}
-.darken {
-  background-image: 
-    linear-gradient(
-      rgba(0, 0, 0, 0.7),
-      rgba(0, 0, 0, 0.7)
-    ),
-    /* url(https://astropix.ipac.caltech.edu/archive/noirlab/stsci-gallery-1427a-2000x960/noirlab_stsci-gallery-1427a-2000x960_1600.jpg); */
+  transition: none !important;
 }
 .v-card__text{
   padding: 0px 15px 0px;

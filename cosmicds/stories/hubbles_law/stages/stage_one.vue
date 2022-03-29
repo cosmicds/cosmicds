@@ -106,15 +106,7 @@
             cols="3"
           >
             <!-- FORM DIALOG as template for reflections/MC -->
-            <guide-specvel-windows
-              button-text="info"
-              close-text="done"
-              @close="
-                console.log('Done button was clicked.');
-                stage_state.vel_win_unopened = 0;
-              "
-            >
-            </guide-specvel-windows>
+            <c-spectrum-slideshow />
           </v-col>
           <v-col
             cols="3"

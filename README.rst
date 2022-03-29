@@ -13,7 +13,7 @@ Installation
 Install the latest version of the package through `pip` in a local python
 environment:
 
-   $ pip install git+https://github.com/glue-viz/cosmicds
+   $ pip install git+https://github.com/cosmicds/cosmicds
 
 Load a data story using the command line::
 
@@ -22,9 +22,9 @@ Load a data story using the command line::
 Development
 -----------
 
-To reload app.vue within Jupyter notebook using app.reload(), use "-e" flag during installation:
+To reload app.vue within Jupyter notebook using app.reload(), use "-e" flag during installation using the files in your local cosmicds directory:
 
-    $ pip install -e git+https://github.com/glue-viz/cosmicds
+    $ pip install -e .
 
 License
 -------
