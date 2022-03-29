@@ -13,6 +13,7 @@ from cosmicds.stories.hubbles_law.viewers import SpectrumView
 from cosmicds.phases import Stage
 from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
+from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
@@ -23,15 +24,19 @@ log = logging.getLogger()
 class StageState(State):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
+    vel_win_opened = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     marker = CallbackProperty("")
     indices = CallbackProperty({})
+    image_location = CallbackProperty()
 
     markers = CallbackProperty([
         'sel_gal1',
+        'sel_gal2',
         'cho_row1',
         'mee_spe1',
         'res_wav1',
+        'res_wav2',
         'obs_wav1',
         'rep_rem1',
         'nic_wor1'
@@ -75,6 +80,12 @@ class StageOne(Stage):
         super().__init__(*args, **kwargs)
 
         self.stage_state = StageState()
+        spectrum_slideshow = SpectrumSlideshow(self.stage_state)
+        self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
+        #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
+        
+        self.stage_state.image_location = "data/images/stage_one_spectrum"
+        add_callback(self.app_state, 'using_voila', self._update_image_location)
 
         # Set up viewers
         spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
@@ -115,13 +126,15 @@ class StageOne(Stage):
         state_components_dir = str(Path(__file__).parent.parent / "components" / "generic_state_components")
         path = join(state_components_dir, "")
         state_components = [
-            "choose_row_alert",
-            "nice_work_alert",
+            "select_galaxies_guidance",
+            "select_galaxies_2_guidance",
+            "choose_row_guidance",
+            "spectrum_guidance",
+            "restwave_alert",
+            "restwave_2_alert",
             "obswave_alert",
             "remaining_gals_alert",
-            "restwave_alert",
-            "select_galaxies_guidance",
-            "spectrum_guidance"
+            "nice_work_alert"
         ]
         ext = ".vue"
         for comp in state_components:
@@ -258,5 +271,14 @@ class StageOne(Stage):
         return self.get_component("c-selection-tool")
 
     @property
+    def slideshow(self):
+        return self.get_component('c-spectrum-slideshow')
+    
+    def _update_image_location(self, using_voila):
+        prepend = "voila/files/" if using_voila else ""
+        self.stage_state.image_location = prepend + "data/images/stage_one_spectrum"
+
+    @property
     def galaxy_table(self):
         return self.get_widget("galaxy_table")
+

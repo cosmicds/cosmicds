@@ -34,9 +34,7 @@ class StageIntro(Stage):
         intro_slideshow = IntroSlideshow(self.stage_state)
         self.add_component(intro_slideshow, label='c-intro-slideshow')
         intro_slideshow.observe(self._on_slideshow_complete, names=['intro_complete'])
-
         self.stage_state.image_location = "data/images"
-        add_callback(self.app_state, 'using_voila', self._update_image_location)
 
     @property
     def slideshow(self):
@@ -49,7 +47,3 @@ class StageIntro(Stage):
             # We need to do this so that the stage will be moved forward every
             # time the button is clicked, not just the first
             self.slideshow.intro_complete = False
-
-    def _update_image_location(self, using_voila):
-        prepend = "voila/files/" if using_voila else ""
-        self.stage_state.image_location = prepend + "data/images"
