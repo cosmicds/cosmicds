@@ -22,6 +22,7 @@
       >
         <v-card-title
           class="text-h6 font-weight-regular justify-space-between my-0"
+          dense
         >
           <span>
             Light and Spectra

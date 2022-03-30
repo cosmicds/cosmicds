@@ -1,6 +1,7 @@
 <template>
   <v-card
     id="slideshow-root"
+    outlined
   >
     <v-card-title
       class="text-h6 text-uppercase font-weight-regular justify-space-between;"
@@ -17,7 +18,9 @@
       <v-window-item :value="0" 
         class="no-transition"
       >
-        <v-card-text>
+        <v-card-text
+          style="min-height: 550px;"
+        >
           <v-container>
             <v-row
               no-gutter
@@ -539,6 +542,7 @@
 }
 .v-card__text{
   padding: 0px 15px 0px;
+  min-height: 550px;
 }
 
 #exploration-tool, #exploration-tool2, #exploration-tool3 {
