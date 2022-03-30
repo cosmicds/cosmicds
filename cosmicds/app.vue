@@ -298,7 +298,7 @@ export default {
       if (!e.target.classList.contains("v-card__title")) return;
       const closestDialog = e.target.closest(".v-dialog.v-dialog--active");
       if (e.button === 0 && closestDialog != null) { // element which can be used to move element
-        const boundingRect = d.el.getBoundingClientRect();
+        const boundingRect = closestDialog.getBoundingClientRect();
         d.el = closestDialog; // element which should be moved
         d.title = e.target;
         d.mouseStartX = e.clientX;
@@ -310,6 +310,8 @@ export default {
         d.oldTransition = d.el.style.transition;
         d.el.style.transition = "none"
         d.title.classList.add("draggable");
+        d.overlays = document.querySelectorAll(".v-overlay.v-overlay--active");
+        d.overlays.forEach(overlay => overlay.style.display = "none");
       }
     });
     document.addEventListener("mousemove", e => {
@@ -329,6 +331,7 @@ export default {
         d.el.style.transition = d.oldTransition;
         d.el = undefined
         d.title.classList.remove("draggable");
+        d.overlays.forEach(overlay => overlay.style.display = '');
     });
 
     // If the window changes size, the dialog may be partially/completely out of bounds
