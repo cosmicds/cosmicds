@@ -309,7 +309,7 @@ export default {
         d.el.style.margin = 0;
         d.oldTransition = d.el.style.transition;
         d.el.style.transition = "none"
-        d.title.classList.add("draggable");
+        d.title.classList.add("dragging");
         d.overlays = document.querySelectorAll(".v-overlay.v-overlay--active");
         d.overlays.forEach(overlay => overlay.style.display = "none");
       }
@@ -330,7 +330,7 @@ export default {
         if (d.el === undefined) return;
         d.el.style.transition = d.oldTransition;
         d.el = undefined
-        d.title.classList.remove("draggable");
+        d.title.classList.remove("dragging");
         d.overlays.forEach(overlay => overlay.style.display = '');
     });
 
@@ -409,7 +409,7 @@ body {
     cursor: grab;
 }
 
-.v-dialog.v-dialog--active .v-card__title.draggable {
+.v-dialog.v-dialog--active .v-card__title.dragging {
   cursor: grabbing;
 }
 </style>
