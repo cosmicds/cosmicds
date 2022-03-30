@@ -308,7 +308,7 @@ export default {
         d.el.style.position = "fixed";
         d.el.style.margin = 0;
         d.oldTransition = d.el.style.transition;
-        d.el.style.transition = "none"
+        d.el.style.transition = "none";
         d.title.classList.add("dragging");
         d.overlays = document.querySelectorAll(".v-overlay.v-overlay--active");
         d.overlays.forEach(overlay => overlay.style.display = "none");
@@ -329,7 +329,7 @@ export default {
     document.addEventListener("mouseup", () => {
         if (d.el === undefined) return;
         d.el.style.transition = d.oldTransition;
-        d.el = undefined
+        d.el = undefined;
         d.title.classList.remove("dragging");
         d.overlays.forEach(overlay => overlay.style.display = '');
     });
