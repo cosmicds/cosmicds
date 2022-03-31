@@ -5,10 +5,11 @@ from cosmicds.utils import load_template
 from glue_jupyter.state_traitlets_helpers import GlueState
 
 
-#theme_colors()
+# theme_colors()
 
 class Angsize_SlideShow(v.VuetifyTemplate):
-    template = load_template("angsize_distance_slideshow.vue", __file__, traitlet=True).tag(sync=True)
+    template = load_template(
+        "angsize_distance_slideshow.vue", __file__, traitlet=True).tag(sync=True)
     step = Int(0).tag(sync=True)
     length = Int(9).tag(sync=True)
     dialog = Bool(False).tag(sync=True)
@@ -18,17 +19,17 @@ class Angsize_SlideShow(v.VuetifyTemplate):
     #intro_complete = Bool(False).tag(sync=True)
 
     _titles = [
-        "Light and Spectra",
-        "Light and Spectra", 
-        "Light and Spectra",
-        "Light and Spectra",
-        "Doppler Shift",
-        "Doppler Shift",
-        "Atom & Molecule Emissions",
-        "Emission & Absorption",
-        "Complete"
+        "1920's Astronomy",
+        "1920's Astronomy",
+        "Galaxy Distances",
+        "Galaxy Distances",
+        "Galaxy Distances",
+        "Galaxy Distances",
+        "Galaxy Distances",
+        "Galaxy Distances",
+        "Galaxy Distances"
     ]
-    _default_title = "Light and Spectra"
+    _default_title = "Galaxy Distances"
 
     def __init__(self, story_state, *args, **kwargs):
         self.state = story_state
@@ -44,5 +45,3 @@ class Angsize_SlideShow(v.VuetifyTemplate):
         self.observe(update_title, names=["step"])
 
         super().__init__(*args, **kwargs)
-
-
