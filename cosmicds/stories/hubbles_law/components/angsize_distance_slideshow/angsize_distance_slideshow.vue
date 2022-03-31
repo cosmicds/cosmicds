@@ -393,62 +393,20 @@
                         (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
                       </h5> 
                       </v-card-text>
+                      <mc-radiogroup
+                        :radio-options="[
+                          'Galaxy A and Galaxy B are the same distance away from us.',
+                          'Galaxy A is farther away from us than Galaxy B.',
+                          'Galaxy A is closer to us than Galaxy B.',
+                          'We do not have enough information to answer this question'
+                        ]"
+                        :feedbacks="['Try again.Think about the cars in the lot. Did the closest cars appear bigger or smaller than the farthest cars?
+                          ', 'That\'s right!', 'Try again.', 'Try again.']"
+                        :answer-key="3"
+                      >
                       </v-card>
                       </p>
                     </div>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col
-                    cols="2"
-                    class="d-flex flex-column"
-                    height="100%"
-                  >
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/carbon_atom_model.png`"
-                    ></v-img>
-                    <v-img
-                      class="mt-auto mx-a"
-                      contain
-                      :src="`${state.image_location}/nitrogen_atom_model.png`"
-                    ></v-img>
-                  </v-col>
-                  <v-col
-                    cols="8"
-                  >
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/stsci_spectrum_element_montage.jpg`"
-                    ></v-img>
-                  </v-col>
-                  <v-col
-                    cols="2"
-                    class="d-flex flex-column"
-                    height="100%"
-                  >
-                    <v-row>
-                      <v-col>
-                        <v-img
-                          class="mx-a"
-                          contain
-                          :src="`${state.image_location}/oxygen_atom_model.png`"
-                        ></v-img>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col>
-                        <v-img
-                          class="mt-auto mx-a"
-                          contain
-                          :src="`${state.image_location}/iron_atom_model.png`"
-                        ></v-img>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
               </v-container>
             </v-card-text>
           </v-window-item>
