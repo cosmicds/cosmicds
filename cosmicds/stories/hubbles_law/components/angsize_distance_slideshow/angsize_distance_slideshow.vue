@@ -370,11 +370,9 @@
           <v-window-item :value="6" 
             class="no-transition"
           >
-          <h3
-                      class="mb-4"
-                    >
-                      Reflect
-                    </h3>
+          <h3 class="mb-4">
+            Reflect
+          </h3>
 
             <v-card-text>
                <p>
@@ -383,15 +381,13 @@
                 <h5>
                   (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
                 </h5> 
-                 
               <mc-radiogroup
                 :radio-options="[
                   'Galaxy A and Galaxy B are the same distance away from us.',
                   'Galaxy A is farther away from us than Galaxy B.',
                   'Galaxy A is closer to us than Galaxy B.',
                   'We do not have enough information to answer this question']"
-                  :feedbacks="['Try again.Think about the cars in the lot. Did the closest cars appear bigger or smaller than the farthest cars?
-                    ', 'That\'s right!', 'Try again.', 'Try again.']"
+                  :feedbacks="['Try again.', 'That\'s right!', 'Try again.', 'Try again.']"
                 :answer-key="3"
               >
               </mc-radiogroup>
