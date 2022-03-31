@@ -315,7 +315,8 @@
           <v-window-item :value="5" 
             class="no-transition"
           >
-            <v-card-text>
+            <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+              $$ a = b + \frac{c}{d} $$
               <v-container>
                 <v-row>
                   <v-col
@@ -340,7 +341,7 @@
                       >
                       <v-card-text>
                       <p>
-                        $ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}}$
+                        $$ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}}$$
                       </p>
                       <h6>
                         (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
