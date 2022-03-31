@@ -1,5 +1,13 @@
 <template>
-  <v-card outlined color="info" class="pa-1">
+  <v-card outlined color="info" class="pa-1"
+    v-intersect.once="(entries, observer, isIntersecting) => {
+      const root = entries[0].target;
+      const element = root.querySelector('iframe');
+      if (element) {
+        element.src = element.src.replace('/api/kernels', '');
+      }
+    }"
+  >
     <v-toolbar color="secondary" height="40px" dense dark class="text-uppercase">
       <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
       <v-spacer></v-spacer>          
