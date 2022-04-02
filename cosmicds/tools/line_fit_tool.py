@@ -5,6 +5,7 @@ from glue.core.message import (DataCollectionAddMessage,
                                DataCollectionDeleteMessage, DataUpdateMessage,
                                NumericalDataChangedMessage, SubsetUpdateMessage)
 from glue_jupyter.bqplot.common.tools import Tool
+from numpy import isnan
 
 from cosmicds.stories.hubbles_law.utils import line_mark
 
@@ -17,6 +18,8 @@ class LineFitTool(Tool, HubListener):
     
     def __init__(self, viewer, **kwargs):
         super().__init__(viewer, **kwargs)
+        self.lines = {}
+        self.slopes = {}
         self._data_filter = lambda message: message.data.label in self.layer_labels
         self._subset_filter = lambda message: message.subset.label in self.layer_labels and message.data.label in self.layer_labels
         self.hub.subscribe(self, DataCollectionAddMessage,
@@ -36,7 +39,7 @@ class LineFitTool(Tool, HubListener):
 
     @property
     def layer_labels(self):
-        return [x.label for x in self.viewer.layers]
+        return [x.state.layer.label for x in self.viewer.layers]
 
     @property
     def hub(self):
@@ -56,20 +59,38 @@ class LineFitTool(Tool, HubListener):
         # Keep track of this line and its slope
         start_x, end_x = x
         start_y, end_y = y
-        slope_value = fitted_line.slope.value
-        label = 'Slope = %.0f ks / s / Mpc' % slope_value if not isnan(slope_value) else None
+        slope = fitted_line.slope.value
+        label = 'Slope = %.0f ks / s / Mpc' % slope if not isnan(slope) else None
         line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color, label)
-
+        return line, slope
 
     def activate(self):
         self._fit_to_layers()
 
     def deactivate(self):
-        pass
+        self._clear_lines()
 
     def _fit_to_layers(self):
+
+        figure = self.viewer.figure
+        marks_to_keep = [mark for mark in figure.marks if mark not in self.lines.keys()]
+
+        self.lines = {}
+        self.slopes = {}
         for layer in self.viewer.layers:
-            self._create_fit_line(layer)
+            label = layer.state.layer.label
+            line, slope = self._create_fit_line(layer)
+            self.lines[label] = line
+            self.slopes[label] = slope
+
+        figure.marks = [marks_to_keep] + list(self.lines.keys())
+
+
+    def _clear_lines(self):
+        figure = self.viewer.figure
+        figure.marks = [mark for mark in figure.marks if mark not in self.lines.keys()]
+        self.lines = {}
+        self.slopes = {}
             
             
 
