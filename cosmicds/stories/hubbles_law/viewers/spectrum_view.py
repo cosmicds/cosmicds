@@ -1,7 +1,8 @@
 from glue.core.message import NumericalDataChangedMessage
 from glue.viewers.scatter.state import ScatterViewerState
-from glue_jupyter.bqplot.scatter import BqplotScatterView
+from glue_jupyter.bqplot.scatter import BqplotScatterView, BqplotScatterLayerArtist
 from bqplot.marks import Lines
+from bqplot_image_gl import LinesGL
 from bqplot import Label
 from echo import add_callback, delay_callback
 from glue.config import viewer_tool
@@ -21,7 +22,18 @@ class SpectrumViewerState(ScatterViewerState):
             super().reset_limits()
             self.y_max = 1.40 * self.y_max
 
+
+class SpectrumViewLayerArtist(BqplotScatterLayerArtist):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        old_scatter = self.scatter
+        self.scatter = LinesGL(scales=self.scales, x=[0,1], y=[0,1])
+        self.view.figure.marks = list(filter(lambda x: x is not old_scatter, self.view.figure.marks)) + [self.scatter]
 class SpectrumView(BqplotScatterView):
+
+    _data_artist_cls = SpectrumViewLayerArtist
+    _subset_artist_cls = SpectrumViewLayerArtist
 
     inherit_tools = False
     tools = ['bqplot:home', 'bqplot:xzoom', 'hubble:restwave', 'cds:info']
@@ -143,6 +155,9 @@ class SpectrumView(BqplotScatterView):
         for layer in self.layers:
             if layer.state.layer.label != data.label:
                 layer.state.visible = False
+
+        print(type(layer))
+        print(layer)
 
     def initialize_toolbar(self):
         self.toolbar = Toolbar(self)
