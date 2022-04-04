@@ -12,26 +12,27 @@ from cosmicds.stories.hubbles_law.utils import line_mark
 @viewer_tool
 class LineFitTool(Tool, HubListener):
 
-    tool_id = 'hubble:linefit'
+    tool_id = 'cds:linefit'
     action_text = 'Fit lines'
     tool_tip = 'Fit lines to data'
+    mdi_icon = 'mdi-chart-timeline-variant'
     
     def __init__(self, viewer, **kwargs):
         super().__init__(viewer, **kwargs)
         self.lines = {}
         self.slopes = {}
-        self._data_filter = lambda message: message.data.label in self.layer_labels
-        self._subset_filter = lambda message: message.subset.label in self.layer_labels and message.data.label in self.layer_labels
-        self.hub.subscribe(self, DataCollectionAddMessage,
-                           handler=self._on_data_collection_added, filter=self._data_filter)
-        self.hub.subscribe(self, DataCollectionDeleteMessage,
-                           handler=self._on_data_collection_deleted, filter=self._data_filter)
-        self.hub.subscribe(self, DataUpdateMessage,
-                           handler=self._on_layer_updated, filter=self._data_filter)
-        self.hub.subscribe(self, NumericalDataChangedMessage,
-                           handler=self._on_layer_updated, filter=self._data_filter)
-        self.hub.subscribe(self, SubsetUpdateMessage,
-                           handler=self._on_layer_updated, filter=self._subset_filter)
+        #self._data_filter = lambda message: message.data.label in self.layer_labels
+        #self._subset_filter = lambda message: message.subset.label in self.layer_labels and message.data.label in self.layer_labels
+        # self.hub.subscribe(self, DataCollectionAddMessage,
+        #                    handler=self._on_data_collection_added, filter=self._data_filter)
+        # self.hub.subscribe(self, DataCollectionDeleteMessage,
+        #                    handler=self._on_data_collection_deleted, filter=self._data_filter)
+        # self.hub.subscribe(self, DataUpdateMessage,
+        #                    handler=self._on_layer_updated, filter=self._data_filter)
+        # self.hub.subscribe(self, NumericalDataChangedMessage,
+        #                    handler=self._on_layer_updated, filter=self._data_filter)
+        # self.hub.subscribe(self, SubsetUpdateMessage,
+        #                    handler=self._on_layer_updated, filter=self._subset_filter)
 
     @property
     def dc(self):

@@ -2,15 +2,14 @@ from bqplot.marks import Scatter
 from bqplot_image_gl import LinesGL
 from glue.config import viewer_tool
 from glue_jupyter.bqplot.common.tools import InteractCheckableTool
-from traitlets import Bool
 
 @viewer_tool
 class LineDrawTool(InteractCheckableTool):
 
-    tool_id = 'hubble:linedraw'
+    tool_id = 'cds:linedraw'
     action_text = 'Draw line'
     tool_tip = 'Draw a best fit line'
-    line_drawn = Bool(False).tag(sync=True)
+    mdi_icon = "mdi-message-draw"
 
     def __init__(self, viewer, **kwargs):
         super().__init__(viewer, **kwargs)

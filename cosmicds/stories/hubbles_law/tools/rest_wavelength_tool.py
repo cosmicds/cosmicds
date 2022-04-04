@@ -10,6 +10,7 @@ class RestWavelengthTool(CheckableTool):
     tool_id = "hubble:restwave"
     action_text = "Show rest wavelength"
     tool_tip = "Toggle display of the rest wavelength line"
+    mdi_icon = "mdi-lambda"
 
     observed_text = ' (observed)'
     rest_text = ' (rest)'
