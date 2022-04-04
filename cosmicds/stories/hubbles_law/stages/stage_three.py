@@ -6,6 +6,7 @@ from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
 from cosmicds.phases import Stage
 from cosmicds.utils import load_template
+from cosmicds.viewers import CDSHistogramView, CDSScatterView
 
 class StageState(State):
     pass
@@ -67,4 +68,22 @@ class StageThree(Stage):
             self.add_link(class_dc_name, field, all_dc_name, field)
             if component.label in student_data.component_ids():
                 self.add_link(student_dc_name, field, class_dc_name, field)
+        
+
+        students_viewer = self.add_viewer(CDSScatterView, "students_viewer")
+        fit_viewer = self.add_viewer(CDSScatterView, "fit_viewer")
+        comparison_viewer = self.add_viewer(CDSScatterView, "comparison_viewer")
+        morphology_viewer = self.add_viewer(CDSScatterView, "morphology_viewer")
+        viewers = [
+            students_viewer,
+            fit_viewer,
+            comparison_viewer,
+            morphology_viewer
+        ]
+        for viewer in viewers:
+            viewer.add_data(student_data)
+            viewer.layers[-1].state.visible = False
+            viewer.state.x_att = student_data.id['distance']
+            viewer.state.y_att = student_data.id['velocity']
+
         

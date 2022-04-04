@@ -30,6 +30,7 @@ class SpectrumViewLayerArtist(BqplotScatterLayerArtist):
         old_scatter = self.scatter
         self.scatter = LinesGL(scales=self.scales, x=[0,1], y=[0,1])
         self.view.figure.marks = list(filter(lambda x: x is not old_scatter, self.view.figure.marks)) + [self.scatter]
+        
 class SpectrumView(BqplotScatterView):
 
     _data_artist_cls = SpectrumViewLayerArtist
