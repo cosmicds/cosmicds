@@ -69,12 +69,19 @@ class HubblesLaw(Story):
         ])
 
         # Compose empty data containers to be populated by user
+        student_cols = ["ID", "RA", "DEC", "Z", "Type", "measwave",
+                         "restwave", "student_id", "velocity", "distance",
+                         "Element"]
         self.data_collection.append(Data(
             label='student_measurements',
             **{x: np.array([], dtype='float64')
-               for x in ["ID", "RA", "DEC", "Z", "Type", "measwave",
-                         "restwave", "student_id", "velocity", "distance",
-                         "Element"]}))
+               for x in student_cols}))
+        self.data_collection.append(Data(
+            label="student_data",
+            **{x : ['X'] if x in ['ID', 'Element', 'Type'] else [0] 
+                for x in student_cols}))
+
+
 
         # Make all data writeable
         for data in self.data_collection:
@@ -136,5 +143,16 @@ class HubblesLaw(Story):
             data = Data(label=label, **components)
             self.make_data_writeable(data) 
             dc.append(data)
+
+    def update_student_data(self):
+        dc = self.data_collection
+        data = dc['student_measurements']
+        df = data.to_dataframe()
+        df = df[df['distance'].notna() & df['velocity'].notna()]
+        main_components = [x.label for x in data.main_components]
+        components = { col: list(df[col]) for col in main_components }
+        new_data = Data(label='student_data', **components)
+        student_data = dc['student_data']
+        student_data.update_values_from_data(new_data)
 
 

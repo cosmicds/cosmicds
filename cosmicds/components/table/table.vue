@@ -25,3 +25,10 @@
     </v-data-table>
   </v-card>
 </template>
+
+<style scoped>
+tr.v-data-table__selected {
+  background-color: dodgerblue !important;
+}
+</style>
+

@@ -2,6 +2,11 @@
   <v-container>
     <v-row>
       <v-col cols="6">
+        <jupyter-widget :widget="widgets.fit_table"/>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="6">
         <jupyter-widget :widget="viewers.fit_viewer"/>
       </v-col>
       <v-col cols="6">

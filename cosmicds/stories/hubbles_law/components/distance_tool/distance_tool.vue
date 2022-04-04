@@ -193,9 +193,6 @@ export default {
       const referenceElement = this.canvas.parentElement;
       this.canvas.width = referenceElement.clientWidth;
       this.canvas.height = referenceElement.clientHeight;
-      console.log("Resize");
-      console.log(referenceElement.clientWidth);
-      console.log(referenceElement.clientHeight);
       const newWidth = referenceElement.clientWidth;
       const newHeight = referenceElement.clientHeight;
       if (newWidth === 0 || newHeight === 0) {
