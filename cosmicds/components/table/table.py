@@ -196,7 +196,10 @@ class Table(VuetifyTemplate, HubListener):
             self.row_click_callback(item, data)
         if self.single_select:
             self.selected = [item]
+
+        # We can't just use append/remove here
+        # We need a reassignment so that the watcher is triggered
         elif item in self.selected:
-            self.selected.remove(item)
+            self.selected = [x for x in self.selected if x != item]
         else:
-            self.selected.append(item)
+            self.selected = self.selected + [item]

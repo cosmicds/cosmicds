@@ -26,6 +26,38 @@
   </v-card>
 </template>
 
+<script>
+export default {
+  watch: {
+    selected(newValue, _oldValue) {
+      console.log("In selected watcher");
+      const selectedKeys = newValue.map(x => x[this.key_component]);
+      const allKeys = this.items.map(x => x[this.key_component]);
+      const indices = [];
+      allKeys.forEach((key, index) => {
+        if (selectedKeys.includes(key)) {
+          indices.push(index);
+        }
+      });
+      console.log(newValue);
+      console.log(selectedKeys);
+      console.log(allKeys);
+      console.log(indices);
+      const rows = Array.from(this.$el.querySelectorAll("tr"));
+      rows.shift();
+      for (const [index, row] of rows.entries()) {
+        if (indices.includes(index)) {
+          row.classList.add("v-data-table__selected");
+        } else {
+          row.classList.remove("v-data-table__selected");
+        }
+      }
+    }
+  }
+}
+</script>
+
+
 <style scoped>
 tr.v-data-table__selected {
   background-color: dodgerblue !important;
