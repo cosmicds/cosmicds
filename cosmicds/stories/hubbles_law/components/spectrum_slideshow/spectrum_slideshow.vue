@@ -507,6 +507,72 @@
           <v-window-item :value="8" 
             class="no-transition"
           >
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="12"
+                  >
+                    <p>
+                      Since we know the wavelengths emitted or absorbed by an element when it is not moving, we can use these <strong>rest wavelengths</strong> as a reference to compare against the <strong>observed wavelengths</strong> of the light when an object is moving.
+                    </p>
+                </v-row>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    lg="10"
+                    offset-lg="1"
+                  >
+                    <p>
+                      The dotted line shows the rest wavelength of a hydrogen line known as <strong>H-&alpha;</strong> (pronounced "H alpha"). The solid line shows the observed wavelength of the H-&alpha; line.
+                    </p>
+                    <v-img
+                      contain
+                      :src="`${state.image_location}/restobs1_spectool.png`"
+                    >
+                    </v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="9" 
+            class="no-transition"
+          >
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="12"
+                  >
+                    <p>
+                      Since we know the wavelengths emitted or absorbed by an element when it is not moving, we can use these <strong>rest wavelengths</strong> as a reference to compare against the <strong>observed wavelengths</strong> of the light when an object is moving.
+                    </p>
+                </v-row>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    lg="10"
+                    offset-lg="1"
+                  >
+                    <p>
+                      The dotted line shows the rest wavelength of a hydrogen line known as <strong>Mg I</strong> (pronounced "magnesium one"). The solid line shows the observed wavelength of the Mg I line.
+                    </p>
+                    <v-img
+                      contain
+                      :src="`${state.image_location}/restobs2_spectool.png`"
+                    >
+                    </v-img>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="10" 
+            class="no-transition"
+          >
             <div class="pa-4 text-center my-auto">
               <v-img
                 class="mb-4"
@@ -557,15 +623,15 @@
           </v-item-group>
           <v-spacer></v-spacer>
           <v-btn
-            :disabled="step === 6"
+            :disabled="step === 10"
             color="accent"
             text
             @click="step++;"
           >
-            {{ step < 6 ? 'next' : '' }}
+            {{ step < 10 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled="step < 6"
+            :disabled="step < 10"
             color="accent"
             class="black--text"
             depressed

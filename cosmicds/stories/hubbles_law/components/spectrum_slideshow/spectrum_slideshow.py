@@ -10,7 +10,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 class SpectrumSlideshow(v.VuetifyTemplate):
     template = load_template("spectrum_slideshow.vue", __file__, traitlet=True).tag(sync=True)
     step = Int(0).tag(sync=True)
-    length = Int(9).tag(sync=True)
+    length = Int(11).tag(sync=True)
     dialog = Bool(False).tag(sync=True)
     #currentTitle = Unicode("").tag(sync=True)
     state = GlueState().tag(sync=True)
