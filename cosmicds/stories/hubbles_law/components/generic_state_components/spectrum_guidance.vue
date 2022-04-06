@@ -46,16 +46,16 @@
       <v-col
         cols="6"
         class="shrink"
-        :class="state.vel_win_unopened ? 'd-block' : 'd-none'"
+        v-if="!state.vel_win_opened"
       >
         <div
         >
-          Click INFO below.
+          Click INFO button.
         </div>
       </v-col>
       <v-col
         class="shrink"
-        :class="state.vel_win_unopened ? 'd-none' : 'd-block'"
+        v-if="state.vel_win_opened"
       >
         <v-btn
           class="black--text"
