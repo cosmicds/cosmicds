@@ -1,11 +1,15 @@
 <template>
   <v-card flat>
     <v-toolbar
+      color="primary"
       dense
       dark
-      color="secondary"
       v-if="show_toolbar">
-      <v-toolbar-title>{{ title }}</v-toolbar-title>
+      <v-toolbar-title
+        class="text-h6 text-uppercase font-weight-regular"
+      >
+        {{ title }}
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <jupyter-widget :widget="controls.toolbar_selection_tools"></jupyter-widget>

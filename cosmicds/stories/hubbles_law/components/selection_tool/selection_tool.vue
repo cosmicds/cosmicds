@@ -6,9 +6,12 @@
       color="primary"
       dense
       dark
-      class="text-uppercase"
     >
-      <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
+      <v-toolbar-title
+        class="text-h6 text-uppercase font-weight-regular"
+      >
+        Night Sky Viewer
+      </v-toolbar-title>
 
       <v-spacer></v-spacer>
 

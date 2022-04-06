@@ -2,14 +2,19 @@
   <v-card
     id="slideshow-root"
     outlined
+    elevation="6"
   >
-    <v-card-title
-      class="text-h6 text-uppercase font-weight-regular justify-space-between;"
+    <v-toolbar
+      color="secondary"
+      dense
+      dark
     >
-      <span>
+      <v-toolbar-title
+        class="text-h6 text-uppercase font-weight-regular"
+      >
         {{ currentTitle }}
-      </span>
-    </v-card-title>
+      </v-toolbar-title>
+    </v-toolbar>
 
     <v-window
       style="min-height: 300px;"
@@ -30,7 +35,8 @@
                   Welcome to the Cosmic Data Story about the Hubble Law. In this activity, you will use real astronomical data to answer these questions about our universe:
                 </p>
                 <v-card
-                  class="d-flex justify-center pa-4 mx-12 mb-4 info"
+                  class="d-flex justify-center pa-4 mx-12 mb-4"
+                  color="secondary"
                   style="font-weight:600;"
                 >
                   Has the universe always existed? If not, how long ago did it form?
@@ -540,7 +546,7 @@
 .no-transition {
   transition: none !important;
 }
-.v-card__text{
+#slideshow-root .v-card__text{
   padding: 0px 15px 0px;
   min-height: 550px;
 }
@@ -548,7 +554,6 @@
 #exploration-tool, #exploration-tool2, #exploration-tool3 {
   height: 400px;
 }
-
 </style>
 
 

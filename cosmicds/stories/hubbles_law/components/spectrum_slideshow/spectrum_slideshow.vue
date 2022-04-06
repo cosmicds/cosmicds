@@ -15,13 +15,17 @@
       <v-card
         class="mx-auto"
       >
-        <v-card-title
-          class="text-h6 font-weight-regular justify-space-between my-0"
+        <v-toolbar
+          color="secondary"
           dense
+          dark
         >
-          <span>
+          <v-toolbar-title
+            class="text-h6 text-uppercase font-weight-regular"
+          >
             Light and Spectra
-          </span>
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
           <span
             @click="() => { $emit('close'); dialog = false; if (step == 6)  {step = 0}; }"
           >
@@ -33,7 +37,7 @@
               </v-icon>
             </v-btn>
           </span>
-        </v-card-title>
+        </v-toolbar>
 
         <v-window
           v-model="step"

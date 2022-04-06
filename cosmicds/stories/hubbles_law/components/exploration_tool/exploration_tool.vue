@@ -1,7 +1,7 @@
 <template>
   <v-card outlined color="info" class="pa-1">
     <v-toolbar
-      color="secondary"
+      color="primary"
       height="40px"
       dense
       dark

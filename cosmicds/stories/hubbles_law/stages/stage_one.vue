@@ -28,7 +28,8 @@
       >
         <v-card
           :color="stage_state.marker == 'sel_gal1' || stage_state.marker == 'sel_gal2' ? 'info' : 'black'"
-          class="pa-1"
+          :class="stage_state.marker == 'sel_gal1' || stage_state.marker == 'sel_gal2' ? 'pa-1' : 'pa-0'"
+          outlined
         >
           <c-selection-tool/>
           <!-- <v-card-actions>
@@ -52,7 +53,8 @@
       >
         <v-card
           :color="stage_state.marker == 'cho_row1' ? 'info' : 'black'"
-          class="pa-1"
+          :class="stage_state.marker == 'cho_row1' ? 'pa-1' : 'pa-0'"
+          outlined
         >
           <jupyter-widget :widget="widgets.galaxy_table"/>
         </v-card>
@@ -81,9 +83,10 @@
         lg="8"
       >
         <v-card
-          color="info"
-          class="pa-1"
           v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
+          :color="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'info' : 'black'"
+          :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1' : 'pa-0'"
+          outlined
         >
           <jupyter-widget :widget="viewers.spectrum_viewer"/>
         </v-card>
