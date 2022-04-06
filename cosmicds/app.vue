@@ -12,7 +12,7 @@
       <template v-slot:img="{ props }">
         <v-img
             v-bind="props"
-            gradient="to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)"
+            gradient="to top right, rgba(1, 87, 155, .7), rgba(0, 0, 0, .5)"
         ></v-img>
       </template>
 
