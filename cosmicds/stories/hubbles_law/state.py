@@ -85,18 +85,20 @@ class HubblesLaw(Story):
 
     def _set_theme(self):
         v.theme.dark = True
-        v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
-        v.theme.themes.light.primary = 'colors.lightBlue.darken3'
-        v.theme.themes.dark.secondary = 'colors.lightBlue.darken4'
-        v.theme.themes.light.secondary = 'colors.lightBlue.lighten3'
+        v.theme.themes.dark.primary = 'colors.lightBlue.darken4'
+        v.theme.themes.light.primary = 'colors.lightBlue.darken4'
+        v.theme.themes.dark.secondary = 'colors.lightBlue.darken2'
+        v.theme.themes.light.secondary = 'colors.lightBlue.darken2'
         v.theme.themes.dark.accent = 'colors.amber.accent2'
         v.theme.themes.light.accent = 'colors.amber.accent3'
+        v.theme.themes.dark.error = 'colors.green.accent2'
+        v.theme.themes.light.error = 'colors.green.accent2'
         v.theme.themes.dark.info = 'colors.deepOrange.darken3'
         v.theme.themes.light.info = 'colors.deepOrange.lighten2'
-        v.theme.themes.dark.success = 'colors.green.accent2'
-        v.theme.themes.light.success = 'colors.green.accent2'
-        v.theme.themes.dark.warning = 'colors.lightBlue.darken4'
-        v.theme.themes.light.warning = 'colors.lightBlue.lighten4'
+        v.theme.themes.dark.success = 'colors.green'
+        v.theme.themes.light.success = 'colors.green'
+        v.theme.themes.dark.warning = 'colors.green.accent2'
+        v.theme.themes.light.warning = 'colors.green.accent2'
         v.theme.themes.dark.anchor = ''
         v.theme.themes.light.anchor = ''
 

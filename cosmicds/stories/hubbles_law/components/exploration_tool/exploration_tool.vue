@@ -1,6 +1,12 @@
 <template>
   <v-card outlined color="info" class="pa-1">
-    <v-toolbar color="secondary" height="40px" dense dark class="text-uppercase">
+    <v-toolbar
+      color="secondary"
+      height="40px"
+      dense
+      dark
+      class="text-uppercase"
+    >
       <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
       <v-spacer></v-spacer>          
       <div class="text-center">

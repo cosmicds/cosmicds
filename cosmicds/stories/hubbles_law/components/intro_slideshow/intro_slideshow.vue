@@ -508,7 +508,7 @@
       <!-- first button below just being used for testing, delete when using live with students -->
       <v-btn
         :class="step < 6 ? 'd-block' : 'd-none'"
-        color="success"
+        color="error"
         class="black--text"
         depressed
         @click="() => { 

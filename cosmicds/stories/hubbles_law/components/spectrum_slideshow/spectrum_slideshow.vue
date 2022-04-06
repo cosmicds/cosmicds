@@ -1,16 +1,11 @@
 <template>
   <v-btn
     block
-    color="primary"
+    color="secondary"
     elevation="2"
     @click.stop="dialog = true"
   >
-    <v-icon
-      class="mr-4"
-    >
-      mdi-pen
-    </v-icon>
-    Info
+    Learn More
 
     <v-dialog
         v-model="dialog"

@@ -3,7 +3,8 @@
     <v-row>
       <v-col>
         <v-btn
-          color="green"
+          color="error"
+          class="black--text"
           @click="select_galaxies();"
         >select 5 galaxies</v-btn>
         <v-btn
@@ -99,7 +100,7 @@
               :disabled="!stage_state.waveline_set"
               class="white-text px-a"
               width="100%"
-              color="green"
+              color="success"
               @click="
                 add_current_velocity();
               "
@@ -121,7 +122,7 @@
             >
               <!-- FORM DIALOG as template for reflections/MC -->
               <reflect-velocity-windows
-                button-text="do"
+                button-text="reflect"
                 close-text="submit"
                 @submit="
                   stage_state.marker = story_state.stage_index = 2;

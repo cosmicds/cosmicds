@@ -1,9 +1,10 @@
 <template>
   <div id="distance-root">
     <v-toolbar
-      color="secondary"
+      color="primary"
       dense
       dark
+      class="text-uppercase"
     >
       <v-toolbar-title>Estimate Distance</v-toolbar-title>
       <v-spacer></v-spacer>
