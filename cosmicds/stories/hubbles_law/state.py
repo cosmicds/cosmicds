@@ -72,15 +72,19 @@ class HubblesLaw(Story):
         student_cols = ["ID", "RA", "DEC", "Z", "Type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
                          "Element"]
-        self.data_collection.append(Data(
+        student_measurements = self.data_collection.append(Data(
             label='student_measurements',
             **{x: np.array([], dtype='float64')
                for x in student_cols}))
-        self.data_collection.append(Data(
+        student_data = self.data_collection.append(Data(
             label="student_data",
             **{x : ['X'] if x in ['ID', 'Element', 'Type'] else [0] 
                 for x in student_cols}))
 
+        self.add_link(student_measurements, 'ID', student_data, 'ID')
+        self.add_link(student_measurements, 'distance', student_data, 'distance')
+        self.add_link(student_measurements, 'velocity', student_data, 'velocity')
+        self.add_link(student_measurements, 'student_id', student_data, 'student_id')
 
 
         # Make all data writeable

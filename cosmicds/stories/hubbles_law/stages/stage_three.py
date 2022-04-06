@@ -59,6 +59,7 @@ class StageThree(Stage):
         class_data = self.get_data("HubbleData_ClassSample")
         all_data = self.get_data("HubbleData_All")
 
+
         # Set up links between various data sets
         student_dc_name = "student_data"
         class_dc_name = "HubbleData_ClassSample"

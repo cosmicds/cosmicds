@@ -39,6 +39,17 @@ class Story(State, HubMixin):
         self.stages[self.stage_index]['steps'][self.step_index][
             'completed'] = value
 
+    def viewers(self):
+        return self.app.viewers
+
+    # Data can be data, a subset, or a subset group
+    def set_layer_visible(self, data, viewers):
+        for viewer in self.viewers():
+            for layer in viewer.layers:
+                if layer.state.layer == data:
+                    layer.state.visible = viewer in viewers
+
+
 
 class Stage(TemplateMixin):
     template = Unicode().tag(sync=True)
