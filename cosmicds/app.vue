@@ -309,6 +309,14 @@ body {
   padding: 0;
 }
 
+.v-card__text {
+  font-size: 1rem !important;
+}
+
+.v-alert {
+  font-size: 18px !important;
+}
+
 .jp-Notebook,
 .jp-OutputArea-output,
 .jupyter-widgets,

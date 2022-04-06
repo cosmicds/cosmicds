@@ -49,8 +49,9 @@
         v-if="!state.vel_win_opened"
       >
         <div
+          style="font-size: 16px;"
         >
-          Click INFO button.
+          Click LEARN MORE button.
         </div>
       </v-col>
       <v-col
