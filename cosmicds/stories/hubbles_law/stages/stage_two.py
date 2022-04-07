@@ -21,6 +21,7 @@ class StageState(State):
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
     advance_marker = CallbackProperty(True)
+    image_location = CallbackProperty()
 
     markers = CallbackProperty([
         "test"
@@ -70,6 +71,9 @@ class StageTwo(Stage):
         self.add_component(angsize_slideshow, label='c-angsize-slideshow')
 
         self.add_component(DistanceTool(), label="c-distance-tool")
+        self.stage_state.image_location = "data/images/stage_two_distance"
+        add_callback(self.app_state, 'using_voila',
+                     self._update_image_location)
 
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
@@ -124,6 +128,10 @@ class StageTwo(Stage):
     @property
     def slideshow(self):
         return self.get_component('c-angsize-slideshow')
+
+    def _update_image_location(self, using_voila):
+        prepend = "voila/files/" if using_voila else ""
+        self.stage_state.image_location = prepend + "data/images/stage_two_distance"
 
     @property
     def distance_sidebar(self):

@@ -27,7 +27,7 @@
             {{ currentTitle }}
           </span>
           <span
-            @click="() => { $emit('close'); dialog = false; if (step == 6)  {step = 0}; }"
+            @click="() => { $emit('close'); dialog = false; if (step == 8)  {step = 0}; }"
           >
             <v-btn
               icon
@@ -50,39 +50,11 @@
             <v-card-text>
               <v-container>
                 <v-row
-                >
-                  <v-col
-                    cols="6" 
-                    class="d-flex flex-column"
-                    height="100%"
-                    flat
-                    tile
-                  >
-                
-                    <div>
-                    <v-card
-                      class="mt-auto white--text"
-                      flat
-                      color="secondary"
-                    >                  
-                      <v-card-text>
-                        You’ve now uncovered evidence that galaxies are for the most part moving AWAY from our Milky Way galaxy. To scientists in the 1920’s, this led to a radical shift in their world view. Once they knew galaxies do not, in fact, move about randomly, they needed to come up with a new explanation for this surprising phenomenon.
-                      </v-card-text>
-                    </v-card>
-                    <br>               
+                > 
                       <p>
                         You’ve now uncovered evidence that galaxies are for the most part moving AWAY from our Milky Way galaxy. To scientists in the 1920’s, this led to a radical shift in their world view. Once they knew galaxies do not, in fact, move about randomly, they needed to come up with a new explanation for this surprising phenomenon.
                       </p>
                     </div>
-                  </v-col>
-                  <v-col cols="1">
-                  </v-col>
-                  <v-col cols="4">
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain                      
-                      :src="`${state.image_location}/refraction_diffraction_spectra.png`"></v-img>
-                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -96,29 +68,7 @@
               <v-container>
                 <v-row
                 >
-                  <v-col
-                    cols="6" 
-                    class="d-flex flex-column"
-                    height="100%"
-                    flat
-                    tile
-                  >
                     <div>                    
-                      <v-card
-                        class="mt-auto white--text"
-                        flat
-                        color="secondary"
-                      > 
-                        <v-card-text>
-                          <p>
-                            Edwin Hubble was an astronomer who was interested in these galaxies. After looking at Slipher’s velocity measurements, Hubble wondered if there is a relationship between the galaxies’ velocities and their distances from the Milky Way. 
-                          </p>
-                          <p>
-                            Measuring distances to objects in space is one of the most challenging things to do in astronomy. In the next section, you will learn a method for determining distances to galaxies.
-                          </p>
-                        </v-card-text>
-                      </v-card>
-                      <br>
                      <p>
                         Edwin Hubble was an astronomer who was interested in these galaxies. After looking at Slipher’s velocity measurements, Hubble wondered if there is a relationship between the galaxies’ velocities and their distances from the Milky Way. 
                      </p>
@@ -131,73 +81,11 @@
             </v-card-text>
           </v-window-item>
 
-
-          <v-window-item :value="2" 
-            class="no-transition"
-          >
+          <v-window v-model="step" style="height: 70vh" class="overflow-auto">
+          <v-window-item :value="2" class="no-transition">
             <v-card-text>
               <v-container>
-                <v-row
-                >
-                  <v-col
-                    cols="6" 
-                    class="d-flex flex-column"
-                    height="100%"
-                    flat
-                    tile
-                  >
-                    <h3
-                      class="mb-4"
-                    >
-                      Distance and Apparent Size
-                    </h3>
-                    <div>
-                      <v-card
-                        class="mt-auto white--text"
-                        flat
-                        color="secondary"
-                      > 
-                        <v-card-text>
-                         From looking at these images, can you determine which car and which galaxy are closest to the viewer? What visual clues and assumptions do you need to make this estimation?
-                        </v-card-text>
-                      </v-card>
-                      <br>
-                      <p>
-                        From looking at these images, can you determine which car and which galaxy are closest to the viewer? What visual clues and assumptions do you need to make this estimation?
-                      </p>
-                    </div>
-
-                  </v-col>
-                  <v-col cols="6">
-                    <h4>
-                      Cars in a parking lot
-                    </h4>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location}/LED_White_w_highlight_spectool.png`"
-                    ></v-img>
-                    <h4>
-                      Galaxies in the night sky 
-                    </h4>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/Sodium_Vapor_w_highlight_spectool.png`"
-                    ></v-img>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-          </v-window-item>
-
-          <v-window-item :value="3" 
-            class="no-transition"
-          >
-            <v-card-text>
-              <v-container>
-                <v-row
-                >
+                <v-row>
                   <v-col
                     cols="6"
                     class="d-flex flex-column"
@@ -205,60 +93,125 @@
                     flat
                     tile
                   >
-                    <h3
-                      class="mb-4"
-                    >
-                      Distance and Apparent Size
-                    </h3>
+                    <h3 class="mb-4">Refraction and Diffraction</h3>
                     <div>
-                      <v-card
-                        class="mt-auto white--text"
-                        flat
-                        color="secondary"
-                      > 
-                        <v-card-text>
-                          <p>
-                            Question Here?
-                          </p>
-                          <p>
-                            You know roughly how big a car is, and all types of cars are similar in size to each other, so the ones that are closest to you will appear bigger than the ones that are farthest away.
-                          </p>
-                          <p>
-                          If we make the same assumption about galaxies, you can use this information to determine how far away they are.
-                          </p>
-                        </v-card-text>
-                      </v-card>
+                      <p>
+                         Consider the people in this image. Do you think that there really is a giant sized person about to step on a smaller person?
+                        </p>
                       <br>
                       <p>
-                        At wavelengths where the spectrum graph has a <strong>low brightness</strong> value, the spectrum image is <strong>dim</strong> or <strong>dark</strong> at the corresponding wavelengths.
+                        No! The people are not at the same distance from the photographer. 
                       </p>
                     </div>
-
                   </v-col>
                   <v-col cols="6">
-                    <h4>
-                      Car in parking lots 
-                    </h4>
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location}/LED_White_w_neghighlight_spectool.png`"
-                    ></v-img>
-                    <h4>
-                      Galaxies in the night sky 
-                    </h4>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/Sodium_Vapor_w_neghighlight_spectool.png`"
+                      :src="`${state.image_location}/People near and far labeled.png`"
                     ></v-img>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
           </v-window-item>
+        
 
-          <v-window-item :value="4" 
+          <v-window-item :value="3" 
+            class="no-transition"
+          >
+            <v-card-text>
+              <v-container>
+                <v-row>
+                <v-col cols="6" >
+                    <h3 class="mb-4">
+                      Distance and Apparent Size
+                    </h3>
+                    <div>
+                    <p>  
+                      From looking at these images, can you determine which person and which galaxy are closest to the viewer? What visual clues and assumptions do you need to make this estimation?
+                    </p>
+                  </v-col>
+                    <v-col cols="6">
+                      <v-row>
+                    <h4>
+                      People on the beach 
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location}/People near and far labeled.png`"
+                    ></v-img>
+                    </v-row>
+                    <v-row>
+                    <h4>
+                      Galaxies in the night sky 
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                    ></v-img>
+                    </v-row>
+                    </v-col>
+                    </div>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-window-item>
+
+         <v-window-item :value="4" 
+            class="no-transition"
+          >
+            <v-card-text>
+              <v-container>
+                  <v-col
+                    cols="6" 
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      Distance and Apparent Size
+                    </h3>
+                    <div>
+                    <p>
+                      You know how big a typical person is, and people are generally similar in size to each other, so the ones that are closest to you will appear bigger than the ones that are farthest away.
+                    </p>
+                    <p>
+                      If we make the same assumption about galaxies, you can use this information to determine how far away they are.
+                    </p>
+                    </div>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-row>
+                    <h4>
+                      People on the beach 
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location}/People near and far labeled.png`"
+                    ></v-img>
+                    </v-row>
+                    <v-row>
+                    <h4>
+                      Galaxies in the night sky 
+                    </h4>
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                    ></v-img>
+                    </v-row>
+                    </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-window-item>
+
+                  
+
+          <v-window-item :value="5" 
             class="no-transition"
           >
             <v-card-text>
@@ -304,7 +257,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      :src="`${state.image_location}/siren_moving_white.png`"
+                      :src="`${state.image_location}/Erin's Pinky - to be replaced with Anna figure.png`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -312,11 +265,9 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="5" 
-            class="no-transition"
+          <v-window-item :value="6" 
           >
-            <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
-              $$ a = b + \frac{c}{d} $$
+            <v-card-text >
               <v-container>
                 <v-row>
                   <v-col
@@ -338,10 +289,11 @@
                         class="mt-auto white--text"
                         flat
                         color="secondary"
+                        v-intersect = "(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
                       >
                       <v-card-text>
                       <p>
-                        $$ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}}$$
+                        \[ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}} /]
                       </p>
                       <h6>
                         (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
@@ -360,7 +312,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      :src="`${state.image_location}/doppler_shift_light_white.png`"
+                      :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.jpg`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -368,20 +320,43 @@
             </v-card-text>
           </v-window-item>
 =
-          <v-window-item :value="6" 
+          <v-window-item :value="7" 
             class="no-transition"
           >
           <h3 class="mb-4">
             Reflect
           </h3>
-
+          <v-card-text>
+          <v-col>
+          <v-card
+            class="mt-auto white--text"
+            flat
+            color="secondary"
+            v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+                     
             <v-card-text>
+              <p>
+                  Let’s come back to these galaxies. Use the image to estimate how much farther away Galaxy B is than Galaxy A. Assume galaxies A and B have the same physical size.
+                </p>
                <p>
-                  $ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}}$
+                  \[ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}}/]
                 </p>
                 <h5>
                   (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
                 </h5> 
+              <v-card-text>
+              </v-col>
+              <v-col>
+              <v-col cols="6">
+                    <h4>
+                      Galaxy Picture
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                    ></v-img>
+                </v-col>
               <mc-radiogroup
                 :radio-options="[
                   'Galaxy A and Galaxy B are the same distance away from us.',
@@ -389,69 +364,72 @@
                   'Galaxy A is closer to us than Galaxy B.',
                   'We do not have enough information to answer this question']"
                   :feedbacks="['Try again.', 'That\'s right!', 'Try again.', 'Try again.']"
-                :answer-key="3"
+                :answer-key="2"
               >
+
               </mc-radiogroup>
+              
             </v-card-text>
           </v-window-item>
 
 
-          <v-window-item :value="7" 
-            class="no-transition"
+          <v-window-item :value="8" 
           >
             <v-card-text>
               <v-container>
-                <v-row
-                >
+                <v-row>
                   <v-col
-                    cols="6" 
-                    class="d-flex flex-column"
-                    height="100%"
-                    flat
-                    tile
+                    cols="6"
                   >
                     <h3
                       class="mb-4"
                     >
-                      Emission and absorption lines in spectra
+                      Distance and apparent size
                     </h3>
                     <div>
                       <p>
-                        The top spectrum shows <strong>emission lines</strong> from a source containing hydrogen.
+                       Nice work! We’re going to use this formula to measure distances to your galaxies. 
+                      </p>
+                       <v-card
+                        class="mt-auto white--text"
+                        flat
+                        color="secondary"
+                        v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+                      >
+                      <v-card-text>
+                      <p>
+                        \[ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}} /]
+                      </p>
+                      <h6>
+                        (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
+                      </h6> 
+                      </v-card-text>
+                      </v-card>
+                      <p>
+                        With some algebra and unit conversions, this becomes: 
                       </p>
                       <p>
-                        The bottom spectrum shows <strong>absorption lines</strong> due to hydrogen.
+                        Galaxy Distance = 200,000 x physical length of galaxy / Galaxy’s angular size (theta, in arcseconds)
                       </p>
                       <p>
-                        Notice that in both spectra, the emission and absorption lines are present at the same combination of wavelengths (hydrogen’s “chemical fingerprint”).
+                        In a few moments, we will teach you how to measure the angular size of your galaxies.
+                      </p>
+                      <p>
+                        But first, we need to know the physical length of your galaxy. In this data story, we are going to make an assumption that all galaxies are the <strong>same physical length as the Milky Way galaxy</strong>, which we know to be about 100,000 light years across. 
+                      </p>
+                      </p>
+                        You can ponder later whether you think this is a good or bad assumption.
                       </p>
                     </div>
-                    <v-card
-                      class="mt-auto white--text"
-                      flat
-                      color="secondary"
-                    > 
-                      <v-card-text>
-                        Elements emit light at specific wavelengths, and they can also absorb light at the same wavelengths, depending on the conditions associated with a light source.
-                      </v-card-text>
-                    </v-card>
                   </v-col>
                   <v-col cols="6">
                     <h4>
-                      Hydrogen emission spectrum
-                    </h4>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location}/hydrogen_emission_spectool.png`"
-                    ></v-img>
-                    <h4>
-                      Hydrogen absorption spectrum
+                      Galaxy Picture
                     </h4>
                     <v-img
                       class="mx-a"
                       contain
-                      :src="`${state.image_location}/hydrogen_absorption_spectool.png`"
+                      :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.jpg`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -459,8 +437,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="8" 
-            class="no-transition"
+          <v-window-item :value="9" 
           >
             <div class="pa-4 text-center my-auto">
               <v-img
@@ -512,15 +489,15 @@
           </v-item-group>
           <v-spacer></v-spacer>
           <v-btn
-            :disabled="step === 6"
+            :disabled=" step === 8"
             color="accent"
             text
             @click="step++;"
           >
-            {{ step < 6 ? 'next' : '' }}
+            {{ step < 8 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled="step < 6"
+            :disabled="step < 8"
             color="accent"
             class="black--text"
             depressed
