@@ -44,8 +44,6 @@ export default {
       }
       const selectedKeys = [...selected].sort(sortFunc).map(x => x[this.key_component]);
       const allKeys = [...this.items].sort(sortFunc).map(x => x[this.key_component]);
-      console.log(selectedKeys);
-      console.log(allKeys);
       const indices = [];
       allKeys.forEach((key, index) => {
         if (selectedKeys.includes(key)) {
