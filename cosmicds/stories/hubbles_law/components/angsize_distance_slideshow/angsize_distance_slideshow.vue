@@ -81,7 +81,6 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window v-model="step" style="height: 70vh" class="overflow-auto">
           <v-window-item :value="2" class="no-transition">
             <v-card-text>
               <v-container>
@@ -288,12 +287,12 @@
                        <v-card
                         class="mt-auto white--text"
                         flat
-                        color="secondary"
+                        color="info"
                         v-intersect = "(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
                       >
                       <v-card-text>
                       <p>
-                        \[ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}} /]
+                        $$ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)} $$  
                       </p>
                       <h6>
                         (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
@@ -319,56 +318,55 @@
               </v-container>
             </v-card-text>
           </v-window-item>
-=
+
           <v-window-item :value="7" 
             class="no-transition"
           >
-          <h3 class="mb-4">
-            Reflect
-          </h3>
-          <v-card-text>
-          <v-col>
-          <v-card
-            class="mt-auto white--text"
-            flat
-            color="secondary"
-            v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
-                     
+            <h3 class="mb-4">
+              Reflect
+            </h3>
             <v-card-text>
-              <p>
-                  Let’s come back to these galaxies. Use the image to estimate how much farther away Galaxy B is than Galaxy A. Assume galaxies A and B have the same physical size.
-                </p>
-               <p>
-                  \[ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}}/]
-                </p>
-                <h5>
-                  (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
-                </h5> 
-              <v-card-text>
-              </v-col>
-              <v-col>
-              <v-col cols="6">
-                    <h4>
-                      Galaxy Picture
-                    </h4>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
-                    ></v-img>
+              <v-row>
+                <v-col cols="7">   
+                  <v-row>   
+                    <p>
+                      Let’s come back to these galaxies. Use the image to estimate how much farther away Galaxy B is than Galaxy A. Assume galaxies A and B have the same physical size.
+                    </p>
+                    <v-card
+                      class="mt-auto white--text"
+                      flat
+                      color="info"
+                    >
+                      <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+                        <p>
+                          $$ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)} $$ 
+                        </p>
+                      </v-card-text>
+                    </v-card>
+                  </v-row>
+                  <v-row>
+                    <mc-radiogroup
+                      :radio-options="[
+                        'Galaxy A and Galaxy B are the same distance away from us.',
+                        'Galaxy A is farther away from us than Galaxy B.',
+                        'Galaxy A is closer to us than Galaxy B.',
+                        'We do not have enough information to answer this question']"
+                      :feedbacks="['Try again.', 'That\'s right!', 'Try again.', 'Try again.']"
+                      :answer-key="1"
+                    >
+                    </mc-radiogroup>
+                  </v-row>
                 </v-col>
-              <mc-radiogroup
-                :radio-options="[
-                  'Galaxy A and Galaxy B are the same distance away from us.',
-                  'Galaxy A is farther away from us than Galaxy B.',
-                  'Galaxy A is closer to us than Galaxy B.',
-                  'We do not have enough information to answer this question']"
-                  :feedbacks="['Try again.', 'That\'s right!', 'Try again.', 'Try again.']"
-                :answer-key="2"
-              >
-
-              </mc-radiogroup>
-              
+                <v-col cols="5">
+                  <h4>
+                    Galaxy Picture
+                  </h4>
+                  <v-img
+                    class="mx-a"
+                    contain
+                    :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                  ></v-img>
+              </v-col>              
             </v-card-text>
           </v-window-item>
 
@@ -393,16 +391,12 @@
                        <v-card
                         class="mt-auto white--text"
                         flat
-                        color="secondary"
-                        v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+                        color="info"
                       >
-                      <v-card-text>
+                      <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
                       <p>
-                        \[ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}} /]
+                        $$ \text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)} $$ 
                       </p>
-                      <h6>
-                        (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
-                      </h6> 
                       </v-card-text>
                       </v-card>
                       <p>

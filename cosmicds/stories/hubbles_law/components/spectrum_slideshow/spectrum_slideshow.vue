@@ -507,7 +507,7 @@
           </v-item-group>
           <v-spacer></v-spacer>
           <v-btn :disabled="step === 8" color="accent" text @click="step++">
-            {{ step < 6 ? "next" : "" }}
+            {{ step < 8 ? "next" : "" }}
           </v-btn>
           <v-btn
             :disabled="step < 8"
