@@ -22,6 +22,7 @@ class Table(VuetifyTemplate, HubListener):
     search = Unicode().tag(sync=True)
     single_select = Bool(False).tag(sync=True)
     selected = List().tag(sync=True)
+    sort_by = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
     use_search = Bool(False).tag(sync=True)
     
@@ -38,6 +39,7 @@ class Table(VuetifyTemplate, HubListener):
 
         components = kwargs.get('glue_components', [x.label for x in data.components])
         self.key_component = kwargs.get('key_component', components[0])
+        self.sort_by = self.key_component
         self._glue_data = data
 
         self.title = kwargs.get('title', '')
@@ -203,3 +205,6 @@ class Table(VuetifyTemplate, HubListener):
             self.selected = [x for x in self.selected if x != item]
         else:
             self.selected = self.selected + [item]
+
+    def vue_update_sort_by(self, field, _args=None):
+        self.sort_by = field

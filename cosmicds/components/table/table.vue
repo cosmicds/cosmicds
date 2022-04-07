@@ -15,6 +15,7 @@
       dense
       v-model="selected"
       @click:row="(item, data) => handle_row_click(item, data)"
+      @update:sort-by="(field) => update_sort_by(field)"
       :headers="headers"
       :items="items"
       :search="search"
@@ -27,31 +28,46 @@
 </template>
 
 <script>
+
 export default {
-  watch: {
-    selected(newValue, _oldValue) {
-      console.log("In selected watcher");
-      const selectedKeys = newValue.map(x => x[this.key_component]);
-      const allKeys = this.items.map(x => x[this.key_component]);
+
+  data: {
+    selectedClass: "v-data-table__selected"
+  },
+
+  methods: {
+    updateStyling: function(selected, sortBy) {
+      const sortFunc = function(x,y) {
+        if (x[sortBy] === y[sortBy]) return 0;
+        if (x[sortBy] < y[sortBy]) return -1;
+        return 1;
+      }
+      const selectedKeys = [...selected].sort(sortFunc).map(x => x[this.key_component]);
+      const allKeys = [...this.items].sort(sortFunc).map(x => x[this.key_component]);
+      console.log(selectedKeys);
+      console.log(allKeys);
       const indices = [];
       allKeys.forEach((key, index) => {
         if (selectedKeys.includes(key)) {
           indices.push(index);
         }
       });
-      console.log(newValue);
-      console.log(selectedKeys);
-      console.log(allKeys);
-      console.log(indices);
       const rows = Array.from(this.$el.querySelectorAll("tr"));
-      rows.shift();
+      rows.shift(); // The first row will be the header
       for (const [index, row] of rows.entries()) {
         if (indices.includes(index)) {
-          row.classList.add("v-data-table__selected");
+          row.classList.add(this.selectedClass);
         } else {
-          row.classList.remove("v-data-table__selected");
+          row.classList.remove(this.selectedClass);
         }
       }
+    }
+  },
+
+  watch: {
+    selected(newValue, oldValue) {
+      if (newValue === oldValue) return;
+      this.updateStyling(newValue, this.sortBy);
     }
   }
 }
