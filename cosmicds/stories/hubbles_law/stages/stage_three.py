@@ -56,7 +56,6 @@ class StageThree(Stage):
         self.add_widget(fit_table, label="fit_table")
 
         student_data = self.get_data("student_data")
-        class_data = self.get_data("HubbleData_ClassSample")
         all_data = self.get_data("HubbleData_All")
 
 
