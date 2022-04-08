@@ -22,9 +22,30 @@
         <h2>Hubble's Law</h2>
       </v-toolbar-title>
 
-      <v-toolbar-title> Cosmic Data Stories</v-toolbar-title>
+      <v-toolbar-title>Cosmic Data Stories</v-toolbar-title>
 
       <v-spacer></v-spacer>
+
+      <v-btn
+        icon
+        @click="
+          app_state.dark_mode = !app_state.dark_mode
+        "
+      >
+        <v-icon
+        >mdi-brightness-6</v-icon>
+      </v-btn>
+
+      <v-btn
+        icon
+        @click="
+          reset_app()
+        "
+      >
+        <v-icon>
+          mdi-replay
+        </v-icon>
+      </v-btn>
 
       <v-responsive max-width="156">
         <v-text-field
@@ -44,7 +65,7 @@
           <v-list-item>
             <v-list-item-action>
               <v-avatar color="indigo">
-                <v-icon dark> mdi-account-circle</v-icon>
+                <v-icon dark>mdi-account-circle</v-icon>
               </v-avatar>
             </v-list-item-action>
 
@@ -175,89 +196,158 @@
 </template>
 
 <script>
+
 export default {
   mounted() {
-    if (this.$data.story_state.use_mathjax) {
-      window.MathJax = {
-        tex: {packages: {'[+]': ['input']}},
-        startup: {
-          ready() {
-            const Configuration = MathJax._.input.tex.Configuration.Configuration;
-            const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
-            const TEXCLASS = MathJax._.core.MmlTree.MmlNode.TEXCLASS;
-            
-            new CommandMap('input', {input: 'Input'}, {
-              Input(parser, name) {
-                const xml = parser.create('node', 'XML');
-                const id = parser.GetBrackets(name, '');
-                const cls = parser.GetBrackets(name, '');
-                const value = parser.GetArgument(name);
-                xml.setXML(MathJax.startup.adaptor.node('input', {
-                  id: id, class: cls, value: value, xmlns: 'http://www.w3.org/1999/xhtml'
-                }), MathJax.startup.adaptor);
-                xml.getSerializedXML = function () {
-                  return this.adaptor.outerHTML(this.xml) + '</input>';
-                }
-                parser.Push(
-                  parser.create('node', 'TeXAtom', [
-                    parser.create('node', 'semantics', [
-                      parser.create('node', 'annotation-xml', [
-                        xml
-                      ], {encoding: 'application/xhtml+xml'})
-                    ])
-                  ], {texClass: TEXCLASS.ORD})
-                );
-              }
-            });
-            Configuration.create('input', {handler: {macro: ['input']}});
 
-            MathJax.startup.defaultReady();
+    // Check whether or not we're using voila
+    // Based on the approach used here: https://github.com/widgetti/ipyvuetify/blob/master/js/src/jupyterEnvironment.js
+    const item = []
+      .slice
+      .call(document.getElementsByTagName('script'))
+      .map(e => e.src)
+      .find(e => e.includes('voila/static'));
+    this.app_state.using_voila = item !== undefined;
+
+
+    window.MathJax = {
+      tex: {packages: {'[+]': ['input']}},
+      startup: {
+        ready() {
+          const Configuration = MathJax._.input.tex.Configuration.Configuration;
+          const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+          const TEXCLASS = MathJax._.core.MmlTree.MmlNode.TEXCLASS;
+          
+          new CommandMap('input', {input: 'Input'}, {
+            Input(parser, name) {
+              const xml = parser.create('node', 'XML');
+              const id = parser.GetBrackets(name, '');
+              const cls = parser.GetBrackets(name, '');
+              const value = parser.GetArgument(name);
+              xml.setXML(MathJax.startup.adaptor.node('input', {
+                id: id, class: cls, value: value, xmlns: 'http://www.w3.org/1999/xhtml'
+              }), MathJax.startup.adaptor);
+              xml.getSerializedXML = function () {
+                return this.adaptor.outerHTML(this.xml) + '</input>';
+              }
+              parser.Push(
+                parser.create('node', 'TeXAtom', [
+                  parser.create('node', 'semantics', [
+                    parser.create('node', 'annotation-xml', [
+                      xml
+                    ], {encoding: 'application/xhtml+xml'})
+                  ])
+                ], {texClass: TEXCLASS.ORD})
+              );
+            }
+          });
+          Configuration.create('input', {handler: {macro: ['input']}});
+
+          MathJax.startup.defaultReady();
+        }
+      }
+    };
+
+    // Grab MathJax itself
+    const mathJaxScript = document.createElement('script');
+    mathJaxScript.async = false;
+    mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
+    document.head.appendChild(mathJaxScript);
+
+    // Not all of our elements are initially in the DOM,
+    // so we need to account for that in order to get MathJax
+    // to render their formulae properly
+    const mathJaxOpeningDelimiters = [ "$$", "\\(", "\\[" ];
+    const containsMathJax = node => mathJaxOpeningDelimiters.some(delim => node.innerHTML.includes(delim));
+    const elementToScan = node => node.nodeType === Node.ELEMENT_NODE;
+    const mathJaxCallback = function(mutationList, _observer) {
+      mutationList.forEach(mutation => {
+        if (mutation.type === 'childList') {
+
+          const needTypesetting = [];
+          mutation.addedNodes.forEach(node => {
+            if (elementToScan(node) && containsMathJax(node)) {
+              needTypesetting.push(node);
+            }
+          });
+          if (needTypesetting.length > 0) {
+            MathJax.typesetPromise(needTypesetting);
+          }
+
+          const toClear = [];
+          mutation.removedNodes.forEach(node => {
+            if (elementToScan(node) && containsMathJax(node)) {
+              toClear.push(node);
+            }
+          })
+          if (toClear.length > 0) {
+            MathJax.typesetClear(toClear);
           }
         }
-      };
-
-      // Grab MathJax itself
-      const mathJaxScript = document.createElement('script');
-      mathJaxScript.async = false;
-      mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
-      document.head.appendChild(mathJaxScript);
-
-      // Not all of our elements are initially in the DOM,
-      // so we need to account for that in order to get MathJax
-      // to render their formulae properly
-      const mathJaxOpeningDelimiters = [ "$$", "\\(", "\\[" ];
-      const containsMathJax = node => mathJaxOpeningDelimiters.some(delim => node.innerHTML.includes(delim));
-      const elementToScan = node => node.nodeType === Node.ELEMENT_NODE;
-      const mathJaxCallback = function(mutationList, _observer) {
-        mutationList.forEach(mutation => {
-          if (mutation.type === 'childList') {
-
-            const needTypesetting = [];
-            mutation.addedNodes.forEach(node => {
-              if (elementToScan(node) && containsMathJax(node)) {
-                needTypesetting.push(node);
-              }
-            });
-            if (needTypesetting.length > 0) {
-              MathJax.typesetPromise(needTypesetting);
-            }
-
-            const toClear = [];
-            mutation.removedNodes.forEach(node => {
-              if (elementToScan(node) && containsMathJax(node)) {
-                toClear.push(node);
-              }
-            })
-            if (toClear.length > 0) {
-              MathJax.typesetClear(toClear);
-            }
-          }
-        });
-      }
-      const observer = new MutationObserver(mathJaxCallback);
-      const options = { childList: true, subtree: true };
-      observer.observe(this.$el, options);
+      });
     }
+    const observer = new MutationObserver(mathJaxCallback);
+    const options = { childList: true, subtree: true };
+    observer.observe(this.$el, options);
+
+    // Make dialogs draggable
+    // This is a modified version of the code from https://github.com/vuetifyjs/vuetify/issues/4058#issuecomment-450636420
+    // In particular, the reliance on setInterval has been removed in favor of a ResizeObserver
+    const d = {};
+    document.addEventListener("mousedown", e => {
+      if (!e.target.classList.contains("v-card__title")) return;
+      const closestDialog = e.target.closest(".v-dialog.v-dialog--active");
+      if (e.button === 0 && closestDialog != null) { // element which can be used to move element
+        const boundingRect = closestDialog.getBoundingClientRect();
+        d.el = closestDialog; // element which should be moved
+        d.title = e.target;
+        d.mouseStartX = e.clientX;
+        d.mouseStartY = e.clientY;
+        d.elStartX = boundingRect.left;
+        d.elStartY = boundingRect.top;
+        d.el.style.position = "fixed";
+        d.el.style.margin = 0;
+        d.oldTransition = d.el.style.transition;
+        d.el.style.transition = "none";
+        d.title.classList.add("dragging");
+        d.overlays = document.querySelectorAll(".v-overlay.v-overlay--active");
+        d.overlays.forEach(overlay => overlay.style.display = "none");
+      }
+    });
+    document.addEventListener("mousemove", e => {
+        if (d.el === undefined) return;
+        const boundingRect = d.el.getBoundingClientRect();
+        d.el.style.left = Math.min(
+            Math.max(d.elStartX + e.clientX - d.mouseStartX, 0),
+            window.innerWidth - boundingRect.width
+        ) + "px";
+        d.el.style.top = Math.min(
+            Math.max(d.elStartY + e.clientY - d.mouseStartY, 0),
+            window.innerHeight - boundingRect.height
+        ) + "px";
+    });
+    document.addEventListener("mouseup", () => {
+        if (d.el === undefined) return;
+        d.el.style.transition = d.oldTransition;
+        d.el = undefined;
+        d.title.classList.remove("dragging");
+        d.overlays.forEach(overlay => overlay.style.display = '');
+    });
+
+    // If the window changes size, the dialog may be partially/completely out of bounds
+    // We fix that here
+    const resizeObserver = new ResizeObserver(entries => {
+      entries.forEach(entry => {
+        const dialogs = entry.target.querySelectorAll(".v-dialog.v-dialog--active");
+        dialogs.forEach(dialog => {
+          const boundingRect = dialog.getBoundingClientRect();
+          dialog.style.left = Math.min(parseInt(dialog.style.left), window.innerWidth - boundingRect.width) + "px";
+          dialog.style.top = Math.min(parseInt(dialog.style.top), window.innerHeight - boundingRect.height) + "px";
+        });
+      });
+    });
+    resizeObserver.observe(document.body);
+
   },
   methods: {
     getCurrentStage: function () {
@@ -313,5 +403,13 @@ body {
 
 .wwt_widget .v-toolbar {
   display: none;
+}
+
+.v-dialog.v-dialog--active .v-card__title {
+    cursor: grab;
+}
+
+.v-dialog.v-dialog--active .v-card__title.dragging {
+  cursor: grabbing;
 }
 </style>

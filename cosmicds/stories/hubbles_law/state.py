@@ -8,7 +8,6 @@ import numpy as np
 from glue.core import Data
 import ipyvuetify as v
 
-
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
     measurements = DictCallbackProperty({
@@ -102,7 +101,7 @@ class HubblesLaw(Story):
         v.theme.themes.dark.primary = 'colors.lightBlue.darken3'
         v.theme.themes.light.primary = 'colors.lightBlue.darken3'
         v.theme.themes.dark.secondary = 'colors.lightBlue.darken4'
-        v.theme.themes.light.secondary = 'colors.lightBlue.darken4'
+        v.theme.themes.light.secondary = 'colors.lightBlue.lighten3'
         v.theme.themes.dark.accent = 'colors.amber.accent2'
         v.theme.themes.light.accent = 'colors.amber.accent3'
         v.theme.themes.dark.info = 'colors.deepOrange.darken3'
@@ -160,5 +159,3 @@ class HubblesLaw(Story):
         new_data = Data(label='student_data', **components)
         student_data = dc['student_data']
         student_data.update_values_from_data(new_data)
-
-

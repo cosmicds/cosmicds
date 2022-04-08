@@ -50,17 +50,17 @@ class StoryRegistry(UniqueDictRegistry):
             return cls
         return decorator
 
-    def setup_story(self, name, session):
+    def setup_story(self, name, session, app_state):
         if name not in self.members:
             raise ValueError(f"Story `{name}` does not exist in the "
-                             "registery.")
+                             "registry.")
 
         story_entry = self.members[name]
         story_state = story_entry['cls'](session)
         story_state.name = name
 
         for k, v in story_entry['stages'].items():
-            stage = v['cls'](session, story_state)
+            stage = v['cls'](session, story_state, app_state)
             
             story_state.stages[k] = {"title": stage.title,
                                      "subtitle": stage.subtitle,
@@ -84,7 +84,7 @@ class StoryRegistry(UniqueDictRegistry):
             # Check to see if the given story has been registered
             if not story in self.members:
                 raise ValueError(f"Story `{story}` does not exist in the "
-                                 "registery.")
+                                 "registry.")
 
             self.members[story]['stages'][index] = {'cls': cls, 'steps': steps}
             return cls

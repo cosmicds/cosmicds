@@ -25,12 +25,6 @@
           class="text-h6 font-weight-regular justify-space-between"
         >
           <span>
-            <v-avatar
-              color="info"
-              class="subheading white--text mr-4"
-              size="24"
-              v-text="step"
-            ></v-avatar>
             {{ currentTitle }}
           </span>
           <span
@@ -59,19 +53,14 @@
               How do the observed wavelengths of emission or absorption lines in your galaxies
               compare with the “rest” wavelength of those lines?
               <mc-radiogroup
-                radio-one="Lines in the galaxies have the same wavelength as the lines at rest."
-                radio-two="Some galaxies have lines with smaller wavelengths and some have lines with larger wavelengths than the lines at rest."
-                radio-three="Most or all of the galaxies have lines with smaller wavelengths than the lines at rest."
-                radio-four="Most or all of the galaxies have lines with larger wavelengths than the lines at rest."
-                answer-key=4
-                color-one="red"
-                color-two="red"
-                color-three="red"
-                color-four="green"
-                feedback-one="Try again."
-                feedback-two="Try again."
-                feedback-three="Try again."
-                feedback-four="That's right!"
+                :radio-options="[
+                  'Lines in the galaxies have the same wavelength as the lines at rest.',
+                  'Some galaxies have lines with smaller wavelengths and some have lines with larger wavelengths than the lines at rest.',
+                  'Most or all of the galaxies have lines with smaller wavelengths than the lines at rest.',
+                  'Most or all of the galaxies have lines with larger wavelengths than the lines at rest.'
+                ]"
+                :feedbacks="['Try again.', 'Try again.', 'Try again.', 'That\'s right!']"
+                :answer-key="3"
               >
               </mc-radiogroup>
             </v-card-text>
@@ -84,19 +73,14 @@
             <v-card-text>
               From the data you just collected, what can you conclude about how the galaxies are moving relative to our home galaxy, the Milky Way?
               <mc-radiogroup
-                radio-one="The galaxies are not moving."
-                radio-two="Some galaxies are moving toward our galaxy and some galaxies are moving away from our galaxy."
-                radio-three="Galaxies are mostly moving toward our galaxy."
-                radio-four="Galaxies are mostly moving away from our galaxy."
-                answer-key=4
-                color-one="red"
-                color-two="red"
-                color-three="red"
-                color-four="green"
-                feedback-one="Try again."
-                feedback-two="Try again."
-                feedback-three="Try again."
-                feedback-four="That's right!"
+                :radio-options="[
+                  'The galaxies are not moving.',
+                  'Some galaxies are moving toward our galaxy and some galaxies are moving away from our galaxy.',
+                  'Galaxies are mostly moving toward our galaxy.',
+                  'Galaxies are mostly moving away from our galaxy.'
+                ]"
+                :feedbacks="['Try again.', 'Try again.', 'Try again.', 'That\'s right!']"
+                :answer-key="3"
               >
               </mc-radiogroup>
             </v-card-text>

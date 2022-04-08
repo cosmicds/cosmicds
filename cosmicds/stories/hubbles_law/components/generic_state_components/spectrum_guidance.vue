@@ -13,7 +13,7 @@
       class="mb-4"
     >
       <p>
-        To the left is a spectrum of light from your chosen galaxy.
+        Here is a spectrum of light from your chosen galaxy.
       </p>
       <p>
         Let’s learn how a spectrum can tell us if an object is moving toward or away from us.
@@ -46,16 +46,16 @@
       <v-col
         cols="6"
         class="shrink"
-        :class="state.vel_win_unopened ? 'd-block' : 'd-none'"
+        v-if="!state.vel_win_opened"
       >
         <div
         >
-          Click INFO below.
+          Click INFO button.
         </div>
       </v-col>
       <v-col
         class="shrink"
-        :class="state.vel_win_unopened ? 'd-none' : 'd-block'"
+        v-if="state.vel_win_opened"
       >
         <v-btn
           class="black--text"
