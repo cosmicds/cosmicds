@@ -23,7 +23,9 @@
       <v-window-item :value="0" 
         class="no-transition"
       >
-        <v-card-text>
+        <v-card-text
+          style="min-height: 550px;"
+        >
           <v-container>
             <v-row
               no-gutter
