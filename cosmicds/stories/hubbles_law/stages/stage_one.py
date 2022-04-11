@@ -110,7 +110,7 @@ class StageOne(Stage):
                                     'Rest Wavelength (Å)',
                                     'Observed Wavelength (Å)',
                                     'Velocity (km/s)'],
-                             title='My Galaxies | Velocity Measurements',
+                             title='My Galaxies',
                              single_select=True) # True for now
         self.add_widget(galaxy_table, label="galaxy_table")
         galaxy_table.row_click_callback = self.on_galaxy_row_click

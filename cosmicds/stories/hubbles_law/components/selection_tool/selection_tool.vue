@@ -10,11 +10,15 @@
     }"
   >
     <v-toolbar
-      color="secondary"
+      color="primary"
       dense
       dark
     >
-      <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
+      <v-toolbar-title
+        class="text-h6 text-uppercase font-weight-regular"
+      >
+        Night Sky Viewer
+      </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -56,7 +60,7 @@
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </template>
-      Add to my dataset
+      Add galaxy to my dataset
     </v-tooltip>
   </div>
 </template>

@@ -1,16 +1,27 @@
 <template>
-  <v-card>
-    <v-card-title v-if="title">
-      {{ title }}
-      <v-spacer></v-spacer>
-      <v-text-field v-if="use_search"
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        hide-details
-      ></v-text-field>
-    </v-card-title>
+  <v-card
+    flat
+  >
+    <v-toolbar
+      color="primary"
+      dense
+      dark
+    >
+      <v-toolbar-title
+        class="text-h6 text-uppercase font-weight-regular"
+        v-if="title"
+      >
+        {{ title }}
+        <v-spacer></v-spacer>
+        <v-text-field v-if="use_search"
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+      </v-toolbar-title>
+    </v-toolbar>
     <v-data-table
       dense
       v-model="selected"
