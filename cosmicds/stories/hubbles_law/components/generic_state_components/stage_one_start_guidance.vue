@@ -8,13 +8,16 @@
     <h3
       class="mb-4"
     >
-      Select Five Galaxies
+      Introducing the Guidelines
     </h3>
     <div
       class="mb-4"
     >
       <p>
-        This is a view of the night sky, like the one you explored earlier. This view shows a more modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. This Data Story will focus on a nearby subset of galaxies.
+        You will be exploring your data through many different representations. These representations will include spatial images, tables, spectrum graphs, and scatter plots.
+      <p>
+      </p>
+        <strong>Guidelines</strong> for your exploration will appear in these orange boxes. Next to them you will find relevant data views, highlighted with an orange background.
       </p>
     </div>
     
@@ -36,7 +39,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'sel_gal2'
+            state.marker = 'sel_gal1'
           "
         >
           next
