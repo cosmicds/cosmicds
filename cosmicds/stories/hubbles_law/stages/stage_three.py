@@ -169,33 +169,33 @@ class StageThree(Stage):
             if layer.state.layer.label in [hist_sync_sg.label, scatter_sync_sg.label]:
                 layer.state.visible = False
 
-        fit_table = self.get_widget("fit_table")
-        subset_group_label = "fit_table" + '_selected'
-        fit_table.subset_group = self.data_collection.new_subset_group(label=subset_group_label, subset_state=None)
+        # fit_table = self.get_widget("fit_table")
+        # subset_group_label = "fit_table" + '_selected'
+        # fit_table.subset_group = self.data_collection.new_subset_group(label=subset_group_label, subset_state=None)
 
-        # Set up the functionality for the histogram <---> scatter sync
-        # We add a listener for when a subset is modified/created on 
-        # the histogram viewer as well as extend the xrange tool for the 
-        # histogram to always affect this subset
-        self.histogram_listener = HistogramListener(self.story_state,
-                                                    hist_sync_sg,
-                                                    classes_summary_data,
-                                                    scatter_sync_sg, 
-                                                    meas_data)
+        # # Set up the functionality for the histogram <---> scatter sync
+        # # We add a listener for when a subset is modified/created on 
+        # # the histogram viewer as well as extend the xrange tool for the 
+        # # histogram to always affect this subset
+        # self.histogram_listener = HistogramListener(self.story_state,
+        #                                             hist_sync_sg,
+        #                                             classes_summary_data,
+        #                                             scatter_sync_sg, 
+        #                                             meas_data)
 
-        def hist_selection_activate():
-            if self.histogram_listener.source is not None:
-                self.session.edit_subset_mode.edit_subset = [self.histogram_listener.source_group]
-            self.histogram_listener.listen()
-        def hist_selection_deactivate():
-            self.session.edit_subset_mode.edit_subset = []
-            self.histogram_listener.ignore()
-        extend_tool(class_distr_viewer, 'bqplot:xrange', hist_selection_activate, hist_selection_deactivate)
+        # def hist_selection_activate():
+        #     if self.histogram_listener.source is not None:
+        #         self.session.edit_subset_mode.edit_subset = [self.histogram_listener.source_group]
+        #     self.histogram_listener.listen()
+        # def hist_selection_deactivate():
+        #     self.session.edit_subset_mode.edit_subset = []
+        #     self.histogram_listener.ignore()
+        # extend_tool(class_distr_viewer, 'bqplot:xrange', hist_selection_activate, hist_selection_deactivate)
 
-        # We want the hub_fit_viewer to be selecting for the same subset as the table
-        def fit_selection_activate():
-            self.session.edit_subset_mode.edit_subset = [self.get_widget('fit_table').subset_group]
-        def fit_selection_deactivate():
-            self.session.edit_subset_mode.edit_subset = []
-        for tool_id in ['bqplot:xrange', 'bqplot:yrange', 'bqplot:rectangle', 'bqplot:circle']:
-            extend_tool(fit_viewer, tool_id, fit_selection_activate, fit_selection_deactivate)
+        # # We want the hub_fit_viewer to be selecting for the same subset as the table
+        # def fit_selection_activate():
+        #     self.session.edit_subset_mode.edit_subset = [self.get_widget('fit_table').subset_group]
+        # def fit_selection_deactivate():
+        #     self.session.edit_subset_mode.edit_subset = []
+        # for tool_id in ['bqplot:xrange', 'bqplot:yrange', 'bqplot:rectangle', 'bqplot:circle']:
+        #     extend_tool(fit_viewer, tool_id, fit_selection_activate, fit_selection_deactivate)
