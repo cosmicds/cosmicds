@@ -105,9 +105,10 @@ class SpectrumView(BqplotScatterView):
         self.toolbar.observe(self._active_tool_change, names=['active_tool'])
 
     def _active_tool_change(self, change):
-        is_tool_active = change.new is not None
-        self.user_line.visible = not is_tool_active
-        self.user_line_label.visible = not is_tool_active
+        is_tool = change.new is not None
+        line_visible = not is_tool or change.new.tool_id != 'bqplot:xzoom'
+        self.user_line.visible = line_visible
+        self.user_line_label.visible = line_visible
 
     def _on_view_change(self, event=None):
         scale = self.scales['y']
@@ -156,9 +157,6 @@ class SpectrumView(BqplotScatterView):
         for layer in self.layers:
             if layer.state.layer.label != data.label:
                 layer.state.visible = False
-
-        print(type(layer))
-        print(layer)
 
     def initialize_toolbar(self):
         self.toolbar = Toolbar(self)

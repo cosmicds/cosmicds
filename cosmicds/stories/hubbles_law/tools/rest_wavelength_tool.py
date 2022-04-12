@@ -51,8 +51,6 @@ class RestWavelengthTool(CheckableTool):
         self._on_view_change()
 
     def activate(self):
-        self.viewer.user_line.visible = False
-        self.viewer.user_line_label.visible = False
         rest = MG_REST_LAMBDA if self.viewer.element == 'Mg-I' else H_ALPHA_REST_LAMBDA
         self.line.x = [rest, rest]
         self.label.x = [rest, rest]
@@ -63,8 +61,6 @@ class RestWavelengthTool(CheckableTool):
         self.viewer.figure.marks = self.viewer.figure.marks + self.marks
 
     def deactivate(self):
-        self.viewer.user_line.visible = True
-        self.viewer.user_line_label.visible = True
         self.viewer.figure.marks = [mark for mark in self.viewer.figure.marks if mark not in self.marks]
         self.viewer.element_label.text = [self.viewer.element]
         self.active = False
