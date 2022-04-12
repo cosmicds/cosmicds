@@ -539,8 +539,10 @@
         </v-item>
       </v-item-group>
       <v-spacer></v-spacer>
+      <!-- Code to use for disable in button below if step 2 depends on exploring WWT first: -->
+      <!-- :disabled="step === 6 || (step === 2 && !exploration_complete)" -->
       <v-btn
-        :disabled="step === 6 || (step === 2 && !exploration_complete)"
+        :disabled="step === 6"
         color="accent"
         text
         @click="step++;"
