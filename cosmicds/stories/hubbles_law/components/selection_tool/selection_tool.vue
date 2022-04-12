@@ -34,9 +34,99 @@
         Reset view
       </v-tooltip>
 
-      <v-btn icon>
+      <v-btn
+        icon
+        @click.stop="dialog = true"
+      >
         <v-icon>mdi-information-outline</v-icon>
       </v-btn>
+      <v-dialog
+          v-model="dialog"
+          persistent
+          max-width="1000px"
+      >
+        <v-card
+          class="mx-auto"
+        >
+          <v-toolbar
+            color="secondary"
+            dense
+            dark
+          >
+            <v-toolbar-title
+              class="text-h6 text-uppercase font-weight-regular"
+            >
+              How to Use the Night Sky Viewer
+            </v-toolbar-title>
+            <v-spacer></v-spacer>
+            <span
+              @click="() => { $emit('close'); dialog = false; }"
+            >
+              <v-btn
+                icon
+              >
+                <v-icon>
+                  mdi-close
+                </v-icon>
+              </v-btn>
+            </span>
+          </v-toolbar>
+          <v-card-text>
+            <v-container>
+              <v-row
+              >
+                <v-col>
+                  <p>
+                    The Night Sky Viewer shows a modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. The green dots mark the locations of galaxies you can collect data for.
+                  </p>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                      lg="4"
+                    >
+                      <v-chip
+                        label
+                        outlined
+                      >
+                        Pan
+                      </v-chip>
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      lg="8"
+                      class="pt-2"
+                    >
+                      <strong>click + drag</strong><br>
+                      (or use <strong class="codeFont">I-J-K-L</strong> keys)
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                      lg="4"
+                    >
+                      <v-chip
+                        label
+                        outlined
+                      >
+                        Zoom
+                      </v-chip>
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      lg="8"
+                      class="pt-2"
+                    >
+                      <strong>scroll in and out</strong><br>
+                      (or use <strong class="codeFont">Z-X</strong> keys)
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
 
     </v-toolbar>
     <jupyter-widget
