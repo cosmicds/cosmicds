@@ -128,7 +128,6 @@
               <v-container>
                 <v-row>
                   <v-col>
-                  <v-row>
                     <h3 class="mb-4">
                       Distance and Apparent Size
                     </h3>
@@ -137,7 +136,6 @@
                       From looking at these images, can you determine which person and which galaxy are closest to the viewer? What visual clues and assumptions do you need to make this estimation?
                     </p>
                   </div>
-                    </v-row>
                     <v-row>
                         <v-col cols="6" > 
                           <h4>
@@ -172,8 +170,7 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col >
-                    <v-row>
+                  <v-col>
                     <h3
                       class="mb-4"
                     >
@@ -186,8 +183,6 @@
                     <p>
                       If we make the same assumption about galaxies, you can use this information to determine how far away they are.
                     </p>
-                    </div>
-                    </v-row>
                     <v-row>
                       <v-col cols="6">
                         <h4>
@@ -332,12 +327,13 @@
           <v-card-text >
               <v-container>
                 <v-row>
-                  <v-col>
                     <v-col cols="7"> 
+                      <div>
                       <v-row>
                         <h3 class="mb-4">
                           Reflect
-                        </h3>     
+                        </h3>  
+                           
                         <p>
                           Let’s come back to these galaxies. Use the image to estimate how much farther away Galaxy B is than Galaxy A. Assume galaxies A and B have the same physical size.
                         </p>
@@ -353,6 +349,7 @@
                           </v-card-text>
                         </v-card>
                       </v-row>
+                      <v-row>
                     <mc-radiogroup
                       :radio-options="[
                         'Galaxy A and Galaxy B are the same distance away from us.',
@@ -363,7 +360,9 @@
                       :answer-key="1"
                     >
                       </mc-radiogroup>
-                </v-col>
+                      </v-row>
+                   </div>
+                </v-col> 
                 <v-col cols="5">
                   <h4>
                     Galaxy Picture
@@ -374,9 +373,8 @@
                     :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
                   ></v-img>
                 </v-col>
-              </v-col>
-              </v-row>   
-              <v-container>           
+              </v-row> 
+              <v-container>            
             </v-card-text>
           </v-window-item>
 
