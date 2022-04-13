@@ -157,17 +157,17 @@ class StageThree(Stage):
         morphology_viewer.state.y_att = galaxy_data.id['velocity_km_s']
 
         # Set up the listener to sync the histogram <--> scatter viewers
-        meas_data = self.get_data("HubbleData_ClassSample")
-        hist_sync_sg = self.data_collection.new_subset_group(label="Hist Sync SG")
-        scatter_sync_sg = self.data_collection.new_subset_group(label="Scatter Sync SG")
-        hist_sync_sg.style.color = "green"
-        scatter_sync_sg.style.color = "green"
+    #    meas_data = self.get_data("HubbleData_ClassSample")
+    #    hist_sync_sg = self.data_collection.new_subset_group(label="Hist Sync SG")
+    #   scatter_sync_sg = self.data_collection.new_subset_group(label="Scatter Sync SG")
+    #    hist_sync_sg.style.color = "green"
+    #    scatter_sync_sg.style.color = "green"
 
         # Right now, this is the only viewer aside from the synced viewers
         # that shows these data objects
-        for layer in sandbox_distr_viewer.layers:
-            if layer.state.layer.label in [hist_sync_sg.label, scatter_sync_sg.label]:
-                layer.state.visible = False
+    #    for layer in sandbox_distr_viewer.layers:
+    #        if layer.state.layer.label in [hist_sync_sg.label, scatter_sync_sg.label]:
+    #            layer.state.visible = False
 
         # fit_table = self.get_widget("fit_table")
         # subset_group_label = "fit_table" + '_selected'
