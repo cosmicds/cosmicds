@@ -12,7 +12,7 @@
       <template v-slot:img="{ props }">
         <v-img
             v-bind="props"
-            gradient="to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)"
+            gradient="to top right, rgba(1, 87, 155, .7), rgba(0, 0, 0, .5)"
         ></v-img>
       </template>
 
@@ -187,7 +187,11 @@
 
     <v-footer app padless inset>
       <v-row justify="center" no-gutters>
-        <v-col class="primary darken py-2 text-center white--text" cols="12">
+        <v-col
+          class="primary darken py-2 text-center white--text"
+          cols="12"
+          color="light-blue darken-5"
+        >
           {{ new Date().getFullYear() }} — <strong>CosmicDS</strong>
         </v-col>
       </v-row>
@@ -362,6 +366,14 @@ html,
 body {
   margin: 0;
   padding: 0;
+}
+
+.v-card__text {
+  font-size: 1rem !important;
+}
+
+.v-alert {
+  font-size: 18px !important;
 }
 
 .jp-Notebook,

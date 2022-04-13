@@ -33,7 +33,6 @@
           elevation="2"
           @click="
             state.marker = 'sel_gal2';
-            state.spectrum_tool_visible = 0;
           "
         >
           back
