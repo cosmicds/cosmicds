@@ -27,7 +27,7 @@
             {{ currentTitle }}
           </span>
           <span
-            @click="() => { $emit('close'); dialog = false; if (step == 8)  {step = 0}; }"
+            @click="() => { $emit('close'); dialog = false; if (step == 9)  {step = 0}; }"
           >
             <v-btn
               icon
@@ -356,7 +356,7 @@
                         'Galaxy A is farther away from us than Galaxy B.',
                         'Galaxy A is closer to us than Galaxy B.',
                         'We do not have enough information to answer this question']"
-                      :feedbacks="['Try again.', 'That\'s right!', 'Try again.', 'Try again.']"
+                      :feedbacks="['Try again. \ Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?', 'That\'s right!', 'Try again. \ Try to imagine how many times you could lay Galaxy B across Galaxy A.', 'Try again. \ You could probably fit 10 Galaxy B’s across Galaxy A.']"
                       :answer-key="1"
                     >
                       </mc-radiogroup>
@@ -439,23 +439,32 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="9" 
-          >
-            <div class="pa-4 text-center my-auto">
-              <v-img
-                class="mb-4"
-                contain
-                height="128"
-                src="https://www.pngrepo.com/png/211744/512/rocket-ship-launch-missile.png"
-              ></v-img>
-              <h3 class="text-h6 font-weight-light mb-2">
-                You're ready to start measuring galaxy velocities now.
-              </h3>
-              <span class="text-caption grey--text">Click on "Info" if you'd like to come back for a refresher.</span>
-            </div>
+          <v-window-item :value="9" >
+            <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+              <v-container>
+                <v-row>
+                  <v-col>
+                    <h3 class="mb-4">
+                          Measuring Distances
+                    </h3>
+                    <p>
+                      When measuring very large distances, astronomers use a unit called a Megaparsec (Mpc). 
+                    </p>
+                    <p>
+                      If we substitute the physical size of the Milky Way ($$L=0.03 Mpc$$) in our equation, we get:
+                    </p>
+                      $$ \mathbf{\text{ Distance in Mpc} = \frac{6200}{ \text{galaxy angular size (theta in arcseconds)}}}$$
+                    <p>
+                      So, to measure the distance to a galaxy like the Milky Way, all you have to do is measure its angular size in arcseconds. Let’s get started.
+                    </p>
+                  </v-col>
+                </v-row> 
+              </v-container>
+            </v-card-text>    
           </v-window-item>
         </v-window>
 
+        
         <v-divider></v-divider>
 
         <v-card-actions
@@ -491,16 +500,15 @@
           </v-item-group>
           <v-spacer></v-spacer>
           <v-btn
-            id = "next_button"
-            :disabled = "step === 8 || step === 7"
+            :disabled = "step === 9"
             color="accent"
             text
             @click="step++;"
           >
-            {{ step < 8 ? 'next' : '' }}
+            {{ step < 9 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled = "step < 8"
+            :disabled = "step < 9"
             color="accent"
             class="black--text"
             depressed

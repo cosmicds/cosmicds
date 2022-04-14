@@ -27,6 +27,7 @@ class Angsize_SlideShow(v.VuetifyTemplate):
         "Galaxy Distances",
         "Galaxy Distances",
         "Galaxy Distances",
+        "Galaxy Distances",
         "Galaxy Distances"
     ]
     _default_title = "Galaxy Distances"
