@@ -71,16 +71,16 @@
               <v-container>
                 <v-row>
                   <v-col>
-                  <h3 class="mb-4"> 1920's Astronomy </h3>
+                    <h3 class="mb-4"> 1920's Astronomy </h3>
                     <div>                    
-                     <p>
+                      <p>
                         Edwin Hubble was an astronomer who was interested in these galaxies. After looking at Slipher’s velocity measurements, Hubble wondered if there is a relationship between the galaxies’ velocities and their distances from the Milky Way. 
-                     </p>
-                     <p>
+                      </p>
+                      <p>
                         Measuring distances to objects in space is one of the most challenging things to do in astronomy. In the next section, you will learn a method for determining distances to galaxies.
                       </p>
                     </div>
-                    </v-col>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -101,7 +101,7 @@
                     <div>
                       <p>
                          Consider the people in this image. Do you think that there really is a giant sized person about to step on a smaller person?
-                        </p>
+                      </p>
                       <br>
                       <p>
                         No! The people are not at the same distance from the photographer. 
@@ -131,40 +131,40 @@
                     <h3 class="mb-4">
                       Distance and Apparent Size
                     </h3>
-                  <div>
-                    <p>  
-                      From looking at these images, can you determine which person and which galaxy are closest to the viewer? What visual clues and assumptions do you need to make this estimation?
-                    </p>
-                  </div>
+                    <div>
+                      <p>  
+                        From looking at these images, can you determine which person and which galaxy are closest to the viewer? What visual clues and assumptions do you need to make this estimation?
+                      </p>
+                    </div>
                     <v-row>
-                        <v-col cols="6" > 
-                          <h4>
-                            People on the beach 
-                          </h4>
-                          <v-img
-                            class="mb-4 mx-a"
-                            contain
-                            :src="`${state.image_location}/People near and far labeled.png`"
-                          ></v-img>
-                          </v-col>
-                        <v-col cols="6">
-                          <h4>
-                            Galaxies in the night sky 
-                          </h4>
-                          <v-img
-                            class="mb-4 mx-a"
-                            contain
-                            :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
-                          ></v-img>
-                        </v-col>
-                      </v-row>
-                </v-col>
-              </v-row>
+                      <v-col cols="6" > 
+                        <h4>
+                          People on the beach 
+                        </h4>
+                        <v-img
+                          class="mb-4 mx-a"
+                          contain
+                          :src="`${state.image_location}/People near and far labeled.png`"
+                        ></v-img>
+                      </v-col>
+                      <v-col cols="6">
+                        <h4>
+                          Galaxies in the night sky 
+                        </h4>
+                        <v-img
+                          class="mb-4 mx-a"
+                          contain
+                          :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                        ></v-img>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-card-text>
           </v-window-item>
 
-         <v-window-item :value="4" 
+          <v-window-item :value="4" 
             class="no-transition"
           >
             <v-card-text>
@@ -177,12 +177,13 @@
                       Distance and Apparent Size
                     </h3>
                     <div>
-                    <p>
-                      You know how big a typical person is, and people are generally similar in size to each other, so the ones that are closest to you will appear bigger than the ones that are farthest away.
-                    </p>
-                    <p>
-                      If we make the same assumption about galaxies, you can use this information to determine how far away they are.
-                    </p>
+                      <p>
+                        You know how big a typical person is, and people are generally similar in size to each other, so the ones that are closest to you will appear bigger than the ones that are farthest away.
+                      </p>
+                      <p>
+                        If we make the same assumption about galaxies, you can use this information to determine how far away they are.
+                      </p>
+                    </div>
                     <v-row>
                       <v-col cols="6">
                         <h4>
@@ -191,20 +192,20 @@
                         <v-img
                           class="mb-4 mx-a"
                           contain
-                          :src="`${state.image_location}/People near and far labeled.png`"
+                         :src="`${state.image_location}/People near and far labeled.png`"
                         ></v-img>
                       </v-col>
                       <v-col cols="6">
-                      <h4>
-                        Galaxies in the night sky 
-                      </h4>
-                      <v-img
-                        class="mb-4 mx-a"
-                        contain
-                        :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
-                      ></v-img>
+                        <h4>
+                          Galaxies in the night sky 
+                        </h4>
+                        <v-img
+                          class="mb-4 mx-a"
+                          contain
+                          :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                         ></v-img>
                       </v-col> 
-                      </v-row> 
+                    </v-row> 
                   </v-col>
                 </v-row>
               </v-container>
@@ -227,16 +228,16 @@
                       How to measure apparent size
                     </h3>
                     <div>
-                    <p>
-                     We need a way to measure “how big” an object seems. We call this “apparent” or “angular” size.
-                    </p>
-                    <p>
-                    The apparent (or <strong> angular </strong> ) size of objects in the sky is measured in degrees, or in fractions of a degree. 
-                    </p>
-                    <p>
-                    To get a sense for how big 1 degree is, hold your pinky out at arm’s length. Your pinky fingernail at arm’s length covers about 1 degree of arc in the sky.
-                    </p>
-                    <v-card
+                      <p>
+                        We need a way to measure “how big” an object seems. We call this “apparent” or “angular” size.
+                      </p>
+                      <p>
+                        The apparent (or <strong> angular </strong> ) size of objects in the sky is measured in degrees, or in fractions of a degree. 
+                      </p>
+                      <p>
+                        To get a sense for how big 1 degree is, hold your pinky out at arm’s length. Your pinky fingernail at arm’s length covers about 1 degree of arc in the sky.
+                      </p>
+                      <v-card
                         class="mt-auto white--text"
                         flat
                         color="secondary"
@@ -245,10 +246,9 @@
                           <p>
                             <strong> Bonus experiment </strong> : Do you think your pinky held at arm’s length would cover the moon? 
                             Try it the next time you see the moon in the sky!
-
                           </p>
                         </v-card-text>
-                        </v-card>
+                      </v-card>
                     </div>
                   </v-col>
                   <v-col cols="6">
@@ -286,20 +286,20 @@
                       <p>
                         For very far away objects like galaxies, the relationship is described by the formula:
                       </p>
-                       <v-card
+                      <v-card
                         class="mt-auto white--text"
                         flat
                         color="info"
                         v-intersect = "(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
                       >
-                      <v-card-text>
-                      <p>
-                        $$ \text{Galaxy's Angular Size} (\theta) = $$ $$ \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)} $$  
-                      </p>
-                      <h6>
-                        (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
-                      </h6> 
-                      </v-card-text>
+                        <v-card-text>
+                          <p>
+                            $$ \text{Galaxy's Angular Size} (\theta) = $$ $$ \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)} $$  
+                         </p>
+                          <h6>
+                            (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
+                          </h6> 
+                        </v-card-text>
                       </v-card>
                       <p>
                         For galaxies that are the same size, the larger the distance, the smaller galaxy will appear in angular size.   
@@ -324,16 +324,15 @@
           <v-window-item :value="7" 
             class="no-transition"
           >
-          <v-card-text >
+            <v-card-text >
               <v-container>
                 <v-row>
-                    <v-col cols="7"> 
-                      <div>
+                  <v-col cols="7"> 
+                    <div>
                       <v-row>
                         <h3 class="mb-4">
                           Reflect
-                        </h3>  
-                           
+                        </h3>                           
                         <p>
                           Let’s come back to these galaxies. Use the image to estimate how much farther away Galaxy B is than Galaxy A. Assume galaxies A and B have the same physical size.
                         </p>
@@ -361,19 +360,19 @@
                     >
                       </mc-radiogroup>
                       </v-row>
-                   </div>
-                </v-col> 
-                <v-col cols="5">
-                  <h4>
-                    Galaxy Picture
-                  </h4>
-                  <v-img
-                    class="mx-a"
-                    contain
-                    :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
-                  ></v-img>
-                </v-col>
-              </v-row> 
+                    </div>
+                  </v-col> 
+                  <v-col cols="5">
+                    <h4>
+                      Galaxy Picture
+                    </h4>
+                    <v-img
+                      class="mx-a"
+                      contain
+                      :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                    ></v-img>
+                  </v-col>
+                </v-row> 
               <v-container>            
             </v-card-text>
           </v-window-item>
@@ -396,16 +395,16 @@
                       <p>
                        Nice work! We’re going to use this formula to measure distances to your galaxies. 
                       </p>
-                       <v-card
+                      <v-card
                         class="mt-auto white--text"
                         flat
                         color="info"
                       >
-                      <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
-                      <p>
-                        $$ \text{Galaxy's Angular Size} (\theta) = $$ $$ \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)} $$ 
-                      </p>
-                      </v-card-text>
+                        <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+                          <p>
+                            $$ \text{Galaxy's Angular Size} (\theta) = $$ $$ \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)} $$ 
+                          </p>
+                        </v-card-text>
                       </v-card>
                       <p>
                         With some algebra and unit conversions, this becomes: 
