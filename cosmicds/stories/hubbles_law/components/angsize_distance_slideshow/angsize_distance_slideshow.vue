@@ -39,33 +39,33 @@
           </span>
         </v-card-title>
 
-        <v-window
-          v-model="step"
-          style="height: 70vh;"
-          class="overflow-auto"
-        >
-          <v-window-item :value="0" 
-            class="no-transition"
+          <v-window
+            v-model="step"
+            style="height: 70vh;"
+            class="overflow-auto"
           >
-            <v-card-text>
-              <v-container>
-                <v-row> 
-                  <v-col>
-                    <h3 class="mb-4"> 1920's Astronomy </h3>
-                    <div>
-                      <p>
-                        You’ve now uncovered evidence that galaxies are for the most part moving AWAY from our Milky Way galaxy. To scientists in the 1920’s, this led to a radical shift in their world view. Once they knew galaxies do not, in fact, move about randomly, they needed to come up with a new explanation for this surprising phenomenon.
-                      </p>
-                    </div>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-          </v-window-item>
+            <v-window-item :value="0" 
+              class="no-transition"
+            >
+              <v-card-text>
+                <v-container>
+                  <v-row> 
+                    <v-col>
+                      <h3 class="mb-4"> 1920's Astronomy </h3>
+                      <div>
+                        <p>
+                          You’ve now uncovered evidence that galaxies are for the most part moving AWAY from our Milky Way galaxy. To scientists in the 1920’s, this led to a radical shift in their world view. Once they knew galaxies do not, in fact, move about randomly, they needed to come up with a new explanation for this surprising phenomenon.
+                        </p>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-window-item>
 
 
           <v-window-item :value="1" 
-            class="no-transition"
+              class="no-transition"
           >
             <v-card-text>
               <v-container>
@@ -406,6 +406,7 @@
                           </p>
                         </v-card-text>
                       </v-card>
+                      <v-spacer></v-spacer>
                       <p>
                         With some algebra and unit conversions, this becomes: 
                       </p>
@@ -450,7 +451,7 @@
                       When measuring very large distances, astronomers use a unit called a Megaparsec (Mpc). 
                     </p>
                     <p>
-                      If we substitute the physical size of the Milky Way ($$L=0.03 Mpc$$) in our equation, we get:
+                      If we substitute the physical size of the Milky Way ($L=0.03 Mpc$) in our equation, we get:
                     </p>
                       $$ \mathbf{\text{ Distance in Mpc} = \frac{6200}{ \text{galaxy angular size (theta in arcseconds)}}}$$
                     <p>
