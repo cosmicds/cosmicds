@@ -14,6 +14,7 @@ from cosmicds.phases import Stage
 from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
 from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
+from cosmicds.stories.hubbles_law.components.reflect_velocity_calc import ReflectVelocityCalc
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
@@ -29,6 +30,8 @@ class StageState(State):
     marker = CallbackProperty("")
     indices = CallbackProperty({})
     image_location = CallbackProperty()
+    lambda_rest = CallbackProperty(0)
+    lambda_obs = CallbackProperty(0)
 
     markers = CallbackProperty([
         'sel_gal1',
@@ -63,7 +66,6 @@ class StageState(State):
     "Calculate velocities"
 ])
 class StageOne(Stage):
-
     @default('template')
     def _default_template(self):
         return load_template("stage_one.vue", __file__)
@@ -82,6 +84,8 @@ class StageOne(Stage):
         self.stage_state = StageState()
         spectrum_slideshow = SpectrumSlideshow(self.stage_state)
         self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
+        reflect_velocity_calc = ReflectVelocityCalc(self.stage_state)
+        self.add_component(reflect_velocity_calc, label='c-reflect-velocity-calc')
         #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
         
         self.stage_state.image_location = "data/images/stage_one_spectrum"
@@ -249,6 +253,9 @@ class StageOne(Stage):
         if name is None or gal_type is None:
             return
         self.selection_tool.go_to_location(data["RA"][index], data["DEC"][index], fov=GALAXY_FOV)
+        self.stage_state.lambda_rest = data["restwave"][index]
+        self.stage_state.lambda_obs = data["measwave"][index]
+        print("galaxy row clicked", self.stage_state)
 
     def on_spectrum_click(self, event):
         specview = self.get_viewer("spectrum_viewer")

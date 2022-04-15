@@ -13,6 +13,20 @@
       </v-col>
     </v-row>
     <v-row>
+      Input here:
+      <c-reflect-velocity-calc/>
+      <!--
+      <c-reflect-velocity-calc
+        button-text="reflect"
+        close-text="submit"
+        @submit="
+        stage_state.marker = story_state.stage_index = 2;
+        console.log('Submit button was clicked.');
+        "
+      >
+      </c-reflect-velocity-calc> -->
+    </v-row>
+    <v-row>
       <v-col
         cols="12"
         lg="4"
