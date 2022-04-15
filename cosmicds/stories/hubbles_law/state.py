@@ -7,6 +7,7 @@ from cosmicds.registries import story_registry
 import numpy as np
 from glue.core import Data
 import ipyvuetify as v
+import requests
 
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
@@ -137,3 +138,9 @@ class HubblesLaw(Story):
             data = Data(label=label, **components)
             self.make_data_writeable(data) 
             dc.append(data)
+
+    def submit_measurement(self, student_id, measurement):
+        requests.put("https://api.cosmicds.cfa.harvard.edu/submit-measurement", data={
+            **measurement,
+            "student_id": student_id
+        })
