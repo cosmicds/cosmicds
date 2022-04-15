@@ -215,7 +215,13 @@ export default {
 
 
     window.MathJax = {
-      tex: {packages: {'[+]': ['input']}},
+      loader: {load: ['[tex]/color', '[tex]/bbox']},
+      tex: {
+        packages: {'[+]': ['input', 'color', 'bbox']},
+        color: {
+          padding: '12px'
+        }
+      },
       startup: {
         ready() {
           const Configuration = MathJax._.input.tex.Configuration.Configuration;
@@ -400,6 +406,12 @@ body {
 
 .bqplot {
   height: 100%;
+}
+
+input {
+  width: 4em !important;
+  border: 1px solid black !important;
+  border-radius: 3px !important;
 }
 
 .MathJax,
