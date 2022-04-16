@@ -14,11 +14,9 @@ from .events import StepChangeMessage, WriteToDatabaseMessage
 from .registries import story_registry
 from .utils import load_template
 
-v.theme.dark = True
+from cosmicds.utils import API_URL
 
-# The URL for the CosmicDS API
-# API_URL = "api.cosmicds.cfa.harvard.edu"
-API_URL = "http://localhost:8080"
+v.theme.dark = True
 
 class ApplicationState(State):
     using_voila = CallbackProperty(False)
@@ -77,32 +75,25 @@ class Application(VuetifyTemplate, HubListener):
     def hub(self):
         return self._application_handler.session.hub
 
-    # def _initialize_from_database(self):
-    #     try:
-    #         # User information for a JupyterHub notebook session is stored in an
-    #         # environment  variable
-    #         user = os.environ['JUPYTERHUB_USER']
-    #         stories = database[self.story_state.name]
-    #         story_data = stories.find_one({
-    #             'name': self.story_state.name,
-    #             'student_user': user})
+    def _initialize_from_database(self):
+        try:
+            # User information for a JupyterHub notebook session is stored in an
+            # environment  variable
+            # user = os.environ['JUPYTERHUB_USER']
+            user = self.app_state.student
+            story = self.story_state.name
+            self.story_state = requests.get(f"{API_URL}/story_state/{user.id}/{story}")
+        except:
+            pass
 
-    #         # Update story state with retrieved database data
-    #         if story_data is not None:
-    #             self.story_state.update_from_dict(story_data)
-    #     except:
-    #         pass
+    def _on_write_to_database(self, msg):
+        # User information for a JupyterHub notebook session is stored in an
+        # environment  variable
+        # user = os.environ['JUPYTERHUB_USER']
 
-    # def _on_write_to_database(self, msg):
-    #     # User information for a JupyterHub notebook session is stored in an
-    #     # environment  variable
-    #     user = os.environ['JUPYTERHUB_USER']
-
-    #     # Connect to story's collection
-    #     stories = database[self.story_state.name]
-    #     story_data = self.story_state.as_dict()
-
-    #    stories.update_one({'student_user': user}, story_data, upsert=True)
+        user = self.app_state.student
+        story = self.story_state.name
+        requests.put(f"{API_URL}/story_state/{user.id}/{story}", data=self.story_state.as_dict())
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark

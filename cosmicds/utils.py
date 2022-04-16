@@ -7,8 +7,12 @@ from traitlets import Unicode
 
 __all__ = [
     'load_template', 'update_figure_css', 'extend_tool',
-    'RepeatedTimer'
+    'API_URL', 'RepeatedTimer'
 ]
+
+# The URL for the CosmicDS API
+# API_URL = "api.cosmicds.cfa.harvard.edu"
+API_URL = "http://localhost:8080"
 
 # JC: I got this from https://stackoverflow.com/a/13151299
 class RepeatedTimer(object):
