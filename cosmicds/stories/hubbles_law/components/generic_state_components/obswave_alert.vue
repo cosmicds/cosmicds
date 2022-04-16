@@ -5,20 +5,17 @@
       state.marker = 'res_wav1';
     "
     @next="
-      state.marker = 'rep_rem1';
+      state.marker = 'obs_wav2';
     "
   >
     <div
       class="mb-4"
     >
       <p>
-        Your line’s rest wavelength has been recorded in the table.
+        Hover your mouse in the Spectrum Viewer. A vertical measuring tool identifies the wavelength as you move the tool left and right.
       </p>
       <p>
-        Now let’s measure the <strong>observed wavelength</strong> of the line.
-      </p>
-      <p>
-        Slide the vertical measuring tool until it aligns with the line you identified, and click to record the line’s observed wavelength in the table.
+        Align the measuring tool to the H-&alpha; or Mg I marker and click. This records the <strong>observed</strong> wavelength in your table.
       </p>
     </div>
   </scaffold-alert>

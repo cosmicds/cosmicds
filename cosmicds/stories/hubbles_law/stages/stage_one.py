@@ -40,8 +40,8 @@ class StageState(State):
         'cho_row1',
         'mee_spe1',
         'res_wav1',
-        'res_wav2',
         'obs_wav1',
+        'obs_wav2',        
         'rep_rem1',
         'nic_wor1'
     ])
@@ -137,8 +137,8 @@ class StageOne(Stage):
             "choose_row_guidance",
             "spectrum_guidance",
             "restwave_alert",
-            "restwave_2_alert",
             "obswave_alert",
+            "obswave_2_alert",            
             "remaining_gals_alert",
             "nice_work_alert"
         ]

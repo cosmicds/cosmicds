@@ -76,10 +76,10 @@
           v-if="stage_state.marker == 'mee_spe1'"/>
         <c-restwave-alert
           v-if="stage_state.marker == 'res_wav1'" />
-        <c-restwave-2-alert
-          v-if="stage_state.marker == 'res_wav2'" />
         <c-obswave-alert
           v-if="stage_state.marker == 'obs_wav1'" />
+        <c-obswave-2-alert
+          v-if="stage_state.marker == 'obs_wav2'" />
         <c-remaining-gals-alert
           v-if="stage_state.marker == 'rep_rem1'" />
         <c-nice-work-alert

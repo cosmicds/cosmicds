@@ -5,20 +5,20 @@
       state.marker = 'mee_spe1';
     "
     @next="
-      state.marker = 'res_wav2';
+      state.marker = 'obs_wav1';
     "
   >
     <div
       class="mb-4"
     >
       <p>
-        Let’s come back to your galaxy spectrum. Notice your spectrum has some bright spikes or faint dips.
+        Your galaxy spectrum has either an H-&alpha; emission line or a Mg-I absorption line marked.
       </p>
       <p>
-        The bright spikes are <strong>emission lines</strong>.
+        The known <strong>rest wavelength</strong> for the line is recorded in your table.
       </p>
       <p>
-        The faint dips are <strong>absorption lines</strong>.
+        Click the <v-icon>mdi-lambda</v-icon> icon in the viewer header to display the rest wavelength for that line. 
       </p>
     </div>
   </scaffold-alert>
