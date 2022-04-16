@@ -12,7 +12,7 @@
       class="mb-4"
     >
       <p>
-        Now let’s examine what conclusions you might draw from your data.
+        As scientists do, let’s examine what conclusions you might draw from your data.
       </p>
     </div>
   </scaffold-alert>

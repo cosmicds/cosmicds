@@ -28,7 +28,7 @@
             {{ currentTitle }}
           </span>
           <span
-            @click="() => { dialog = false; if (step == 7)  {step = 0}; }"
+            @click="() => { dialog = false; if (step == 6)  {step = 0}; }"
           >
             <v-btn
               icon
@@ -50,6 +50,29 @@
             class="no-transition"
           >
             <v-card-text>
+              <p>
+                Throughout the data story, you will answer questions that are designed to guide your thinking. Your responses will be recorded (as in a scientist’s lab notebook), so you can use this information to support your claims later in the story.
+              </p>
+              <p>
+                Scientists do not work in a vacuum and neither should you. You can consult colleagues (classmates or lab partners) and instructors for help.
+              </p>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="1" 
+            class="no-transition"
+          >
+            <v-card-text>
+              <p>
+                Recall that you are looking at the same kind of observations Vesto Slipher made in 1920. We’ll ask you some of the question astronomers in 1920 might have asked about Slipher’s data.
+              </p>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="2" 
+            class="no-transition"
+          >
+            <v-card-text>
               How do the observed wavelengths of emission or absorption lines in your galaxies
               compare with the “rest” wavelength of those lines?
               <mc-radiogroup
@@ -67,7 +90,7 @@
           </v-window-item>
 
 
-          <v-window-item :value="1"
+          <v-window-item :value="3"
             class="no-transition"
           >
             <v-card-text>
@@ -86,58 +109,29 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="2"
-            class="no-transition"
-          >
-            <v-card-text>
-              These were the prevailing viewpoints in the 1920's:
-              <ul class="mb-4">  
-                <li><em>The universe is static and unchanging</em></li>
-                <li><em>Galaxies in the universe are moving randomly</em></li>
-              </ul>
-              <h3>Question 1</h3>
-              Do your data support either of these conclusions?
-              <form-textarea
-                question-label="Question 1"
-              >
-              </form-textarea>
-              <h3>Question 2</h3>
-              What would you tell a scientist from 1920 regarding the prevailing wisdom about galaxies during this time?
-              <form-textarea
-                question-label="Question 2"
-              >
-              </form-textarea>
-            </v-card-text>
-          </v-window-item>
-
-          <v-window-item :value="3"
-            class="no-transition"
-          >
-            <v-card-text>
-              These were the prevailing viewpoints in the 1920's:
-              <ul class="mb-4">  
-                <li><em>The universe is static and unchanging</em></li>
-                <li><em>Galaxies in the universe are moving randomly</em></li>
-              </ul>
-              <h3>Question 3</h3>
-              Based on your data, how confident are you about what you told the 1920's scientist? What would improve your confidence in your data and conclusions?
-              <form-textarea
-                question-label="Question 3"
-              >
-              </form-textarea>
-            </v-card-text>
-          </v-window-item>
-
           <v-window-item :value="4"
             class="no-transition"
           >
             <v-card-text>
               <p>
-                You concluded from your data that your galaxies seem to be moving AWAY from our Milky Way galaxy.
+                You concluded from your data that all five of your galaxies seem to be moving AWAY from our Milky Way galaxy. 
               </p>
+
               <p>
-                The Doppler equation can be used to figure out just how fast the galaxies are moving.
+                Are your data consistent with this 1920’s views of the universe?
               </p>
+
+              <em>The universe is static and unchanging</em>:
+              <mc-radiogroup
+                :radio-options="[
+                  'Yes.',
+                  'No.',
+                  'I am not sure.'
+                ]"
+                :feedbacks="['Actually, your evidence does not support this statement. Galaxies would not be moving in a universe that is static and unchanging.', 'That\'s right.', 'Your evidence does not support this statement. Galaxies would not be moving in a universe that is static and unchanging']"
+                :answer-key="1"
+              >
+              </mc-radiogroup>
             </v-card-text>
           </v-window-item>
 
@@ -145,24 +139,24 @@
             class="no-transition"
           >
             <v-card-text>
-              MATHJAX Stuff
+              <p>
+                Are your data consistent with this 1920’s views of the universe?
+              </p>
+              <em>Galaxies in the universe are moving randomly</em>:
+              <mc-radiogroup
+                :radio-options="[
+                  'Yes.',
+                  'No.',
+                  'I am not sure.'
+                ]"
+                :feedbacks="['With only 5 galaxies, it may be hard to say, but your galaxies all seem to be moving in the same direction (away from us). If galaxies move randomly, you would expect some to be moving toward us and some to be moving away.', 'Your galaxies all seem to be moving in the same direction (away from us), which is NOT consistent with galaxies that move randomly, but it may be difficult to say for sure with data from only 5 galaxies.', 'With only 5 galaxies it is difficult to draw strong conclusions about the motion of galaxies, but all your data so far seem to show that the motion of galaxies is NOT random.']"
+                :answer-key="2"
+              >
+              </mc-radiogroup>
             </v-card-text>
           </v-window-item>
 
           <v-window-item :value="6"
-            class="no-transition"
-          >
-            <v-card-text>
-              <p>
-                Great, notice your calculated velocity is now entered in the table.
-              </p>
-              <p>
-                Now that you know how to use this equation, click below to have the velocities of the remaining galaxies calculated as well.
-              </p>
-            </v-card-text>
-          </v-window-item>
-
-          <v-window-item :value="7"
             class="no-transition"
           >
             <div class="pa-4 text-center">
@@ -213,15 +207,15 @@
           </v-item-group>
           <v-spacer></v-spacer>
           <v-btn
-            :disabled="step === 7"
+            :disabled="step === 6"
             color="accent"
             text
             @click="step++;"
           >
-            {{ step < 7 ? 'next' : '' }}
+            {{ step < 6 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled="step < 7"
+            :disabled="step < 6"
             color="accent"
             class="black--text"
             depressed
@@ -251,20 +245,19 @@ module.exports = {
   data: function () {
     return {
       step: 0,
-      length: 8,
+      length: 7,
       dialog: false
     };
   },
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 0: return "Observed vs. Rest Wavelengths"
-        case 1: return "How Galaxies Move"
-        case 2: return "Feedback for a 1920's Scientist"
-        case 3: return "Confidence in Your Conclusions"
-        case 4: return "Moving Away"
-        case 5: return "MATHJAX"
-        case 6: return "Remaining Galaxy Velocities"
+        case 0: return "Reflect on your Data"
+        case 1: return "What would a 1920's Scientist Wonder?" 
+        case 2: return "Observed vs. Rest Wavelengths"
+        case 3: return "How Galaxies Move"  
+        case 4: return "Do Data Agree with 1920's Thinking?"
+        case 5: return "Do Data Agree with 1920's Thinking?"
         default: return "Complete"
       }
     },
