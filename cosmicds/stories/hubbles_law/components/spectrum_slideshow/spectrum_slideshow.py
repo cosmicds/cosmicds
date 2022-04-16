@@ -15,7 +15,6 @@ class SpectrumSlideshow(v.VuetifyTemplate):
     #currentTitle = Unicode("").tag(sync=True)
     state = GlueState().tag(sync=True)
     #exploration_complete = Bool(False).tag(sync=True)
-    #intro_complete = Bool(False).tag(sync=True)
 
     def __init__(self, story_state, *args, **kwargs):
         self.state = story_state
