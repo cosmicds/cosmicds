@@ -8,13 +8,14 @@ from cosmicds.stories.hubbles_law.utils import FULL_FOV, GALAXY_FOV
 from ipywidgets import DOMWidget, widget_serialization
 from pandas import DataFrame
 from pywwt.jupyter import WWTJupyterWidget
-from traitlets import Dict, Instance, Int
+from traitlets import Dict, Instance, Int, Bool
 
 class SelectionTool(v.VueTemplate):
     template = load_template("selection_tool.vue", __file__, traitlet=True).tag(sync=True)
     widget = Instance(DOMWidget, allow_none=True).tag(sync=True, **widget_serialization)
     current_galaxy = Dict().tag(sync=True)
     selected_count = Int().tag(sync=True)
+    dialog = Bool(False).tag(sync=True)
 
     START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 

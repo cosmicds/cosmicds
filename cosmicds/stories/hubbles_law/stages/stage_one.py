@@ -34,6 +34,7 @@ class StageState(State):
     lambda_obs = CallbackProperty(0)
 
     markers = CallbackProperty([
+        'mee_gui1',
         'sel_gal1',
         'sel_gal2',
         'cho_row1',
@@ -46,7 +47,7 @@ class StageState(State):
     ])
 
     step_markers = CallbackProperty([
-        'sel_gal1',
+        'mee_gui1',
         'mee_spe1',
     ])
 
@@ -130,7 +131,8 @@ class StageOne(Stage):
         state_components_dir = str(Path(__file__).parent.parent / "components" / "generic_state_components")
         path = join(state_components_dir, "")
         state_components = [
-            "select_galaxies_guidance",
+            "stage_one_start_guidance",
+            "select_galaxies_alert",
             "select_galaxies_2_guidance",
             "choose_row_guidance",
             "spectrum_guidance",
