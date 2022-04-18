@@ -138,9 +138,3 @@ class HubblesLaw(Story):
             data = Data(label=label, **components)
             self.make_data_writeable(data) 
             dc.append(data)
-
-    def submit_measurement(self, student_id, measurement):
-        requests.put("https://api.cosmicds.cfa.harvard.edu/submit-measurement", data={
-            **measurement,
-            "student_id": student_id
-        })

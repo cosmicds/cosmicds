@@ -1,6 +1,6 @@
 import ipyvuetify as v
 import requests
-import os
+import json
 from echo import add_callback, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
@@ -37,7 +37,8 @@ class Application(VuetifyTemplate, HubListener):
         self.app_state = ApplicationState()
         
         # For testing purposes, we create a new dummy student on each startup
-        self.app_state.student = requests.get(f"{API_URL}/new-dummy-student").json()
+        response = requests.get(f"{API_URL}/new-dummy-student").json()
+        self.app_state.student = response["student"]
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
@@ -82,18 +83,25 @@ class Application(VuetifyTemplate, HubListener):
             # user = os.environ['JUPYTERHUB_USER']
             user = self.app_state.student
             story = self.story_state.name
-            self.story_state = requests.get(f"{API_URL}/story_state/{user.id}/{story}")
+            response = requests.get(f"{API_URL}/story-state/{user['id']}/{story}")
+            data = response.json()
+            state = data["state"]
+            if state is not None:
+                self.story_state = state
         except:
             pass
 
     def _on_write_to_database(self, msg):
+        print("In _on_write_to_database")
         # User information for a JupyterHub notebook session is stored in an
         # environment  variable
         # user = os.environ['JUPYTERHUB_USER']
 
         user = self.app_state.student
         story = self.story_state.name
-        requests.put(f"{API_URL}/story_state/{user.id}/{story}", data=self.story_state.as_dict())
+        data = json.loads(json.dumps(self.story_state.as_dict()))
+        if data:
+            response = requests.put(f"{API_URL}/story-state/{user['id']}/{story}", json=data)
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
