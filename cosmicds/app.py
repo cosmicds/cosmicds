@@ -22,6 +22,7 @@ class ApplicationState(State):
     using_voila = CallbackProperty(False)
     dark_mode = CallbackProperty(True)
     student = CallbackProperty({})
+    connect_to_db = CallbackProperty(True)
 
 class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
@@ -35,16 +36,20 @@ class Application(VuetifyTemplate, HubListener):
         super().__init__(*args, **kwargs)
 
         self.app_state = ApplicationState()
+
+        self.app_state.connect_to_db = kwargs.get("connect_to_db", True)
         
         # For testing purposes, we create a new dummy student on each startup
-        response = requests.get(f"{API_URL}/new-dummy-student").json()
-        self.app_state.student = response["student"]
+        if self.app_state.connect_to_db:
+            response = requests.get(f"{API_URL}/new-dummy-student").json()
+            self.app_state.student = response["student"]
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
 
         # Initialize from database
-        self._initialize_from_database()
+        if self.app_state.connect_to_db:
+            self._initialize_from_database()
 
         # Subscribe to events
         self.hub.subscribe(self, WriteToDatabaseMessage,
@@ -79,7 +84,7 @@ class Application(VuetifyTemplate, HubListener):
     def _initialize_from_database(self):
         try:
             # User information for a JupyterHub notebook session is stored in an
-            # environment  variable
+            # environment variable
             # user = os.environ['JUPYTERHUB_USER']
             user = self.app_state.student
             story = self.story_state.name
@@ -92,6 +97,9 @@ class Application(VuetifyTemplate, HubListener):
             print(e)
 
     def _on_write_to_database(self, _msg):
+        if not self.app_state.connect_to_db:
+            return
+
         # User information for a JupyterHub notebook session is stored in an
         # environment  variable
         # user = os.environ['JUPYTERHUB_USER']
