@@ -1,14 +1,11 @@
 <template>
   <v-card
-    color="warning"
     width="100%"
   >
     <v-card-title>{{state.distance_name || "Galaxy Name"}}</v-card-title>
     <v-card-text>
       <v-divider></v-divider>
-      <v-list
-        color="warning"
-      >
+      <v-list>
         <v-list-item-content>
           <v-list-item-title>{{state.distance_type || "Galaxy Type"}}</v-list-item-title>
           <v-list-item-subtitle>type</v-list-item-subtitle>
