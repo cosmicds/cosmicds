@@ -43,7 +43,11 @@ class StageState(State):
         'obs_wav1',
         'obs_wav2',        
         'rep_rem1',
-        'nic_wor1'
+        'nic_wor1',
+        'dop_cal1',
+        'dop_cal2',
+        'dop_cal3',
+        'dop_cal4'
     ])
 
     step_markers = CallbackProperty([
@@ -140,7 +144,11 @@ class StageOne(Stage):
             "obswave_alert",
             "obswave_2_alert",            
             "remaining_gals_alert",
-            "nice_work_alert"
+            "nice_work_alert",
+            "doppler_calc_1_alert",
+            "doppler_calc_2_alert",
+            "doppler_calc_3_guidance",
+            "doppler_calc_4_guidance"
         ]
         ext = ".vue"
         for comp in state_components:

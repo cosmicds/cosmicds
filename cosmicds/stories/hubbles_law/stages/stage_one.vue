@@ -12,7 +12,9 @@
         >State</v-btn>
       </v-col>
     </v-row>
-    <!--
+            <c-doppler-calc-2-alert/>     
+
+<!--
     <v-row>
       <c-reflect-velocity-calc/>
     </v-row>
@@ -52,6 +54,8 @@
       >
         <c-choose-row-guidance
           v-if="stage_state.marker == 'cho_row1'" />
+        <c-doppler-calc-3-guidance
+          v-if="stage_state.marker == 'dop_cal3'" />      
       </v-col>
       <v-col
         cols="12"
@@ -84,6 +88,10 @@
           v-if="stage_state.marker == 'rep_rem1'" />
         <c-nice-work-alert
           v-if="stage_state.marker == 'nic_wor1'" />
+        <c-doppler-calc-1-alert
+          v-if="stage_state.marker == 'dop_cal1'" />
+        <c-doppler-calc-2-alert
+          v-if="stage_state.marker == 'dop_cal2'" />            
       </v-col>
       <v-col
         cols="12"
