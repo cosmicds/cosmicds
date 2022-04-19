@@ -73,7 +73,7 @@ class HubblesLaw(Story):
             **{x: np.array([], dtype='float64')
                for x in ["ID", "RA", "DEC", "Z", "Type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
-                         "Element"]}))
+                         "Element", "angular_size"]}))
 
         # Make all data writeable
         for data in self.data_collection:

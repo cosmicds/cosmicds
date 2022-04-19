@@ -183,8 +183,8 @@ class StageOne(HubbleStage):
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
 
-    def vue_select_galaxies(self, _args=None):
-        data = self.get_data("dummy_student_data")
+    def _select_from_data(self, dc_name):
+        data = self.get_data(dc_name)
         components = [x.label for x in data.main_components]
         measurements = self.get_data("student_measurements")
         need = self.selection_tool.gals_max - measurements.size
@@ -192,6 +192,12 @@ class StageOne(HubbleStage):
         for index in indices:
             galaxy = { c: data[c][index] for c in components }
             self.selection_tool.select_galaxy(galaxy)
+
+    def vue_fill_data(self, _args=None):
+        self._select_from_data("dummy_student_data")
+
+    def vue_select_galaxies(self, _args=None):
+        self._select_from_data("SDSS_all_sample_filtered")
 
     def update_spectrum_viewer(self, name, z):
         specview = self.get_viewer("spectrum_viewer")
@@ -216,7 +222,6 @@ class StageOne(HubbleStage):
             index = self.get_widget("galaxy_table").index
             self.update_data_value("student_measurements", "Element", element, index)
             self.update_data_value("student_measurements", "restwave", restwave, index)
-
 
     def galaxy_table_selected_change(self, change):
         if change["new"] == change["old"]:
