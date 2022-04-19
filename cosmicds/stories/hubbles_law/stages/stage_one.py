@@ -10,7 +10,7 @@ from traitlets import default
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.viewers import SpectrumView
-from cosmicds.phases import Stage
+from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
 from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
@@ -62,7 +62,7 @@ class StageState(State):
     "Reflect",
     "Calculate velocities"
 ])
-class StageOne(Stage):
+class StageOne(HubbleStage):
 
     @default('template')
     def _default_template(self):
@@ -84,7 +84,7 @@ class StageOne(Stage):
         self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
         #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
         
-        self.stage_state.image_location = "data/images/stage_one_spectrum"
+        self.stage_state.image_location = join("data", "images", "stage_one_spectrum")
         add_callback(self.app_state, 'using_voila', self._update_image_location)
 
         # Set up viewers
@@ -254,13 +254,13 @@ class StageOne(Stage):
         specview = self.get_viewer("spectrum_viewer")
         if event["event"] != "click" or not specview.line_visible:
             return
-        value = round(event["domain"]["x"], 2)
+        value = round(event["domain"]["x"], 0)
         self.stage_state.waveline_set = True
         self.update_data_value("student_measurements", "measwave", value, self.galaxy_table.index)
 
     def vue_add_current_velocity(self, _args=None):
         data = self.get_data("student_measurements")
-        index = self.get_component('galaxy_table').index
+        index = self.galaxy_table.index
         if index is not None:
             z = data["Z"][index]
             velocity = int(3 * (10 ** 5) * z)

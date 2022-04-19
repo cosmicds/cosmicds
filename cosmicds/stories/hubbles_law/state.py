@@ -7,7 +7,6 @@ from cosmicds.registries import story_registry
 import numpy as np
 from glue.core import Data
 import ipyvuetify as v
-import requests
 
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):

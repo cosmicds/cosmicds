@@ -44,7 +44,6 @@ class Story(State, HubMixin):
     def _on_step_complete_changed(self, value):
         self.stages[self.stage_index]['steps'][self.step_index][
             'completed'] = value
-        print("Broadcasting WriteToDatabaseMessage")
         self.hub.broadcast(WriteToDatabaseMessage(self))
 
 

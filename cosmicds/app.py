@@ -88,20 +88,20 @@ class Application(VuetifyTemplate, HubListener):
             state = data["state"]
             if state is not None:
                 self.story_state = state
-        except:
-            pass
+        except Exception as e:
+            print(e)
 
-    def _on_write_to_database(self, msg):
-        print("In _on_write_to_database")
+    def _on_write_to_database(self, _msg):
         # User information for a JupyterHub notebook session is stored in an
         # environment  variable
         # user = os.environ['JUPYTERHUB_USER']
 
         user = self.app_state.student
         story = self.story_state.name
+        json.loads
         data = json.loads(json.dumps(self.story_state.as_dict()))
         if data:
-            response = requests.put(f"{API_URL}/story-state/{user['id']}/{story}", json=data)
+            requests.put(f"{API_URL}/story-state/{user['id']}/{story}", json=data)
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark

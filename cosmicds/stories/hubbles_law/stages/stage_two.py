@@ -7,10 +7,10 @@ from traitlets import default
 from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSidebar
 from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
-from cosmicds.phases import Stage
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, format_fov, format_measured_angle
 from cosmicds.utils import load_template
+from cosmicds.stories.hubbles_law.stage import HubbleStage
 
 log = logging.getLogger()
 
@@ -44,7 +44,7 @@ class StageState(State):
 @register_stage(story="hubbles_law", index=2, steps=[
     "Measure distances"
 ])
-class StageTwo(Stage):
+class StageTwo(HubbleStage):
 
     @default('template')
     def _default_template(self):
