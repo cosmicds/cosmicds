@@ -1,0 +1,27 @@
+Notes for coding orange scaffold alerts:
+
+Where:
+- New alerts go in cosmicds/stories/hubbles_law/generic_state_components/
+
+Terminology:
+- "alert": part of the basic "back" and "next" sequence and uses "scaffold-alert" template at cosmicds/vue_components/scaffold_alert.vue
+- "guidance": alert that listens for a specific user action before being able to advance. Uses standard v-alert component.
+
+Alert Steps:
+- Create <name>_alert.vue file 
+    - Add relevant on screen text
+    - Update @back=state.marker to point to label of alert object that preceeds this one.
+    - Update @next=state.marker to point to the object that follows this one (or point to itself if the next one doesn't exist yet, so the trail of alerts doesn't disappear)
+- Create state.marker string that consists of 3 letters of first and 2nd header text words, separated by _ and ending in 1 or 2 or more, depending on how many alerts are needed to keep alert box at a manageable height.
+- In stage_one.py: 
+    - Add marker to list in correct sequence under "markers = CallbackProperty([.." 
+    - If marker corresponds to a step change in list, also include it under "step_markers = CallbackProperty.."
+    - Add alert file name (without .vue) to "state_components = []" list
+- In stage_one.vue: add <c-<name>-alert v-if="stage_state.marker == '<marker label>'" /> to correct location in the stage 1 layout.
+- If alert corresponds to a change in which viewer should have an orange focus border, put the correct logic in the v-if tag for the viewer.
+- In the alert/guidance.vue file that preceeds this one, update @next="state.marker = '<this marker label>';"
+
+Guidance Steps:
+- Coming soon
+
+
