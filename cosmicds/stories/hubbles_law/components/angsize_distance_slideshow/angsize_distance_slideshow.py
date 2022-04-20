@@ -11,7 +11,7 @@ class Angsize_SlideShow(v.VuetifyTemplate):
     template = load_template(
         "angsize_distance_slideshow.vue", __file__, traitlet=True).tag(sync=True)
     step = Int(0).tag(sync=True)
-    length = Int(10).tag(sync=True)
+    length = Int(11).tag(sync=True)
     dialog = Bool(False).tag(sync=True)
     currentTitle = Unicode("").tag(sync=True)
     state = GlueState().tag(sync=True)
@@ -21,6 +21,8 @@ class Angsize_SlideShow(v.VuetifyTemplate):
     _titles = [
         "1920's Astronomy",
         "1920's Astronomy",
+        "Galaxy Distances",
+        "Galaxy Distances",
         "Galaxy Distances",
         "Galaxy Distances",
         "Galaxy Distances",
