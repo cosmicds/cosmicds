@@ -7,7 +7,7 @@
       <v-radio
         v-for="[index, option] of radioOptions.entries()"
         :key="index"
-        :color="answerKey === index ? colorRight : colorWrong"
+        :color="color(index)"
         @mouseup="selectChoice(index)"
       >
         <template v-slot:label>
@@ -25,7 +25,7 @@
       <div
         :class="feedbackIndex !== null ? 'd-block' : 'd-none'"
       >
-        <span :class="answerKey === feedbackIndex ? 'green--text' : 'red--text'">
+        <span :class="`${color(feedbackIndex)}--text`">
           {{ feedbacks[feedbackIndex] }}
         </span>
       </div>
@@ -37,7 +37,8 @@
 module.exports = {
   props: [
     "radioOptions",
-    "answerKey",
+    "correctAnswers",
+    "neutralAnswers",
     "feedbacks",
     "selectedCallback"
   ],
@@ -45,6 +46,7 @@ module.exports = {
     return {
       column: null,
       colorRight: 'green',
+      colorNeutral: 'yellow',
       colorWrong: 'red',
       feedbackIndex: null,
     };
@@ -55,6 +57,9 @@ module.exports = {
       if (this.selectedCallback != null) {
         this.selectedCallback(index);
       }
+    },
+    color: function(index) {
+      return this.correctAnswers?.includes(index) ? this.colorRight : this.neutralAnswers?.includes(index) ? this.colorNeutral : this.colorWrong;
     }
   }
 };
