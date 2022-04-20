@@ -12,9 +12,9 @@
         >State</v-btn>
       </v-col>
     </v-row>
-            <c-doppler-calc-2-alert/>     
 
 <!--
+      <c-doppler-calc-4/> 
     <v-row>
       <c-reflect-velocity-calc/>
     </v-row>
@@ -54,8 +54,13 @@
       >
         <c-choose-row-guidance
           v-if="stage_state.marker == 'cho_row1'" />
-        <c-doppler-calc-3-guidance
-          v-if="stage_state.marker == 'dop_cal3'" />      
+        <c-doppler-calc-3-guidance/>
+        <!--
+          v-if="stage_state.marker == 'dop_cal3'" /> 
+          -->
+        <c-doppler-calc-4
+          v-if="stage_state.marker == 'dop_cal4'">
+        </c-doppler-calc-4> 
       </v-col>
       <v-col
         cols="12"
@@ -136,7 +141,7 @@
             cols="3"
           >
             <span
-              v-if="stage_state.waveline_set"
+              v-if="stage_state.waveline_set" 
             >
               <!-- FORM DIALOG as template for reflections/MC -->
               <reflect-velocity-windows

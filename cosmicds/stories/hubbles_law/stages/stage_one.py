@@ -15,6 +15,7 @@ from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
 from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
 from cosmicds.stories.hubbles_law.components.reflect_velocity_calc import ReflectVelocityCalc
+from cosmicds.stories.hubbles_law.components.doppler_calc_component import DopplerCalc
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
@@ -91,6 +92,8 @@ class StageOne(Stage):
         self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
         reflect_velocity_calc = ReflectVelocityCalc(self.stage_state)
         self.add_component(reflect_velocity_calc, label='c-reflect-velocity-calc')
+        doppler_calc = DopplerCalc(self.stage_state)
+        self.add_component(doppler_calc, label='c-doppler-calc-4')
         #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
         
         self.stage_state.image_location = "data/images/stage_one_spectrum"
@@ -147,8 +150,7 @@ class StageOne(Stage):
             "nice_work_alert",
             "doppler_calc_1_alert",
             "doppler_calc_2_alert",
-            "doppler_calc_3_guidance",
-            "doppler_calc_4_guidance"
+            "doppler_calc_3_guidance"
         ]
         ext = ".vue"
         for comp in state_components:
