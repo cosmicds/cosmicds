@@ -582,7 +582,7 @@
               <h3 class="text-h6 font-weight-light mb-2">
                 You're ready to start measuring galaxy velocities now.
               </h3>
-              <span class="text-caption grey--text">Click on "Info" if you'd like to come back for a refresher.</span>
+              <span class="text-caption grey--text">Click on "LEARN MORE" if you'd like to come back for a refresher.</span>
             </div>
           </v-window-item>
         </v-window>

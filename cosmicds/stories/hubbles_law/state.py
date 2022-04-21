@@ -87,8 +87,8 @@ class HubblesLaw(Story):
         v.theme.dark = True
         v.theme.themes.dark.primary = 'colors.lightBlue.darken4'   # Overall theme & header bars
         v.theme.themes.light.primary = 'colors.lightBlue.darken4'
-        v.theme.themes.dark.secondary = 'colors.pink.darken3'    # Headers on dialogs & buttons that pop up dialogs
-        v.theme.themes.light.secondary = 'colors.pink.darken2'
+        v.theme.themes.dark.secondary = 'colors.purple.darken2'    # Headers on dialogs & buttons that pop up dialogs
+        v.theme.themes.light.secondary = 'colors.purple.darken2'
         v.theme.themes.dark.accent = 'colors.amber.accent2'   # Next/Back buttons
         v.theme.themes.light.accent = 'colors.amber.accent3'
         v.theme.themes.dark.error = 'colors.teal.accent2'  # Team insider buttons that will not appear for user

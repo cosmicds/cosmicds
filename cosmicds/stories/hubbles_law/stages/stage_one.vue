@@ -3,11 +3,6 @@
     <v-row>
       <v-col>
         <v-btn
-          color="error"
-          class="black--text"
-          @click="select_galaxies();"
-        >select 5 galaxies</v-btn>
-        <v-btn
           @click="console.log(stage_state)"
         >State</v-btn>
       </v-col>
@@ -23,6 +18,13 @@
           v-if="stage_state.marker == 'sel_gal1'" />
         <c-select-galaxies-2-guidance
           v-if="stage_state.marker == 'sel_gal2'" />
+        <v-btn
+          v-if="stage_state.marker == 'sel_gal2' && stage_state.gals_total < stage_state.gals_max"
+          color="error"
+          class="black--text"
+          block
+          @click="select_galaxies();"
+        >select 5 galaxies</v-btn>
       </v-col>
       <v-col
         cols="12"
@@ -122,20 +124,17 @@
           <v-col
             cols="3"
           >
-            <span
+            <!-- FORM DIALOG as template for reflections/MC -->
+            <reflect-velocity-windows
               v-if="stage_state.waveline_set"
+              button-text="reflect"
+              close-text="submit"
+              @submit="
+                stage_state.marker = story_state.stage_index = 2;
+                console.log('Submit button was clicked.');
+              "
             >
-              <!-- FORM DIALOG as template for reflections/MC -->
-              <reflect-velocity-windows
-                button-text="reflect"
-                close-text="submit"
-                @submit="
-                  stage_state.marker = story_state.stage_index = 2;
-                  console.log('Submit button was clicked.');
-                "
-              >
-              </reflect-velocity-windows>
-            </span>
+            </reflect-velocity-windows>
           </v-col>
         </v-row>
       </v-col>
