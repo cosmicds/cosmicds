@@ -11,7 +11,7 @@ class HubbleStage(Stage):
         "restwave": "rest_wave_value",
         "velocity": "velocity_value",
         "distance": "est_dist_value",
-        "ID": "galaxy_name",
+        "galaxy_name": "galaxy_name",
         "student_id": "student_id",
         "angular_size" : "ang_size_value"
     }
@@ -42,7 +42,7 @@ class HubbleStage(Stage):
     def update_data_value(self, dc_name, comp_name, value, index):
         super().update_data_value(dc_name, comp_name, value, index)
 
-        if self.app_state.connect_to_db \
+        if self.app_state.update_db \
             and dc_name == "student_measurements" \
             and comp_name in HubbleStage._measurement_mapping.keys():
 
@@ -53,5 +53,5 @@ class HubbleStage(Stage):
     def add_data_values(self, dc_name, values):
         super().add_data_values(dc_name, values)
 
-        if self.app_state.connect_to_db and dc_name == "student_measurements":
+        if self.app_state.update_db and dc_name == "student_measurements":
             self.submit_measurement(values)

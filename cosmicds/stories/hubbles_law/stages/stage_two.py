@@ -67,10 +67,10 @@ class StageTwo(HubbleStage):
 
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
-                               glue_components=['ID',
+                               glue_components=['name',
                                                'velocity',
                                                'distance'],
-                               key_component='ID',
+                               key_component='name',
                                names=['Galaxy Name',
                                        'Velocity (km/s)',
                                        'Distance (Mpc)'],
@@ -93,7 +93,7 @@ class StageTwo(HubbleStage):
         index = self.distance_table.index
         data = self.distance_table.glue_data
         galaxy = { x.label : data[x][index] for x in data.main_components }
-        self.distance_tool.go_to_location(galaxy["RA"], galaxy["DEC"], fov=GALAXY_FOV)
+        self.distance_tool.go_to_location(galaxy["ra"], galaxy["decl"], fov=GALAXY_FOV)
 
         self.stage_state.selected_galaxy = galaxy
         self.distance_tool.measuring_allowed = bool(galaxy)

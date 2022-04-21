@@ -39,11 +39,11 @@ class StageThree(HubbleStage):
         measurements = self.get_data("student_measurements")
         fit_table = Table(self.session,
                           data=measurements,
-                          glue_components=['ID',
-                                          'Type',
+                          glue_components=['name',
+                                          'type',
                                           'velocity',
                                           'distance'],
-                          key_component='ID',
+                          key_component='name',
                           names=['Galaxy Name',
                               'Galaxy Type',
                               'Velocity (km/s)',
@@ -55,7 +55,7 @@ class StageThree(HubbleStage):
         measurements = self.get_data("student_measurements")
         student_dc_name = "student_data"
         student_cols = [x.label for x in measurements.main_components]
-        dummy_data = {x : ['X'] if x in ['ID', 'Element', 'Type'] else [0] for x in student_cols}
+        dummy_data = {x : ['X'] if x in ['id', 'element', 'type'] else [0] for x in student_cols}
         student_data = Data(label=student_dc_name, **dummy_data)
         self.add_data(student_data)
     

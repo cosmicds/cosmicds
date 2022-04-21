@@ -8,6 +8,9 @@ import numpy as np
 from glue.core import Data
 import ipyvuetify as v
 
+import requests
+from cosmicds.utils import API_URL
+
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
     measurements = DictCallbackProperty({
@@ -57,8 +60,8 @@ class HubblesLaw(Story):
                 data_dir / "galaxy_data",
                 data_dir / "Hubble 1929-Table 1",
                 data_dir / "HSTkey2001",
-                data_dir / "SDSS_all_sample_filtered",
                 data_dir / "dummy_student_data",
+                #data_dir / "SDSS_all_sample_filtered",
                 output_dir / "HubbleData_ClassSample",
                 output_dir / "HubbleData_All",
                 output_dir / "HubbleSummary_ClassSample",
@@ -67,13 +70,20 @@ class HubblesLaw(Story):
             )
         ])
 
+        # Load in the galaxy data
+        galaxies = requests.get(f"{API_URL}/galaxies").json()
+        self.data_collection.append(Data(
+            label="SDSS_all_sample_filtered",
+            **{ k : [x[k] for x in galaxies] for k in galaxies[0] }
+        ))
+
         # Compose empty data containers to be populated by user
         self.data_collection.append(Data(
             label='student_measurements',
             **{x: np.array([], dtype='float64')
-               for x in ["ID", "RA", "DEC", "Z", "Type", "measwave",
+               for x in ["id", "name", "ra", "decl", "z", "type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
-                         "Element", "angular_size"]}))
+                         "element", "angular_size"]}))
 
         # Make all data writeable
         for data in self.data_collection:

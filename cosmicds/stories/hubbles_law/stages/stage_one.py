@@ -99,12 +99,12 @@ class StageOne(HubbleStage):
         # Set up widgets
         galaxy_table = Table(self.session,
                              data=self.get_data('student_measurements'),
-                             glue_components=['ID',
-                                              'Element',
+                             glue_components=['name',
+                                              'element',
                                               'restwave',
                                               'measwave',
                                               'velocity'],
-                             key_component='ID',
+                             key_component='name',
                              names=['Galaxy Name',
                                     'Element',
                                     'Rest Wavelength (Å)',
@@ -169,7 +169,7 @@ class StageOne(HubbleStage):
 
     def _on_galaxy_selected(self, galaxy):
         data = self.get_data("student_measurements")
-        already_present = galaxy['ID'] in data['ID'] # Avoid duplicates
+        already_present = galaxy['name'] in data['name'] # Avoid duplicates
         if already_present:
             # To do nothing
             return
@@ -178,8 +178,8 @@ class StageOne(HubbleStage):
             # for component, values in component_dict.items():
             #     values.pop(index)
         else:
-            filename = galaxy['ID']
-            gal_type = galaxy['Type']
+            filename = galaxy['name']
+            gal_type = galaxy['type']
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
 
@@ -214,13 +214,13 @@ class StageOne(HubbleStage):
         self.stage_state.waveline_set = False
 
         sdss = self.get_data("SDSS_all_sample_filtered")
-        sdss_index = next((i for i in range(sdss.size) if sdss["ID"][i] == name), None)
+        sdss_index = next((i for i in range(sdss.size) if sdss["name"][i] == name), None)
         if sdss_index is not None:
-            element = sdss['Element'][sdss_index]
+            element = sdss['element']
             specview.update(element, z)
             restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
             index = self.get_widget("galaxy_table").index
-            self.update_data_value("student_measurements", "Element", element, index)
+            self.update_data_value("student_measurements", "element", element, index)
             self.update_data_value("student_measurements", "restwave", restwave, index)
 
     def galaxy_table_selected_change(self, change):
@@ -230,8 +230,8 @@ class StageOne(HubbleStage):
         index = self.galaxy_table.index
         data = self.galaxy_table.glue_data
         galaxy = { x.label : data[x][index] for x in data.main_components }
-        name = galaxy["ID"]
-        gal_type = galaxy["Type"]
+        name = galaxy["name"]
+        gal_type = galaxy["type"]
         if name is None or gal_type is None:
             return
 
@@ -239,7 +239,7 @@ class StageOne(HubbleStage):
         filename = name
         spec_data = self.story_state.load_spectrum_data(filename, gal_type)
 
-        z = galaxy["Z"]
+        z = galaxy["z"]
         self.story_state.update_data("spectrum_data", spec_data)
         self.update_spectrum_viewer(name, z)
 
@@ -249,11 +249,11 @@ class StageOne(HubbleStage):
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]
         data = self.galaxy_table.glue_data
-        name = data["ID"][index]
-        gal_type = data["Type"][index]
+        name = data["name"][index]
+        gal_type = data["type"][index]
         if name is None or gal_type is None:
             return
-        self.selection_tool.go_to_location(data["RA"][index], data["DEC"][index], fov=GALAXY_FOV)
+        self.selection_tool.go_to_location(data["ra"][index], data["decl"][index], fov=GALAXY_FOV)
 
     def on_spectrum_click(self, event):
         specview = self.get_viewer("spectrum_viewer")
@@ -267,8 +267,9 @@ class StageOne(HubbleStage):
         data = self.get_data("student_measurements")
         index = self.galaxy_table.index
         if index is not None:
-            z = data["Z"][index]
-            velocity = int(3 * (10 ** 5) * z)
+            lamb_obs = data["restwave"][index]
+            lamb_meas = data["measwave"][index]
+            velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
             self.update_data_value("student_measurements", "velocity", velocity, index)
 
     @property
