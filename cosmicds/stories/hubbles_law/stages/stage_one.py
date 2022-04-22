@@ -15,7 +15,7 @@ from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
 from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
 from cosmicds.stories.hubbles_law.components.reflect_velocity_calc import ReflectVelocityCalc
-from cosmicds.stories.hubbles_law.components.doppler_calc_component import DopplerCalc
+from cosmicds.stories.hubbles_law.components.doppler_calc_components import DopplerCalc
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
@@ -31,8 +31,9 @@ class StageState(State):
     marker = CallbackProperty("")
     indices = CallbackProperty({})
     image_location = CallbackProperty()
-    lambda_rest = CallbackProperty(0)
-    lambda_obs = CallbackProperty(0)
+    lambda_rest = CallbackProperty(6563)
+    lambda_obs = CallbackProperty(6617)
+    doppler_calc_dialog = CallbackProperty(True)
 
     markers = CallbackProperty([
         'mee_gui1',
@@ -48,7 +49,8 @@ class StageState(State):
         'dop_cal1',
         'dop_cal2',
         'dop_cal3',
-        'dop_cal4'
+        'dop_cal4',
+        'dop_cal5'
     ])
 
     step_markers = CallbackProperty([
@@ -88,13 +90,6 @@ class StageOne(Stage):
         super().__init__(*args, **kwargs)
 
         self.stage_state = StageState()
-        spectrum_slideshow = SpectrumSlideshow(self.stage_state)
-        self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
-        reflect_velocity_calc = ReflectVelocityCalc(self.stage_state)
-        self.add_component(reflect_velocity_calc, label='c-reflect-velocity-calc')
-        doppler_calc = DopplerCalc(self.stage_state)
-        self.add_component(doppler_calc, label='c-doppler-calc-4')
-        #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
         
         self.stage_state.image_location = "data/images/stage_one_spectrum"
         add_callback(self.app_state, 'using_voila', self._update_image_location)
@@ -134,6 +129,13 @@ class StageOne(Stage):
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
 
+        spectrum_slideshow = SpectrumSlideshow(self.stage_state)
+        self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
+        reflect_velocity_calc = ReflectVelocityCalc(self.stage_state)
+        self.add_component(reflect_velocity_calc, label='c-reflect-velocity-calc')
+
+        #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
+
         # Set up the generic state components
         state_components_dir = str(Path(__file__).parent.parent / "components" / "generic_state_components")
         path = join(state_components_dir, "")
@@ -155,7 +157,20 @@ class StageOne(Stage):
         ext = ".vue"
         for comp in state_components:
             label = f"c-{comp}".replace("_", "-")
+            # comp + ext = filename; path = folder where they live.
             component = GenericStateComponent(comp + ext, path, self.stage_state)
+            self.add_component(component, label=label)
+
+        # Set up doppler calc components
+        doppler_calc_components_dir = str(Path(__file__).parent.parent / "components" / "doppler_calc_components")
+        path = join(doppler_calc_components_dir,"")
+        doppler_components = [
+            "doppler_calc_4_component",
+            "doppler_calc_5_slideshow"
+        ]
+        for comp in doppler_components:
+            label = f"c-{comp}".replace("_", "-")
+            component = DopplerCalc(comp + ext, path, self.stage_state)
             self.add_component(component, label=label)
 
         # Callbacks

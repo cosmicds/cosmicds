@@ -13,12 +13,6 @@
       </v-col>
     </v-row>
 
-<!--
-      <c-doppler-calc-4/> 
-    <v-row>
-      <c-reflect-velocity-calc/>
-    </v-row>
-    -->
     <v-row>
       <v-col
         cols="12"
@@ -54,13 +48,12 @@
       >
         <c-choose-row-guidance
           v-if="stage_state.marker == 'cho_row1'" />
-        <c-doppler-calc-3-guidance/>
-        <!--
+        <c-doppler-calc-3-guidance
           v-if="stage_state.marker == 'dop_cal3'" /> 
-          -->
-        <c-doppler-calc-4
-          v-if="stage_state.marker == 'dop_cal4'">
-        </c-doppler-calc-4> 
+        <c-doppler-calc-4-component
+          v-if="stage_state.marker == 'dop_cal4' || stage_state.marker == 'dop_cal5'"/>
+        <c-doppler-calc-5-slideshow 
+          v-if="stage_state.marker == 'dop_cal5'"/>
       </v-col>
       <v-col
         cols="12"
