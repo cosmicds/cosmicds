@@ -50,7 +50,7 @@ class SelectionTool(v.VueTemplate):
             galaxy = source["layerData"]
             for k in ["ra", "decl", "z"]:
                 galaxy[k] = float(galaxy[k])
-            self.current_galaxy = galaxy
+            galaxy['element'] = galaxy['element'].replace("?", "α") # Hacky fix for now
             fov = min(wwt.get_fov(), GALAXY_FOV)
             self.go_to_location(galaxy["ra"], galaxy["decl"], fov=fov)
             self.current_galaxy = galaxy
