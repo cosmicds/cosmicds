@@ -8,7 +8,7 @@ from cosmicds.stories.hubbles_law.utils import FULL_FOV, GALAXY_FOV
 from ipywidgets import DOMWidget, widget_serialization
 from pandas import DataFrame
 from pywwt.jupyter import WWTJupyterWidget
-from traitlets import Dict, Instance, Int
+from traitlets import Dict, Instance, Int, Bool
 
 from cosmicds.utils import API_URL
 import requests
@@ -17,6 +17,7 @@ class SelectionTool(v.VueTemplate):
     widget = Instance(DOMWidget, allow_none=True).tag(sync=True, **widget_serialization)
     current_galaxy = Dict().tag(sync=True)
     selected_count = Int().tag(sync=True)
+    dialog = Bool(False).tag(sync=True)
 
 
 

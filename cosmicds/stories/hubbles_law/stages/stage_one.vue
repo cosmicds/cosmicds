@@ -22,7 +22,9 @@
         cols="12"
         lg="4"
       >
-        <c-select-galaxies-guidance
+        <c-stage-one-start-guidance
+          v-if="stage_state.marker == 'mee_gui1'" />
+        <c-select-galaxies-alert
           v-if="stage_state.marker == 'sel_gal1'" />
         <c-select-galaxies-2-guidance
           v-if="stage_state.marker == 'sel_gal2'" />
