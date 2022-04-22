@@ -216,7 +216,7 @@ class StageOne(HubbleStage):
         sdss = self.get_data("SDSS_all_sample_filtered")
         sdss_index = next((i for i in range(sdss.size) if sdss["name"][i] == name), None)
         if sdss_index is not None:
-            element = sdss['element']
+            element = sdss['element'][sdss_index]
             specview.update(element, z)
             restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
             index = self.get_widget("galaxy_table").index
