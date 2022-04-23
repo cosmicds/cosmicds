@@ -73,7 +73,6 @@
           color="accent"
           elevation="2"
           @click="() => {
-            const answers = ['lam_obs', 'lam_rest'].map(id => parseAnswer(id));
             const expectedAnswers = [state.lambda_obs, state.lambda_rest];
             state.marker = validateAnswersJS(['lam_obs', 'lam_rest'], expectedAnswers) ? 'dop_cal5' : 'dop_cal4';
             state.doppler_calc_dialog = validateAnswersJS(['lam_obs', 'lam_rest'], expectedAnswers) ? true: false;

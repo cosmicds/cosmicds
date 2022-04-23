@@ -52,8 +52,13 @@
           v-if="stage_state.marker == 'dop_cal3'" /> 
         <c-doppler-calc-4-component
           v-if="stage_state.marker == 'dop_cal4' || stage_state.marker == 'dop_cal5'"/>
-        <c-doppler-calc-5-slideshow 
+        <c-doppler-calc-5-slideshow/>
+        <!--
           v-if="stage_state.marker == 'dop_cal5'"/>
+          -->
+        <c-doppler-calc-6-component
+          v-if="stage_state.marker == 'dop_cal6'"/> 
+          
       </v-col>
       <v-col
         cols="12"

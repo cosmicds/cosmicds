@@ -52,9 +52,6 @@
               </v-card>
               <v-divider role="presentation"></v-divider>
               <p class="pt-5 font-weight-light">
-                Remember:
-              </p>  
-              <p class="font-weight-light">  
                 \(v\): velocity of your galaxy, in km/s <br>
                 \(c\): speed of light, 300,000 km/s <br>
                 \(\lambda_{\text{obs}}\): observed wavelength of spectral line in your galaxy <br>
@@ -83,9 +80,6 @@
               </v-card>
               <v-divider role="presentation"></v-divider>
               <p class="pt-5 font-weight-light">
-                Remember:
-              </p>  
-              <p class="font-weight-light">  
                 \(v\): velocity of your galaxy, in km/s <br>
                 \(c\): speed of light, 300,000 km/s <br>
                 \(\lambda_{\text{obs}}\): observed wavelength of spectral line in your galaxy <br>
@@ -108,16 +102,13 @@
                 $$ v= c\left(\textcolor{black}{\colorbox{LightSteelBlue}{ {{(state.lambda_obs/state.lambda_rest).toFixed(5)}} } } -1 \right) $$
               </p>
               <p>
-                Great! Now we are left with:
+                Now we are left with:
               </p>
               <v-card color="info" class="pa-3">
                 $$ v=c \left(\textcolor{black}{\colorbox{LightSteelBlue}{ {{(state.lambda_obs/state.lambda_rest-1).toFixed(5)}} } } \right) $$
               </v-card>
-              <v-divider role="presentation"></v-divider>
-              <p class="pt-5 font-weight-light">
-                Remember:
-              </p>  
-              <p class="font-weight-light">  
+              <v-divider role="presentation"></v-divider> 
+              <p class="pt-5 font-weight-light"> 
                 \(v\): velocity of your galaxy, in km/s <br>
                 \(c\): speed of light, 300,000 km/s <br>
                 \(\lambda_{\text{obs}}\): observed wavelength of spectral line in your galaxy <br>
@@ -151,11 +142,8 @@
                 :selected-callback="(index) => { if([1].includes(index)) { this.maxStepCompleted5 = Math.max(this.maxStepCompleted5, 3); } }"  
               >
               </mc-radiogroup>
-              <v-divider role="presentation"></v-divider>
+              <v-divider role="presentation"></v-divider> 
               <p class="pt-5 font-weight-light">
-                Remember:
-              </p>  
-              <p class="font-weight-light">  
                 \(v\): velocity of your galaxy, in km/s <br>
                 \(c\): speed of light, 300,000 km/s <br>
                 \(\lambda_{\text{obs}}\): observed wavelength of spectral line in your galaxy <br>
@@ -172,19 +160,25 @@
               const targets = entries.filter(entry => entry.isIntersecting).map(entry => entry.target);
               MathJax.typesetPromise(targets);
             }">
-              <p>
-                Now let’s calculate how fast your galaxy is moving by substituting the speed of light. Enter the speed of light in km/s in the box below.
-              </p>
+              <div
+                v-if="!failedValidation5"
+                class="pb-5">
+                Now enter the speed of light in km/s in the box below.<br> 
+                Click calculate to multiply through and obtain the speed of your galaxy.
+              </div>
+              <div
+                v-if="failedValidation5"
+                class="pb-5"
+              >
+                Try again, check that you are using <b>km</b>/s, and make sure you have the correct number of zeroes. The speed of light is highlighted in yellow.
+              </div>
               <v-card color="info" class="pa-3">
                 $$ v=c \left(\textcolor{black}{\colorbox{LightSteelBlue}{ {{(state.lambda_obs/state.lambda_rest-1).toFixed(5)}} } } \right) $$
                 $$ v = \bbox[DarkSlateGrey]{\input[speed_light][]{}} \text{ km/s} \times \textcolor{black}{\colorbox{LightSteelBlue}{ {{(state.lambda_obs/state.lambda_rest-1).toFixed(5)}} } } $$
               </v-card>
               <v-divider role="presentation"></v-divider>
-              <p class="pt-5 font-weight-light">
-                Remember:
-              </p>  
               <div v-if="!failedValidation5">
-                <p class="font-weight-light">  
+                <p class="pt-5 font-weight-light">
                   \(v\): velocity of your galaxy, in km/s <br>
                   \(c\): speed of light, 300,000 km/s <br>
                   \(\lambda_{\text{obs}}\): observed wavelength of spectral line in your galaxy <br>
@@ -199,10 +193,10 @@
                   MathJax.typesetPromise(targets);
                 }"
               >
-                <p class="font-weight-light">  
+                <p class="pt-5 font-weight-light">
                   \(v\): velocity of your galaxy, in km/s
                 <p>
-                <p class="yellow--text font-weight-normal" >
+                <p class="yellow--text font-weight-medium" >
                   \(c\): speed of light, 300,000 km/s
                 </p>
                 <p class="font-weight-light">               
@@ -210,18 +204,6 @@
                   \(\lambda_{\text{rest}}\): rest wavelength of spectral line} 
                 </p>
               </div>
-              <v-divider
-                class="my-4"
-                v-if="failedValidation5"
-              >
-              </v-divider>
-
-              <div
-                v-if="failedValidation5"
-              >
-                Try again and make sure you have the correct number of zeroes. The speed of light is highlighted in yellow.
-              </div>
-
             </v-card-text>
           </v-window-item>
 
@@ -233,18 +215,16 @@
               const targets = entries.filter(entry => entry.isIntersecting).map(entry => entry.target);
               MathJax.typesetPromise(targets);
             }">
+              $$ v=c \left(\textcolor{black}{\colorbox{LightSteelBlue}{ {{(state.lambda_obs/state.lambda_rest-1).toFixed(5)}} } } \right) $$
+              $$ v = \textcolor{black}{\colorbox{LightSteelBlue}{ {{ studentc.toLocaleString() }} } }  \text{ km/s} \times \textcolor{black}{\colorbox{LightSteelBlue}{ {{(state.lambda_obs/state.lambda_rest-1).toFixed(5)}} } } $$
               <p>
-                Click calculate to multiply through to get the speed of your galaxy:
+                Great work. Here is your galaxy's velocity:
               </p>
               <v-card color="info" class="pa-3">
-                $$ v=c \left(\textcolor{black}{\colorbox{LightSteelBlue}{ {{(state.lambda_obs/state.lambda_rest-1).toFixed(5)}} } } \right) $$
-                $$ v = \textcolor{black}{\colorbox{LightSteelBlue}{ {{ studentc.toLocaleString() }} } }  \text{ km/s} \times \textcolor{black}{\colorbox{LightSteelBlue}{ {{(state.lambda_obs/state.lambda_rest-1).toFixed(5)}} } } $$
+                $$ v = \textcolor{black}{\colorbox{LightSteelBlue}{ {{ state.student_vel.toFixed(0).toLocaleString() }} } }   \text{ km/s}$$
               </v-card>
               <v-divider role="presentation"></v-divider>
               <p class="pt-5 font-weight-light">
-                Remember:
-              </p>  
-              <p class="font-weight-light">  
                 \(v\): velocity of your galaxy, in km/s <br>
                 \(c\): speed of light, 300,000 km/s <br>
                 \(\lambda_{\text{obs}}\): observed wavelength of spectral line in your galaxy <br>
@@ -305,9 +285,10 @@
             color="accent"
             elevation="2"
             @click="() => {
-              const answers = ['speed_light'].map(id => parseAnswer(id));
+              const lambdas = [state.lambda_obs, state.lambda_rest];
               validateLightSpeed(['speed_light']) ? step++ : null;
               storeStudentc(['speed_light']);
+              state.student_vel = storeStudentVel(studentc, lambdas);
             }"
           >
            {{ (!failedValidation5 ) ? 'next' : 'try again' }}
@@ -317,9 +298,14 @@
             color="accent"
             class="black--text"
             depressed
-            @click="() => { $emit('submit'); state.doppler_calc_dialog = false; step = 0; state.marker='dop_cal3'}"
+            @click="() => { 
+              $emit('submit'); 
+              state.doppler_calc_dialog = false; 
+              step = 0; 
+              state.marker='dop_cal6'; 
+              state.dopper_calc_complete = true}"
           >
-            Calculate
+            Done
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -343,6 +329,10 @@ export default = {
 
     storeStudentc(inputID) {
       return this.studentc = this.parseAnswer(inputID);
+    },
+
+    storeStudentVel(studentc, lambdas) {
+      return studentc * (lambdas[0]/lambdas[1] - 1);
     },
 
     validateLightSpeed(inputIDs) {

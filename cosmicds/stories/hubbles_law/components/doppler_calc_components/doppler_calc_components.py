@@ -11,7 +11,7 @@ class DopplerCalc(v.VuetifyTemplate):
     state = GlueState().tag(sync=True)
     failedValidation4 = Bool(False).tag(sync=True)
     failedValidation5 = Bool(False).tag(sync=True)
-    interactSteps5 = List([3,5]).tag(sync=True)
+    interactSteps5 = List([3,4]).tag(sync=True)
     maxStepCompleted5 = Int(0).tag(sync=True)
     studentc = Float().tag(sync=True)
 
@@ -21,7 +21,7 @@ class DopplerCalc(v.VuetifyTemplate):
         "Doppler Calculation",
         "Reflect on Your Result",
         "Enter Speed of Light",
-        "Last Step",
+        "Your Galaxy's Velocity",
     ]
     _default_title = "Doppler Calculation"    
 

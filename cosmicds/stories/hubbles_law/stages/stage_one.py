@@ -14,7 +14,6 @@ from cosmicds.phases import Stage
 from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
 from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
-from cosmicds.stories.hubbles_law.components.reflect_velocity_calc import ReflectVelocityCalc
 from cosmicds.stories.hubbles_law.components.doppler_calc_components import DopplerCalc
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
@@ -34,6 +33,8 @@ class StageState(State):
     lambda_rest = CallbackProperty(6563)
     lambda_obs = CallbackProperty(6617)
     doppler_calc_dialog = CallbackProperty(True)
+    student_vel = CallbackProperty(0)
+    doppler_calc_complete = CallbackProperty(False)
 
     markers = CallbackProperty([
         'mee_gui1',
@@ -50,7 +51,8 @@ class StageState(State):
         'dop_cal2',
         'dop_cal3',
         'dop_cal4',
-        'dop_cal5'
+        'dop_cal5',
+        'dop_cal6'
     ])
 
     step_markers = CallbackProperty([
@@ -131,8 +133,6 @@ class StageOne(Stage):
 
         spectrum_slideshow = SpectrumSlideshow(self.stage_state)
         self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
-        reflect_velocity_calc = ReflectVelocityCalc(self.stage_state)
-        self.add_component(reflect_velocity_calc, label='c-reflect-velocity-calc')
 
         #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
 
@@ -166,7 +166,8 @@ class StageOne(Stage):
         path = join(doppler_calc_components_dir,"")
         doppler_components = [
             "doppler_calc_4_component",
-            "doppler_calc_5_slideshow"
+            "doppler_calc_5_slideshow",
+            "doppler_calc_6_component"
         ]
         for comp in doppler_components:
             label = f"c-{comp}".replace("_", "-")
