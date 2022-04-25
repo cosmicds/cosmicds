@@ -33,12 +33,12 @@ class IntroSlideshow(v.VuetifyTemplate):
     def __init__(self, story_state, *args, **kwargs):
         self.state = story_state
         exploration_tool = ExplorationTool()
+        exploration_tool1 = ExplorationTool()
         exploration_tool2 = ExplorationTool()
-        exploration_tool3 = ExplorationTool()
         self.components = {
             'c-exploration-tool': exploration_tool,
-            'c-exploration-tool2': exploration_tool2,
-            'c-exploration-tool3': exploration_tool3
+            'c-exploration-tool1': exploration_tool1,
+            'c-exploration-tool2': exploration_tool2
         }
         self.currentTitle = self._default_title
 
@@ -65,8 +65,8 @@ class IntroSlideshow(v.VuetifyTemplate):
         fov = fov_as * u.arcsec if fov_as else GALAXY_FOV
         wwt.center_on_coordinates(coordinates, fov=fov, instant=instant)
 
+    def vue_go_to_location_tool1(self, args):
+        self.go_to_location('c-exploration-tool1', args)
+
     def vue_go_to_location_tool2(self, args):
         self.go_to_location('c-exploration-tool2', args)
-
-    def vue_go_to_location_tool3(self, args):
-        self.go_to_location('c-exploration-tool3', args)

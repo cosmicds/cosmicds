@@ -3,8 +3,12 @@
     <v-row>
       <v-col>
         <v-btn
+          color="error"
+          class="black--text"
           @click="console.log(stage_state)"
-        >State</v-btn>
+        >
+          State
+        </v-btn>
       </v-col>
     </v-row>
     <v-row>

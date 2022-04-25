@@ -14,6 +14,7 @@
     >
       <v-card
         class="mx-auto"
+        light
       >
         <v-toolbar
           color="secondary"
@@ -42,7 +43,7 @@
         <v-window
           v-model="step"
           style="height: 70vh;"
-          class="overflow-auto"
+          class="overflow-auto white"
         >
           <v-window-item :value="0" 
             class="no-transition"
@@ -67,7 +68,8 @@
                     <v-card
                       class="mt-auto white--text"
                       flat
-                      color="secondary"
+                      color="secondary lighten-1"
+                      light
                     >                  
                       <v-card-text>
                         A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
@@ -119,7 +121,8 @@
                       <v-card
                         class="mt-auto white--text"
                         flat
-                        color="secondary"
+                        color="secondary lighten-1"
+                        light
                       > 
                         <v-card-text>
                           A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
@@ -185,7 +188,8 @@
                       <v-card
                         class="mt-auto white--text"
                         flat
-                        color="secondary"
+                        color="secondary lighten-1"
+                        light
                       > 
                         <v-card-text>
                           A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
@@ -244,7 +248,8 @@
                       <v-card
                         class="mt-auto white--text"
                         flat
-                        color="secondary"
+                        color="secondary lighten-1"
+                        light
                       > 
                         <v-card-text>
                           A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
@@ -473,7 +478,8 @@
                     <v-card
                       class="mt-auto white--text"
                       flat
-                      color="secondary"
+                      color="secondary lighten-1"
+                      light
                     > 
                       <v-card-text>
                         Elements emit light at specific wavelengths, and they can also absorb light at the same wavelengths, depending on the conditions associated with a light source.
@@ -590,15 +596,16 @@
         <v-divider></v-divider>
 
         <v-card-actions
-          class="justify-space-between"
+          class="justify-space-between grey lighten-4"
         >
           <v-btn
             :disabled="step === 0"
+            class="black--text"
             color="accent"
-            text
+            depressed
             @click="step--"
           >
-            Back
+            back
           </v-btn>
           <v-spacer></v-spacer>
           <v-item-group
@@ -615,6 +622,7 @@
                 :input-value="active"
                 icon
                 @click="toggle"
+                color="secondary"
               >
                 <v-icon>mdi-record</v-icon>
               </v-btn>
@@ -622,21 +630,22 @@
           </v-item-group>
           <v-spacer></v-spacer>
           <v-btn
-            :disabled="step === 10"
+            v-if="step < 10"
+            class="black--text"
             color="accent"
-            text
+            depressed
             @click="step++;"
           >
-            {{ step < 10 ? 'next' : '' }}
+            next
           </v-btn>
           <v-btn
-            :disabled="step < 10"
+            v-if="step >= 10"
             color="accent"
             class="black--text"
             depressed
             @click="() => { $emit('close'); dialog = false; step = 0; }"
           >
-            Done
+            done
           </v-btn>
         </v-card-actions>
       </v-card>

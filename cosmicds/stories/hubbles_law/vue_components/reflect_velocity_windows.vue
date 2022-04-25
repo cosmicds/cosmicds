@@ -1,7 +1,7 @@
 <template>
   <v-btn
     block
-    color="primary"
+    color="info"
     elevation="2"
     @click.stop="dialog = true"
   >
