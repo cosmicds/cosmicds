@@ -170,3 +170,4 @@ class HubblesLaw(Story):
         new_data = Data(label='student_data', **components)
         student_data = dc['student_data']
         student_data.update_values_from_data(new_data)
+        self.make_data_writeable(student_data)

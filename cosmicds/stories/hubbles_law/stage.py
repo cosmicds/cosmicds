@@ -11,7 +11,7 @@ class HubbleStage(Stage):
         "restwave": "rest_wave_value",
         "velocity": "velocity_value",
         "distance": "est_dist_value",
-        "galaxy_name": "galaxy_name",
+        "name": "galaxy_name",
         "student_id": "student_id",
         "angular_size" : "ang_size_value"
     }

@@ -264,7 +264,8 @@ class StageOne(HubbleStage):
             return
         value = round(event["domain"]["x"], 0)
         self.stage_state.waveline_set = True
-        self.update_data_value("student_measurements", "measwave", value, self.galaxy_table.index)
+        index = self.galaxy_table.index
+        self.update_data_value("student_measurements", "measwave", value, index)
 
     def vue_add_current_velocity(self, _args=None):
         data = self.get_data("student_measurements")
@@ -274,7 +275,6 @@ class StageOne(HubbleStage):
             lamb_meas = data["measwave"][index]
             velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
             self.update_data_value("student_measurements", "velocity", velocity, index)
-            self.update_data_value("student_data", "velocity", velocity, index)
 
     @property
     def selection_tool(self):

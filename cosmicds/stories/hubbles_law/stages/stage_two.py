@@ -108,7 +108,7 @@ class StageTwo(HubbleStage):
         if not value:
             return
         galaxy = self.stage_state.selected_galaxy
-        index = self.get_data_index('student_data', 'ID', lambda x: x == galaxy["ID"])
+        index = self.get_data_index('student_data', 'id', lambda x: x == galaxy["id"])
 
         
 
