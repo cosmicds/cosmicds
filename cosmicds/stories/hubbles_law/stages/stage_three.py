@@ -4,6 +4,7 @@ from traitlets import default
 
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
+from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.phases import Stage
 from cosmicds.utils import extend_tool, load_template, update_figure_css
 from cosmicds.viewers import CDSHistogramView, CDSScatterView
@@ -20,7 +21,7 @@ class StageState(State):
     "Galaxy Type",
     "Professional Science Data"
 ])
-class StageThree(Stage):
+class StageThree(HubbleStage):
     @default('stage_state')
     def _default_state(self):
         return StageState()

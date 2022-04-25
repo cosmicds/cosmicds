@@ -10,12 +10,16 @@ from pandas import DataFrame
 from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, Instance, Int, Bool
 
+from cosmicds.utils import API_URL
+import requests
 class SelectionTool(v.VueTemplate):
     template = load_template("selection_tool.vue", __file__, traitlet=True).tag(sync=True)
     widget = Instance(DOMWidget, allow_none=True).tag(sync=True, **widget_serialization)
     current_galaxy = Dict().tag(sync=True)
     selected_count = Int().tag(sync=True)
     dialog = Bool(False).tag(sync=True)
+
+
 
     START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 
@@ -45,11 +49,11 @@ class SelectionTool(v.VueTemplate):
 
             source = wwt.most_recent_source
             galaxy = source["layerData"]
-            for k in ["RA", "DEC", "Z"]:
+            for k in ["ra", "decl", "z"]:
                 galaxy[k] = float(galaxy[k])
-            self.current_galaxy = galaxy
+            galaxy['element'] = galaxy['element'].replace("?", "α") # Hacky fix for now
             fov = min(wwt.get_fov(), GALAXY_FOV)
-            self.go_to_location(galaxy["RA"], galaxy["DEC"], fov=fov)
+            self.go_to_location(galaxy["ra"], galaxy["decl"], fov=fov)
             self.current_galaxy = galaxy
 
         self.widget.set_selection_change_callback(wwt_cb)
@@ -91,3 +95,7 @@ class SelectionTool(v.VueTemplate):
         if not instant:
             self.motions_left -= 1
         self.widget.center_on_coordinates(coordinates, fov=fov, instant=instant)
+
+    def vue_mark_galaxy_bad(self, _args=None):
+        data = { "galaxy_id" : self.current_galaxy["id"] }
+        requests.put(f"{API_URL}/mark-galaxy-bad", json=data)

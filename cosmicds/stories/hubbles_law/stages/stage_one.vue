@@ -8,6 +8,11 @@
           @click="select_galaxies();"
         >select 5 galaxies</v-btn>
         <v-btn
+          color="error"
+          class="black--text"
+          @click="fill_data();"
+        >fill data points</v-btn>
+        <v-btn
           @click="console.log(stage_state)"
         >State</v-btn>
       </v-col>

@@ -2,6 +2,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from ipywidgets import widget_serialization
 from traitlets import Dict, Unicode, default
 from cosmicds.components.viewer_layout import ViewerLayout
+from cosmicds.events import WriteToDatabaseMessage
 
 from cosmicds.mixins import TemplateMixin, HubMixin
 from cosmicds.utils import load_template
@@ -29,15 +30,21 @@ class Story(State, HubMixin):
         # in the stage state
         add_callback(self, 'step_index', self._on_step_index_changed)
         add_callback(self, 'step_complete', self._on_step_complete_changed)
+        add_callback(self, 'stage_index', self._on_stage_index_changed)
+
+    def _on_stage_index_changed(self, value):
+        self.hub.broadcast(WriteToDatabaseMessage(self))
 
     def _on_step_index_changed(self, value):
         self.stages[self.stage_index]['step_index'] = value
         self.step_complete = self.stages[self.stage_index]['steps'][
             self.step_index]['completed']
+        self.hub.broadcast(WriteToDatabaseMessage(self))
 
     def _on_step_complete_changed(self, value):
         self.stages[self.stage_index]['steps'][self.step_index][
             'completed'] = value
+        self.hub.broadcast(WriteToDatabaseMessage(self))
 
     def viewers(self):
         return self.app.viewers
