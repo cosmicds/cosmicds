@@ -9,6 +9,7 @@ class InfoTool(Tool):
     tool_id = "cds:info"
     action_text = "Show information"
     tool_tip = "Show informational dialog"
+    mdi_icon = "mdi-information-outline"
 
     active = Bool().tag(sync=True)
 

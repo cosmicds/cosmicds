@@ -7,11 +7,12 @@ from glue_jupyter.bqplot.histogram import BqplotHistogramView
 
 from cosmicds.components.toolbar import Toolbar
 
-def cds_viewer(viewer_class, viewer_tools):
+def cds_viewer(viewer_class, viewer_tools, label=None):
     class CDSViewer(viewer_class):
 
         inherit_tools = False
         tools = viewer_tools
+        LABEL = label or viewer_class.LABEL
 
         def initialize_toolbar(self):
             self.toolbar = Toolbar(self)
@@ -24,5 +25,5 @@ def cds_viewer(viewer_class, viewer_tools):
     return CDSViewer
 
 
-CDSScatterView = cds_viewer(BqplotScatterView, ['bqplot:home', 'bqplot:rectzoom', 'bqplot:rectangle'])
-CDSHistogramView = cds_viewer(BqplotHistogramView, ['bqplot:home', 'bqplot:xzoom', 'bqplot:xrange'])
+CDSScatterView = cds_viewer(BqplotScatterView, ['bqplot:home', 'bqplot:rectzoom', 'bqplot:rectangle'], '2D scatter')
+CDSHistogramView = cds_viewer(BqplotHistogramView, ['bqplot:home', 'bqplot:xzoom', 'bqplot:xrange'], 'Histogram')

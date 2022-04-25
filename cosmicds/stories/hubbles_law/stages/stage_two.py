@@ -7,10 +7,10 @@ from traitlets import default
 from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSidebar
 from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
-from cosmicds.phases import Stage
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, format_fov, format_measured_angle
 from cosmicds.utils import load_template
+from cosmicds.stories.hubbles_law.stage import HubbleStage
 
 log = logging.getLogger()
 
@@ -44,7 +44,7 @@ class StageState(State):
 @register_stage(story="hubbles_law", index=2, steps=[
     "Measure distances"
 ])
-class StageTwo(Stage):
+class StageTwo(HubbleStage):
 
     @default('template')
     def _default_template(self):
@@ -67,10 +67,10 @@ class StageTwo(Stage):
 
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
-                               glue_components=['ID',
+                               glue_components=['name',
                                                'velocity',
                                                'distance'],
-                               key_component='ID',
+                               key_component='name',
                                names=['Galaxy Name',
                                        'Velocity (km/s)',
                                        'Distance (Mpc)'],
@@ -93,7 +93,7 @@ class StageTwo(Stage):
         index = self.distance_table.index
         data = self.distance_table.glue_data
         galaxy = { x.label : data[x][index] for x in data.main_components }
-        self.distance_tool.go_to_location(galaxy["RA"], galaxy["DEC"], fov=GALAXY_FOV)
+        self.distance_tool.go_to_location(galaxy["ra"], galaxy["decl"], fov=GALAXY_FOV)
 
         self.stage_state.selected_galaxy = galaxy
         self.distance_tool.measuring_allowed = bool(galaxy)
@@ -107,6 +107,8 @@ class StageTwo(Stage):
     def _make_measurement(self, value):
         if not value:
             return
+        galaxy = self.stage_state.selected_galaxy
+        index = self.get_data_index('student_data', 'id', lambda x: x == galaxy["id"])
 
         
 

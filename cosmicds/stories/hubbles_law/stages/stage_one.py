@@ -10,7 +10,7 @@ from traitlets import default
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.viewers import SpectrumView
-from cosmicds.phases import Stage
+from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
 from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
@@ -75,7 +75,8 @@ class StageState(State):
     "Reflect",
     "Calculate velocities"
 ])
-class StageOne(Stage):
+class StageOne(HubbleStage):
+
     @default('template')
     def _default_template(self):
         return load_template("stage_one.vue", __file__)
@@ -93,7 +94,7 @@ class StageOne(Stage):
 
         self.stage_state = StageState()
         
-        self.stage_state.image_location = "data/images/stage_one_spectrum"
+        self.stage_state.image_location = join("data", "images", "stage_one_spectrum")
         add_callback(self.app_state, 'using_voila', self._update_image_location)
 
         # Set up viewers
@@ -108,12 +109,12 @@ class StageOne(Stage):
         # Set up widgets
         galaxy_table = Table(self.session,
                              data=self.get_data('student_measurements'),
-                             glue_components=['ID',
-                                              'Element',
+                             glue_components=['name',
+                                              'element',
                                               'restwave',
                                               'measwave',
                                               'velocity'],
-                             key_component='ID',
+                             key_component='name',
                              names=['Galaxy Name',
                                     'Element',
                                     'Rest Wavelength (Å)',
@@ -201,7 +202,7 @@ class StageOne(Stage):
 
     def _on_galaxy_selected(self, galaxy):
         data = self.get_data("student_measurements")
-        already_present = galaxy['ID'] in data['ID'] # Avoid duplicates
+        already_present = galaxy['name'] in data['name'] # Avoid duplicates
         if already_present:
             # To do nothing
             return
@@ -210,13 +211,13 @@ class StageOne(Stage):
             # for component, values in component_dict.items():
             #     values.pop(index)
         else:
-            filename = galaxy['ID']
-            gal_type = galaxy['Type']
+            filename = galaxy['name']
+            gal_type = galaxy['type']
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
 
-    def vue_select_galaxies(self, _args=None):
-        data = self.get_data("dummy_student_data")
+    def _select_from_data(self, dc_name):
+        data = self.get_data(dc_name)
         components = [x.label for x in data.main_components]
         measurements = self.get_data("student_measurements")
         need = self.selection_tool.gals_max - measurements.size
@@ -224,6 +225,13 @@ class StageOne(Stage):
         for index in indices:
             galaxy = { c: data[c][index] for c in components }
             self.selection_tool.select_galaxy(galaxy)
+            self.story_state.update_student_data()
+
+    def vue_fill_data(self, _args=None):
+        self._select_from_data("dummy_student_data")
+
+    def vue_select_galaxies(self, _args=None):
+        self._select_from_data("SDSS_all_sample_filtered")
 
     def update_spectrum_viewer(self, name, z):
         specview = self.get_viewer("spectrum_viewer")
@@ -240,15 +248,14 @@ class StageOne(Stage):
         self.stage_state.waveline_set = False
 
         sdss = self.get_data("SDSS_all_sample_filtered")
-        sdss_index = next((i for i in range(sdss.size) if sdss["ID"][i] == name), None)
+        sdss_index = next((i for i in range(sdss.size) if sdss["name"][i] == name), None)
         if sdss_index is not None:
-            element = sdss['Element'][sdss_index]
+            element = sdss['element'][sdss_index]
             specview.update(element, z)
             restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
             index = self.get_widget("galaxy_table").index
-            self.update_data_value("student_measurements", "Element", element, index)
+            self.update_data_value("student_measurements", "element", element, index)
             self.update_data_value("student_measurements", "restwave", restwave, index)
-
 
     def galaxy_table_selected_change(self, change):
         if change["new"] == change["old"]:
@@ -257,8 +264,8 @@ class StageOne(Stage):
         index = self.galaxy_table.index
         data = self.galaxy_table.glue_data
         galaxy = { x.label : data[x][index] for x in data.main_components }
-        name = galaxy["ID"]
-        gal_type = galaxy["Type"]
+        name = galaxy["name"]
+        gal_type = galaxy["type"]
         if name is None or gal_type is None:
             return
 
@@ -266,7 +273,7 @@ class StageOne(Stage):
         filename = name
         spec_data = self.story_state.load_spectrum_data(filename, gal_type)
 
-        z = galaxy["Z"]
+        z = galaxy["z"]
         self.story_state.update_data("spectrum_data", spec_data)
         self.update_spectrum_viewer(name, z)
 
@@ -276,11 +283,12 @@ class StageOne(Stage):
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]
         data = self.galaxy_table.glue_data
-        name = data["ID"][index]
-        gal_type = data["Type"][index]
+        name = data["name"][index]
+        gal_type = data["type"][index]
         if name is None or gal_type is None:
             return
-        self.selection_tool.go_to_location(data["RA"][index], data["DEC"][index], fov=GALAXY_FOV)
+
+        self.selection_tool.go_to_location(data["ra"][index], data["decl"][index], fov=GALAXY_FOV)
         self.stage_state.lambda_rest = data["restwave"][index]
         self.stage_state.lambda_obs = data["measwave"][index]
         print("galaxy row clicked", self.stage_state)
@@ -289,16 +297,18 @@ class StageOne(Stage):
         specview = self.get_viewer("spectrum_viewer")
         if event["event"] != "click" or not specview.line_visible:
             return
-        value = round(event["domain"]["x"], 2)
+        value = round(event["domain"]["x"], 0)
         self.stage_state.waveline_set = True
-        self.update_data_value("student_measurements", "measwave", value, self.galaxy_table.index)
+        index = self.galaxy_table.index
+        self.update_data_value("student_measurements", "measwave", value, index)
 
     def vue_add_current_velocity(self, _args=None):
         data = self.get_data("student_measurements")
-        index = self.get_component('galaxy_table').index
+        index = self.galaxy_table.index
         if index is not None:
-            z = data["Z"][index]
-            velocity = int(3 * (10 ** 5) * z)
+            lamb_obs = data["restwave"][index]
+            lamb_meas = data["measwave"][index]
+            velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
             self.update_data_value("student_measurements", "velocity", velocity, index)
 
     @property
