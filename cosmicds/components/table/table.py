@@ -5,7 +5,7 @@ from glue.core.message import (DataCollectionAddMessage,
 from glue.core import HubListener
 from glue.core.subset import SubsetState
 from ipyvuetify import VuetifyTemplate
-from traitlets import Bool, List, Unicode
+from traitlets import Bool, List, Unicode, observe
 
 from ...utils import load_template
 
@@ -22,6 +22,7 @@ class Table(VuetifyTemplate, HubListener):
     search = Unicode().tag(sync=True)
     single_select = Bool(False).tag(sync=True)
     selected = List().tag(sync=True)
+    sort_by = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
     use_search = Bool(False).tag(sync=True)
     
@@ -38,6 +39,7 @@ class Table(VuetifyTemplate, HubListener):
 
         components = kwargs.get('glue_components', [x.label for x in data.components])
         self.key_component = kwargs.get('key_component', components[0])
+        self.sort_by = self.key_component
         self._glue_data = data
 
         self.title = kwargs.get('title', '')
@@ -47,7 +49,12 @@ class Table(VuetifyTemplate, HubListener):
         self._data_update_filter = lambda message: message.data.label == self._glue_data.label and message.attribute in self._glue_components
         self._data_changed_filter = lambda message: message.data.label == self._glue_data.label
         #self._data_changed_filter = lambda _: True
-        self._subset_changed_filter = lambda message: message.subset.label == self._subset_group_label and message.subset.data.label == self._glue_data.label
+        def subset_changed_filter(message):
+            #print("Got a message")
+            #print(message.subset.label)
+            return message.subset.label == self._subset_group_label and message.subset.data.label == self._glue_data.label
+        self._subset_changed_filter = subset_changed_filter
+        #self._subset_changed_filter = lambda message: message.subset.label == self._subset_group_label and message.subset.data.label == self._glue_data.label
 
         self.single_select = kwargs.get('single_select', False)
         self.subset_color = kwargs.get('color', Table.default_color)
@@ -71,9 +78,6 @@ class Table(VuetifyTemplate, HubListener):
                            handler=self._on_data_updated, filter=self._data_changed_filter)
         self.hub.subscribe(self, SubsetUpdateMessage,
                            handler=self._on_subset_updated, filter=self._subset_changed_filter)
-
-        # Listen for changes to selected rows
-        self.observe(self._on_selected_changed, names=['selected'])
 
     @property
     def data_collection(self):
@@ -156,6 +160,8 @@ class Table(VuetifyTemplate, HubListener):
                 self._on_data_deleted()
         self._populate_table()
         
+
+    @observe('selected')
     def _on_selected_changed(self, event):
         state = self.subset_state_from_selected(event['new'])
         if self._subset_group is None:
@@ -192,7 +198,13 @@ class Table(VuetifyTemplate, HubListener):
             self.row_click_callback(item, data)
         if self.single_select:
             self.selected = [item]
-        elif item in self.items:
-            self.items.remove(item)
+
+        # We can't just use append/remove here
+        # We need a reassignment so that the watcher is triggered
+        elif item in self.selected:
+            self.selected = [x for x in self.selected if x != item]
         else:
-            self.items.append(item)
+            self.selected = self.selected + [item]
+
+    def vue_update_sort_by(self, field, _args=None):
+        self.sort_by = field

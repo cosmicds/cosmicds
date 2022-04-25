@@ -46,6 +46,17 @@ class Story(State, HubMixin):
             'completed'] = value
         self.hub.broadcast(WriteToDatabaseMessage(self))
 
+    def viewers(self):
+        return self.app.viewers
+
+    # Data can be data, a subset, or a subset group
+    def set_layer_visible(self, data, viewers):
+        for viewer in self.viewers():
+            for layer in viewer.layers:
+                if layer.state.layer == data:
+                    layer.state.visible = viewer in viewers
+
+
 
 class Stage(TemplateMixin):
     template = Unicode().tag(sync=True)
@@ -64,8 +75,10 @@ class Stage(TemplateMixin):
         self.story_state = story_state
         self.app_state = app_state
 
-    def add_viewer(self, cls, label, data=None, layout=ViewerLayout, show_toolbar=True):
+    def add_viewer(self, cls, label, viewer_label=None, data=None, layout=ViewerLayout, show_toolbar=True):
         viewer = self.app.new_data_viewer(cls, data=data, show=False)
+        if viewer_label is not None:
+            viewer.LABEL = viewer_label
         current_viewers = {k: v for k, v in self.viewers.items()}
         viewer_layout = layout(viewer)
         viewer_layout.show_toolbar = show_toolbar
@@ -133,6 +146,11 @@ class Stage(TemplateMixin):
         new_data = Data(label=data.label, **component_dict)
         self.story_state.make_data_writeable(new_data)
         data.update_values_from_data(new_data)
+
+    def get_data_index(self, dc_name, component, condition):
+        data = self.data_collection[dc_name]
+        component = data[component]
+        return next((index for index, x in enumerate(component) if condition(x)), None)
 
     def vue_set_step_index(self, value):
         self.story_state.step_index = value

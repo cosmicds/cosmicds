@@ -107,6 +107,8 @@ class StageTwo(HubbleStage):
     def _make_measurement(self, value):
         if not value:
             return
+        galaxy = self.stage_state.selected_galaxy
+        index = self.get_data_index('student_data', 'ID', lambda x: x == galaxy["ID"])
 
         
 

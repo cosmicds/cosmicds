@@ -78,12 +78,24 @@ class HubblesLaw(Story):
         ))
 
         # Compose empty data containers to be populated by user
-        self.data_collection.append(Data(
+        student_cols = ["id", "name", "ra", "decl", "z", "type", "measwave",
+                         "restwave", "student_id", "velocity", "distance",
+                         "element", "angular_size"]
+        student_measurements = Data(
             label='student_measurements',
             **{x: np.array([], dtype='float64')
-               for x in ["id", "name", "ra", "decl", "z", "type", "measwave",
-                         "restwave", "student_id", "velocity", "distance",
-                         "element", "angular_size"]}))
+               for x in student_cols})
+        student_data = Data(
+            label="student_data",
+            **{x : ['X'] if x in ['id', 'element', 'type'] else [0] 
+                for x in student_cols})
+        self.data_collection.append(student_measurements)
+        self.data_collection.append(student_data)
+
+        self.app.add_link(student_measurements, 'id', student_data, 'id')
+        self.app.add_link(student_measurements, 'distance', student_data, 'distance')
+        self.app.add_link(student_measurements, 'velocity', student_data, 'velocity')
+        self.app.add_link(student_measurements, 'student_id', student_data, 'student_id')
 
         # Make all data writeable
         for data in self.data_collection:
@@ -147,3 +159,14 @@ class HubblesLaw(Story):
             data = Data(label=label, **components)
             self.make_data_writeable(data) 
             dc.append(data)
+
+    def update_student_data(self):
+        dc = self.data_collection
+        data = dc['student_measurements']
+        df = data.to_dataframe()
+        df = df[df['distance'].notna() & df['velocity'].notna()]
+        main_components = [x.label for x in data.main_components]
+        components = { col: list(df[col]) for col in main_components }
+        new_data = Data(label='student_data', **components)
+        student_data = dc['student_data']
+        student_data.update_values_from_data(new_data)

@@ -194,6 +194,7 @@ class StageOne(HubbleStage):
         for index in indices:
             galaxy = { c: data[c][index] for c in components }
             self.selection_tool.select_galaxy(galaxy)
+            self.story_state.update_student_data()
 
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")
@@ -273,6 +274,7 @@ class StageOne(HubbleStage):
             lamb_meas = data["measwave"][index]
             velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
             self.update_data_value("student_measurements", "velocity", velocity, index)
+            self.update_data_value("student_data", "velocity", velocity, index)
 
     @property
     def selection_tool(self):
