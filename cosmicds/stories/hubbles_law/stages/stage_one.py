@@ -194,6 +194,7 @@ class StageOne(Stage):
         for index in indices:
             galaxy = { c: data[c][index] for c in components }
             self.selection_tool.select_galaxy(galaxy)
+            self.story_state.update_student_data()
 
     def update_spectrum_viewer(self, name, z):
         specview = self.get_viewer("spectrum_viewer")
@@ -267,6 +268,7 @@ class StageOne(Stage):
             z = data["Z"][index]
             velocity = int(3 * (10 ** 5) * z)
             self.update_data_value("student_measurements", "velocity", velocity, index)
+            self.update_data_value("student_data", "velocity", velocity, index)
 
     @property
     def selection_tool(self):

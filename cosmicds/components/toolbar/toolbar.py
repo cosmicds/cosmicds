@@ -15,8 +15,6 @@ class Toolbar(VuetifyTemplate):
         'bqplot:xrange': 'mdi-select-drag',
         'bqplot:yrange': 'mdi-select-drag',
         'bqplot:rectangle': 'mdi-select-drag',
-        'cds:info': 'mdi-information-outline',
-        'hubble:restwave' : 'mdi-lambda'
     }
 
     template = load_template("toolbar.vue", __file__, traitlet=True).tag(sync=True)
@@ -64,11 +62,15 @@ class Toolbar(VuetifyTemplate):
 
     def add_tool(self, tool):
         self.tools[tool.tool_id] = tool
+        if hasattr(tool, 'mdi_icon'):
+            icon = tool.mdi_icon
+        else:
+            icon = self.TOOL_ICONS.get(tool.tool_id, "")
         self.tools_data = {
             **self.tools_data,
             tool.tool_id: {
                 "tooltip": tool.tool_tip,
-                "icon": self.TOOL_ICONS.get(tool.tool_id, ""),
+                "icon": icon,
             }
         }
 
