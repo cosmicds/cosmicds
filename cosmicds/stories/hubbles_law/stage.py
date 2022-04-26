@@ -41,6 +41,7 @@ class HubbleStage(Stage):
 
     def update_data_value(self, dc_name, comp_name, value, index):
         super().update_data_value(dc_name, comp_name, value, index)
+        self.story_state.update_student_data()
 
         if self.app_state.update_db \
             and dc_name == "student_measurements" \
@@ -49,9 +50,12 @@ class HubbleStage(Stage):
             data = self.data_collection[dc_name]
             measurement = { comp.label: data[comp][index] for comp in data.main_components }
             self.submit_measurement(measurement)
+            
 
     def add_data_values(self, dc_name, values):
         super().add_data_values(dc_name, values)
+        self.story_state.update_student_data()
 
         if self.app_state.update_db and dc_name == "student_measurements":
             self.submit_measurement(values)
+        

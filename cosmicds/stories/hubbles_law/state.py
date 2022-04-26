@@ -5,6 +5,7 @@ from echo import DictCallbackProperty
 from cosmicds.phases import Story
 from cosmicds.registries import story_registry
 import numpy as np
+from glue.core.component import CategoricalComponent, Component
 from glue.core import Data
 import ipyvuetify as v
 
@@ -78,17 +79,29 @@ class HubblesLaw(Story):
         ))
 
         # Compose empty data containers to be populated by user
-        student_cols = ["id", "name", "ra", "decl", "z", "type", "measwave",
+        self.student_cols = ["id", "name", "ra", "decl", "z", "type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
                          "element", "angular_size"]
-        student_measurements = Data(
-            label='student_measurements',
-            **{x: np.array([], dtype='float64')
-               for x in student_cols})
-        student_data = Data(
-            label="student_data",
-            **{x : ['X'] if x in ['id', 'element', 'type'] else [0] 
-                for x in student_cols})
+        self.categorical_cols = ['name', 'element', 'type']
+        student_measurements = Data(label="student_measurements")
+        student_data = Data(label="student_data")
+        for col in self.student_cols:
+            categorical = col in self.categorical_cols
+            ctype = CategoricalComponent if categorical else Component
+            meas_comp = ctype(np.array([]))
+            data = ['X'] if categorical else [0]
+            data_comp = ctype(np.array(data))
+            student_measurements.add_component(meas_comp, col)
+            student_data.add_component(data_comp, col)
+
+        # student_measurements = Data(
+        #     label='student_measurements',
+        #     **{x: np.array([], dtype='float64')
+        #        for x in student_cols})
+        # student_data = Data(
+        #     label="student_data",
+        #     **{x : ['X'] if x in ['id', 'element', 'type'] else [0] 
+        #         for x in student_cols})
         self.data_collection.append(student_measurements)
         self.data_collection.append(student_data)
 
@@ -124,16 +137,22 @@ class HubblesLaw(Story):
         v.theme.themes.dark.anchor = '' # Unallocated
         v.theme.themes.light.anchor = ''
 
-    def load_spectrum_data(self, spectrum, gal_type):
+    def load_spectrum_data(self, name, gal_type):
         type_folders = {
             "Sp" : "spirals_spectra",
             "E" : "ellipticals_spectra",
             "Ir" : "irregulars_spectra"
         }
-        name = spectrum.split(".")[0]
+
+        ext = ".fits"
+        if not name.endswith(ext):
+            filename = name + ext
+        else:
+            filename = name
+            name = name[:-len(ext)]
         spectra_path = Path(__file__).parent / "data" / "spectra"
         folder = spectra_path / type_folders[gal_type]
-        path = str(folder / spectrum)
+        path = str(folder / filename)
         data_name = name + '[COADD]'
 
         # Don't load data that we've already loaded
@@ -162,12 +181,24 @@ class HubblesLaw(Story):
 
     def update_student_data(self):
         dc = self.data_collection
-        data = dc['student_measurements']
-        df = data.to_dataframe()
-        df = df[df['distance'].notna() & df['velocity'].notna()]
-        main_components = [x.label for x in data.main_components]
+        meas_data = dc['student_measurements']
+        df = meas_data.to_dataframe()
+        df = df[df['distance'].notna() & \
+                df['velocity'].notna() & \
+                df['angular_size'].notna()]
+        df["name"] = df["name"].astype(np.dtype(str))
+        main_components = [x.label for x in meas_data.main_components]
         components = { col: list(df[col]) for col in main_components }
-        new_data = Data(label='student_data', **components)
+        if not all(len(v) > 0 for v in components.values()):
+            return
+
+        new_data = Data(label='student_data')
+        for col, data in components.items():
+            categorical = col in self.categorical_cols
+            ctype = CategoricalComponent if categorical else Component
+            comp = ctype(np.array(data))
+            new_data.add_component(comp, col)
+        
         student_data = dc['student_data']
         student_data.update_values_from_data(new_data)
         self.make_data_writeable(student_data)
