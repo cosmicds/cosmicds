@@ -2,13 +2,14 @@ import logging
 
 from echo import CallbackProperty, add_callback
 from glue.core.state_objects import State
+from numpy import pi
 from traitlets import default
 
 from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSidebar
 from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
-from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, format_fov, format_measured_angle
+from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 
@@ -110,8 +111,9 @@ class StageTwo(HubbleStage):
         if not value:
             return
         galaxy = self.stage_state.selected_galaxy
-        index = self.get_data_index('student_data', 'name', lambda x: x == galaxy["name"])
-
+        index = self.get_data_index('student_measurements', 'name', lambda x: x == galaxy["name"])
+        distance = round(MILKY_WAY_SIZE_MPC * 180 / (self.distance_tool.angular_size.value * pi))
+        self.update_data_value("student_measurements", "distance", distance, index)
         
 
     @property
