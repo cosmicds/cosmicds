@@ -73,9 +73,12 @@ class HubblesLaw(Story):
 
         # Load in the galaxy data
         galaxies = requests.get(f"{API_URL}/galaxies").json()
+        galaxies_dict = { k : [x[k] for x in galaxies] for k in galaxies[0] }
+        name_ext = ".fits"
+        galaxies_dict["name"] = [x[:-len(name_ext)] for x in galaxies_dict["name"]]
         self.data_collection.append(Data(
             label="SDSS_all_sample_filtered",
-            **{ k : [x[k] for x in galaxies] for k in galaxies[0] }
+            **galaxies_dict
         ))
 
         # Compose empty data containers to be populated by user
@@ -106,6 +109,7 @@ class HubblesLaw(Story):
         self.data_collection.append(student_data)
 
         self.app.add_link(student_measurements, 'id', student_data, 'id')
+        self.app.add_link(student_measurements, 'name', student_data, 'name')
         self.app.add_link(student_measurements, 'distance', student_data, 'distance')
         self.app.add_link(student_measurements, 'velocity', student_data, 'velocity')
         self.app.add_link(student_measurements, 'student_id', student_data, 'student_id')
