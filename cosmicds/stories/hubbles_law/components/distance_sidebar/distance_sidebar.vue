@@ -19,7 +19,7 @@
           <v-list-item-subtitle>field of view</v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-content>
-          <v-list-item-title>{{angular_size}}</v-list-item-title>
+          <v-list-item-title>{{angular_size || "--"}}</v-list-item-title>
           <v-list-item-subtitle>measured angular size</v-list-item-subtitle>
         </v-list-item-content>
       </v-list>
@@ -41,8 +41,8 @@
         dark
         class="px-auto"
         max-width="100%"
-        :disabled="!state.measure_gal_selected || state.measured_ang_size === 0 || state.distance_view_changing"
-        @click="add_distance_data_point()"
+        :disabled="!state.selected_galaxy || !angular_size || state.distance_view_changing"
+        @click="add_distance_data_point();"
       >
         estimate
       </v-btn>

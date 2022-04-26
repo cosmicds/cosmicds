@@ -82,6 +82,7 @@ class StageTwo(HubbleStage):
         self.add_component(DistanceSidebar(self.stage_state), label="c-distance-sidebar")
         self.distance_tool.observe(self._angular_size_update, names=["angular_size"])
         self.distance_tool.observe(self._angular_height_update, names=["angular_height"])
+        self.distance_sidebar.angular_height = format_fov(self.distance_tool.angular_height)
 
         add_callback(self.stage_state, 'make_measurement', self._make_measurement)
 
@@ -93,22 +94,23 @@ class StageTwo(HubbleStage):
         index = self.distance_table.index
         data = self.distance_table.glue_data
         galaxy = { x.label : data[x][index] for x in data.main_components }
+        self.distance_tool.reset_canvas()
         self.distance_tool.go_to_location(galaxy["ra"], galaxy["decl"], fov=GALAXY_FOV)
 
         self.stage_state.selected_galaxy = galaxy
         self.distance_tool.measuring_allowed = bool(galaxy)
 
     def _angular_size_update(self, change):
-        self.distance_sidebar.angular_size = format_fov(change["new"])
+        self.distance_sidebar.angular_size = format_measured_angle(change["new"])
 
     def _angular_height_update(self, change):
-        self.distance_sidebar.angular_height = format_measured_angle(change["new"])
+        self.distance_sidebar.angular_height = format_fov(change["new"])
 
     def _make_measurement(self, value):
         if not value:
             return
         galaxy = self.stage_state.selected_galaxy
-        index = self.get_data_index('student_data', 'id', lambda x: x == galaxy["id"])
+        index = self.get_data_index('student_data', 'name', lambda x: x == galaxy["name"])
 
         
 
