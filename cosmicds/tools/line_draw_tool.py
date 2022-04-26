@@ -21,7 +21,6 @@ class LineDrawTool(InteractCheckableTool):
 
         figure = viewer.figure
         self._original_interaction = figure.interaction
-        print(viewer.scales)
         #scales_image = figure.marks[0].scales
         scales_image = viewer.scales
         self._interaction = MouseInteraction(x_scale=scales_image['x'], y_scale=scales_image['y'], move_throttle=70, next=None,
@@ -86,7 +85,7 @@ class LineDrawTool(InteractCheckableTool):
             self.endpoint = endpoint
 
             # End drawing
-            self._follow_cursor = False
+            self.deactivate()
 
     def _on_endpoint_drag_start(self, element, event):
         self.endpoint.hovered_style = {'cursor' : 'grabbing'}
@@ -111,7 +110,7 @@ class LineDrawTool(InteractCheckableTool):
         self.line.x = [0, x]
         self.line.y = [0, y]
 
-    def _update_interaction(self, draw):
+    def _update_interaction(self):
         have_endpoint = self.endpoint is not None
 
         # if have_endpoint:
@@ -121,16 +120,19 @@ class LineDrawTool(InteractCheckableTool):
 
         if have_endpoint:
             self.viewer.figure.interaction = None
-        elif draw:
-            self.viewer.figure.interaction = self._interaction
         else:
-            self.viewer.figure.interaction = self._original_interaction
-
+            self.viewer.figure.interaction = self._interaction
+        
     def activate(self):
-        self._update_interaction(draw=True)
+        self._update_interaction()
 
     def deactivate(self):
-        self._update_interaction(draw=False)
+        self._follow_cursor = False
+        self.viewer.figure.interaction = self._original_interaction
+        self.viewer.toolbar.active_tool = None
+
+    def close(self):
+        super().close()
 
     def _coordinates_in_bounds(self, x, y):
         """
@@ -140,10 +142,8 @@ class LineDrawTool(InteractCheckableTool):
         """
 
         # Get the current viewer bounds
-        print(x,y)
         state = self.viewer.state
         x_min, x_max, y_min, y_max = state.x_min, state.x_max, state.y_min, state.y_max
-        print(x_min, x_max, y_min, y_max)
 
         # If the point is in bounds, do nothing
         if x >= x_min and x <= x_max and y >= y_min and y <= y_max:
@@ -164,7 +164,6 @@ class LineDrawTool(InteractCheckableTool):
         t3 = y_min / y
         t4 = y_max / y
         ts = [t for t in [t1,t2,t3,t4] if t > 0 and t < 1]
-        print([t1,t2,t3,t4])
         t = max(ts or [0]) * 0.98
 
         return x * t, y * t

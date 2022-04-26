@@ -62,7 +62,8 @@ class LineFitTool(Tool, HubListener):
         start_y, end_y = y
         slope = fitted_line.slope.value
         label = 'Slope = %.0f ks / s / Mpc' % slope if not isnan(slope) else None
-        line = line_mark(layer, start_x, start_y, end_x, end_y, layer.state.color, label)
+        color = layer.state.color if layer.state.color != '0.35' else 'black'
+        line = line_mark(layer, start_x, start_y, end_x, end_y, color, label)
         return line, slope
 
     def activate(self):
@@ -74,7 +75,7 @@ class LineFitTool(Tool, HubListener):
     def _fit_to_layers(self):
 
         figure = self.viewer.figure
-        marks_to_keep = [mark for mark in figure.marks if mark not in self.lines.keys()]
+        marks_to_keep = [mark for mark in figure.marks if mark not in self.line_marks]
 
         self.lines = {}
         self.slopes = {}
@@ -84,16 +85,19 @@ class LineFitTool(Tool, HubListener):
             self.lines[label] = line
             self.slopes[label] = slope
 
-        figure.marks = [marks_to_keep] + list(self.lines.keys())
+        figure.marks = marks_to_keep + list(self.line_marks)
 
 
     def _clear_lines(self):
         figure = self.viewer.figure
-        figure.marks = [mark for mark in figure.marks if mark not in self.lines.keys()]
+        figure.marks = [mark for mark in figure.marks if mark not in self.line_marks]
         self.lines = {}
         self.slopes = {}
             
-            
+    
+    @property
+    def line_marks(self):
+        return self.lines.values()
 
 
     
