@@ -1,5 +1,6 @@
 from bqplot.marks import Scatter
 from bqplot_image_gl import LinesGL
+from bqplot_image_gl.interacts import MouseInteraction, mouse_events
 from glue.config import viewer_tool
 from glue_jupyter.bqplot.common.tools import InteractCheckableTool
 
@@ -17,6 +18,22 @@ class LineDrawTool(InteractCheckableTool):
         self.line = None
         self.endpoint = None
         self._follow_cursor = False
+
+        figure = viewer.figure
+        self._original_interaction = figure.interaction
+        print(viewer.scales)
+        #scales_image = figure.marks[0].scales
+        scales_image = viewer.scales
+        self._interaction = MouseInteraction(x_scale=scales_image['x'], y_scale=scales_image['y'], move_throttle=70, next=None,
+                                events=mouse_events)
+        self._interaction.on_msg(self._message_handler)
+
+    def _message_handler(self, interaction, data, buffers):
+        event_type = data['event']
+        if event_type == 'mousemove':
+            self._handle_mousemove(data)
+        elif event_type == 'click':
+            self._handle_click(data)
 
     def _handle_mousemove(self, data):
         figure = self.viewer.figure
@@ -70,7 +87,6 @@ class LineDrawTool(InteractCheckableTool):
 
             # End drawing
             self._follow_cursor = False
-            self._done_editing()
 
     def _on_endpoint_drag_start(self, element, event):
         self.endpoint.hovered_style = {'cursor' : 'grabbing'}
@@ -124,8 +140,10 @@ class LineDrawTool(InteractCheckableTool):
         """
 
         # Get the current viewer bounds
+        print(x,y)
         state = self.viewer.state
         x_min, x_max, y_min, y_max = state.x_min, state.x_max, state.y_min, state.y_max
+        print(x_min, x_max, y_min, y_max)
 
         # If the point is in bounds, do nothing
         if x >= x_min and x <= x_max and y >= y_min and y <= y_max:
@@ -146,7 +164,8 @@ class LineDrawTool(InteractCheckableTool):
         t3 = y_min / y
         t4 = y_max / y
         ts = [t for t in [t1,t2,t3,t4] if t > 0 and t < 1]
-        t = min(ts or [0]) * 0.98
+        print([t1,t2,t3,t4])
+        t = max(ts or [0]) * 0.98
 
         return x * t, y * t
 
