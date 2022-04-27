@@ -17,19 +17,6 @@
     >
       <v-toolbar-title>Estimate Distance</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-tooltip top>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn icon
-            v-bind="attrs"
-            v-on="on"
-            :disabled="!measuring_allowed || view_changing"
-            @click="toggle_measuring()"
-          >
-            <v-icon>mdi-ruler</v-icon>
-          </v-btn>
-        </template>
-        {{ measuring ? 'Stop measuring' : 'Start measuring'}}
-      </v-tooltip>
 
       <v-btn icon>
         <v-icon>mdi-information-outline</v-icon>
@@ -47,6 +34,25 @@
           class="wwt-widget"
         />
       </v-lazy>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            fab
+            dark
+            bottom
+            right
+            absolute
+            color="secondary"
+            class="measuring-fab"
+            v-bind="attrs"
+            v-on="on"
+            v-show="measuring_allowed && !view_changing"
+            @click="toggle_measuring()">
+            <v-icon>mdi-ruler</v-icon>
+          </v-btn>
+        </template>
+        {{ measuring ? 'Stop measuring' : 'Start measuring'}}
+      </v-tooltip>
     </div>
   </div>
 </template>
@@ -376,5 +382,14 @@ export default {
 
 .grabbing {
   cursor: grabbing;
+}
+
+.measuring-fab {
+  --margin: 15px;
+  --card-padding: 16px;
+  bottom: 0px !important;
+  margin-bottom: var(--margin);
+  margin-right: calc(var(--margin) - var(--card-padding));
+  z-index: 25 !important;
 }
 </style>
