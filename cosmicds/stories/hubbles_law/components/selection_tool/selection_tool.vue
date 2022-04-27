@@ -22,24 +22,21 @@
 
       <v-spacer></v-spacer>
 
-      <v-tooltip top>
+      <v-tooltip
+        top
+      >
         <template v-slot:activator="{ on, attrs }">
-          <v-btn icon
+          <v-btn
+            icon
             v-bind="attrs"
             v-on="on"
-            @click="reset()">
-            <v-icon>mdi-home</v-icon>
+            @click.stop="dialog = true"
+          >
+            <v-icon>mdi-information-outline</v-icon>
           </v-btn>
         </template>
-        Reset view
+        Info for using this tool
       </v-tooltip>
-
-      <v-btn
-        icon
-        @click.stop="dialog = true"
-      >
-        <v-icon>mdi-information-outline</v-icon>
-      </v-btn>
       <v-dialog
           v-model="dialog"
           persistent
@@ -49,7 +46,7 @@
           class="mx-auto"
         >
           <v-toolbar
-            color="info"
+            color="secondary"
             dense
             dark
           >
@@ -139,22 +136,42 @@
     />
     <v-tooltip top>
       <template v-slot:activator="{ on, attrs }">
+        <v-fab-transition>
+          <v-btn
+            fab
+            dark
+            bottom
+            left
+            absolute
+            color="accent"
+            class="selection-fab black--text"
+            v-bind="attrs"
+            v-on="on"
+            v-show="Object.keys(current_galaxy).length !== 0"
+            @click="select_current_galaxy()">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </v-fab-transition>
+      </template>
+      Add galaxy to my dataset
+    </v-tooltip>
+    <v-tooltip top>
+      <template v-slot:activator="{ on, attrs }">
         <v-btn
           fab
           dark
           bottom
           right
           absolute
-          color="secondary"
-          class="selection-fab"
+          color="accent"
+          class="selection-fab black--text"
           v-bind="attrs"
           v-on="on"
-          v-show="Object.keys(current_galaxy).length !== 0"
-          @click="select_current_galaxy()">
-          <v-icon>mdi-plus</v-icon>
+          @click="reset()">
+          <v-icon>mdi-home</v-icon>
         </v-btn>
       </template>
-      Add galaxy to my dataset
+      Reset view
     </v-tooltip>
   </div>
 </template>

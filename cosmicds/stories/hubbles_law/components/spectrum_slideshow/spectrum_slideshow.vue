@@ -66,9 +66,9 @@
                     </h3>
                     <div>
                     <v-card
-                      class="mt-auto white--text"
+                      class="mt-auto"
                       flat
-                      color="secondary lighten-1"
+                      color="secondary lighten-3"
                       light
                     >                  
                       <v-card-text>
@@ -119,9 +119,9 @@
                     </h3>
                     <div>                    
                       <v-card
-                        class="mt-auto white--text"
+                        class="mt-auto"
                         flat
-                        color="secondary lighten-1"
+                        color="secondary lighten-3"
                         light
                       > 
                         <v-card-text>
@@ -186,9 +186,9 @@
                     </h3>
                     <div>
                       <v-card
-                        class="mt-auto white--text"
+                        class="mt-auto"
                         flat
-                        color="secondary lighten-1"
+                        color="secondary lighten-3"
                         light
                       > 
                         <v-card-text>
@@ -246,9 +246,9 @@
                     </h3>
                     <div>
                       <v-card
-                        class="mt-auto white--text"
+                        class="mt-auto"
                         flat
-                        color="secondary lighten-1"
+                        color="secondary lighten-3"
                         light
                       > 
                         <v-card-text>
@@ -476,9 +476,9 @@
                       </p>
                     </div>
                     <v-card
-                      class="mt-auto white--text"
+                      class="mt-auto"
                       flat
-                      color="secondary lighten-1"
+                      color="secondary lighten-3"
                       light
                     > 
                       <v-card-text>
@@ -622,7 +622,6 @@
                 :input-value="active"
                 icon
                 @click="toggle"
-                color="secondary"
               >
                 <v-icon>mdi-record</v-icon>
               </v-btn>
