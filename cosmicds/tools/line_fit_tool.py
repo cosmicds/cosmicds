@@ -8,21 +8,27 @@ from glue.core.message import (DataCollectionAddMessage,
 from glue.core.exceptions import IncompatibleAttribute
 from glue_jupyter.bqplot.common.tools import Tool
 from numpy import isnan
+from traitlets import Unicode, HasTraits
 
 from cosmicds.stories.hubbles_law.utils import line_mark
 
 @viewer_tool
-class LineFitTool(Tool, HubListener):
+class LineFitTool(Tool, HubListener, HasTraits):
 
     tool_id = 'cds:linefit'
     action_text = 'Fit lines'
-    tool_tip = 'Fit lines to data'
+    tool_tip = Unicode().tag(sync=True)
     mdi_icon = 'mdi-chart-timeline-variant'
+
+    inactive_tool_tip = 'Fit lines to data'
+    active_tool_tip = 'Clear fit lines'
     
     def __init__(self, viewer, **kwargs):
         super().__init__(viewer, **kwargs)
         self.lines = {}
         self.slopes = {}
+        self.tool_tip = self.inactive_tool_tip
+        self.active = False
         #self._data_filter = lambda message: message.data.label in self.layer_labels
         #self._subset_filter = lambda message: message.subset.label in self.layer_labels and message.data.label in self.layer_labels
         # self.hub.subscribe(self, DataCollectionAddMessage,
@@ -35,6 +41,7 @@ class LineFitTool(Tool, HubListener):
         #                    handler=self._on_layer_updated, filter=self._data_filter)
         self.hub.subscribe(self, SubsetUpdateMessage,
                            handler=self._on_layer_updated, filter=self._update_filter)
+
 
     def _data_collection_filter(self, msg):
         return msg.data in self.lines.keys()
@@ -53,9 +60,8 @@ class LineFitTool(Tool, HubListener):
 
     def _on_layer_updated(self, msg):
         data = msg.subset if isinstance(msg, SubsetMessage) else msg.data
-        for layer in self.viewer.layers:
-            layer_data = layer.state.layer
-            if layer.state.visible and layer_data == data:
+        for layer in self.visible_layers:
+            if layer.state.layer == data:
                 self._remove_line(layer)
                 self._fit_to_layer(layer)
                 return
@@ -67,6 +73,10 @@ class LineFitTool(Tool, HubListener):
     @property
     def dc(self):
         return self.viewer.session.data_collection
+
+    @property
+    def visible_layers(self):
+        return filter(lambda layer: layer.state.visible, self.viewer.layers)
 
     @property
     def layer_labels(self):
@@ -91,18 +101,21 @@ class LineFitTool(Tool, HubListener):
         start_x, end_x = x
         start_y, end_y = y
         slope = fitted_line.slope.value
-        label = 'Slope = %.0f ks / s / Mpc' % slope if not isnan(slope) else None
+        label = 'Slope = %.0f km / s / Mpc' % slope if not isnan(slope) else None
         color = layer.state.color if layer.state.color != '0.35' else 'black'
         line = line_mark(layer, start_x, start_y, end_x, end_y, color, label)
         return line, slope
 
     def activate(self):
-        self._fit_to_layers()
+        if not self.active:
+            self._fit_to_layers()
+            self.tool_tip = self.active_tool_tip
+        else:
+            self._clear_lines()
+            self.tool_tip = self.inactive_tool_tip
+        self.active = not self.active
 
-    def deactivate(self):
-        self._clear_lines()
-
-    def _fit_to_layer(self, layer, add=True):
+    def _fit_to_layer(self, layer, add_marks=True):
         try:
             line, slope = self._create_fit_line(layer)
             data = layer.state.layer
@@ -111,7 +124,7 @@ class LineFitTool(Tool, HubListener):
         except IncompatibleAttribute:
             pass
 
-        if add:
+        if add_marks:
             self.figure.marks = self.figure.marks + [line]
 
     def _fit_to_layers(self):
@@ -120,9 +133,8 @@ class LineFitTool(Tool, HubListener):
 
         self.lines = {}
         self.slopes = {}
-        for layer in self.viewer.layers:
-            if layer.state.visible:
-                self._fit_to_layer(layer, add=False)
+        for layer in self.visible_layers:
+            self._fit_to_layer(layer, add_marks=False)
 
         self.figure.marks = marks_to_keep + list(self.line_marks)
 

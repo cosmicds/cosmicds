@@ -2,7 +2,7 @@ import os
 
 from cosmicds.utils import load_template
 from ipyvuetify import VuetifyTemplate
-from traitlets import Dict, Instance, Unicode, Any, observe
+from traitlets import HasTraits, Dict, Instance, Unicode, Any, observe
 from glue.viewers.common.tool import Tool, CheckableTool
 
 class Toolbar(VuetifyTemplate):
@@ -60,17 +60,32 @@ class Toolbar(VuetifyTemplate):
             if self._default_mouse_mode is not None:
                 self._default_mouse_mode.activate()
 
-    def add_tool(self, tool):
-        self.tools[tool.tool_id] = tool
+    @classmethod
+    def get_icon(cls, tool):
         if hasattr(tool, 'mdi_icon'):
             icon = tool.mdi_icon
         else:
-            icon = self.TOOL_ICONS.get(tool.tool_id, "")
+            icon = cls.TOOL_ICONS.get(tool.tool_id, "")
+        return icon
+
+    def update_tools_data(self, tool):
+        if tool.tool_id in self.tools_data:
+            del self.tools_data[tool.tool_id]
         self.tools_data = {
-            **self.tools_data,
+            **self.tools_data, 
             tool.tool_id: {
-                "tooltip": tool.tool_tip,
-                "icon": icon,
+                "tooltip" : tool.tool_tip,
+                "icon": Toolbar.get_icon(tool)
             }
         }
+
+    def refresh_tools_data(self, change):
+        self.update_tools_data(change["owner"])
+
+    def add_tool(self, tool):
+        self.tools[tool.tool_id] = tool
+        self.update_tools_data(tool)
+
+        if isinstance(tool, HasTraits) and "tool_tip" in tool.traits():
+            tool.observe(self.refresh_tools_data, names=["tool_tip"])
 
