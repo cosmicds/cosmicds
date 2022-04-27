@@ -6,9 +6,9 @@ from glue.core.subset_group import SubsetGroup, GroupedSubset
 
 class SubsetModifierListener(HubListener):
 
-    def __init__(self, app, source_sg, source_data, modify_sg, modify_data, listen=False, color=None):
+    def __init__(self, state, source_sg, source_data, modify_sg, modify_data, listen=False, color=None):
             
-        self._app = app
+        self._state = state
         self._source_sg = source_sg
         self._modify_sg = modify_sg
         self._source_data = source_data
@@ -62,7 +62,7 @@ class SubsetModifierListener(HubListener):
 
     @property
     def hub(self):
-        return self._app.data_collection.hub
+        return self._state.data_collection.hub
 
     @property
     def source_group(self):

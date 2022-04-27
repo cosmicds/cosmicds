@@ -10,7 +10,7 @@ from cosmicds.utils import extend_tool, load_template, update_figure_css
 from cosmicds.viewers import CDSHistogramView, CDSScatterView
 
 from cosmicds.stories.hubbles_law.histogram_listener import HistogramListener
-from cosmicds.stories.hubbles_law.viewers import CDSFitView
+from cosmicds.stories.hubbles_law.viewers import HubbleFitView, HubbleScatterView
 
 class StageState(State):
     pass
@@ -79,11 +79,11 @@ class StageThree(HubbleStage):
         self.add_link(hstkp_name, 'Velocity (km/s)', student_dc_name, 'velocity')
 
 
-        students_viewer = self.add_viewer(CDSScatterView, "students_viewer", "Student Data")
-        fit_viewer = self.add_viewer(CDSFitView, "fit_viewer", "My Data")
-        comparison_viewer = self.add_viewer(CDSScatterView, "comparison_viewer", "Data Comparison")
-        morphology_viewer = self.add_viewer(CDSScatterView, "morphology_viewer", "Galaxy Morphology")
-        prodata_viewer = self.add_viewer(CDSScatterView, "prodata_viewer", "Professional Data")
+        students_viewer = self.add_viewer(HubbleScatterView, "students_viewer", "Student Data")
+        fit_viewer = self.add_viewer(HubbleFitView, "fit_viewer", "My Data")
+        comparison_viewer = self.add_viewer(HubbleScatterView, "comparison_viewer", "Data Comparison")
+        morphology_viewer = self.add_viewer(HubbleScatterView, "morphology_viewer", "Galaxy Morphology")
+        prodata_viewer = self.add_viewer(HubbleScatterView, "prodata_viewer", "Professional Data")
         for viewer in [students_viewer, fit_viewer, comparison_viewer, prodata_viewer]:
             viewer.add_data(student_data)
             #viewer.layers[-1].state.visible = False
@@ -161,6 +161,8 @@ class StageThree(HubbleStage):
         meas_data = self.get_data("HubbleData_ClassSample")
         hist_sync_sg = self.data_collection.new_subset_group(label="Hist Sync SG")
         scatter_sync_sg = self.data_collection.new_subset_group(label="Scatter Sync SG")
+        self.story_state.set_layer_visible(hist_sync_sg, [class_distr_viewer, comparison_viewer])
+        self.story_state.set_layer_visible(scatter_sync_sg, [class_distr_viewer, comparison_viewer])
         hist_sync_sg.style.color = "green"
         scatter_sync_sg.style.color = "green"
 
@@ -183,7 +185,8 @@ class StageThree(HubbleStage):
                                                     hist_sync_sg,
                                                     classes_summary_data,
                                                     scatter_sync_sg, 
-                                                    meas_data)
+                                                    meas_data,
+                                                    "comparison_viewer")
 
         def hist_selection_activate():
             if self.histogram_listener.source is not None:

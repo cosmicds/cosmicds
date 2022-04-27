@@ -292,7 +292,7 @@ class StageOne(HubbleStage):
         self.selection_tool.go_to_location(data["ra"][index], data["decl"][index], fov=GALAXY_FOV)
         self.stage_state.lambda_rest = data["restwave"][index]
         self.stage_state.lambda_obs = data["measwave"][index]
-        print("galaxy row clicked", self.stage_state)
+        #print("galaxy row clicked", self.stage_state)
 
     def on_spectrum_click(self, event):
         specview = self.get_viewer("spectrum_viewer")

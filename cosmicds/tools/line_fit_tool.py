@@ -3,7 +3,9 @@ from glue.config import viewer_tool
 from glue.core import HubListener
 from glue.core.message import (DataCollectionAddMessage,
                                DataCollectionDeleteMessage, DataUpdateMessage,
-                               NumericalDataChangedMessage, SubsetUpdateMessage)
+                               LayerArtistVisibilityMessage, NumericalDataChangedMessage,
+                               SubsetMessage, SubsetUpdateMessage)
+from glue.core.exceptions import IncompatibleAttribute
 from glue_jupyter.bqplot.common.tools import Tool
 from numpy import isnan
 
@@ -25,14 +27,42 @@ class LineFitTool(Tool, HubListener):
         #self._subset_filter = lambda message: message.subset.label in self.layer_labels and message.data.label in self.layer_labels
         # self.hub.subscribe(self, DataCollectionAddMessage,
         #                    handler=self._on_data_collection_added, filter=self._data_filter)
-        # self.hub.subscribe(self, DataCollectionDeleteMessage,
-        #                    handler=self._on_data_collection_deleted, filter=self._data_filter)
-        # self.hub.subscribe(self, DataUpdateMessage,
-        #                    handler=self._on_layer_updated, filter=self._data_filter)
+        self.hub.subscribe(self, DataCollectionDeleteMessage,
+                           handler=self._on_data_collection_deleted, filter=self._data_collection_filter)
+        self.hub.subscribe(self, DataUpdateMessage,
+                           handler=self._on_layer_updated, filter=self._update_filter)
         # self.hub.subscribe(self, NumericalDataChangedMessage,
         #                    handler=self._on_layer_updated, filter=self._data_filter)
-        # self.hub.subscribe(self, SubsetUpdateMessage,
-        #                    handler=self._on_layer_updated, filter=self._subset_filter)
+        self.hub.subscribe(self, SubsetUpdateMessage,
+                           handler=self._on_layer_updated, filter=self._update_filter)
+
+    def _data_collection_filter(self, msg):
+        return msg.data in self.lines.keys()
+
+    def _update_filter(self, msg):
+        data = msg.subset if isinstance(msg, SubsetMessage) else msg.data
+        return data in self.lines.keys() \
+            and msg.attribute in [self.viewer.state.x_att, self.viewer.state.y_att]
+
+    def _on_data_collection_deleted(self, msg):
+        remove = [layer for layer in self.lines.keys() if layer.state.layer == msg.data]
+        lines = [self.lines[x] for x in remove]
+        self.figure.marks = [mark for mark in self.figure.marks if mark not in lines]
+        for layer in remove:
+            self._remove_line(layer)
+
+    def _on_layer_updated(self, msg):
+        data = msg.subset if isinstance(msg, SubsetMessage) else msg.data
+        for layer in self.viewer.layers:
+            layer_data = layer.state.layer
+            if layer.state.visible and layer_data == data:
+                self._remove_line(layer)
+                self._fit_to_layer(layer)
+                return
+
+    @property
+    def figure(self):
+        return self.viewer.figure
 
     @property
     def dc(self):
@@ -72,27 +102,45 @@ class LineFitTool(Tool, HubListener):
     def deactivate(self):
         self._clear_lines()
 
+    def _fit_to_layer(self, layer, add=True):
+        try:
+            line, slope = self._create_fit_line(layer)
+            data = layer.state.layer
+            self.lines[data] = line
+            self.slopes[data] = slope
+        except IncompatibleAttribute:
+            pass
+
+        if add:
+            self.figure.marks = self.figure.marks + [line]
+
     def _fit_to_layers(self):
 
-        figure = self.viewer.figure
-        marks_to_keep = [mark for mark in figure.marks if mark not in self.line_marks]
+        marks_to_keep = [mark for mark in self.figure.marks if mark not in self.line_marks]
 
         self.lines = {}
         self.slopes = {}
         for layer in self.viewer.layers:
-            label = layer.state.layer.label
-            line, slope = self._create_fit_line(layer)
-            self.lines[label] = line
-            self.slopes[label] = slope
+            if layer.state.visible:
+                self._fit_to_layer(layer, add=False)
 
-        figure.marks = marks_to_keep + list(self.line_marks)
+        self.figure.marks = marks_to_keep + list(self.line_marks)
 
+    def _remove_line(self, layer):
+        data = layer.state.layer
+        line = self.lines.get(data, None)
+        del self.lines[data]
+        del self.slopes[data]
+        self.figure.marks = [mark for mark in self.figure.marks if mark != line]
 
     def _clear_lines(self):
-        figure = self.viewer.figure
-        figure.marks = [mark for mark in figure.marks if mark not in self.line_marks]
+        self.figure.marks = [mark for mark in self.figure.marks if mark not in self.line_marks]
         self.lines = {}
         self.slopes = {}
+
+    def refresh(self):
+        self._clear_lines()
+        self._fit_to_layers()
             
     
     @property
