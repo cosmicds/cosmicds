@@ -213,9 +213,15 @@ export default {
       .find(e => e.includes('voila/static'));
     this.app_state.using_voila = item !== undefined;
 
-
+    // Colors that seem to work consistently are in Section "4.3. Colors via svgnames option," pg 42 of this doc: https://ctan.math.washington.edu/tex-archive/macros/latex/contrib/xcolor/xcolor.pdf
     window.MathJax = {
-      tex: {packages: {'[+]': ['input']}},
+      loader: {load: ['[tex]/color', '[tex]/bbox']},
+      tex: {
+        packages: {'[+]': ['input', 'color', 'bbox']},
+        color: {
+          padding: '4px'
+        }
+      },
       startup: {
         ready() {
           const Configuration = MathJax._.input.tex.Configuration.Configuration;
@@ -400,6 +406,12 @@ body {
 
 .bqplot {
   height: 100%;
+}
+
+input {
+  width: 4em !important;
+  border: 1px solid black !important;
+  border-radius: 3px !important;
 }
 
 .MathJax,

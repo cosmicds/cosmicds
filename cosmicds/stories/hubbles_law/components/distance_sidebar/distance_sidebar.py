@@ -21,7 +21,7 @@ class DistanceSidebar(v.VuetifyTemplate):
         add_callback(self.state, 'selected_galaxy', self._on_galaxy_update)
 
     def _on_galaxy_update(self, galaxy):
-        self.galaxy_type = galaxy["Type"]
+        self.galaxy_type = galaxy["type"]
 
     def vue_add_distance_data_point(self):
         self.state.make_measurement = True

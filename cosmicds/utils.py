@@ -7,8 +7,22 @@ from traitlets import Unicode
 
 __all__ = [
     'load_template', 'update_figure_css', 'extend_tool',
-    'RepeatedTimer'
+    'API_URL', 'CDSJSONEncoder', 'RepeatedTimer'
 ]
+
+# The URL for the CosmicDS API
+API_URL = "https://api.cosmicds.cfa.harvard.edu"
+
+# JC: I got this from https://stackoverflow.com/a/57915246
+class CDSJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(CDSJSONEncoder, self).default(obj)
 
 # JC: I got this from https://stackoverflow.com/a/13151299
 class RepeatedTimer(object):

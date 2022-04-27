@@ -5,12 +5,21 @@
         <v-btn
           color="error"
           class="black--text"
+          @click="select_galaxies();"
+        >select 5 galaxies</v-btn>
+        <v-btn
+          color="error"
+          class="black--text"
+          @click="fill_data();"
+        >fill data points</v-btn>
+        <v-btn
           @click="console.log(stage_state)"
         >
           State
         </v-btn>
       </v-col>
     </v-row>
+
     <v-row>
       <v-col
         cols="12"
@@ -53,6 +62,15 @@
       >
         <c-choose-row-guidance
           v-if="stage_state.marker == 'cho_row1'" />
+        <c-doppler-calc-3-guidance
+          v-if="stage_state.marker == 'dop_cal3'" /> 
+        <c-doppler-calc-4-component
+          v-if="stage_state.marker == 'dop_cal4' || stage_state.marker == 'dop_cal5'"/>
+        <c-doppler-calc-5-slideshow
+          v-if="stage_state.marker == 'dop_cal5'"/>
+        <c-doppler-calc-6-component
+          v-if="stage_state.marker == 'dop_cal6'"/> 
+          
       </v-col>
       <v-col
         cols="12"
@@ -77,14 +95,18 @@
           v-if="stage_state.marker == 'mee_spe1'"/>
         <c-restwave-alert
           v-if="stage_state.marker == 'res_wav1'" />
-        <c-restwave-2-alert
-          v-if="stage_state.marker == 'res_wav2'" />
         <c-obswave-alert
           v-if="stage_state.marker == 'obs_wav1'" />
+        <c-obswave-2-alert
+          v-if="stage_state.marker == 'obs_wav2'" />
         <c-remaining-gals-alert
           v-if="stage_state.marker == 'rep_rem1'" />
         <c-nice-work-alert
           v-if="stage_state.marker == 'nic_wor1'" />
+        <c-doppler-calc-1-alert
+          v-if="stage_state.marker == 'dop_cal1'" />
+        <c-doppler-calc-2-alert
+          v-if="stage_state.marker == 'dop_cal2'" />            
       </v-col>
       <v-col
         cols="12"
@@ -123,7 +145,7 @@
             cols="3"
           >
             <!-- FORM DIALOG as template for reflections/MC -->
-            <c-spectrum-slideshow />
+            <c-spectrum-slideshow v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']" />
           </v-col>
           <v-col
             cols="3"

@@ -1,6 +1,6 @@
 import ipyvuetify as v
-import pymongo
-import os
+import requests
+import json
 from echo import add_callback, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
@@ -14,15 +14,15 @@ from .events import StepChangeMessage, WriteToDatabaseMessage
 from .registries import story_registry
 from .utils import load_template
 
-v.theme.dark = True
+from cosmicds.utils import API_URL
 
-# Setup database connections
-client = pymongo.MongoClient("mongodb://localhost:27017/")
-database = client['cosmicds']
+v.theme.dark = True
 
 class ApplicationState(State):
     using_voila = CallbackProperty(False)
     dark_mode = CallbackProperty(True)
+    student = CallbackProperty({})
+    update_db = CallbackProperty(True)
 
 class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
@@ -36,11 +36,20 @@ class Application(VuetifyTemplate, HubListener):
         super().__init__(*args, **kwargs)
 
         self.app_state = ApplicationState()
+
+        self.app_state.update_db = kwargs.get("update_db", True)
+        
+        # For testing purposes, we create a new dummy student on each startup
+        if self.app_state.update_db:
+            response = requests.get(f"{API_URL}/new-dummy-student").json()
+            self.app_state.student = response["student"]
+
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
 
         # Initialize from database
-        self._initialize_from_database()
+        if self.app_state.update_db:
+            self._initialize_from_database()
 
         # Subscribe to events
         self.hub.subscribe(self, WriteToDatabaseMessage,
@@ -75,29 +84,32 @@ class Application(VuetifyTemplate, HubListener):
     def _initialize_from_database(self):
         try:
             # User information for a JupyterHub notebook session is stored in an
-            # environment  variable
-            user = os.environ['JUPYTERHUB_USER']
-            stories = database[self.story_state.name]
-            story_data = stories.find_one({
-                'name': self.story_state.name,
-                'student_user': user})
+            # environment variable
+            # user = os.environ['JUPYTERHUB_USER']
+            user = self.app_state.student
+            story = self.story_state.name
+            response = requests.get(f"{API_URL}/story-state/{user['id']}/{story}")
+            data = response.json()
+            state = data["state"]
+            if state is not None:
+                self.story_state = state
+        except Exception as e:
+            print(e)
 
-            # Update story state with retrieved database data
-            if story_data is not None:
-                self.story_state.update_from_dict(story_data)
-        except:
-            pass
+    def _on_write_to_database(self, _msg):
+        if not self.app_state.update_db:
+            return
 
-    def _on_write_to_database(self, msg):
         # User information for a JupyterHub notebook session is stored in an
         # environment  variable
-        user = os.environ['JUPYTERHUB_USER']
+        # user = os.environ['JUPYTERHUB_USER']
 
-        # Connect to story's collection
-        stories = database[self.story_state.name]
-        story_data = self.story_state.as_dict()
-
-        stories.update_one({'student_user': user}, story_data, upsert=True)
+        user = self.app_state.student
+        story = self.story_state.name
+        json.loads
+        data = json.loads(json.dumps(self.story_state.as_dict()))
+        if data:
+            requests.put(f"{API_URL}/story-state/{user['id']}/{story}", json=data)
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark

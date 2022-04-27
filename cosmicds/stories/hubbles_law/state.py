@@ -8,6 +8,9 @@ import numpy as np
 from glue.core import Data
 import ipyvuetify as v
 
+import requests
+from cosmicds.utils import API_URL
+
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
     measurements = DictCallbackProperty({
@@ -57,8 +60,8 @@ class HubblesLaw(Story):
                 data_dir / "galaxy_data",
                 data_dir / "Hubble 1929-Table 1",
                 data_dir / "HSTkey2001",
-                data_dir / "SDSS_all_sample_filtered",
                 data_dir / "dummy_student_data",
+                #data_dir / "SDSS_all_sample_filtered",
                 output_dir / "HubbleData_ClassSample",
                 output_dir / "HubbleData_All",
                 output_dir / "HubbleSummary_ClassSample",
@@ -67,26 +70,32 @@ class HubblesLaw(Story):
             )
         ])
 
+        # Load in the galaxy data
+        galaxies = requests.get(f"{API_URL}/galaxies").json()
+        self.data_collection.append(Data(
+            label="SDSS_all_sample_filtered",
+            **{ k : [x[k] for x in galaxies] for k in galaxies[0] }
+        ))
+
         # Compose empty data containers to be populated by user
-        student_cols = ["ID", "RA", "DEC", "Z", "Type", "measwave",
+        student_cols = ["id", "name", "ra", "decl", "z", "type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
-                         "Element"]
+                         "element", "angular_size"]
         student_measurements = Data(
             label='student_measurements',
             **{x: np.array([], dtype='float64')
                for x in student_cols})
         student_data = Data(
             label="student_data",
-            **{x : ['X'] if x in ['ID', 'Element', 'Type'] else [0] 
+            **{x : ['X'] if x in ['id', 'element', 'type'] else [0] 
                 for x in student_cols})
         self.data_collection.append(student_measurements)
         self.data_collection.append(student_data)
 
-        self.app.add_link(student_measurements, 'ID', student_data, 'ID')
+        self.app.add_link(student_measurements, 'id', student_data, 'id')
         self.app.add_link(student_measurements, 'distance', student_data, 'distance')
         self.app.add_link(student_measurements, 'velocity', student_data, 'velocity')
         self.app.add_link(student_measurements, 'student_id', student_data, 'student_id')
-
 
         # Make all data writeable
         for data in self.data_collection:
@@ -161,3 +170,4 @@ class HubblesLaw(Story):
         new_data = Data(label='student_data', **components)
         student_data = dc['student_data']
         student_data.update_values_from_data(new_data)
+        self.make_data_writeable(student_data)

@@ -22,6 +22,20 @@
 
       <v-spacer></v-spacer>
 
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon
+            v-bind="attrs"
+            v-on="on"
+            :disabled="Object.keys(current_galaxy).length == 0"
+            @click="mark_galaxy_bad()"
+          >
+            <v-icon>mdi-flag</v-icon>
+          </v-btn>
+        </template>
+        Flag galaxy as missing image
+      </v-tooltip>
+
       <v-tooltip
         top
       >
@@ -37,6 +51,7 @@
         </template>
         Info for using this tool
       </v-tooltip>
+      
       <v-dialog
           v-model="dialog"
           persistent
