@@ -183,7 +183,7 @@
           v-bind="attrs"
           v-on="on"
           @click="reset()">
-          <v-icon>mdi-home</v-icon>
+          <v-icon>mdi-cached</v-icon>
         </v-btn>
       </template>
       Reset view
