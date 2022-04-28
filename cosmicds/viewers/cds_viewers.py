@@ -13,7 +13,10 @@ def cds_viewer(viewer_class, viewer_tools, label=None):
         inherit_tools = False
         tools = viewer_tools
         LABEL = label or viewer_class.LABEL
-        ignore_conditions = []
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.ignore_conditions = []
 
         def initialize_toolbar(self):
             self.toolbar = Toolbar(self)

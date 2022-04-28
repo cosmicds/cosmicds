@@ -15,17 +15,13 @@ class HistogramListener(SubsetModifierListener):
             rgs.append((b[0][1], b[-1][1]))
         return rgs
 
-    def _create_subset_state(self, message):
+    def _create_subset_state(self, subset):
         # Get the student IDs present in the selected
         # histogram bar(s)
-        subset = message.subset
         student_ids = list(unique(subset['student_id']))
         id_ranges = self._ranges(student_ids)
         component = self._modify_data.id['student_id']
         subset_state = MultiRangeSubsetState(id_ranges, component)
         self._current_ids = student_ids
-
-        print("Subset state!")
-        print(subset_state)
 
         return subset_state

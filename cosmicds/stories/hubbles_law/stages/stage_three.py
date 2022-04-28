@@ -1,4 +1,6 @@
+from functools import partial
 from glue.core.state_objects import State
+from glue.core.subset_group import SubsetGroup
 from traitlets import default
 
 from cosmicds.components.table import Table
@@ -84,9 +86,9 @@ class StageThree(HubbleStage):
         comparison_viewer = self.add_viewer(HubbleScatterView, "comparison_viewer", "Data Comparison")
         morphology_viewer = self.add_viewer(HubbleScatterView, "morphology_viewer", "Galaxy Morphology")
         prodata_viewer = self.add_viewer(HubbleScatterView, "prodata_viewer", "Professional Data")
-        class_distr_viewer = self.add_viewer(CDSHistogramView, 'class_distr_viewer')
-        all_distr_viewer = self.add_viewer(CDSHistogramView, 'all_distr_viewer')
-        sandbox_distr_viewer = self.add_viewer(CDSHistogramView, 'sandbox_distr_viewer')
+        class_distr_viewer = self.add_viewer(CDSHistogramView, 'class_distr_viewer', "My Class")
+        all_distr_viewer = self.add_viewer(CDSHistogramView, 'all_distr_viewer', "All Classes")
+        sandbox_distr_viewer = self.add_viewer(CDSHistogramView, 'sandbox_distr_viewer', "Sandbox")
 
         # Grab data
         class_sample_data = self.get_data("HubbleSummary_ClassSample")
@@ -94,6 +96,7 @@ class StageThree(HubbleStage):
         classes_summary_data = self.get_data("HubbleSummary_Classes")
         hubble1929 = self.get_data("Hubble 1929-Table 1")
         hstkp = self.get_data("HSTkey2001")
+        galaxy_data = self.get_data('galaxy_data')
 
         # Set up the listener to sync the histogram <--> scatter viewers
         meas_data = self.get_data("HubbleData_ClassSample")
@@ -102,30 +105,33 @@ class StageThree(HubbleStage):
         # We add a listener for when a subset is modified/created on 
         # the histogram viewer as well as extend the xrange tool for the 
         # histogram to always affect this subset
-        def before_create_listener_subset(label):
-            condition = lambda x: x.label == label
-            #comparison_condition = lambda x: x.label == label and x.data != class_data
-            for viewer in self.all_viewers:
-                if viewer != comparison_viewer:
-                    viewer.ignore(condition)
-            def comp_cond(x):
-                print(label)
-                print(x)
-                print(x.data)
-                print(class_data)
-                print(x.data != class_data)
-                return x.label == label and x.data is not class_data
-            comparison_viewer.ignore(comp_cond)
+        histogram_source_label = "histogram_source_subset"
+        histogram_modify_label = "histogram_modify_subset"
         self.histogram_listener = HistogramListener(self.story_state,
                                                     None,
                                                     class_sample_data,
                                                     None, 
                                                     meas_data,
-                                                    before_create_modify_subset=before_create_listener_subset)
+                                                    source_subset_label=histogram_source_label,
+                                                    modify_subset_label=histogram_modify_label)
 
-        for viewer in self.all_viewers:
-            if viewer != fit_viewer:
-                viewer.ignore(lambda x: x.label == fit_table.subset_label)
+        not_ignore = {
+            fit_table.subset_label: [fit_viewer],
+            histogram_source_label: [class_distr_viewer],
+            histogram_modify_label: [comparison_viewer]
+        }
+        def label_ignore(x, label):
+            return x.label == label
+        for label, listeners in not_ignore.items():
+            ignorer = partial(label_ignore, label=label)
+            for viewer in self.all_viewers:
+                if viewer not in listeners:
+                    viewer.ignore(ignorer)
+
+        def comparison_ignorer(x):
+            return x.label == histogram_modify_label and x.data != self.histogram_listener.modify_data
+        comparison_viewer.ignore(comparison_ignorer)
+
 
         for viewer in [fit_viewer, comparison_viewer, prodata_viewer]:
             viewer.add_data(student_data)
@@ -177,7 +183,7 @@ class StageThree(HubbleStage):
         all_distr_viewer.state.x_att = students_summary_data.id['age']
         sandbox_distr_viewer.state.x_att = students_summary_data.id['age']
 
-        galaxy_data = self.get_data('galaxy_data')
+        # Do some stuff with the galaxy data
         type_field = 'MorphType'
         elliptical_subset = galaxy_data.new_subset(galaxy_data.id[type_field] == 'E', label='Elliptical', color='orange')
         spiral_subset = galaxy_data.new_subset(galaxy_data.id[type_field] == 'Sp', label='Spiral', color='green')
@@ -188,17 +194,16 @@ class StageThree(HubbleStage):
         morphology_viewer.state.x_att = galaxy_data.id['EstDist_Mpc']
         morphology_viewer.state.y_att = galaxy_data.id['velocity_km_s']
 
+        # Just for accessibility while testing
+        self.data_collection.histogram_listener = self.histogram_listener
+
+
         def hist_selection_activate():
             if self.histogram_listener.source_subset is None:
-                label = "histogram_source_subset"
-                condition = lambda x: x.label == label and x.data is not student_data
-                comparison_viewer.ignore(condition)
-                self.histogram_listener.source_subset = self.data_collection.new_subset_group(label=label)
+                self.histogram_listener.source_subset = self.data_collection.new_subset_group(label=self.histogram_listener.source_subset_label)
             self.session.edit_subset_mode.edit_subset = [self.histogram_listener.source_subset]
-            self.histogram_listener.listen()
         def hist_selection_deactivate():
             self.session.edit_subset_mode.edit_subset = []
-            self.histogram_listener.ignore()
         extend_tool(class_distr_viewer, 'bqplot:xrange', hist_selection_activate, hist_selection_deactivate)
 
         # We want the hub_fit_viewer to be selecting for the same subset as the table
@@ -206,8 +211,7 @@ class StageThree(HubbleStage):
             self.session.edit_subset_mode.edit_subset = [self.get_widget('fit_table').subset]
         def fit_selection_deactivate():
             self.session.edit_subset_mode.edit_subset = []
-        for tool_id in ['bqplot:xrange', 'bqplot:yrange', 'bqplot:rectangle', 'bqplot:circle']:
-            extend_tool(fit_viewer, tool_id, fit_selection_activate, fit_selection_deactivate)
+        extend_tool(fit_viewer, 'bqplot:rectangle', fit_selection_activate, fit_selection_deactivate)
 
     @property
     def all_viewers(self):
