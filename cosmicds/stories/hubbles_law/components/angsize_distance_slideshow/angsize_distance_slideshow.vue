@@ -51,7 +51,6 @@
                 <v-container>
                   <v-row> 
                     <v-col>
-                      <h3 class="mb-4"> 1920's Astronomy </h3>
                       <div>
                         <p>
                           You’ve now uncovered evidence that galaxies are for the most part moving AWAY from our Milky Way galaxy. To scientists in the 1920’s, this led to a radical shift in their world view. Once they knew galaxies do not, in fact, move about randomly, they needed to come up with a new explanation for this surprising phenomenon.
@@ -71,7 +70,6 @@
               <v-container>
                 <v-row>
                   <v-col>
-                    <h3 class="mb-4"> 1920's Astronomy </h3>
                     <div>                    
                       <p>
                         Edwin Hubble was an astronomer who was interested in these galaxies. After looking at Slipher’s velocity measurements, Hubble wondered if there is a relationship between the galaxies’ velocities and their distances from the Milky Way. 
@@ -109,10 +107,13 @@
                     </div>
                   </v-col>
                   <v-col cols="6">
+                    <h4>
+                      People on the beach 
+                    </h4>
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location}/People near and far labeled.png`"
+                      :src="`${state.image_location}/People near and far - will replace with uncopyrighted.png`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -144,7 +145,7 @@
                         <v-img
                           class="mb-4 mx-a"
                           contain
-                          :src="`${state.image_location}/People near and far labeled.png`"
+                          :src="`${state.image_location}/People near and far - will replace with uncopyrighted.png`"
                         ></v-img>
                       </v-col>
                       <v-col cols="6">
@@ -154,7 +155,7 @@
                         <v-img
                           class="mb-4 mx-a"
                           contain
-                          :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                          :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.jpg`"
                         ></v-img>
                       </v-col>
                     </v-row>
@@ -202,7 +203,7 @@
                         <v-img
                           class="mb-4 mx-a"
                           contain
-                          :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                          :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.jpg`"
                          ></v-img>
                       </v-col> 
                     </v-row> 
@@ -281,7 +282,7 @@
                     </h3>
                     <div>
                       <p>
-                        As with the cars, if we know the physical length of a galaxy, then its angular size tells us its distance from us. 
+                        As with the people, if we know the physical length of a galaxy, then its angular size tells us its distance from us. 
                       </p>
                       <p>
                         For very far away objects like galaxies, the relationship is described by the formula:
@@ -357,8 +358,9 @@
                               'Galaxy A is farther away from us than Galaxy B.',
                               'Galaxy A is closer to us than Galaxy B.',
                               'We do not have enough information to answer this question']"
-                            :feedbacks="['Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?', 'That\'s right!', 'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?', 'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?']"
-                            :answer-key="2"
+                            :feedbacks="['Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?',  'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?', 'That\'s right!', 'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?']"
+                            :correct-answers="[2]"
+                            :selected-callback="(index) => { if([2].includes(index)) { max_step_completed = Math.max(this.max_step_completed, 7); } }"
                           >
                           </mc-radiogroup>
                         </v-row>
@@ -455,7 +457,8 @@
                         'Galaxy B is about 1000 times farther from us than Galaxy A.',
                         'There is not enough information to estimate the relative distances to the galaxies.']"
                       :feedbacks="['Try again. \n Try to imagine how many times you could lay Galaxy B across Galaxy A.', 'That\'s right!', 'Try again. \n Try to imagine how many times you could lay Galaxy B across Galaxy A.', 'Try again. \ You could probably fit 10 Galaxy B’s across Galaxy A.']"
-                      :answer-key="1"
+                      :correct-answers="[1]"
+                      :selected-callback="(index) => { if([1].includes(index)) { max_step_completed = Math.max(this.max_step_completed, 9); } }"
                     >
                       </mc-radiogroup>
                       </v-row>
@@ -482,9 +485,7 @@
             <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
               <v-container>
                 <v-row>
-                  <v-col
-                    cols="6"
-                  >
+                  <v-col>
                     <h3
                       class="mb-4"
                     >
@@ -522,16 +523,6 @@
                         You can ponder later whether you think this is a good or bad assumption.
                       </p>
                     </div>
-                  </v-col>
-                  <v-col cols="6">
-                    <h4>
-                      Galaxy Picture
-                    </h4>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.jpg`"
-                    ></v-img>
                   </v-col>
                 </v-row>
               </v-container>
@@ -589,6 +580,7 @@
               v-slot="{ active, toggle }"
             >
               <v-btn
+                :disabled="n > max_step_completed + 2"
                 :input-value="active"
                 icon
                 @click="toggle"
@@ -598,16 +590,16 @@
             </v-item>
           </v-item-group>
           <v-spacer></v-spacer>
-          <v-btn
-            :disabled = "step === 10"
+           <v-btn
+            :disabled="step > max_step_completed"
             color="accent"
             text
             @click="step++;"
           >
-            {{ step < 10? 'next' : '' }}
+            {{ step < 11 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled = "step < 10"
+            :disabled = "step < 11"
             color="accent"
             class="black--text"
             depressed
@@ -621,7 +613,20 @@
   </v-btn>
 </template>
 
+<script>
+module.exports = {
+  props: ["buttonText", "titleText", "closeText"],
 
+  watch: {
+    step(newStep, oldStep) {
+      const isInteractStep = this.interact_steps.includes(newStep);
+      console.log("Interact Step", this.interact_steps);
+      const newCompleted = isInteractStep ? newStep - 1 : newStep;
+      this.max_step_completed = Math.max(this.max_step_completed, newCompleted);
+    },
+  },
+};
+</script>
 
 <style>
 .no-transition {
