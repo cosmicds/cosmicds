@@ -222,4 +222,8 @@ class Table(VuetifyTemplate, HubListener):
             self.selected = self.selected + [item]
 
     def vue_update_sort_by(self, field, _args=None):
-        self.sort_by = field
+        # We get a list of the form ['sort_field']
+        # which is empty is there isn't a sort field selected
+        # We default to the key component
+        self.sort_by = field[0] if len(field) > 0 else self.key_component
+        
