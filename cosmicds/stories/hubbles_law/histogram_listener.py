@@ -8,14 +8,6 @@ from cosmicds.tools.line_fit_tool import LineFitTool
 from .subset_modifier_listener import SubsetModifierListener
 class HistogramListener(SubsetModifierListener):
 
-    def __init__(self, state, source_sg, source_data, modify_sg, modify_data, scatter_viewer_id, listen=False, color=None):
-        super().__init__(state, source_sg, source_data, modify_sg, modify_data, listen=listen, color=color)
-        self.scatter_viewer_id = scatter_viewer_id
-
-    @property
-    def scatter_viewer(self):
-        return self._state.get_viewer(self.scatter_viewer_id)
-
     def _ranges(self, ids):
         rgs = []
         for _, b in groupby(enumerate(ids), lambda pair: pair[1] - pair[0]):
@@ -32,5 +24,8 @@ class HistogramListener(SubsetModifierListener):
         component = self._modify_data.id['student_id']
         subset_state = MultiRangeSubsetState(id_ranges, component)
         self._current_ids = student_ids
+
+        print("Subset state!")
+        print(subset_state)
 
         return subset_state

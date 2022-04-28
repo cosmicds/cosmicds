@@ -24,5 +24,10 @@
         <jupyter-widget :widget="viewers.all_distr_viewer"/>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="6">
+        <jupyter-widget :widget="viewers.sandbox_distr_viewer"/>
+      </v-col>
+    </v-row>
   </v-container>
 </template>

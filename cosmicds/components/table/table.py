@@ -31,11 +31,14 @@ class Table(VuetifyTemplate, HubListener):
         super().__init__(*args, **kwargs)
 
         self._session = session
-        self._subset_group = kwargs.get('subset_group', None)
-        if self._subset_group is not None:
-            self._subset_group_label = self._subset_group.label
+        self._subset = kwargs.get('subset', None) # Can be either a subset or subset group
+        if self._subset is not None:
+            self._subset_label = self._subset.label
         else:
-            self._subset_group_label = "selected"
+            self._subset_label = kwargs.get("subset_label", "selected")
+
+        self.subset_color = kwargs.get('color', Table.default_color)
+        self.use_subset_group = kwargs.get('use_subset_group', True)
 
         components = kwargs.get('glue_components', [x.label for x in data.components])
         self.key_component = kwargs.get('key_component', components[0])
@@ -52,12 +55,12 @@ class Table(VuetifyTemplate, HubListener):
         def subset_changed_filter(message):
             #print("Got a message")
             #print(message.subset.label)
-            return message.subset.label == self._subset_group_label and message.subset.data.label == self._glue_data.label
+            return message.subset.label == self._subset_label and message.subset.data.label == self._glue_data.label
         self._subset_changed_filter = subset_changed_filter
         #self._subset_changed_filter = lambda message: message.subset.label == self._subset_group_label and message.subset.data.label == self._glue_data.label
 
         self.single_select = kwargs.get('single_select', False)
-        self.subset_color = kwargs.get('color', Table.default_color)
+        self._on_create_subset = kwargs.get("on_create_subset", None)
 
         self._subset_message_pass = False
 
@@ -92,19 +95,23 @@ class Table(VuetifyTemplate, HubListener):
         return self._glue_data
 
     @property
-    def subset_group(self):
-        return self._subset_group
+    def subset(self):
+        return self._subset
+
+    @property
+    def subset_label(self):
+        return self._subset_label
 
     @glue_data.setter
     def glue_data(self, data):
         self._glue_data = data
         self._populate_table()
 
-    @subset_group.setter
-    def subset_group(self, group):
-        self._subset_group = group
-        self._subset_group_label = group.label
-        self.selected = self._selection_from_state(self._subset_group.subset_state)
+    @subset.setter
+    def subset(self, subset):
+        self._subset = subset
+        self._subset_label = subset.label
+        self.selected = self._selection_from_state(self._subset.subset_state)
 
     def subset_state_from_selected(self, selected):
         keys = [x[self.key_component] for x in selected]
@@ -131,11 +138,19 @@ class Table(VuetifyTemplate, HubListener):
             } for row in df.itertuples()
         ]
 
-    def _on_data_added(self):
-        self._glue_data = self.data_collection[self._glue_data.label]
+    def _new_subset(self):
         state = self.subset_state_from_selected(self.selected)
-        self._subset_group = self.data_collection.new_subset_group(self._subset_group_label, state)
-        self._subset_group.style.color = self.subset_color
+        if self.use_subset_group:
+            subset = self.data_collection.new_subset_group(label=self._subset_label, subset_state=state)
+            subset.style.color = self.subset_color
+        else:
+            subset = self._glue_data.new_subset(label=self._subset_label, subset=state, color=self.subset_color)
+        if self._on_create_subset is not None:
+            self._on_create_subset(subset)
+        return subset
+
+    def _on_data_added(self):
+        self._subset = self._new_subset()
 
     def _on_data_updated(self, message=None):
         self._populate_table()
@@ -145,12 +160,12 @@ class Table(VuetifyTemplate, HubListener):
             self._subset_message_pass = False
             return
 
-        if self._subset_group is not None:
-            self.selected = self._selection_from_state(self._subset_group.subset_state)
+        if self._subset is not None:
+            self.selected = self._selection_from_state(self._subset.subset_state)
 
     def _on_data_deleted(self):
-        self.data_collection.remove_subset_group(self._subset_group)
-        self._subset_group = None
+        self.data_collection.remove_subset_group(self._subset)
+        self._subset = None
 
     def _on_data_collection_updated(self, message=None):
         if message is not None and message.data.label == self._glue_data.label:
@@ -164,11 +179,11 @@ class Table(VuetifyTemplate, HubListener):
     @observe('selected')
     def _on_selected_changed(self, event):
         state = self.subset_state_from_selected(event['new'])
-        if self._subset_group is None:
-            self._subset_group = self.data_collection.new_subset_group(self._subset_group_label, state)
+        if self._subset is None:
+            self._subset = self._new_subset()
         else:
             self._subset_message_pass = True
-            self._subset_group.subset_state = state
+            self._subset.subset_state = state
             
     def indices_from_items(self, items):
         state = self.subset_state_from_selected(items)

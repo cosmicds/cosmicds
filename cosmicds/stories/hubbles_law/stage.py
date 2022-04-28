@@ -41,10 +41,11 @@ class HubbleStage(Stage):
 
     def update_data_value(self, dc_name, comp_name, value, index):
         super().update_data_value(dc_name, comp_name, value, index)
-        self.story_state.update_student_data()
+        
+        if dc_name != "student_measurements":
+            return
 
         if self.app_state.update_db \
-            and dc_name == "student_measurements" \
             and comp_name in HubbleStage._measurement_mapping.keys():
 
             data = self.data_collection[dc_name]

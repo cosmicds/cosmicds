@@ -13,7 +13,7 @@ def cds_viewer(viewer_class, viewer_tools, label=None):
         inherit_tools = False
         tools = viewer_tools
         LABEL = label or viewer_class.LABEL
-        ignore_labels = []
+        ignore_conditions = []
 
         def initialize_toolbar(self):
             self.toolbar = Toolbar(self)
@@ -23,16 +23,16 @@ def cds_viewer(viewer_class, viewer_tools, label=None):
                 mode = mode_cls(self)
                 self.toolbar.add_tool(mode)
 
-        def ignore(self, label):
-            self.ignore_labels.append(label)
+        def ignore(self, condition):
+            self.ignore_conditions.append(condition)
 
         def add_data(self, data):
-            if data.label in self.ignore_labels:
+            if any(condition(data) for condition in self.ignore_conditions):
                 return
             super().add_data(data)
 
         def add_subset(self, subset):
-            if subset.label in self.ignore_labels:
+            if any(condition(subset) for condition in self.ignore_conditions):
                 return
             super().add_subset(subset)
         

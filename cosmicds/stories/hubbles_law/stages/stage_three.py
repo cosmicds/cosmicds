@@ -1,13 +1,11 @@
-from glue.core import Data
 from glue.core.state_objects import State
 from traitlets import default
 
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.stage import HubbleStage
-from cosmicds.phases import Stage
-from cosmicds.utils import extend_tool, load_template, update_figure_css
-from cosmicds.viewers import CDSHistogramView, CDSScatterView
+from cosmicds.utils import extend_tool, load_template
+from cosmicds.viewers import CDSHistogramView
 
 from cosmicds.stories.hubbles_law.histogram_listener import HistogramListener
 from cosmicds.stories.hubbles_law.viewers import HubbleFitView, HubbleScatterView
@@ -43,17 +41,19 @@ class StageThree(HubbleStage):
 
         measurements = self.get_data("student_measurements")
         fit_table = Table(self.session,
-                          data=measurements,
-                          glue_components=['name',
-                                          'type',
-                                          'velocity',
-                                          'distance'],
-                          key_component='name',
-                          names=['Galaxy Name',
-                              'Galaxy Type',
-                              'Velocity (km/s)',
-                              'Distance (Mpc)'],
-                          title='My Galaxies')
+                    data=measurements,
+                    glue_components=['name',
+                                    'type',
+                                    'velocity',
+                                    'distance'],
+                    key_component='name',
+                    names=['Galaxy Name',
+                        'Galaxy Type',
+                        'Velocity (km/s)',
+                        'Distance (Mpc)'],
+                    title='My Galaxies',
+                    subset_label="fit_table_selected"
+        )
         self.add_widget(fit_table, label="fit_table")
 
         student_data = self.get_data("student_data")
@@ -79,46 +79,77 @@ class StageThree(HubbleStage):
         self.add_link(hstkp_name, 'Velocity (km/s)', student_dc_name, 'velocity')
 
 
-        students_viewer = self.add_viewer(HubbleScatterView, "students_viewer", "Student Data")
+        # Create viewers
         fit_viewer = self.add_viewer(HubbleFitView, "fit_viewer", "My Data")
         comparison_viewer = self.add_viewer(HubbleScatterView, "comparison_viewer", "Data Comparison")
         morphology_viewer = self.add_viewer(HubbleScatterView, "morphology_viewer", "Galaxy Morphology")
         prodata_viewer = self.add_viewer(HubbleScatterView, "prodata_viewer", "Professional Data")
-        for viewer in [students_viewer, fit_viewer, comparison_viewer, prodata_viewer]:
+        class_distr_viewer = self.add_viewer(CDSHistogramView, 'class_distr_viewer')
+        all_distr_viewer = self.add_viewer(CDSHistogramView, 'all_distr_viewer')
+        sandbox_distr_viewer = self.add_viewer(CDSHistogramView, 'sandbox_distr_viewer')
+
+        # Grab data
+        class_sample_data = self.get_data("HubbleSummary_ClassSample")
+        students_summary_data = self.get_data("HubbleSummary_Students")
+        classes_summary_data = self.get_data("HubbleSummary_Classes")
+        hubble1929 = self.get_data("Hubble 1929-Table 1")
+        hstkp = self.get_data("HSTkey2001")
+
+        # Set up the listener to sync the histogram <--> scatter viewers
+        meas_data = self.get_data("HubbleData_ClassSample")
+
+        # Set up the functionality for the histogram <---> scatter sync
+        # We add a listener for when a subset is modified/created on 
+        # the histogram viewer as well as extend the xrange tool for the 
+        # histogram to always affect this subset
+        def before_create_listener_subset(label):
+            condition = lambda x: x.label == label
+            #comparison_condition = lambda x: x.label == label and x.data != class_data
+            for viewer in self.all_viewers:
+                if viewer != comparison_viewer:
+                    viewer.ignore(condition)
+            def comp_cond(x):
+                print(label)
+                print(x)
+                print(x.data)
+                print(class_data)
+                print(x.data != class_data)
+                return x.label == label and x.data is not class_data
+            comparison_viewer.ignore(comp_cond)
+        self.histogram_listener = HistogramListener(self.story_state,
+                                                    None,
+                                                    class_sample_data,
+                                                    None, 
+                                                    meas_data,
+                                                    before_create_modify_subset=before_create_listener_subset)
+
+        for viewer in self.all_viewers:
+            if viewer != fit_viewer:
+                viewer.ignore(lambda x: x.label == fit_table.subset_label)
+
+        for viewer in [fit_viewer, comparison_viewer, prodata_viewer]:
             viewer.add_data(student_data)
             #viewer.layers[-1].state.visible = False
             viewer.state.x_att = student_data.id['distance']
             viewer.state.y_att = student_data.id['velocity']
-
-
-        students_viewer.add_data(class_data)
-        students_viewer.state.x_att = class_data.id['distance']
-        students_viewer.state.y_att = class_data.id['velocity']
-        students_viewer.layers[-1].state.zorder = 2
         
         comparison_viewer.layers[-1].state.zorder = 3
         comparison_viewer.add_data(class_data)
         comparison_viewer.layers[-1].state.zorder = 2
+        comparison_viewer.layers[-1].state.visible = False
         comparison_viewer.add_data(all_data)
         comparison_viewer.layers[-1].state.zorder = 1
+        comparison_viewer.layers[-1].state.visible = False
         comparison_viewer.state.x_att = all_data.id['distance']
         comparison_viewer.state.y_att = all_data.id['velocity']
         comparison_viewer.state.reset_limits()
         
-        hubble1929 = self.get_data("Hubble 1929-Table 1")
-        hstkp = self.get_data("HSTkey2001")
         prodata_viewer.add_data(student_data)
         prodata_viewer.state.x_att = student_data.id['distance']
         prodata_viewer.state.y_att = student_data.id['velocity']
         prodata_viewer.add_data(hstkp)
         prodata_viewer.add_data(hubble1929)
 
-        class_distr_viewer = self.add_viewer(CDSHistogramView, 'class_distr_viewer')
-        all_distr_viewer = self.add_viewer(CDSHistogramView, 'all_distr_viewer')
-        sandbox_distr_viewer = self.add_viewer(CDSHistogramView, 'sandbox_distr_viewer')
-        class_sample_data = self.get_data("HubbleSummary_ClassSample")
-        students_summary_data = self.get_data("HubbleSummary_Students")
-        classes_summary_data = self.get_data("HubbleSummary_Classes")
         histogram_viewers = [class_distr_viewer, all_distr_viewer, sandbox_distr_viewer]
         for viewer in histogram_viewers:
             label = 'Count' if viewer == class_distr_viewer else 'Proportion'
@@ -157,40 +188,13 @@ class StageThree(HubbleStage):
         morphology_viewer.state.x_att = galaxy_data.id['EstDist_Mpc']
         morphology_viewer.state.y_att = galaxy_data.id['velocity_km_s']
 
-        # Set up the listener to sync the histogram <--> scatter viewers
-        meas_data = self.get_data("HubbleData_ClassSample")
-        hist_sync_sg = self.data_collection.new_subset_group(label="Hist Sync SG")
-        scatter_sync_sg = self.data_collection.new_subset_group(label="Scatter Sync SG")
-        self.story_state.set_layer_visible(hist_sync_sg, [class_distr_viewer, comparison_viewer])
-        self.story_state.set_layer_visible(scatter_sync_sg, [class_distr_viewer, comparison_viewer])
-        hist_sync_sg.style.color = "green"
-        scatter_sync_sg.style.color = "green"
-
-        # Right now, this is the only viewer aside from the synced viewers
-        # that shows these data objects
-        for layer in sandbox_distr_viewer.layers:
-            if layer.state.layer.label in [hist_sync_sg.label, scatter_sync_sg.label]:
-                layer.state.visible = False
-
-        fit_table = self.get_widget("fit_table")
-        subset_group_label = "fit_table" + '_selected'
-        fit_table.subset_group = self.data_collection.new_subset_group(label=subset_group_label, subset_state=None)
-        self.story_state.set_layer_visible(fit_table.subset_group, [fit_viewer])
-
-        # Set up the functionality for the histogram <---> scatter sync
-        # We add a listener for when a subset is modified/created on 
-        # the histogram viewer as well as extend the xrange tool for the 
-        # histogram to always affect this subset
-        self.histogram_listener = HistogramListener(self.story_state,
-                                                    hist_sync_sg,
-                                                    classes_summary_data,
-                                                    scatter_sync_sg, 
-                                                    meas_data,
-                                                    "comparison_viewer")
-
         def hist_selection_activate():
-            if self.histogram_listener.source is not None:
-                self.session.edit_subset_mode.edit_subset = [self.histogram_listener.source_group]
+            if self.histogram_listener.source_subset is None:
+                label = "histogram_source_subset"
+                condition = lambda x: x.label == label and x.data is not student_data
+                comparison_viewer.ignore(condition)
+                self.histogram_listener.source_subset = self.data_collection.new_subset_group(label=label)
+            self.session.edit_subset_mode.edit_subset = [self.histogram_listener.source_subset]
             self.histogram_listener.listen()
         def hist_selection_deactivate():
             self.session.edit_subset_mode.edit_subset = []
@@ -199,8 +203,12 @@ class StageThree(HubbleStage):
 
         # We want the hub_fit_viewer to be selecting for the same subset as the table
         def fit_selection_activate():
-            self.session.edit_subset_mode.edit_subset = [self.get_widget('fit_table').subset_group]
+            self.session.edit_subset_mode.edit_subset = [self.get_widget('fit_table').subset]
         def fit_selection_deactivate():
             self.session.edit_subset_mode.edit_subset = []
         for tool_id in ['bqplot:xrange', 'bqplot:yrange', 'bqplot:rectangle', 'bqplot:circle']:
             extend_tool(fit_viewer, tool_id, fit_selection_activate, fit_selection_deactivate)
+
+    @property
+    def all_viewers(self):
+        return [layout.viewer for layout in self.viewers.values()]
