@@ -15,7 +15,7 @@ class DistanceSidebar(v.VuetifyTemplate):
     def __init__(self, state, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.state = state
-        add_callback(self.state, 'selected_galaxy', self._on_galaxy_update)
+        add_callback(self.state, 'galaxy', self._on_galaxy_update)
 
     def _on_galaxy_update(self, galaxy):
         self.galaxy_type = galaxy["type"]

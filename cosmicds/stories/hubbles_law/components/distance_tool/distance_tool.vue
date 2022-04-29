@@ -2,10 +2,19 @@
   <div
     id="distance-root"
     v-intersect="(entries, observer, isIntersecting) => {
+
+      /**
+        We can't just use .once
+        since that seems to run before the viewer actually comes into view
+        so we'll just manually keep track of whether the iframe
+        has been updated or not
+      */
+      if (this.ranIntersectObserver) { return; }
       const root = entries[0].target;
       const element = root.querySelector('iframe');
       if (element) {
         element.src = element.src.replace('/api/kernels', '');
+        this.ranIntersectObserver = true;
       }
     }"
   >
@@ -63,6 +72,7 @@ export default {
   mounted() {
     this.setup();
     this.reset();
+    this.ranIntersectObserver = false;
     window.addEventListener('resize', this.handleResize);
     // We don't get a Window resize event when the canvas first appears
     // so we watch the canvas' dimensions instead

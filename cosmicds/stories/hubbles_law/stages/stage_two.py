@@ -1,6 +1,6 @@
 import logging
 
-from echo import CallbackProperty, add_callback
+from echo import CallbackProperty, add_callback, ignore_callback
 from glue.core.state_objects import State
 from numpy import pi
 from traitlets import default
@@ -16,7 +16,8 @@ from cosmicds.stories.hubbles_law.stage import HubbleStage
 log = logging.getLogger()
 
 class StageState(State):
-    selected_galaxy = CallbackProperty({})
+    galaxy = CallbackProperty({})
+    galaxy_dist = CallbackProperty(None)
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
     advance_marker = CallbackProperty(True)
@@ -98,7 +99,8 @@ class StageTwo(HubbleStage):
         self.distance_tool.reset_canvas()
         self.distance_tool.go_to_location(galaxy["ra"], galaxy["decl"], fov=GALAXY_FOV)
 
-        self.stage_state.selected_galaxy = galaxy
+        self.stage_state.galaxy = galaxy
+        self.stage_state.galaxy_dist = None
         self.distance_tool.measuring_allowed = bool(galaxy)
 
     def _angular_size_update(self, change):
@@ -110,10 +112,13 @@ class StageTwo(HubbleStage):
     def _make_measurement(self, value):
         if not value:
             return
-        galaxy = self.stage_state.selected_galaxy
+        galaxy = self.stage_state.galaxy
         index = self.get_data_index('student_measurements', 'name', lambda x: x == galaxy["name"])
         distance = round(MILKY_WAY_SIZE_MPC * 180 / (self.distance_tool.angular_size.value * pi))
+        self.stage_state.galaxy_dist = distance
         self.update_data_value("student_measurements", "distance", distance, index)
+        with ignore_callback(self.stage_state, 'make_measurement'):
+            self.stage_state.make_measurement = False
         
 
     @property

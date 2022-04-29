@@ -2,13 +2,13 @@
   <v-card
     width="100%"
   >
-    <v-card-title>{{state.distance_name || "Galaxy Name"}}</v-card-title>
+    <v-card-title>{{state.galaxy.name || ""}}</v-card-title>
     <v-card-text>
       <v-divider></v-divider>
       <v-list>
         <v-list-item-content>
-          <v-list-item-title>{{state.distance_type || "Galaxy Type"}}</v-list-item-title>
-          <v-list-item-subtitle>type</v-list-item-subtitle>
+          <v-list-item-title>{{state.galaxy.type || "--"}}</v-list-item-title>
+          <v-list-item-subtitle>galaxy type</v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-content>
           <v-list-item-title>100,000 light years</v-list-item-title>
@@ -41,7 +41,7 @@
         dark
         class="px-auto"
         max-width="100%"
-        :disabled="!state.selected_galaxy || !angular_size || state.distance_view_changing"
+        :disabled="!state.galaxy || !angular_size || state.distance_view_changing"
         @click="add_distance_data_point();"
       >
         estimate
