@@ -6,6 +6,7 @@ from traitlets import default
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.stage import HubbleStage
+from cosmicds.stories.hubbles_law.viewers.viewers import HubbleClassHistogramView, HubbleHistogramView
 from cosmicds.utils import extend_tool, load_template
 from cosmicds.viewers import CDSHistogramView
 
@@ -86,9 +87,9 @@ class StageThree(HubbleStage):
         comparison_viewer = self.add_viewer(HubbleScatterView, "comparison_viewer", "Data Comparison")
         morphology_viewer = self.add_viewer(HubbleScatterView, "morphology_viewer", "Galaxy Morphology")
         prodata_viewer = self.add_viewer(HubbleScatterView, "prodata_viewer", "Professional Data")
-        class_distr_viewer = self.add_viewer(CDSHistogramView, 'class_distr_viewer', "My Class")
-        all_distr_viewer = self.add_viewer(CDSHistogramView, 'all_distr_viewer', "All Classes")
-        sandbox_distr_viewer = self.add_viewer(CDSHistogramView, 'sandbox_distr_viewer', "Sandbox")
+        class_distr_viewer = self.add_viewer(HubbleClassHistogramView, 'class_distr_viewer', "My Class")
+        all_distr_viewer = self.add_viewer(HubbleHistogramView, 'all_distr_viewer', "All Classes")
+        sandbox_distr_viewer = self.add_viewer(HubbleHistogramView, 'sandbox_distr_viewer', "Sandbox")
 
         # Grab data
         class_sample_data = self.get_data("HubbleSummary_ClassSample")
