@@ -209,7 +209,9 @@ class StageThree(HubbleStage):
 
         # We want the hub_fit_viewer to be selecting for the same subset as the table
         def fit_selection_activate():
-            self.session.edit_subset_mode.edit_subset = [self.get_widget('fit_table').subset]
+            table = self.get_widget('fit_table')
+            table.initialize_subset_if_needed()
+            self.session.edit_subset_mode.edit_subset = [table.subset]
         def fit_selection_deactivate():
             self.session.edit_subset_mode.edit_subset = []
         extend_tool(fit_viewer, 'bqplot:rectangle', fit_selection_activate, fit_selection_deactivate)
