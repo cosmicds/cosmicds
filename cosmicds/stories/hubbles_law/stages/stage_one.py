@@ -122,6 +122,7 @@ class StageOne(HubbleStage):
                                     'Observed Wavelength (Å)',
                                     'Velocity (km/s)'],
                              title='My Galaxies',
+                             use_subset_group=False,
                              single_select=True) # True for now
         self.add_widget(galaxy_table, label="galaxy_table")
         galaxy_table.row_click_callback = self.on_galaxy_row_click
