@@ -13,7 +13,9 @@ class DopplerCalc(v.VuetifyTemplate):
     failedValidation5 = Bool(False).tag(sync=True)
     interactSteps5 = List([3,4]).tag(sync=True)
     maxStepCompleted5 = Int(0).tag(sync=True)
-    studentc = Float().tag(sync=True)
+    studentc = Float(0).tag(sync=True)
+    student_vel_calc = Bool(False).tag(sync=True)
+
 
     _titles = [
         "Doppler Calculation",

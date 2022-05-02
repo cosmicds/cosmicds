@@ -175,6 +175,11 @@ class StageOne(HubbleStage):
             component = DopplerCalc(comp + ext, path, self.stage_state)
             self.add_component(component, label=label)
 
+        # model on galaxy_table.observe(self.galaxy_table_selected_change, names=["selected"])
+
+        doppler_slideshow = self.get_component("c-doppler-calc-5-slideshow")
+        doppler_slideshow.observe(self.add_student_velocity, names=["student_vel_calc"])
+
         # Callbacks
         def update_count(change):
             self.stage_state.gals_total = change["new"]
@@ -291,7 +296,7 @@ class StageOne(HubbleStage):
         self.selection_tool.go_to_location(data["ra"][index], data["decl"][index], fov=GALAXY_FOV)
         self.stage_state.lambda_rest = data["restwave"][index]
         self.stage_state.lambda_obs = data["measwave"][index]
-        print("galaxy row clicked", self.stage_state)
+        self.stage_state.sel_gal_index = index
 
     def on_spectrum_click(self, event):
         specview = self.get_viewer("spectrum_viewer")
@@ -310,6 +315,12 @@ class StageOne(HubbleStage):
             lamb_meas = data["measwave"][index]
             velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
             self.update_data_value("student_measurements", "velocity", velocity, index)
+
+    def add_student_velocity(self, _args=None):
+        index = self.galaxy_table.index
+        velocity = round(self.stage_state.student_vel)
+        print("index", index, "student vel", self.stage_state.student_vel)
+        self.update_data_value("student_measurements", "velocity", velocity, index)
 
     @property
     def selection_tool(self):
