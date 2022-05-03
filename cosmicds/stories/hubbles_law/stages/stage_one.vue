@@ -7,6 +7,7 @@
           class="black--text"
           @click="select_galaxies();"
         >select 5 galaxies</v-btn>
+        <!--
         <v-btn
           color="error"
           class="black--text"
@@ -14,7 +15,8 @@
         >fill data points</v-btn>
         <v-btn
           @click="console.log(stage_state)"
-        >State</v-btn>
+        >State</v-btn> 
+        -->
       </v-col>
     </v-row>
 
@@ -23,17 +25,20 @@
         cols="12"
         lg="4"
       >
+            <!--
         <c-stage-one-start-guidance
           v-if="stage_state.marker == 'mee_gui1'" />
         <c-select-galaxies-alert
           v-if="stage_state.marker == 'sel_gal1'" />
         <c-select-galaxies-2-guidance
           v-if="stage_state.marker == 'sel_gal2'" />
+          -->
       </v-col>
       <v-col
         cols="12"
         lg="8"
       >
+      <!--
         <v-card
           :color="stage_state.marker == 'sel_gal1' || stage_state.marker == 'sel_gal2' ? 'info' : 'black'"
           :class="stage_state.marker == 'sel_gal1' || stage_state.marker == 'sel_gal2' ? 'pa-1' : 'pa-0'"
@@ -42,11 +47,14 @@
           <c-selection-tool/>
           <!-- <v-card-actions>
             <v-btn @click="story_state.step_index += 1; story_state.step_complete = true">Next Step</v-btn>
-          </v-card-actions> -->
+          </v-card-actions> 
         </v-card>
+                  -->
       </v-col>
+      <!--
     </v-row>
     <v-row>
+      -->
       <v-col
         cols="12"
         lg="4"
@@ -115,11 +123,26 @@
     </v-row>
     <v-row>
       <v-col cols="12" lg="8" offset-lg="4">
+            <v-btn
+              class="white-text px-a"
+              width="100%"
+              color="success"
+              @click="
+                stage_state.marker = story_state.stage_index = 2;
+              "
+            >
+              Done with velocities
+            </v-btn>        
+      </v-col>
+    </v-row>
+    <!--
+    <v-row>
+      <v-col cols="12" lg="8" offset-lg="4">
         <v-row>
           <v-col
             cols="6"
           >
-            <!-- This alert is temporary -->
+            <!-- This alert is temporary --
             <v-btn
               :disabled="!stage_state.waveline_set"
               class="white-text px-a"
@@ -135,7 +158,7 @@
           <v-col
             cols="3"
           >
-            <!-- FORM DIALOG as template for reflections/MC -->
+            <!-- FORM DIALOG as template for reflections/MC --
             <c-spectrum-slideshow v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']" />
           </v-col>
           <v-col
@@ -144,7 +167,7 @@
             <span
               v-if="stage_state.waveline_set" 
             >
-              <!-- FORM DIALOG as template for reflections/MC -->
+              <!-- FORM DIALOG as template for reflections/MC --
               <reflect-velocity-windows
                 button-text="reflect"
                 close-text="submit"
@@ -159,5 +182,6 @@
         </v-row>
       </v-col>
     </v-row>
+            -->
   </v-container>
 </template>

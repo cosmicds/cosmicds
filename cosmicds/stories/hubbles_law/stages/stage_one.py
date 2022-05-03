@@ -37,9 +37,9 @@ class StageState(State):
     doppler_calc_complete = CallbackProperty(False)
 
     markers = CallbackProperty([
-        'mee_gui1',
-        'sel_gal1',
-        'sel_gal2',
+        # 'mee_gui1',
+        # 'sel_gal1',
+        # 'sel_gal2',
         'cho_row1',
         'mee_spe1',
         'res_wav1',
@@ -301,6 +301,14 @@ class StageOne(HubbleStage):
         self.stage_state.waveline_set = True
         index = self.galaxy_table.index
         self.update_data_value("student_measurements", "measwave", value, index)
+        
+        #set up to auto fill velocity when wavelength is measured
+        data = self.get_data("student_measurements")
+        lamb_rest = data["restwave"][index]
+        velocity = int(3 * (10 ** 5) * (value/lamb_rest - 1))
+        self.update_data_value("student_measurements", "velocity", velocity, index)
+        print(velocity)
+
 
     def vue_add_current_velocity(self, _args=None):
         data = self.get_data("student_measurements")

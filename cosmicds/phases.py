@@ -13,7 +13,7 @@ from echo import DictCallbackProperty, CallbackProperty, add_callback
 
 class Story(State, HubMixin):
     name = CallbackProperty()
-    stage_index = CallbackProperty(0)
+    stage_index = CallbackProperty(1) #temporarily skip intro
     step_index = CallbackProperty(0)
     step_complete = CallbackProperty(False)
     stages = DictCallbackProperty()
