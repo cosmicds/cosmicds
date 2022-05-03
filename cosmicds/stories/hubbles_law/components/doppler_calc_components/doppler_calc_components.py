@@ -14,7 +14,7 @@ class DopplerCalc(v.VuetifyTemplate):
     interactSteps5 = List([3,4]).tag(sync=True)
     maxStepCompleted5 = Int(0).tag(sync=True)
     studentc = Float(0).tag(sync=True)
-    student_vel_calc = Bool(False).tag(sync=True)
+    student_vel_calc = Bool(False).tag(sync=True) # stage_one.py listens for whether this value changes
 
 
     _titles = [

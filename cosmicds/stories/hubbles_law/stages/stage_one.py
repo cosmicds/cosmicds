@@ -32,9 +32,9 @@ class StageState(State):
     image_location = CallbackProperty()
     lambda_rest = CallbackProperty(0)
     lambda_obs = CallbackProperty(0)
-    doppler_calc_dialog = CallbackProperty(True)
-    student_vel = CallbackProperty(0)
-    doppler_calc_complete = CallbackProperty(False)
+    doppler_calc_dialog = CallbackProperty(True) # Should the doppler calculation be displayed when marker == dop_cal5?
+    student_vel = CallbackProperty(0) # Value of student's calculated velocity
+    doppler_calc_complete = CallbackProperty(False) # Did student finish the doppler calculation?
 
     markers = CallbackProperty([
         'mee_gui1',
