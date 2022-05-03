@@ -158,7 +158,6 @@ class Table(VuetifyTemplate, HubListener):
             return
 
         if self._subset is not None:
-            print("Updating selection")
             self.selected = self._selection_from_state(self._subset.subset_state)
 
     def _on_data_deleted(self):
