@@ -16,7 +16,6 @@ class SubsetModifierListener(HubListener):
         self._modify_data = modify_data
         self._color = kwargs.get("color", None)
         self._use_group = kwargs.get("use_group", True)
-        self._before_create_subset = kwargs.get("before_create_modify_subset", None)
         self._source_subset_label = kwargs.get("source_subset_label", "source_subset") if self._source_subset is None else self._source_subset.albel
         self._modify_subset_label = kwargs.get("modify_subset_label", "modify_subset") if self._modify_subset is None else self._modify_subset.label
 
