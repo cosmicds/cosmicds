@@ -26,6 +26,7 @@ class StageState(State):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
     vel_win_opened = CallbackProperty(False)
+    lambda_clicked = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     marker = CallbackProperty("")
     indices = CallbackProperty({})
