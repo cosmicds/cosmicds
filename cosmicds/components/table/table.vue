@@ -87,5 +87,9 @@ export default {
 tr.v-data-table__selected {
   background-color: dodgerblue !important;
 }
+
+th.text-start.sortable {
+  font-size: 14px;
+}
 </style>
 
