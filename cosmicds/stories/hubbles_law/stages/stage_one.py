@@ -28,6 +28,8 @@ class StageState(State):
     vel_win_opened = CallbackProperty(False)
     lambda_clicked = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
+    spec_reflect_complete = CallbackProperty(False)
+
     marker = CallbackProperty("")
     indices = CallbackProperty({})
     image_location = CallbackProperty()
@@ -151,7 +153,7 @@ class StageOne(HubbleStage):
             "obswave_alert",
             "obswave_2_alert",            
             "remaining_gals_alert",
-            "nice_work_alert",
+            "nice_work_guidance",
             "doppler_calc_1_alert",
             "doppler_calc_2_alert",
             "doppler_calc_3_guidance"

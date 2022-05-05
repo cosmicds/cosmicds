@@ -29,7 +29,7 @@
         Notice that the table now has a row for your selected galaxy.
       </p>
       <p>
-        Choose another galaxy to enter into your table. You can pan around the sky from where you are or click <v-icon>mdi-home</v-icon> in the blue header bar to reset the view.
+        Choose another galaxy to enter into your table. You can pan around the sky from where you are or click the <v-icon>mdi-cached</v-icon> button to reset the view.
       </p>
     </div>
     <div
