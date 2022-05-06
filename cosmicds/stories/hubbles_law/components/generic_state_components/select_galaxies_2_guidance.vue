@@ -11,7 +11,7 @@
       Select Five Galaxies
     </h3>
     <div
-      v-if="state.gals_total == 0"
+      v-if="state.gals_total == 0 & !state.gal_selected"
       class="mb-4"
     >
       <p>
@@ -22,7 +22,7 @@
       </p>
     </div>
     <div
-      v-if="state.gals_total == 1"
+      v-if="state.gals_total == 1 & !state.gal_selected"
       class="mb-4"
     >
       <p>
@@ -33,7 +33,7 @@
       </p>
     </div>
     <div
-      v-if="state.gals_total > 1 & state.gals_total < 5"
+      v-if="state.gals_total > 1 & state.gals_total < 5 & !state.gal_selected"
       class="mb-4"
     >
       <p>
@@ -55,8 +55,14 @@
       </p>
     </div>
     <div
-      class="text-center my-8"
+      v-if="state.gals_total < 5 & state.gal_selected"
     >
+      <p>
+        What do you think of this galaxy? If it looks good to you, click the <v-icon>mdi-plus</v-icon> button to add it to your galaxy collection.
+      </p>
+      <p>
+        If you’d rather look for another galaxy, click the <v-icon>mdi-cached</v-icon> button to reset the view and choose a different green dot.
+      </p>
     </div>
     
     <v-divider
@@ -83,7 +89,7 @@
       <v-spacer></v-spacer>
       <v-col
         v-if="state.gals_total < 5"
-        cols="4"
+        cols="6"
         class="shrink"
       >
         <div

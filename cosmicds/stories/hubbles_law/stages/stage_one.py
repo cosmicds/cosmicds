@@ -25,6 +25,7 @@ log = logging.getLogger()
 class StageState(State):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
+    gal_selected = CallbackProperty(False)
     vel_win_opened = CallbackProperty(False)
     lambda_clicked = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
@@ -131,7 +132,7 @@ class StageOne(HubbleStage):
 
         # Set up components
         sdss_data = self.get_data("SDSS_all_sample_filtered")
-        selection_tool = SelectionTool(data=sdss_data)
+        selection_tool = SelectionTool(data=sdss_data, state=self.stage_state)
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
 
