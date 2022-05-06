@@ -40,7 +40,7 @@
       >
         <v-card
           :color="stage_state.marker == 'sel_gal1' || stage_state.marker == 'sel_gal2' ? 'info' : 'black'"
-          :class="stage_state.marker == 'sel_gal1' || stage_state.marker == 'sel_gal2' ? 'pa-1' : 'pa-0'"
+          :class="stage_state.marker == 'sel_gal1' || stage_state.marker == 'sel_gal2' ? 'pa-1 my-n1' : 'pa-0'"
           outlined
         >
           <c-selection-tool/>
@@ -74,7 +74,7 @@
       >
         <v-card
           :color="stage_state.marker == 'cho_row1' ? 'info' : 'black'"
-          :class="stage_state.marker == 'cho_row1' ? 'pa-1' : 'pa-0'"
+          :class="stage_state.marker == 'cho_row1' ? 'pa-1 my-n1' : 'pa-0'"
           outlined
         >
           <jupyter-widget :widget="widgets.galaxy_table"/>
@@ -110,32 +110,17 @@
         <v-card
           v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
           :color="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'info' : 'black'"
-          :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1' : 'pa-0'"
+          :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1 my-n1' : 'pa-0'"
           outlined
         >
           <jupyter-widget :widget="viewers.spectrum_viewer"/>
+
         </v-card>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12" lg="8" offset-lg="4">
         <v-row>
-          <v-col
-            cols="6"
-          >
-            <!-- This alert is temporary -->
-            <v-btn
-              :disabled="!stage_state.waveline_set"
-              class="white-text px-a"
-              width="100%"
-              color="success"
-              @click="
-                add_current_velocity();
-              "
-            >
-              find velocity
-            </v-btn>
-          </v-col>
           <v-col
             cols="3"
           >
@@ -156,6 +141,22 @@
               "
             >
             </reflect-velocity-windows>
+          </v-col>
+          <v-col
+            cols="6"
+          >
+            <!-- This alert is temporary -->
+            <v-btn
+              :disabled="!stage_state.waveline_set"
+              class="white-text px-a"
+              width="100%"
+              color="success"
+              @click="
+                add_current_velocity();
+              "
+            >
+              find velocity
+            </v-btn>
           </v-col>
         </v-row>
       </v-col>
