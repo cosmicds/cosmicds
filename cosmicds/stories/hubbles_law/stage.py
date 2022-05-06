@@ -1,6 +1,9 @@
 import json
 import requests
 
+from echo import add_callback
+
+from cosmicds.components import Table
 from cosmicds.phases import Stage
 from cosmicds.utils import API_URL, CDSJSONEncoder
 
@@ -23,6 +26,13 @@ class HubbleStage(Stage):
         "velocity_unit": "km / s",
         "ang_size_unit": "arcsecond"
     }
+
+    def __init__(self, session, story_state, app_state, *args, **kwargs):
+        super().__init__(session, story_state, app_state, *args, **kwargs)
+
+        # Respond to dark/light mode change
+        add_callback(self.app_state, 'dark_mode', self._on_dark_mode_change)
+
     
     @classmethod
     def _map_key(cls, key):
@@ -55,3 +65,12 @@ class HubbleStage(Stage):
 
         if self.app_state.update_db and dc_name == "student_measurements":
             self.submit_measurement(values)
+
+    def table_selected_color(self, dark):
+        return "#d84315" if dark else "#ff8a65"
+
+    def _on_dark_mode_change(self, dark):
+        color = self.table_selected_color(dark)
+        for widget in self.widgets.values():
+            if isinstance(widget, Table):
+                widget.selected_color = color

@@ -53,6 +53,7 @@ class StageThree(HubbleStage):
         #                       'Galaxy Type',
         #                       'Velocity (km/s)',
         #                       'Distance (Mpc)'],
+        #                   color=self.table_selected_color(self.app_state.dark_mode),
         #                   title='My Galaxies')
         # self.add_widget(fit_table, label="fit_table")
 

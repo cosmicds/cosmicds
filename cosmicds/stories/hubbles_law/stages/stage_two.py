@@ -75,6 +75,7 @@ class StageTwo(HubbleStage):
                                        'Velocity (km/s)',
                                        'Distance (Mpc)'],
                                title='My Galaxies | Distance Measurements',
+                               color=self.table_selected_color(self.app_state.dark_mode),
                                single_select=True)
         self.add_widget(distance_table, label="distance_table")
         distance_table.observe(self.distance_table_selected_change, names=["selected"])
