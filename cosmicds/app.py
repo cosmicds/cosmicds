@@ -106,7 +106,6 @@ class Application(VuetifyTemplate, HubListener):
 
         user = self.app_state.student
         story = self.story_state.name
-        json.loads
         data = json.loads(json.dumps(self.story_state.as_dict()))
         if data:
             requests.put(f"{API_URL}/story-state/{user['id']}/{story}", json=data)
