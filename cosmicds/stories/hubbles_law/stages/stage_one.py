@@ -122,7 +122,7 @@ class StageOne(HubbleStage):
                                     'Observed Wavelength (Å)',
                                     'Velocity (km/s)'],
                              title='My Galaxies',
-                             color=self.table_selected_color(self.app_state.dark_mode),
+                             selected_color=self.table_selected_color(self.app_state.dark_mode),
                              single_select=True) # True for now
         self.add_widget(galaxy_table, label="galaxy_table")
         galaxy_table.row_click_callback = self.on_galaxy_row_click

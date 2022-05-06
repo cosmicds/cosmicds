@@ -44,7 +44,7 @@ class Table(VuetifyTemplate, HubListener):
         self._glue_data = data
 
         self.title = kwargs.get('title', '')
-        self.selected_color = kwargs.get('color', Table.default_color)
+        self.selected_color = kwargs.get('selected_color', Table.default_color)
 
         self._glue_components = components
         self._glue_component_names = kwargs.get('names', components)
