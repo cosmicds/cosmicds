@@ -115,9 +115,12 @@ class StageTwo(HubbleStage):
             return
         galaxy = self.stage_state.galaxy
         index = self.get_data_index('student_measurements', 'name', lambda x: x == galaxy["name"])
-        distance = round(MILKY_WAY_SIZE_MPC * 180 / (self.distance_tool.angular_size.value * pi))
+        angular_size = self.distance_tool.angular_size.value
+        distance = round(MILKY_WAY_SIZE_MPC * 180 / (angular_size * pi))
         self.stage_state.galaxy_dist = distance
         self.update_data_value("student_measurements", "distance", distance, index)
+        self.update_data_value("student_measurements", "angular_size", angular_size, index)
+        self.story_state.update_student_data()
         with ignore_callback(self.stage_state, 'make_measurement'):
             self.stage_state.make_measurement = False
         
