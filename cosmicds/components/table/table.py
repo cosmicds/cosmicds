@@ -13,7 +13,7 @@ __all__ = ['Table']
 
 
 class Table(VuetifyTemplate, HubListener):
-    default_color = '#00ff00'
+    default_color = 'dodgerblue'
 
     template = load_template("table.vue", __file__, traitlet=True).tag(sync=True)
     headers = List().tag(sync=True)
@@ -22,6 +22,7 @@ class Table(VuetifyTemplate, HubListener):
     search = Unicode().tag(sync=True)
     single_select = Bool(False).tag(sync=True)
     selected = List().tag(sync=True)
+    selected_color = Unicode().tag(sync=True)
     sort_by = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
     use_search = Bool(False).tag(sync=True)
@@ -43,6 +44,7 @@ class Table(VuetifyTemplate, HubListener):
         self._glue_data = data
 
         self.title = kwargs.get('title', '')
+        self.selected_color = kwargs.get('color', Table.default_color)
 
         self._glue_components = components
         self._glue_component_names = kwargs.get('names', components)
@@ -57,7 +59,6 @@ class Table(VuetifyTemplate, HubListener):
         #self._subset_changed_filter = lambda message: message.subset.label == self._subset_group_label and message.subset.data.label == self._glue_data.label
 
         self.single_select = kwargs.get('single_select', False)
-        self.subset_color = kwargs.get('color', Table.default_color)
 
         self._subset_message_pass = False
 
@@ -135,7 +136,7 @@ class Table(VuetifyTemplate, HubListener):
         self._glue_data = self.data_collection[self._glue_data.label]
         state = self.subset_state_from_selected(self.selected)
         self._subset_group = self.data_collection.new_subset_group(self._subset_group_label, state)
-        self._subset_group.style.color = self.subset_color
+        self._subset_group.style.color = self.selected_color
 
     def _on_data_updated(self, message=None):
         self._populate_table()
