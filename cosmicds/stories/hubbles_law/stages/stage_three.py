@@ -142,11 +142,13 @@ class StageThree(HubbleStage):
         
         comparison_viewer.layers[-1].state.zorder = 3
         comparison_viewer.add_data(class_data)
-        comparison_viewer.layers[-1].state.zorder = 2
-        comparison_viewer.layers[-1].state.visible = False
+        class_layer = comparison_viewer.layers[-1]
+        class_layer.state.zorder = 2
+        class_layer.state.visible = False
         comparison_viewer.add_data(all_data)
-        comparison_viewer.layers[-1].state.zorder = 1
-        comparison_viewer.layers[-1].state.visible = False
+        all_layer = comparison_viewer.layers[-1]
+        all_layer.state.zorder = 1
+        all_layer.state.visible = False
         comparison_viewer.state.x_att = all_data.id['distance']
         comparison_viewer.state.y_att = all_data.id['velocity']
         comparison_viewer.state.reset_limits()
