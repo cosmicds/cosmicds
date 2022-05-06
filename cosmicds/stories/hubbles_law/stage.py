@@ -2,6 +2,7 @@ import json
 import requests
 
 from echo import add_callback
+import ipyvuetify as v
 
 from cosmicds.components import Table
 from cosmicds.phases import Stage
@@ -67,7 +68,8 @@ class HubbleStage(Stage):
             self.submit_measurement(values)
 
     def table_selected_color(self, dark):
-        return "#d84315" if dark else "#ff8a65"
+        theme = v.theme.themes.dark if dark else v.theme.themes.light
+        return theme.info
 
     def _on_dark_mode_change(self, dark):
         color = self.table_selected_color(dark)

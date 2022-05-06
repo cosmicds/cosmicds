@@ -7,7 +7,7 @@ from glue.core.subset import SubsetState
 from ipyvuetify import VuetifyTemplate
 from traitlets import Bool, List, Unicode, observe
 
-from ...utils import load_template
+from ...utils import convert_material_color, load_template
 
 __all__ = ['Table']
 
@@ -22,7 +22,7 @@ class Table(VuetifyTemplate, HubListener):
     search = Unicode().tag(sync=True)
     single_select = Bool(False).tag(sync=True)
     selected = List().tag(sync=True)
-    selected_color = Unicode().tag(sync=True)
+    sel_color = Unicode().tag(sync=True)
     sort_by = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
     use_search = Bool(False).tag(sync=True)
@@ -96,6 +96,16 @@ class Table(VuetifyTemplate, HubListener):
     def subset_group(self):
         return self._subset_group
 
+    @property
+    def selected_color(self):
+        return self._selected_color
+
+    @selected_color.setter
+    def selected_color(self, value):
+        if value.startswith("colors"):
+            value = convert_material_color(value)
+        self.sel_color = value
+
     @glue_data.setter
     def glue_data(self, data):
         self._glue_data = data
@@ -136,7 +146,7 @@ class Table(VuetifyTemplate, HubListener):
         self._glue_data = self.data_collection[self._glue_data.label]
         state = self.subset_state_from_selected(self.selected)
         self._subset_group = self.data_collection.new_subset_group(self._subset_group_label, state)
-        self._subset_group.style.color = self.selected_color
+        self._subset_group.style.color = self._selected_color
 
     def _on_data_updated(self, message=None):
         self._populate_table()

@@ -84,7 +84,7 @@ export default {
   computed: {
     cssVars() {
       return {
-        "--selected-color": this.selected_color
+        "--selected-color": this.sel_color
       }
     }
   }
