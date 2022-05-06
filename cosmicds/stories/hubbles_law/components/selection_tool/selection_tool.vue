@@ -1,5 +1,5 @@
 <template>
-  <div
+  <v-card
     id="selection-root"
     v-intersect.once="(entries, observer, isIntersecting) => {
       const root = entries[0].target;
@@ -188,7 +188,7 @@
       </template>
       Reset view
     </v-tooltip>
-  </div>
+  </v-card>
 </template>
 
 <style scoped>
