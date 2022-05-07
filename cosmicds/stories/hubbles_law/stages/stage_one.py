@@ -29,7 +29,6 @@ class StageState(State):
     vel_win_opened = CallbackProperty(False)
     lambda_clicked = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
-    spec_reflect_complete = CallbackProperty(False)
 
     marker = CallbackProperty("")
     indices = CallbackProperty({})
