@@ -20,18 +20,19 @@ class IntroSlideshow(v.VuetifyTemplate):
     state = GlueState().tag(sync=True)
 
     _titles = [
-        "Hubble Data Story",
-        "1920's Astronomy",
-        "Explore the Night Sky",
+        "Welcome to Your Data Story",
+        "Astronomy in the 1920's",
+        "Explore the Cosmic Sky",
         "What Are Nebulae?",
-        "Spiral Nebulae",
+        "Spiral Nebulae and the Great Debate",
         "Henrietta Leavitt's Discovery",
-        "Vesto Slipher and Spectra"
+        "Vesto Slipher and Spectral Data"
     ]
-    _default_title = "Hubble Data Story"
+    _default_title = "Welcome to Your Data Story"
 
     def __init__(self, story_state, *args, **kwargs):
         self.state = story_state
+
         exploration_tool = ExplorationTool()
         exploration_tool1 = ExplorationTool()
         exploration_tool2 = ExplorationTool()

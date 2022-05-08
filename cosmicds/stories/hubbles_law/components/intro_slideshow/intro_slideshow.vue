@@ -33,21 +33,30 @@
             >
               <v-col cols="6">
                 <p>
-                  Welcome to the Cosmic Data Story about the Hubble Law. In this activity, you will use real astronomical data to answer these questions about our universe:
+                  Welcome to the Cosmic Data Story about Hubble's Law. In this investigation, you will use real astronomical data to form answers to major questions about our universe:
                 </p>
                 <v-card
-                  class="d-flex justify-center pa-4 mx-12 mb-4"
+                  class="justify-center pa-4 mx-12 mb-4"
                   color="primary lighten-1"
                   style="font-weight:600;"
                   dark
                 >
-                  Has the universe always existed? If not, how long ago did it form?
+                  <p
+                    class="my-2 text-center"
+                  >
+                    Has the universe always existed?
+                  </p>
+                  <p
+                    class="my-2 text-center"
+                  >
+                    If not, how long ago did it form?
+                  </p>
                 </v-card>
                 <p>
-                  While answering these questions, you will learn techniques scientists use to assess how reliable they think a result is, based on their data. After all, when scientists collect data to answer new questions, there is no answer key that they can use to check their answers. They have to determine for themselves what conclusions can be drawn from their data.
+                  While exploring these questions, you will learn techniques scientists use to assess the reliability of your results, based on your data. After all, when scientists collect data to answer new questions, there is no answer key they can use to check if their conclusions are correct. Like a scientist, you will have to judge for yourself what can be concluded from their data, and how much confidence you should have in your conclusions.
                 </p>
                 <p>
-                  You will do the same thing in this Data Story. Let’s get started!
+                  Let’s get started!
                 </p>
               </v-col>
               <v-col cols="6">
@@ -70,12 +79,12 @@
             <v-row>
               <v-col>
                 <p>
-                  Imagine that you are an astronomer living a century ago in the early 1920's. Pretty much all scientists of this time, including Albert Einstein, believed that the universe was static, unchanging, and eternal (meaning that the universe has always been and always will be). These ideas date back to ancient Greek times and were embraced by philosophers such as Aristotle.
+                  Imagine that you are an astronomer living a century ago in the early 1920's. Pretty much all astronomers and scientists of this era (including Albert Einstein) believed that the universe was static, unchanging, and eternal. In other words, the universe has always been, and always will be. These ideas date back to ancient Greek times and were embraced by philosophers such as Aristotle.
                 </p>
                 <p
-                  style="text-align:center;"
+                  class="text-center grey--text"
                 >
-                  (Pictures of old telescopes &amp; astronomers)
+                  [ Pictures of old telescopes &amp; astronomers ]
                 </p>
               </v-col>
             </v-row>
@@ -94,7 +103,7 @@
                   style="min-height: 120px;"
                 >
                   <p>
-                    This window provides a view of the "night sky," based on actual telescopic data. You can explore this view, as astronomers have been doing for centuries.
+                    The frame below provides an interactive view of the cosmic sky, built from authentic telescopic data. You can explore this view by panning around and zooming in/out to familiarize yourself with the tool, and connect it to the work astronomers have been doing for centuries.
                   </p>
                 </div>
                 <div
@@ -173,10 +182,10 @@
                   style="min-height: 120px;"
                 >
                   <p>
-                    As you pan through the sky, you may see stars and fuzzy blobs called nebulae. In the 1700's, French astronomer Charles Messier cataloged as many nebulae as he could find. They are known as "Messier Objects" and are identified by their catalog number.
+                    As you explore the cosmic sky, you may see stars and fuzzy blobs called nebulae. In the 1700's, French astronomer Charles Messier cataloged as many nebulae as he could find. They are known as "Messier Objects" and are identified by their catalog number. For example, M13 represents the 13th Messier Object in the catalog.
                   </p>
                   <p>
-                    Click on the thumbnails to view some Messier Objects:
+                    Click on the thumbnails to view some Messier Objects.
                   </p>
                 </div>
                 <div
@@ -325,7 +334,10 @@
                   style="min-height: 120px;"
                 >
                   <p>
-                    M31 and M51 are examples of a particular type of nebula that interested astronomers in the early 1900’s. They were known as “spiral” nebulae because of their distinctive spiral shape. In 1920, there was a “Great Debate” between astronomers Harlow Shapley and Heber Curtis questioning whether the spiral nebulae were part of our own Milky Way galaxy or were “island universes” beyond our Milky Way. Do you think the nebulae you’ve observed are within the Milky Way or beyond it?
+                    M31 and M51 are examples of a particular type of nebula that interested astronomers in the early 1900’s. They were known as “spiral nebulae" because of their distinctive spiral shape. In 1920, there was a “Great Debate” between astronomers Harlow Shapley and Heber Curtis questioning whether the spiral nebulae were part of our own Milky Way galaxy or were “island universes” beyond our Milky Way.
+                  </p>
+                  <p>
+                    Do you think the nebulae you’ve observed are within the Milky Way or beyond it?
                   </p>
                 </div>
                 <div
@@ -471,12 +483,12 @@
             <v-row>
               <v-col>
                 <p>
-                  Between 1907&#8211;1921, astronomer Henrietta Leavitt discovered and observed Cepheid variable stars. She noticed an important property about these stars, that there is a relationship between the intrinsic brightness of the Cepheids and how slowly or rapidly their brightness changes. This important discovery made it possible to determine distances to the nebulae and finally resolve the Shapley-Curtis Great Debate&#8212;many of the nebulae are far beyond the Milky Way and constitute individual galaxies in their own right.
+                  Between 1907&#8211;1921, astronomer Henrietta Leavitt discovered and observed Cepheid variable stars. She noticed an important property about these stars, that there is a relationship between the intrinsic brightness of the Cepheids and how slowly or rapidly their brightness changes. This important discovery made it possible to determine distances to the nebulae and finally resolve the Shapley-Curtis Great Debate: it turned out that many of the nebulae are far beyond the Milky Way and constitute individual galaxies in their own right.
                 </p>
                 <p
-                  style="text-align:center;"
+                  class="text-center grey--text"
                 >
-                  (Pictures of Henrietta's glass plates)
+                  [ Pictures of Henrietta's glass plates ]
                 </p>
               </v-col>
             </v-row>
@@ -492,13 +504,13 @@
             <v-row>
               <v-col>
                 <p>
-                  Around this same time, astronomer Vesto Slipher observed galaxies using a spectrograph. Spectrographs can tell you a lot about an object in space, like what it is made of or how fast it is moving toward or away from you. 
+                  Around this same time, astronomer Vesto Slipher observed galaxies using a spectrograph. Spectrographs can reveal a lot about an object in space, like what the object is made of or how fast it is moving toward or away from the observer. 
                 </p>
                 <p>
-                  Recall that the prevailing view in the early 1900’s was that that the universe is unchanging and eternal, so the expectation was that the galaxies are either not moving at all, or perhaps they are moving randomly. 
+                  Recall that the prevailing view in the early 1900’s was that that the universe is unchanging and eternal. As a result, the dominant expectation was that distant galaxies are either not moving at all, or if they are moving then they are moving randomly. 
                 </p>
                 <p>
-                  It’s time for you to collect some of your own data to learn what Slipher found.
+                  It’s time for you to collect some of your own data, form conclusions, and compare your conclusions to what Vesto Slipher found.
                 </p>
               </v-col>
             </v-row>
@@ -545,8 +557,7 @@
       <!-- Code to use for disable in button below if step 2 depends on exploring WWT first: -->
       <!-- :disabled="step === 6 || (step === 2 && !exploration_complete)" -->
       <v-btn
-        v-if="step < 6"
-        :disabled="step === 6"
+        :disabled="step >= 6"
         class="black--text"
         color="accent"
         depressed
