@@ -1,6 +1,9 @@
 <template>
   <v-container>
     <v-row class="d-flex align-stretch">
+      <v-btn
+        @click="story_state.stage_index = 1"
+      >back</v-btn>
       <v-col cols="6">
         <v-card class="align-self-stretch">
           <c-distance-tool/>

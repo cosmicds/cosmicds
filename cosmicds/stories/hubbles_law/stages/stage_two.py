@@ -69,11 +69,13 @@ class StageTwo(HubbleStage):
                                data=self.get_data('student_measurements'),
                                glue_components=['name',
                                                'velocity',
-                                               'distance'],
+                                               'distance',
+                                               'angular_size'],
                                key_component='name',
                                names=['Galaxy Name',
                                        'Velocity (km/s)',
-                                       'Distance (Mpc)'],
+                                       'Distance (Mpc)',
+                                       'Angular Size'],
                                title='My Galaxies | Distance Measurements',
                                single_select=True)
         self.add_widget(distance_table, label="distance_table")
