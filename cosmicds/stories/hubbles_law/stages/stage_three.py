@@ -1,4 +1,5 @@
 from functools import partial
+from glue.core.message import NumericalDataChangedMessage
 from glue.core.state_objects import State
 from glue.core.subset_group import SubsetGroup
 from traitlets import default
@@ -200,6 +201,9 @@ class StageThree(HubbleStage):
         # Just for accessibility while testing
         self.data_collection.histogram_listener = self.histogram_listener
 
+        # Whenever the student data is updated, the student scatter viewer should update its bounds
+        self.hub.subscribe(self, NumericalDataChangedMessage,
+                           handler=self._on_student_data_change, filter=self._student_data_filter)
 
         def hist_selection_activate():
             if self.histogram_listener.source_subset is None:
@@ -221,3 +225,10 @@ class StageThree(HubbleStage):
     @property
     def all_viewers(self):
         return [layout.viewer for layout in self.viewers.values()]
+
+    def _student_data_filter(self, msg):
+        return msg.data == self.get_data("student_data")
+
+    def _on_student_data_change(self, msg):
+        viewer = self.get_viewer("fit_viewer")
+        viewer.state.reset_limits()
