@@ -17,6 +17,14 @@ class HubbleScatterViewerState(ScatterViewerState):
             self.x_min = min(self.x_min, 0)
             self.y_min = min(self.y_min, 0)
 
+class HubbleFitViewerState(HubbleScatterViewerState):
+
+    def reset_limits(self):
+        with delay_callback(self, 'x_min', 'x_max', 'y_min', 'y_max'):
+            super().reset_limits()
+            self.x_max = 1.2 * self.x_max
+            self.y_max = 1.2 * self.y_max
+
 HubbleFitView = cds_viewer(
     BqplotScatterView,
     name="HubbleFitView",
@@ -28,7 +36,7 @@ HubbleFitView = cds_viewer(
         "cds:linefit"
     ],
     label='Fit View',
-    state_cls=HubbleScatterViewerState
+    state_cls=HubbleFitViewerState
 )
 
 HubbleScatterView = cds_viewer(
