@@ -15,7 +15,7 @@
         <strong>Tips:</strong> You can re-measure the wavelength as many times as you like. 
       </p>
       <p>  
-        If you want even more precision in your measurement, you can zoom in to a specific wavelength range in the viewer using the <v-icon>mdi-select-search</v-icon> icon in the toolbar.
+        If you want even more precision in your measurement, zoom in to a specific wavelength range in the viewer using the <v-icon>mdi-select-drag</v-icon> icon in the toolbar.
       </p>
     </div>
   </scaffold-alert>

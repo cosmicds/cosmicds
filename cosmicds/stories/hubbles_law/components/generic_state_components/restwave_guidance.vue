@@ -19,7 +19,7 @@
         The known <strong>rest wavelength</strong> for the line is recorded in your table.
       </p>
       <p>
-        Click the <v-icon>mdi-lambda</v-icon> icon in the viewer header to display the rest wavelength for that line. 
+        Click the <v-icon>mdi-lambda</v-icon> icon in the Spectrum Viewer toolbar to display the rest wavelength. 
       </p>
     </div>
     <v-divider

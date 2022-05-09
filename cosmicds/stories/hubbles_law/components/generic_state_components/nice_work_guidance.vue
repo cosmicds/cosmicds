@@ -17,6 +17,9 @@
       <p>
         As scientists do, let’s examine what conclusions you might draw from your data.
       </p>
+      <p>
+        Click the REFLECT button to complete the reflection sequence before moving on.
+      </p>
     </div>
     
     <v-divider
@@ -43,13 +46,13 @@
       <v-spacer></v-spacer>
       <v-col
         v-if="!state.spec_reflect_complete"
-        cols="4"
+        cols="6"
         class="shrink"
       >
         <div
           style="font-size: 16px;"
         >
-          Complete the REFLECT sequence to move on
+          Click the REFLECT button.
         </div>
       </v-col>
       <v-col

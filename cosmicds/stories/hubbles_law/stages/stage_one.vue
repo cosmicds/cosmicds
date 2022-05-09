@@ -107,19 +107,21 @@
         cols="12"
         lg="8"
       >
-        <v-card
-          v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
-          :color="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'info' : 'black'"
-          :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1 my-n1' : 'pa-0'"
-          outlined
-        >
-          <jupyter-widget :widget="viewers.spectrum_viewer"/>
+        <v-row>
+          <v-col
+            class="py-0"
+          >
+            <v-card
+              v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
+              :color="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'info' : 'black'"
+              :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1 my-n1' : 'pa-0'"
+              outlined
+            >
+              <jupyter-widget :widget="viewers.spectrum_viewer"/>
 
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" lg="8" offset-lg="4">
+            </v-card>
+          </v-col>
+        </v-row>
         <v-row>
           <v-col
             cols="3"
