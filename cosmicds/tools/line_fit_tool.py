@@ -1,13 +1,12 @@
 from astropy.modeling import models, fitting
 from glue.config import viewer_tool
 from glue.core import HubListener
-from glue.core.message import (DataCollectionAddMessage,
-                               DataCollectionDeleteMessage, DataUpdateMessage,
-                               LayerArtistVisibilityMessage, NumericalDataChangedMessage,
-                               SubsetMessage, SubsetUpdateMessage)
+from glue.core.message import (DataCollectionDeleteMessage, DataUpdateMessage,
+                               SubsetMessage, SubsetCreateMessage, SubsetUpdateMessage)
 from glue.core.exceptions import IncompatibleAttribute
 from glue_jupyter.bqplot.common.tools import Tool
 from numpy import isnan
+from numpy.linalg import LinAlgError
 from traitlets import Unicode, HasTraits
 
 from cosmicds.stories.hubbles_law.utils import line_mark
@@ -31,14 +30,14 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self.active = False
         #self._data_filter = lambda message: message.data.label in self.layer_labels
         #self._subset_filter = lambda message: message.subset.label in self.layer_labels and message.data.label in self.layer_labels
-        # self.hub.subscribe(self, DataCollectionAddMessage,
-        #                    handler=self._on_data_collection_added, filter=self._data_filter)
         self.hub.subscribe(self, DataCollectionDeleteMessage,
                            handler=self._on_data_collection_deleted, filter=self._data_collection_filter)
         self.hub.subscribe(self, DataUpdateMessage,
                            handler=self._on_layer_updated, filter=self._update_filter)
         # self.hub.subscribe(self, NumericalDataChangedMessage,
         #                    handler=self._on_layer_updated, filter=self._data_filter)
+        self.hub.subscribe(self, SubsetCreateMessage,
+                           handler=self._on_subset_created, filter=self._create_filter)
         self.hub.subscribe(self, SubsetUpdateMessage,
                            handler=self._on_layer_updated, filter=self._update_filter)
 
@@ -46,10 +45,17 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def _data_collection_filter(self, msg):
         return msg.data in self.lines.keys()
 
+    def _create_filter(self, msg):
+        return msg.subset.data in self.lines.keys()
+
     def _update_filter(self, msg):
         data = msg.subset if isinstance(msg, SubsetMessage) else msg.data
         return data in self.lines.keys() \
             and msg.attribute in [self.viewer.state.x_att, self.viewer.state.y_att]
+
+    def _on_subset_created(self, _msg):
+        if self.active:
+            self.refresh()
 
     def _on_data_collection_deleted(self, msg):
         remove = [layer for layer in self.lines.keys() if layer.state.layer == msg.data]
@@ -121,7 +127,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
             data = layer.state.layer
             self.lines[data] = line
             self.slopes[data] = slope
-        except IncompatibleAttribute:
+        except (IncompatibleAttribute, LinAlgError, SystemError):
             pass
 
         if add_marks:
@@ -151,10 +157,8 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self.slopes = {}
 
     def refresh(self):
-        self._clear_lines()
         self._fit_to_layers()
             
-    
     @property
     def line_marks(self):
         return self.lines.values()
