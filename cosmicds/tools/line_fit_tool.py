@@ -68,8 +68,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
         data = msg.subset if isinstance(msg, SubsetMessage) else msg.data
         for layer in self.visible_layers:
             if layer.state.layer == data:
-                self._remove_line(layer)
-                self._fit_to_layer(layer)
+                self._update_fit_line(layer)
                 return
 
     @property
@@ -92,25 +91,46 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def hub(self):
         return self.viewer.session.hub
 
-    def _create_fit_line(self, layer):
+    def _fit_line(self, layer):
         data = layer.state.layer
         x = data[self.viewer.state.x_att]
         y = data[self.viewer.state.y_att]
         fit = fitting.LinearLSQFitter()
         line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
         fitted_line = fit(line_init, x, y)
-        x = [0, 2 * self.viewer.state.x_max] # For now, the line spans from 0 to twice the edge of the viewer
-        y = fitted_line(x)
+        return fitted_line
+
+    def _create_fit_line(self, layer):
+
+        # Do the fit
+        fit_line = self._fit_line(layer)
     
         # Create the fit line object
-        # Keep track of this line and its slope
-        start_x, end_x = x
+        # Keep track of this line and its slope # For now, the line spans from 0 to twice the edge of the viewer
+        y = fit_line(self.x_range)
+        start_x, end_x = self.x_range
         start_y, end_y = y
-        slope = fitted_line.slope.value
-        label = 'Slope = %.0f km / s / Mpc' % slope if not isnan(slope) else None
+        slope = fit_line.slope.value
+        label = self.label(slope)
         color = layer.state.color if layer.state.color != '0.35' else 'black'
         line = line_mark(layer, start_x, start_y, end_x, end_y, color, label)
         return line, slope
+
+    def _update_fit_line(self, layer):
+        data = layer.state.layer
+        if data in self.lines.keys():
+            fit_line = self._fit_line(layer)
+            mark = self.lines[data]
+            mark.x = self.x_range
+            mark.y = fit_line(self.x_range)
+            slope = fit_line.slope.value
+            self.slopes[data] = slope
+            label = self.label(slope)
+            is_label = label is not None
+            mark.display_legend = is_label
+            mark.labels = [label] if is_label else []
+        else:
+            self._fit_to_layer(layer)
 
     def activate(self):
         if not self.active:
@@ -158,10 +178,17 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     def refresh(self):
         self._fit_to_layers()
+
+    def label(self, slope):
+        return 'Slope = %.0f km / s / Mpc' % slope if not isnan(slope) else None
             
     @property
     def line_marks(self):
         return self.lines.values()
+
+    @property
+    def x_range(self):
+        return [0, 2 * self.viewer.state.x_max]
 
 
     
