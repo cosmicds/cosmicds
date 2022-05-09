@@ -1,3 +1,5 @@
+from math import sqrt
+
 from bqplot.marks import Scatter
 from bqplot_image_gl import LinesGL
 from bqplot_image_gl.interacts import MouseInteraction, mouse_events
@@ -12,12 +14,14 @@ class LineDrawTool(InteractCheckableTool):
     tool_tip = 'Draw a best fit line'
     mdi_icon = "mdi-message-draw"
 
-    def __init__(self, viewer, **kwargs):
+    def __init__(self, viewer, bx=0, by=0, **kwargs):
         super().__init__(viewer, **kwargs)
         self.line_drawn = False
         self.line = None
         self.endpoint = None
         self._follow_cursor = False
+        self.bx = bx
+        self.by = by
 
         figure = viewer.figure
         self._original_interaction = figure.interaction
@@ -49,13 +53,13 @@ class LineDrawTool(InteractCheckableTool):
         x, y = domain['x'], domain['y']
 
         if self.line is None:
-            self.line = LinesGL(x=[0, self.viewer.state.x_max], y=[0,0], scales=image.scales, colors=['black'])
+            self.line = LinesGL(x=[self.bx, self.viewer.state.x_max], y=[self.bx, self.by], scales=image.scales, colors=['black'])
             figure.marks = figure.marks + [self.line]
             self._follow_cursor = True
             
         if self._follow_cursor:
-            self.line.x = [0, x]
-            self.line.y = [0, y]
+            self.line.x = [self.bx, x]
+            self.line.y = [self.by, y]
 
     def _handle_click(self, data):
         if self._follow_cursor:
@@ -95,8 +99,8 @@ class LineDrawTool(InteractCheckableTool):
         y = self.endpoint.y[0]
         x_adj, y_adj = self._coordinates_in_bounds(x,y)
         if x_adj != x or y_adj != y:
-            self.line.x = [0, x_adj]
-            self.line.y = [0, y_adj]
+            self.line.x = [self.bx, x_adj]
+            self.line.y = [self.by, y_adj]
             self.endpoint.x = [x_adj]
             self.endpoint.y = [y_adj]
 
@@ -107,8 +111,8 @@ class LineDrawTool(InteractCheckableTool):
     def _on_endpoint_drag(self, element, event):
         point = event["point"]
         x, y = point["x"], point["y"]
-        self.line.x = [0, x]
-        self.line.y = [0, y]
+        self.line.x = [self.bx, x]
+        self.line.y = [self.by, y]
 
     def _update_interaction(self):
         have_endpoint = self.endpoint is not None
@@ -150,21 +154,23 @@ class LineDrawTool(InteractCheckableTool):
             return x, y
 
         # Vertical line
-        if x == 0:
+        if x == self.bx:
             y_adj = y_min if y < y_min else y_max
             return x, y_adj
 
         # Horizontal line
-        if y == 0:
+        if y == self.by:
             x_adj = x_min if x < x_min else x_max
             return x_adj, y
 
-        t1 = x_min / x
-        t2 = x_max / x
-        t3 = y_min / y
-        t4 = y_max / y
+        # Length of the vector from the basepoint to the endpoint
+
+        t1 = (x_max - self.bx) / (x - self.bx)
+        t2 = (y_max - self.by) / (y - self.by)
+        t3 = (x_min - self.bx) / (x - self.bx)
+        t4 = (y_min - self.by) / (y - self.by)
         ts = [t for t in [t1,t2,t3,t4] if t > 0 and t < 1]
-        t = max(ts or [0]) * 0.98
+        t = min(ts or [0]) * 0.98
 
         return x * t, y * t
 
