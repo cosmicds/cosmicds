@@ -34,13 +34,13 @@ def cds_viewer(viewer_class, name=None, viewer_tools=None, label=None, state_cls
 
         def add_data(self, data):
             if any(condition(data) for condition in self.ignore_conditions):
-                return
-            super().add_data(data)
+                return False
+            return super().add_data(data)
 
         def add_subset(self, subset):
             if any(condition(subset) for condition in self.ignore_conditions):
-                return
-            super().add_subset(subset)
+                return False
+            return super().add_subset(subset)
         
     return CDSViewer
 
