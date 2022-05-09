@@ -5,8 +5,8 @@ from glue_jupyter.bqplot.scatter import BqplotScatterView
 from cosmicds.viewers import cds_viewer
 
 __all__ = [
-    "HubbleScatterViewerState","HubbleFitView", "HubbleScatterView",
-    "HubbleClassHistogramView"
+    "HubbleScatterViewerState","HubbleFitViewerState", 
+    "HubbleFitView", "HubbleScatterView", "HubbleClassHistogramView"
 ]
 
 class HubbleScatterViewerState(ScatterViewerState):
