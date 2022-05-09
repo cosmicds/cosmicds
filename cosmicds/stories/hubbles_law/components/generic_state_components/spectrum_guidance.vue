@@ -7,16 +7,16 @@
     <h3
       class="mb-4"
     >
-      Meet the Spectrum Tool
+      Meet the Spectrum Viewer
     </h3>
     <div
       class="mb-4"
     >
       <p>
-        Here is a spectrum of light from your chosen galaxy.
+        Here is a spectrum of light measured from your chosen galaxy.
       </p>
       <p>
-        Let’s learn how a spectrum can tell us if an object is moving toward or away from us.
+        Let’s learn how a spectrum can reveal if an object (such as a galaxy) is moving toward or away from an observer.
       </p>
     </div>
     <v-divider

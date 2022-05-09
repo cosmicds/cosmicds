@@ -36,18 +36,18 @@
                   Welcome to the Cosmic Data Story about Hubble's Law. In this investigation, you will use real astronomical data to form answers to major questions about our universe:
                 </p>
                 <v-card
-                  class="justify-center pa-4 mx-12 mb-4"
+                  class="justify-center pa-2 mx-12 my-8"
                   color="primary lighten-1"
                   style="font-weight:600;"
                   dark
                 >
                   <p
-                    class="my-2 text-center"
+                    class="my-3 text-center"
                   >
                     Has the universe always existed?
                   </p>
                   <p
-                    class="my-2 text-center"
+                    class="my-3 text-center"
                   >
                     If not, how long ago did it form?
                   </p>

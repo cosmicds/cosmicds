@@ -39,6 +39,16 @@
         </v-btn>
       </v-col>
       <v-spacer></v-spacer>
+      <v-col
+        cols="6"
+        class="shrink"
+      >
+        <div
+          style="font-size: 16px;"
+        >
+          Select a galaxy from your table.
+        </div>
+      </v-col>
     </v-row>
   </v-alert>
 </template>
