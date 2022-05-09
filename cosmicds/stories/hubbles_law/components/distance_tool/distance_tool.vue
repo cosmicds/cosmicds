@@ -43,7 +43,10 @@
           class="wwt-widget"
         />
       </v-lazy>
-      <v-tooltip top>
+      <v-tooltip
+        top
+        class="fab-tooltip"
+        >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             fab
@@ -400,6 +403,10 @@ export default {
   bottom: 0px !important;
   margin-bottom: var(--margin);
   margin-right: calc(var(--margin) - var(--card-padding));
+  z-index: 25 !important;
+}
+
+.fab-tooltip {
   z-index: 25 !important;
 }
 </style>
