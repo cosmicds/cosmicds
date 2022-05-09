@@ -49,8 +49,10 @@ class LineFitTool(Tool, HubListener, HasTraits):
         return msg.subset.data in self.lines.keys()
 
     def _update_filter(self, msg):
-        data = msg.subset if isinstance(msg, SubsetMessage) else msg.data
-        return data in self.lines.keys() \
+        subset_message = isinstance(msg, SubsetMessage)
+        subset = msg.subset if subset_message else None
+        data = subset.data if subset_message else msg.data
+        return (data in self.lines.keys() or subset in self.lines.keys()) \
             and msg.attribute in [self.viewer.state.x_att, self.viewer.state.y_att]
 
     def _on_subset_created(self, _msg):
