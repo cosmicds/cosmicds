@@ -37,7 +37,7 @@ class SpectrumView(BqplotScatterView):
     _subset_artist_cls = SpectrumViewLayerArtist
 
     inherit_tools = False
-    tools = ['bqplot:home', 'hubble:wavezoom', 'hubble:restwave', 'cds:info']
+    tools = ['bqplot:home', 'hubble:wavezoom', 'hubble:restwave', 'hubble:specflag', 'cds:info']
     _state_cls = SpectrumViewerState
     show_line = Bool(True)
     LABEL = "Spectrum Viewer"
@@ -139,7 +139,8 @@ class SpectrumView(BqplotScatterView):
         self.user_line.x = [new_x, new_x]
         self.user_line_label.x = [new_x, new_x]
 
-    def update(self, element, z):
+    def update(self, name, element, z):
+        self.spectrum_name = name
         self.element = element
         self.z = z
         rest = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA

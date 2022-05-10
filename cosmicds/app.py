@@ -41,7 +41,8 @@ class Application(VuetifyTemplate, HubListener):
         
         # For testing purposes, we create a new dummy student on each startup
         if self.app_state.update_db:
-            response = requests.get(f"{API_URL}/new-dummy-student").json()
+            data = { "seed": True, "team_member": kwargs.get("team_member", None) }
+            response = requests.post(f"{API_URL}/new-dummy-student", json=data).json()
             self.app_state.student = response["student"]
 
         self._application_handler = JupyterApplication()

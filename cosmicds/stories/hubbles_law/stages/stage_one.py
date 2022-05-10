@@ -1,10 +1,10 @@
 from os.path import join
 from pathlib import Path
 
-from echo import add_callback, CallbackProperty
+from echo import add_callback, ignore_callback, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
-from random import sample
+from random import randint, sample
 from traitlets import default
 
 from cosmicds.registries import register_stage
@@ -100,6 +100,8 @@ class StageOne(HubbleStage):
         # Set up viewers
         spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
         spectrum_viewer.add_event_callback(self.on_spectrum_click, events=['click'])
+        sf_tool = spectrum_viewer.toolbar.tools["hubble:specflag"]
+        add_callback(sf_tool, "flagged", self._on_spectrum_flagged)
 
         for label in ['hub_const_viewer', 'hub_fit_viewer',
                       'hub_comparison_viewer', 'hub_students_viewer',
@@ -227,6 +229,14 @@ class StageOne(HubbleStage):
             self.selection_tool.select_galaxy(galaxy)
             self.story_state.update_student_data()
 
+    def _replace_galaxy_at_index(self, index):
+        dc_name = "SDSS_all_sample_filtered"
+        data = self.get_data(dc_name)
+        components = [x.label for x in data.main_components]
+        new_index = randint(0, data.size-1)
+        for c in components:
+            self.update_data_value(dc_name, c, data[c][new_index], index)
+
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")
 
@@ -251,7 +261,7 @@ class StageOne(HubbleStage):
         sdss_index = next((i for i in range(sdss.size) if sdss["name"][i] == name), None)
         if sdss_index is not None:
             element = sdss['element'][sdss_index]
-            specview.update(element, z)
+            specview.update(name, element, z)
             restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
             index = self.get_widget("galaxy_table").index
             self.update_data_value("student_measurements", "element", element, index)
@@ -335,3 +345,14 @@ class StageOne(HubbleStage):
     def galaxy_table(self):
         return self.get_widget("galaxy_table")
 
+
+    def _on_spectrum_flagged(self, flagged):
+        if not flagged:
+            return
+        index = self.galaxy_table.index
+        self._replace_galaxy_at_index(index)
+
+        spectrum_viewer = self.get_viewer("spectrum_viewer")
+        sf_tool = spectrum_viewer.toolbar.tools["hubble:specflag"]
+        with ignore_callback(sf_tool, "flagged"):
+            sf_tool.flagged = False
