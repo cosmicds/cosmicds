@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container
+    fluid
+    class="px-8"
+  >
     <v-radio-group
       v-model="column"
       column
@@ -7,29 +10,30 @@
       <v-radio
         v-for="[index, option] of radioOptions.entries()"
         :key="index"
-        :color="color(index)"
+        :color="`${color(index)} accent-3`"
         @mouseup="selectChoice(index)"
       >
         <template v-slot:label>
           <div
             @mouseup="selectChoice(index)"
+            class="black--text"
           >
-          {{ option }}
+            {{ option }}
           </div>
         </template>
       </v-radio>
     </v-radio-group>
-    <div
-      class="text-center"
+    <v-alert
+      dense
+      :color="`${color(feedbackIndex)} lighten-4`"
+      :class="feedbackIndex !== null ? 'd-block' : 'd-none'"
     >
-      <div
-        :class="feedbackIndex !== null ? 'd-block' : 'd-none'"
+      <span
+        :class="`${color(feedbackIndex)}--text text--darken-4`"
       >
-        <span :class="`${color(feedbackIndex)}--text`">
-          {{ feedbacks[feedbackIndex] }}
-        </span>
-      </div>
-    </div>
+        {{ feedbacks[feedbackIndex] }}
+      </span>
+    </v-alert>
   </v-container>
 </template>
 
@@ -46,7 +50,7 @@ module.exports = {
     return {
       column: null,
       colorRight: 'green',
-      colorNeutral: 'yellow',
+      colorNeutral: 'orange',
       colorWrong: 'red',
       feedbackIndex: null,
     };

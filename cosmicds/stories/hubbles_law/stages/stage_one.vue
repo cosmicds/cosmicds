@@ -104,6 +104,7 @@
           v-if="stage_state.marker == 'dop_cal2'" />            
       </v-col>
       <v-col
+        v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
         cols="12"
         lg="8"
       >
@@ -112,7 +113,6 @@
             class="py-0"
           >
             <v-card
-              v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
               :color="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'info' : 'black'"
               :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1 my-n1' : 'pa-0'"
               outlined

@@ -598,7 +598,6 @@
           <v-window-item :value="10" 
             class="no-transition"
             style="height: 100%;"
-            align="center"
           >
             <v-card-text
               style="height: 100%;"
@@ -633,7 +632,7 @@
         <v-divider></v-divider>
 
         <v-card-actions
-          class="justify-space-between grey lighten-4"
+          class="grey lighten-4"
         >
           <v-btn
             :disabled="step === 0"
