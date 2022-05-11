@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from echo import DictCallbackProperty
+from echo import CallbackProperty, DictCallbackProperty, ignore_callback
 
 from cosmicds.phases import Story
 from cosmicds.registries import story_registry
@@ -44,6 +44,7 @@ class HubblesLaw(Story):
             "finished": True
         }
     })
+    reset_flag = CallbackProperty(False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -171,3 +172,9 @@ class HubblesLaw(Story):
         student_data = dc['student_data']
         student_data.update_values_from_data(new_data)
         self.make_data_writeable(student_data)
+
+    def vue_start_over(self):
+        self.stage_index = 1
+        self.reset_flag = True
+        with ignore_callback(self, 'reset_flag'):
+            self.reset_flag = False

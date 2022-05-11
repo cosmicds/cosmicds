@@ -1,9 +1,16 @@
 <template>
   <v-container>
+    <v-row>
+      <v-col cols="1">
+        <v-btn
+          @click="story_state.stage_index = 1"
+        >back</v-btn>
+        <v-btn
+          @click="story_state.start_over()"
+        >start over</v-btn>
+      </v-col>
+    </v-row>
     <v-row class="d-flex align-stretch">
-      <v-btn
-        @click="story_state.stage_index = 1"
-      >back</v-btn>
       <v-col cols="6">
         <v-card class="align-self-stretch">
           <c-distance-tool/>

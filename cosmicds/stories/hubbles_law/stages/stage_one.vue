@@ -128,7 +128,7 @@
               width="100%"
               color="success"
               @click="
-                stage_state.marker = story_state.stage_index = 2;
+                story_state.stage_index = 2;
               "
             >
               Done with velocities
