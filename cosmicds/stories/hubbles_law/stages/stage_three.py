@@ -1,3 +1,4 @@
+from echo import add_callback
 from glue.core.message import NumericalDataChangedMessage
 from glue.core.state_objects import State
 from traitlets import default
@@ -44,6 +45,8 @@ class StageThree(HubbleStage):
         fit_viewer.state.x_att = student_data.id['distance']
         fit_viewer.state.y_att = student_data.id['velocity']
 
+        add_callback(self.story_state, "reset_flag", self._on_reset)
+
         # Whenever the student data is updated, the student scatter viewer should update its bounds
         self.hub.subscribe(self, NumericalDataChangedMessage,
                            handler=self._on_student_data_change, filter=self._student_data_filter)
@@ -54,3 +57,10 @@ class StageThree(HubbleStage):
     def _on_student_data_change(self, msg):
         viewer = self.get_viewer("fit_viewer")
         viewer.state.reset_limits()
+
+    def _on_reset(self, flag):
+        print(flag)
+        if flag:
+            fit_viewer = self.get_viewer("fit_viewer")
+            fit_tool = fit_viewer.toolbar.tools["cds:linefit"]
+            fit_tool.deactivate()

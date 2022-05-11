@@ -75,7 +75,7 @@ class LineFitTool(Tool, HubListener):
     def _fit_to_layers(self):
 
         figure = self.viewer.figure
-        marks_to_keep = [mark for mark in figure.marks if mark not in self.lines.keys()]
+        marks_to_keep = [mark for mark in figure.marks if mark not in self.line_marks]
 
         self.lines = {}
         self.slopes = {}
@@ -90,7 +90,7 @@ class LineFitTool(Tool, HubListener):
 
     def _clear_lines(self):
         figure = self.viewer.figure
-        figure.marks = [mark for mark in figure.marks if mark not in self.lines.keys()]
+        figure.marks = [mark for mark in figure.marks if mark not in self.line_marks]
         self.lines = {}
         self.slopes = {}
 
