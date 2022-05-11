@@ -35,6 +35,7 @@ class StageState(State):
     image_location = CallbackProperty()
     lambda_rest = CallbackProperty(0)
     lambda_obs = CallbackProperty(0)
+    element = CallbackProperty("")
     doppler_calc_dialog = CallbackProperty(True)
     student_vel = CallbackProperty(0)
     doppler_calc_complete = CallbackProperty(False)
@@ -302,6 +303,7 @@ class StageOne(HubbleStage):
         self.selection_tool.go_to_location(data["ra"][index], data["decl"][index], fov=GALAXY_FOV)
         self.stage_state.lambda_rest = data["restwave"][index]
         self.stage_state.lambda_obs = data["measwave"][index]
+        self.stage_state.element = data["element"][index]
         print("galaxy row clicked", self.stage_state)
 
     def on_spectrum_click(self, event):

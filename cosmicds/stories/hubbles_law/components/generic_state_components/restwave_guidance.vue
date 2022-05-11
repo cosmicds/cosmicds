@@ -13,7 +13,7 @@
       class="mb-4"
     >
       <p>
-        Your galaxy spectrum has either an H-&alpha; emission line or a Mg-I absorption line marked.
+        Your galaxy spectrum has {{ state.element == 'Mg-I' ? 'a' : 'an' }} {{ state.element }} {{ state.element == 'Mg-I' ? 'absorption' : 'emission' }} line marked.
       </p>
       <p>
         The known <strong>rest wavelength</strong> for the line is recorded in your table.
@@ -47,13 +47,13 @@
       
       <v-col
         cols="6"
-        class="shrink text-right"
+        class="shrink"
         v-if="!state.lambda_used"
       >
         <div
           style="font-size: 16px;"
         >
-          Click <v-icon>mdi-lambda</v-icon> button.
+          Click the <v-icon>mdi-lambda</v-icon> button.
         </div>
       </v-col>
       <v-col

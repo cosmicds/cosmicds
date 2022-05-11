@@ -5,7 +5,9 @@
     elevation="2"
     @click.stop="dialog = true"
   >
+    <v-spacer></v-spacer>
     {{ buttonText }}
+    <v-spacer></v-spacer>
     <v-icon
       class="ml-4"
     >
@@ -402,6 +404,6 @@ module.exports = {
         const newCompleted = isInteractStep ? newStep - 1 : newStep;
         this.max_step_completed = Math.max(this.max_step_completed, newCompleted)
     }
-}
+  }
 };
 </script>

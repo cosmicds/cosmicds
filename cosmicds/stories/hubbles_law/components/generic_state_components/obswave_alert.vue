@@ -15,7 +15,7 @@
         Hover your mouse in the Spectrum Viewer. A vertical measuring tool identifies the wavelength as you move the tool left and right.
       </p>
       <p>
-        Align the measuring tool to the H-&alpha; or Mg I marker and click. This records the <strong>observed wavelength</strong> in your table.
+        Align the measuring tool to the {{ state.element }} (observed) marker and click. This records the <strong>observed wavelength</strong> in your table.
       </p>
     </div>
   </scaffold-alert>
