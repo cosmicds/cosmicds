@@ -1,6 +1,13 @@
 <template>
   <v-container>
     <v-row>
+      <v-col cols="12">
+        <v-btn
+          @click="story_state.stage_index = 2"
+        >back</v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
       <v-col cols="6">
         <jupyter-widget :widget="widgets.fit_table"/>
       </v-col>

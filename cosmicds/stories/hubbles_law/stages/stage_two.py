@@ -1,15 +1,17 @@
 import logging
 
+from astropy.modeling import fitting, models
 from echo import CallbackProperty, add_callback, ignore_callback
 from glue.core.state_objects import State
 from numpy import pi
 from traitlets import default
+from cosmicds.events import WriteToDatabaseMessage
 
 from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSidebar
 from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
-from cosmicds.stories.hubbles_law.utils import FULL_FOV, GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
+from cosmicds.stories.hubbles_law.utils import FULL_FOV, GALAXY_FOV, MILKY_WAY_SIZE_MPC, age_in_gyr_simple, format_fov, format_measured_angle
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 
@@ -69,12 +71,10 @@ class StageTwo(HubbleStage):
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
                                glue_components=['name',
-                                               'velocity',
                                                'distance',
                                                'angular_size'],
                                key_component='name',
                                names=['Galaxy Name',
-                                       'Velocity (km/s)',
                                        'Distance (Mpc)',
                                        'Angular Size'],
                                title='My Galaxies | Distance Measurements',
@@ -120,6 +120,21 @@ class StageTwo(HubbleStage):
         self.update_data_value("student_measurements", "distance", distance, index)
         self.update_data_value("student_measurements", "angular_size", angular_size, index)
         self.story_state.update_student_data()
+
+    def _find_H0(self):
+        data = self.get_data("student_data")
+        x = data["distance"]
+        y = data["velocity"]
+        fit = fitting.LinearLSQFitter()
+        line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
+        fitted_line = fit(line_init, x, y)
+        return fitted_line.slope.value
+
+    def vue_submit_age(self, _args=None):
+        h0 = self._find_H0()
+        age = age_in_gyr_simple(h0)
+        self.story_state.calculations["age_value"] = age
+        self.hub.broadcast(WriteToDatabaseMessage(self))
 
     def vue_start_over(self, _args=None):
         self.app_state.reset_student = True
