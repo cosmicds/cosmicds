@@ -9,7 +9,7 @@ from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSid
 from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
-from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
+from cosmicds.stories.hubbles_law.utils import FULL_FOV, GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 
@@ -103,8 +103,9 @@ class StageTwo(HubbleStage):
         self.distance_tool.measuring_allowed = bool(galaxy)
 
     def _angular_size_update(self, change):
-        self.distance_sidebar.angular_size = format_fov(change["new"])
-        if self.distance_sidebar.angular_size != 0:
+        new_ang_size = change["new"]
+        self.distance_sidebar.angular_size = format_fov(new_ang_size)
+        if new_ang_size !=0 and new_ang_size is not None:
             self._make_measurement()
 
     def _angular_height_update(self, change):
@@ -120,7 +121,11 @@ class StageTwo(HubbleStage):
         self.update_data_value("student_measurements", "angular_size", angular_size, index)
         self.story_state.update_student_data()
 
-        
+    def vue_start_over(self, _args=None):
+        self.app_state.reset_student = True
+        self.distance_tool.reset_canvas()
+        self.distance_tool.go_to_location(0, 0, FULL_FOV)
+        self.story_state.start_over()
 
     @property
     def distance_sidebar(self):

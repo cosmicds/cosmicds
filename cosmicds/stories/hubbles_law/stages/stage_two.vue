@@ -6,7 +6,7 @@
           @click="story_state.stage_index = 1"
         >back</v-btn>
         <v-btn
-          @click="story_state.start_over()"
+          @click="start_over()"
         >start over</v-btn>
       </v-col>
     </v-row>

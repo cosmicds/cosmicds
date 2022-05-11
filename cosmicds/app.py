@@ -23,6 +23,7 @@ class ApplicationState(State):
     dark_mode = CallbackProperty(True)
     student = CallbackProperty({})
     update_db = CallbackProperty(True)
+    reset_student = CallbackProperty(False)
 
 class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
@@ -38,12 +39,10 @@ class Application(VuetifyTemplate, HubListener):
         self.app_state = ApplicationState()
 
         self.app_state.update_db = kwargs.get("update_db", True)
+        self.team_member = kwargs.get("team_member", None)
         
         # For testing purposes, we create a new dummy student on each startup
-        if self.app_state.update_db:
-            data = { "seed": True, "team_member": kwargs.get("team_member", None) }
-            response = requests.post(f"{API_URL}/new-dummy-student", json=data).json()
-            self.app_state.student = response["student"]
+        self._get_new_seed_student()
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
@@ -57,6 +56,7 @@ class Application(VuetifyTemplate, HubListener):
                            handler=self._on_write_to_database)
 
         add_callback(self.app_state, 'dark_mode', self._theme_toggle)
+        add_callback(self.app_state, 'reset_student', self._get_new_seed_student)
 
     def reload(self):
         """
@@ -114,3 +114,9 @@ class Application(VuetifyTemplate, HubListener):
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
+
+    def _get_new_seed_student(self, reset=True):
+        if reset and self.app_state.update_db:
+            data = { "seed": True, "team_member": self.team_member }
+            response = requests.post(f"{API_URL}/new-dummy-student", json=data).json()
+            self.app_state.student = response["student"]

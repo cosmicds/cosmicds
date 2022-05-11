@@ -187,7 +187,7 @@ class StageOne(HubbleStage):
 
         def reset(flag):
             if flag:
-                self.marker = self.markers[0]
+                self.stage_state.marker = self.stage_state.markers[0]
         add_callback(self.story_state, 'reset_flag', reset)
 
     def _on_marker_update(self, old, new):

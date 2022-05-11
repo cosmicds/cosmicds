@@ -173,7 +173,24 @@ class HubblesLaw(Story):
         student_data.update_values_from_data(new_data)
         self.make_data_writeable(student_data)
 
-    def vue_start_over(self):
+    def reset_data(self):
+        dc = self.data_collection
+        student_cols = ["id", "name", "ra", "decl", "z", "type", "measwave",
+                         "restwave", "student_id", "velocity", "distance",
+                         "element", "angular_size"]
+        student_measurements = Data(
+            label='student_measurements',
+            **{x: np.array([], dtype='float64')
+               for x in student_cols})
+        student_data = Data(
+            label="student_data",
+            **{x : ['X'] if x in ['id', 'element', 'type'] else [0] 
+                for x in student_cols})
+        dc["student_measurements"].update_values_from_data(student_measurements)
+        dc["student_data"].update_values_from_data(student_data)
+
+    def start_over(self):
+        self.reset_data()
         self.stage_index = 1
         self.reset_flag = True
         with ignore_callback(self, 'reset_flag'):
