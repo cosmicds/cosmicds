@@ -230,12 +230,18 @@ class StageOne(HubbleStage):
             self.story_state.update_student_data()
 
     def _replace_galaxy_at_index(self, index):
-        dc_name = "SDSS_all_sample_filtered"
-        data = self.get_data(dc_name)
-        components = [x.label for x in data.main_components]
-        new_index = randint(0, data.size-1)
-        for c in components:
-            self.update_data_value(dc_name, c, data[c][new_index], index)
+        sdss_data = self.get_data("SDSS_all_sample_filtered")
+        components = [x.label for x in sdss_data.main_components]
+        meas_data = self.get_data("student_measurements")
+        student_comps = [x.label for x in meas_data.main_components]
+        while True:
+            sdss_index = randint(0, sdss_data.size-1)
+            galaxy = { c: sdss_data[c][sdss_index] for c in components if c in student_comps }
+            if galaxy['name'] not in meas_data['name']:
+                break
+        for c in galaxy.keys():
+            self.update_data_value("student_measurements", c, galaxy[c], index)
+        return galaxy
 
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")
@@ -301,7 +307,6 @@ class StageOne(HubbleStage):
         self.selection_tool.go_to_location(data["ra"][index], data["decl"][index], fov=GALAXY_FOV)
         self.stage_state.lambda_rest = data["restwave"][index]
         self.stage_state.lambda_obs = data["measwave"][index]
-        print("galaxy row clicked", self.stage_state)
 
     def on_spectrum_click(self, event):
         specview = self.get_viewer("spectrum_viewer")
@@ -317,7 +322,6 @@ class StageOne(HubbleStage):
         lamb_rest = data["restwave"][index]
         velocity = int(3 * (10 ** 5) * (value/lamb_rest - 1))
         self.update_data_value("student_measurements", "velocity", velocity, index)
-        print(velocity)
 
 
     def vue_add_current_velocity(self, _args=None):
@@ -350,7 +354,9 @@ class StageOne(HubbleStage):
         if not flagged:
             return
         index = self.galaxy_table.index
-        self._replace_galaxy_at_index(index)
+        galaxy = self._replace_galaxy_at_index(index)
+        self.galaxy_table._populate_table()
+        self.galaxy_table.selected = [galaxy]
 
         spectrum_viewer = self.get_viewer("spectrum_viewer")
         sf_tool = spectrum_viewer.toolbar.tools["hubble:specflag"]
