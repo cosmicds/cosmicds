@@ -88,7 +88,7 @@
       >
         <c-spectrum-guidance 
           v-if="stage_state.marker == 'mee_spe1'"/>
-        <c-restwave-alert
+        <c-restwave-guidance
           v-if="stage_state.marker == 'res_wav1'" />
         <c-obswave-alert
           v-if="stage_state.marker == 'obs_wav1'" />

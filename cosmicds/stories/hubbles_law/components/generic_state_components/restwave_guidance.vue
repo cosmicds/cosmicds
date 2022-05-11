@@ -38,7 +38,6 @@
           elevation="2"
           @click="
             state.marker = 'mee_spe1';
-            state.spectrum_tool_visible = 0;
           "
         >
           back
@@ -48,8 +47,8 @@
       
       <v-col
         cols="6"
-        class="shrink"
-        v-if="!state.lambda_clicked"
+        class="shrink text-right"
+        v-if="!state.lambda_used"
       >
         <div
           style="font-size: 16px;"
@@ -59,7 +58,7 @@
       </v-col>
       <v-col
         class="shrink"
-        v-if="state.lambda_clicked"
+        v-if="state.lambda_used"
       >
         <v-btn
           class="black--text"

@@ -27,7 +27,7 @@ class StageState(State):
     gals_max = CallbackProperty(5)
     gal_selected = CallbackProperty(False)
     vel_win_opened = CallbackProperty(False)
-    lambda_clicked = CallbackProperty(False)
+    lambda_used = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
 
     marker = CallbackProperty("")
@@ -149,7 +149,7 @@ class StageOne(HubbleStage):
             "select_galaxies_2_guidance",
             "choose_row_guidance",
             "spectrum_guidance",
-            "restwave_alert",
+            "restwave_guidance",
             "obswave_alert",
             "obswave_2_alert",            
             "remaining_gals_alert",
@@ -186,6 +186,11 @@ class StageOne(HubbleStage):
         add_callback(self.story_state, 'step_index', self._on_step_index_update)
         self.trigger_marker_update_cb = True
 
+        spectrum_viewer = self.get_viewer("spectrum_viewer")
+        restwave_tool = spectrum_viewer.toolbar.tools["hubble:restwave"]
+
+        add_callback(restwave_tool, 'lambda_used', self._on_lambda_used)
+
     def _on_marker_update(self, old, new):
         if not self.trigger_marker_update_cb:
             return
@@ -218,6 +223,9 @@ class StageOne(HubbleStage):
             gal_type = galaxy['type']
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
+
+    def _on_lambda_used(self, used):
+        self.stage_state.lambda_used = used
 
     def _select_from_data(self, dc_name):
         data = self.get_data(dc_name)
