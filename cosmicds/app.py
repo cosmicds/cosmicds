@@ -1,7 +1,7 @@
 import ipyvuetify as v
 import requests
 import json
-from echo import add_callback, CallbackProperty
+from echo import add_callback, ignore_callback, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.state_traitlets_helpers import GlueState
@@ -120,3 +120,5 @@ class Application(VuetifyTemplate, HubListener):
             data = { "seed": True, "team_member": self.team_member }
             response = requests.post(f"{API_URL}/new-dummy-student", json=data).json()
             self.app_state.student = response["student"]
+            with ignore_callback(self.app_state, 'reset_student'):
+                self.app_state.reset_student = False
