@@ -4,6 +4,7 @@ from pathlib import Path
 from echo import add_callback, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
+from numpy import isin
 from random import sample
 from traitlets import default
 
@@ -121,6 +122,7 @@ class StageOne(HubbleStage):
                                     'Observed Wavelength (Å)',
                                     'Velocity (km/s)'],
                              title='My Galaxies',
+                             use_subset_group=False,
                              single_select=True) # True for now
         self.add_widget(galaxy_table, label="galaxy_table")
         galaxy_table.row_click_callback = self.on_galaxy_row_click
@@ -202,7 +204,8 @@ class StageOne(HubbleStage):
 
     def _on_galaxy_selected(self, galaxy):
         data = self.get_data("student_measurements")
-        already_present = galaxy['name'] in data['name'] # Avoid duplicates
+        is_in = isin(data['name'], galaxy['name']) # Avoid duplicates
+        already_present = is_in.size > 0 and is_in[0]
         if already_present:
             # To do nothing
             return
@@ -225,7 +228,6 @@ class StageOne(HubbleStage):
         for index in indices:
             galaxy = { c: data[c][index] for c in components }
             self.selection_tool.select_galaxy(galaxy)
-            self.story_state.update_student_data()
 
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")
@@ -291,7 +293,6 @@ class StageOne(HubbleStage):
         self.selection_tool.go_to_location(data["ra"][index], data["decl"][index], fov=GALAXY_FOV)
         self.stage_state.lambda_rest = data["restwave"][index]
         self.stage_state.lambda_obs = data["measwave"][index]
-        print("galaxy row clicked", self.stage_state)
 
     def on_spectrum_click(self, event):
         specview = self.get_viewer("spectrum_viewer")

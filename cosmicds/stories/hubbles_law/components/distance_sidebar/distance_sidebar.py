@@ -10,18 +10,16 @@ class DistanceSidebar(v.VuetifyTemplate):
     state = GlueState().tag(sync=True)
     angular_height = Unicode().tag(sync=True)
     angular_size = Unicode().tag(sync=True)
-
     galaxy_type = Unicode().tag(sync=True)
-    height = Unicode().tag(sync=True)
-    angular_size = Unicode().tag(sync=True)
 
     def __init__(self, state, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.state = state
-        add_callback(self.state, 'selected_galaxy', self._on_galaxy_update)
+        add_callback(self.state, 'galaxy', self._on_galaxy_update)
 
     def _on_galaxy_update(self, galaxy):
         self.galaxy_type = galaxy["type"]
+        self.angular_size = ""
 
-    def vue_add_distance_data_point(self):
+    def vue_add_distance_data_point(self, _args=None):
         self.state.make_measurement = True
