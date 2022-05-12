@@ -224,6 +224,7 @@ class Table(VuetifyTemplate, HubListener):
         self._row_click_callback = cb
 
     def vue_handle_row_click(self, item, data=None):
+        key = item[self.key_component]
         if self.row_click_callback:
             self.row_click_callback(item, data)
         if self.single_select:
@@ -231,8 +232,8 @@ class Table(VuetifyTemplate, HubListener):
 
         # We can't just use append/remove here
         # We need a reassignment so that the watcher is triggered
-        elif item[self.key_component] in self.selected_keys:
-            self.selected = [x for x in self.selected if x != item]
+        elif key in self.selected_keys:
+            self.selected = [x for x in self.selected if x[self.key_component] != key]
         else:
             self.selected = self.selected + [item]
 
