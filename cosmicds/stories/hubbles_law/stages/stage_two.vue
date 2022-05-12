@@ -10,6 +10,17 @@
       </v-col>
     </v-row>
 
+    <v-row class="d-flex align-stretch">
+      <v-col cols="4">
+        <c-distance-sidebar/>
+      </v-col>
+      <v-col cols="6">
+        <v-card class="align-self-stretch">
+          <c-distance-tool/>
+        </v-card>
+      </v-col>
+    </v-row>
+
     <v-row>
       <v-col cols="4">
         <v-card
@@ -24,17 +35,6 @@
       </v-col>
       <v-col cols="6">
         <jupyter-widget :widget="widgets.distance_table"/>      
-      </v-col>
-    </v-row>
-
-    <v-row class="d-flex align-stretch">
-      <v-col cols="4">
-        <c-distance-sidebar/>
-      </v-col>
-      <v-col cols="6">
-        <v-card class="align-self-stretch">
-          <c-distance-tool/>
-        </v-card>
       </v-col>
     </v-row>
 
