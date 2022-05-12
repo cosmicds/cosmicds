@@ -28,7 +28,7 @@ class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
     story_state = GlueState().tag(sync=True)
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
-    drawer = Bool(False).tag(sync=True)
+    drawer = Bool(True).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
     app_state = GlueState().tag(sync=True)
 
@@ -106,7 +106,6 @@ class Application(VuetifyTemplate, HubListener):
 
         user = self.app_state.student
         story = self.story_state.name
-        json.loads
         data = json.loads(json.dumps(self.story_state.as_dict()))
         if data:
             requests.put(f"{API_URL}/story-state/{user['id']}/{story}", json=data)
