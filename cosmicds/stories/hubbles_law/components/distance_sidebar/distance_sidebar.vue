@@ -1,9 +1,10 @@
 <template>
   <v-card
     width="100%"
+    color="primary"
   >
     <v-card-title>{{state.galaxy.name || ""}}</v-card-title>
-    <v-card-text>
+    <v-card-text color="primary">
       <v-divider></v-divider>
       <v-list>
         <v-list-item-content>
