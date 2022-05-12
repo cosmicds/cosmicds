@@ -6,7 +6,7 @@ from threading import Timer
 from traitlets import Unicode
 
 __all__ = [
-    'load_template', 'update_figure_css', 'extend_tool',
+    'load_template', 'update_figure_css', 'extend_tool', 'convert_material_color',
     'API_URL', 'CDSJSONEncoder', 'RepeatedTimer'
 ]
 
@@ -168,3 +168,15 @@ def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
     
     tool.activate = extended_activate
     tool.deactivate = extended_deactivate
+
+def convert_material_color(color_string):
+    """
+    This function converts the name of a material color, like those used in 
+    ipyvuetify (e.g. colors.<base>.<lighten/darken#>) into a hex code.
+    """
+    from cosmicds.material_colors import MATERIAL_COLORS 
+    parts = color_string.split(".")[1:]
+    result = MATERIAL_COLORS
+    for part in parts:
+        result = result[part]
+    return result

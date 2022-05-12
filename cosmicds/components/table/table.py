@@ -8,13 +8,13 @@ from glue.core.subset import SubsetState
 from ipyvuetify import VuetifyTemplate
 from traitlets import Bool, List, Unicode, observe
 
-from ...utils import load_template
+from ...utils import convert_material_color, load_template
 
 __all__ = ['Table']
 
 
 class Table(VuetifyTemplate, HubListener):
-    default_color = '#00ff00'
+    default_color = 'dodgerblue'
 
     template = load_template("table.vue", __file__, traitlet=True).tag(sync=True)
     headers = List().tag(sync=True)
@@ -23,6 +23,7 @@ class Table(VuetifyTemplate, HubListener):
     search = Unicode().tag(sync=True)
     single_select = Bool(False).tag(sync=True)
     selected = List().tag(sync=True)
+    sel_color = Unicode().tag(sync=True)
     sort_by = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
     use_search = Bool(False).tag(sync=True)
@@ -48,6 +49,7 @@ class Table(VuetifyTemplate, HubListener):
         self._glue_data = data
 
         self.title = kwargs.get('title', '')
+        self.selected_color = kwargs.get('selected_color', Table.default_color)
 
         self._glue_components = components
         self._glue_component_names = kwargs.get('names', components)
@@ -100,6 +102,16 @@ class Table(VuetifyTemplate, HubListener):
     @property
     def subset_label(self):
         return self._subset_label
+
+    @property
+    def selected_color(self):
+        return self.sel_color
+
+    @selected_color.setter
+    def selected_color(self, value):
+        if value.startswith("colors"):
+            value = convert_material_color(value)
+        self.sel_color = value
 
     @glue_data.setter
     def glue_data(self, data):
@@ -180,6 +192,10 @@ class Table(VuetifyTemplate, HubListener):
     def _on_selected_changed(self, event):
         self.update_subset(event["new"])
 
+    @property
+    def selected_keys(self):
+        return [item[self.key_component] for item in self.selected]
+
     def initialize_subset_if_needed(self):
         if self._subset is None:
             self.subset = self._new_subset()
@@ -208,6 +224,7 @@ class Table(VuetifyTemplate, HubListener):
         self._row_click_callback = cb
 
     def vue_handle_row_click(self, item, data=None):
+        key = item[self.key_component]
         if self.row_click_callback:
             self.row_click_callback(item, data)
         if self.single_select:
@@ -215,8 +232,8 @@ class Table(VuetifyTemplate, HubListener):
 
         # We can't just use append/remove here
         # We need a reassignment so that the watcher is triggered
-        elif item in self.selected:
-            self.selected = [x for x in self.selected if x != item]
+        elif key in self.selected_keys:
+            self.selected = [x for x in self.selected if x[self.key_component] != key]
         else:
             self.selected = self.selected + [item]
 

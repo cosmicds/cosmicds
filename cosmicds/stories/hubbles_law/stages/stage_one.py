@@ -4,6 +4,7 @@ from pathlib import Path
 from echo import add_callback, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
+import ipyvuetify as v
 from numpy import isin
 from random import sample
 from traitlets import default
@@ -122,6 +123,7 @@ class StageOne(HubbleStage):
                                     'Observed Wavelength (Å)',
                                     'Velocity (km/s)'],
                              title='My Galaxies',
+                             selected_color=self.table_selected_color(self.app_state.dark_mode),
                              use_subset_group=False,
                              single_select=True) # True for now
         self.add_widget(galaxy_table, label="galaxy_table")

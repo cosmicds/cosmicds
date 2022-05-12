@@ -232,3 +232,6 @@ class StageThree(HubbleStage):
     def _on_student_data_change(self, msg):
         viewer = self.get_viewer("fit_viewer")
         viewer.state.reset_limits()
+
+    def table_selected_color(self, dark):
+        return "colors.lightBlue.darken4"
