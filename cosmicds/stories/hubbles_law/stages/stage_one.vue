@@ -1,17 +1,14 @@
 <template>
   <v-container>
+            <!--
     <v-row>
       <v-col>
         <v-btn
           color="error"
           class="black--text"
-          @click="select_galaxies();"
-        >select 5 galaxies</v-btn>
-        <v-btn
-          color="error"
-          class="black--text"
           @click="console.dir(app_state.student)"
         >show student data</v-btn>
+        -->
         <!--
         <v-btn
           color="error"
@@ -21,15 +18,16 @@
         <v-btn
           @click="console.log(stage_state)"
         >State</v-btn> 
-        -->
       </v-col>
     </v-row>
+    -->
 
     <v-row>
       <v-col
         cols="12"
         lg="4"
       >
+
             <!--
         <c-stage-one-start-guidance
           v-if="stage_state.marker == 'mee_gui1'" />
@@ -64,6 +62,23 @@
         cols="12"
         lg="4"
       >
+        <v-btn
+          class="white-text px-a"
+          color="success"
+          @click="select_galaxies();"
+        >select 5 galaxies</v-btn>
+        <v-divider
+          class="my-3"
+          >
+        </v-divider>
+        <v-card
+          class="pa-4"
+          color="info"
+          elevation="6"
+        >
+          Click a row to display the spectrum.
+        </v-card>
+          <!--      
         <c-choose-row-guidance
           v-if="stage_state.marker == 'cho_row1'" />
         <c-doppler-calc-3-guidance
@@ -74,7 +89,7 @@
           v-if="stage_state.marker == 'dop_cal5'"/>
         <c-doppler-calc-6-component
           v-if="stage_state.marker == 'dop_cal6'"/> 
-          
+          -->
       </v-col>
       <v-col
         cols="12"
@@ -95,6 +110,19 @@
         cols="12"
         lg="4"
       >
+        <v-card
+          class="pa-4"
+          color="info"
+          elevation="6"
+        >
+          <ul>
+            <li>Zoom in to region around line</li>
+            <li>Align vertical measuring tool to line and click to record wavelength and velocity</li>
+            <li>If line looks incorrect (for example, if there does not appear to be a strong Mg-I line) click the flag.</li>
+            <li>Repeat for all 5 galaxies and click "Go to Distance Measurement" to move on</li>            
+          </ul>
+        </v-card>
+        <!--
         <c-spectrum-guidance 
           v-if="stage_state.marker == 'mee_spe1'"/>
         <c-restwave-alert
@@ -110,7 +138,8 @@
         <c-doppler-calc-1-alert
           v-if="stage_state.marker == 'dop_cal1'" />
         <c-doppler-calc-2-alert
-          v-if="stage_state.marker == 'dop_cal2'" />            
+          v-if="stage_state.marker == 'dop_cal2'" />    
+          -->        
       </v-col>
       <v-col
         cols="12"
@@ -127,17 +156,18 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" lg="8" offset-lg="4">
-            <v-btn
-              class="white-text px-a"
-              width="100%"
-              color="success"
-              @click="
-                story_state.stage_index = 2;
-              "
-            >
-              Done with velocities
-            </v-btn>        
+      <v-col cols="9">
+      </v-col>
+      <v-col cols="3">
+        <v-btn
+          class="white-text px-a"
+          color="success"
+          @click="
+            story_state.stage_index = 2;
+          "
+        >
+          Go to Distance Measurement
+        </v-btn>        
       </v-col>
     </v-row>
     <!--
