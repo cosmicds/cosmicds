@@ -192,6 +192,10 @@ class Table(VuetifyTemplate, HubListener):
     def _on_selected_changed(self, event):
         self.update_subset(event["new"])
 
+    @property
+    def selected_keys(self):
+        return [item[self.key_component] for item in self.selected]
+
     def initialize_subset_if_needed(self):
         if self._subset is None:
             self.subset = self._new_subset()
@@ -227,7 +231,7 @@ class Table(VuetifyTemplate, HubListener):
 
         # We can't just use append/remove here
         # We need a reassignment so that the watcher is triggered
-        elif item in self.selected:
+        elif item[self.key_component] in self.selected_keys:
             self.selected = [x for x in self.selected if x != item]
         else:
             self.selected = self.selected + [item]
