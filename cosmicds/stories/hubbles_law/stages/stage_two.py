@@ -145,6 +145,7 @@ class StageTwo(HubbleStage):
         self.app_state.reset_student = True
         self.distance_tool.reset_canvas()
         self.distance_tool.go_to_location(0, 0, FULL_FOV)
+        self.display_age = False
         self.story_state.start_over()
 
     @property
