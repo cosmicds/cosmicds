@@ -4,7 +4,7 @@ from astropy.modeling import fitting, models
 from echo import CallbackProperty, add_callback, ignore_callback
 from glue.core.state_objects import State
 from numpy import pi
-from traitlets import default
+from traitlets import default, Bool, Float
 from cosmicds.events import WriteToDatabaseMessage
 
 from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSidebar
@@ -48,6 +48,8 @@ class StageState(State):
     "Measure distances"
 ])
 class StageTwo(HubbleStage):
+    age_to_display = Float(0).tag(sync=True)
+    display_age = Bool(False).tag(sync=True)
 
     @default('template')
     def _default_template(self):
@@ -134,6 +136,8 @@ class StageTwo(HubbleStage):
         h0 = self._find_H0()
         age = age_in_gyr_simple(h0)
         self.story_state.calculations["age_value"] = age
+        self.age_to_display = age
+        self.display_age = True
         self.hub.broadcast(WriteToDatabaseMessage(self))
 
     def vue_start_over(self, _args=None):

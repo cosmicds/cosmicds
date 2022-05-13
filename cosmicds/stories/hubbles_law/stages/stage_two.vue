@@ -51,12 +51,20 @@
       <v-col cols="4">
         <v-spacer></v-spacer>
       </v-col>
-      <v-col cols="1">
+      <v-col cols="2" class="text-right">
         <v-btn
           class="white-text px-a"
           color="success"
           @click="submit_age()"
         >submit age</v-btn>
+        <v-card 
+          v-if="display_age"
+          class="pa-2 mt-2"
+          elevation="6"
+          outlined 
+        >
+          Estimated age: {{ age_to_display }} Gy
+        </v-card>
       </v-col>      
     </v-row>    
     <v-row>
@@ -72,7 +80,7 @@
       <v-col cols="4">
         <v-spacer></v-spacer>
       </v-col>
-      <v-col cols="1">
+      <v-col cols="2" class="text-right">
         <v-btn
           class="white-text px-a"
           color="success"
@@ -84,7 +92,7 @@
       <v-col cols="7">
         <v-spacer></v-spacer>
       </v-col>
-      <v-col cols="1">
+      <v-col cols="3" class="text-right">
         <v-btn
           class="white-text px-a"
           color="accent"
