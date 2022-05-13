@@ -54,6 +54,12 @@ def age_in_gyr(H0):
     unit = age.unit
     return age.value * unit.to(u.Gyr)
 
+def age_in_gyr_simple(H0):
+    inv = 1 / H0
+    mpc_over_km = u.Mpc.to(u.km)
+    s_to_gyr = u.s.to(u.Gyr)
+    return round(inv * mpc_over_km * s_to_gyr, 1)
+
 
 def format_fov(fov):
     return fov.to_string(unit=u.degree, sep=":", precision=0, pad=True) + " (dd:mm:ss)"
