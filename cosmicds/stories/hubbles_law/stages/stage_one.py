@@ -327,6 +327,7 @@ class StageOne(HubbleStage):
         lamb_rest = data["restwave"][index]
         velocity = int(3 * (10 ** 5) * (value/lamb_rest - 1))
         self.update_data_value("student_measurements", "velocity", velocity, index)
+        self.story_state.update_student_data()
 
 
     def vue_add_current_velocity(self, _args=None):
@@ -337,6 +338,7 @@ class StageOne(HubbleStage):
             lamb_meas = data["measwave"][index]
             velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
             self.update_data_value("student_measurements", "velocity", velocity, index)
+            self.story_state.update_student_data()
 
     @property
     def selection_tool(self):
