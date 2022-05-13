@@ -39,6 +39,20 @@
         {{ measuring ? 'Stop measuring' : 'Start measuring'}}
       </v-tooltip>
 
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon
+            v-bind="attrs"
+            v-on="on"
+            :disabled="Object.keys(galaxy).length == 0"
+            @click="mark_galaxy_bad()"
+          >
+            <v-icon>mdi-flag</v-icon>
+          </v-btn>
+        </template>
+        Flag galaxy as missing image
+      </v-tooltip>
+
       <v-btn icon>
         <v-icon>mdi-information-outline</v-icon>
       </v-btn>

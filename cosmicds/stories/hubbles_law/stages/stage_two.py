@@ -103,6 +103,7 @@ class StageTwo(HubbleStage):
         self.stage_state.galaxy = galaxy
         self.stage_state.galaxy_dist = None
         self.distance_tool.measuring_allowed = bool(galaxy)
+        self.distance_tool.galaxy = galaxy
 
     def _angular_size_update(self, change):
         new_ang_size = change["new"]
