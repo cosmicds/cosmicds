@@ -33,7 +33,7 @@ class StageThree(HubbleStage):
 
     @default('subtitle')
     def _default_subtitle(self):
-        return "Perhaps a small blurb about this stage"
+        return ""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

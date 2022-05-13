@@ -55,11 +55,11 @@ class StageTwo(HubbleStage):
 
     @default('title')
     def _default_title(self):
-        return "Another Stage Name"
+        return "Distance Measurements"
 
     @default('subtitle')
     def _default_subtitle(self):
-        return "Perhaps a small blurb about this stage"
+        return ""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

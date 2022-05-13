@@ -7,7 +7,7 @@ from glue.core.message import (DataCollectionAddMessage,
 from glue_jupyter.bqplot.common.tools import Tool
 from numpy import isnan
 
-from cosmicds.stories.hubbles_law.utils import line_mark
+from cosmicds.stories.hubbles_law.utils import line_mark, age_in_gyr_simple
 
 @viewer_tool
 class LineFitTool(Tool, HubListener):
@@ -61,7 +61,8 @@ class LineFitTool(Tool, HubListener):
         start_x, end_x = x
         start_y, end_y = y
         slope = fitted_line.slope.value
-        label = 'Slope = %.0f km / s / Mpc' % slope if not isnan(slope) else None
+        age = age_in_gyr_simple(slope)
+        label = 'H0 = %.0f km/s/Mpc; %.1f Gyr' % (slope, age) if not isnan(slope) else None
         color = layer.state.color if layer.state.color != '0.35' else 'black'
         line = line_mark(layer, start_x, start_y, end_x, end_y, color, label)
         return line, slope
