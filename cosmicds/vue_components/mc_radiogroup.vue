@@ -3,17 +3,16 @@
     <v-radio-group
       v-model="column"
       column
+      :disabled='complete'
     >
       <v-radio
         v-for="[index, option] of radioOptions.entries()"
         :key="index"
         :color="color(index)"
-        @mouseup="selectChoice(index)"
+        @change="selectChoice(index)"
       >
         <template v-slot:label>
-          <div
-            @mouseup="selectChoice(index)"
-          >
+          <div>
           {{ option }}
           </div>
         </template>
@@ -48,6 +47,7 @@ module.exports = {
       colorRight: 'green',
       colorNeutral: 'yellow',
       colorWrong: 'red',
+      complete: false,
       feedbackIndex: null,
     };
   },
@@ -56,6 +56,9 @@ module.exports = {
       this.feedbackIndex = index;
       if (this.selectedCallback != null) {
         this.selectedCallback(index);
+      }
+      if (this.correctAnswers.includes(index)) {
+        this.complete = true;
       }
     },
     color: function(index) {
