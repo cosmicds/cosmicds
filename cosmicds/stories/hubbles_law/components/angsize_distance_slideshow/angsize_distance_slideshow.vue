@@ -659,6 +659,7 @@
           <v-spacer></v-spacer>
            <v-btn
             :disabled="step > max_step_completed"
+            v-if="step < length-1"
             color="accent"
             text
             @click="step++;"
@@ -666,7 +667,7 @@
             {{ step < length-1 ? 'next' : '' }}
           </v-btn>
           <v-btn
-            :disabled = "step < length-1"
+            v-if = "step == length-1"
             color="accent"
             class="black--text"
             depressed
