@@ -213,9 +213,15 @@ export default {
       .find(e => e.includes('voila/static'));
     this.app_state.using_voila = item !== undefined;
 
-
+    // Colors that seem to work consistently are in Section "4.3. Colors via svgnames option," pg 42 of this doc: https://ctan.math.washington.edu/tex-archive/macros/latex/contrib/xcolor/xcolor.pdf
     window.MathJax = {
-      tex: {packages: {'[+]': ['input']}},
+      loader: {load: ['[tex]/color', '[tex]/bbox']},
+      tex: {
+        packages: {'[+]': ['input', 'color', 'bbox']},
+        color: {
+          padding: '4px'
+        }
+      },
       startup: {
         ready() {
           const Configuration = MathJax._.input.tex.Configuration.Configuration;
@@ -298,8 +304,11 @@ export default {
     // This is a modified version of the code from https://github.com/vuetifyjs/vuetify/issues/4058#issuecomment-450636420
     // In particular, the reliance on setInterval has been removed in favor of a ResizeObserver
     const d = {};
+    const titleClasses = ["v-card__title", "v-toolbar__content"];
     document.addEventListener("mousedown", e => {
-      if (!e.target.classList.contains("v-card__title")) return;
+      const classes = Array.from(e.target.classList);
+      const containsTitleClass = classes.some(x => titleClasses.includes(x));
+      if (!containsTitleClass) return;
       const closestDialog = e.target.closest(".v-dialog.v-dialog--active");
       if (e.button === 0 && closestDialog != null) { // element which can be used to move element
         const boundingRect = closestDialog.getBoundingClientRect();
@@ -402,6 +411,12 @@ body {
   height: 100%;
 }
 
+input {
+  width: 4em !important;
+  border: 1px solid black !important;
+  border-radius: 3px !important;
+}
+
 .MathJax,
 .MathJax_Display {
   width: fit-content;
@@ -417,11 +432,13 @@ body {
   display: none;
 }
 
-.v-dialog.v-dialog--active .v-card__title {
+.v-dialog.v-dialog--active .v-card__title,
+.v-dialog.v-dialog--active .v-toolbar__content {
     cursor: grab;
 }
 
-.v-dialog.v-dialog--active .v-card__title.dragging {
+.v-dialog.v-dialog--active .v-card__title.dragging,
+.v-dialog.v-dialog--active .v-toolbar__content.dragging {
   cursor: grabbing;
 }
 </style>

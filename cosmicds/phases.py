@@ -2,9 +2,9 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from ipywidgets import widget_serialization
 from traitlets import Dict, Unicode, default
 from cosmicds.components.viewer_layout import ViewerLayout
+from cosmicds.events import WriteToDatabaseMessage
 
 from cosmicds.mixins import TemplateMixin, HubMixin
-from cosmicds.utils import load_template
 from glue.core import Data
 from glue.core.state_objects import State
 from echo import DictCallbackProperty, CallbackProperty, add_callback
@@ -29,16 +29,31 @@ class Story(State, HubMixin):
         # in the stage state
         add_callback(self, 'step_index', self._on_step_index_changed)
         add_callback(self, 'step_complete', self._on_step_complete_changed)
+        add_callback(self, 'stage_index', self._on_stage_index_changed)
+
+    def _on_stage_index_changed(self, value):
+        self.hub.broadcast(WriteToDatabaseMessage(self))
 
     def _on_step_index_changed(self, value):
         self.stages[self.stage_index]['step_index'] = value
         self.step_complete = self.stages[self.stage_index]['steps'][
             self.step_index]['completed']
+        self.hub.broadcast(WriteToDatabaseMessage(self))
 
     def _on_step_complete_changed(self, value):
         self.stages[self.stage_index]['steps'][self.step_index][
             'completed'] = value
+        self.hub.broadcast(WriteToDatabaseMessage(self))
 
+    def viewers(self):
+        return self.app.viewers
+
+    # Data can be data, a subset, or a subset group
+    def set_layer_visible(self, data, viewers):
+        for viewer in self.viewers():
+            for layer in viewer.layers:
+                if layer.state.layer.label == data.label:
+                    layer.state.visible = viewer in viewers
 
 class Stage(TemplateMixin):
     template = Unicode().tag(sync=True)
@@ -57,8 +72,10 @@ class Stage(TemplateMixin):
         self.story_state = story_state
         self.app_state = app_state
 
-    def add_viewer(self, cls, label, data=None, layout=ViewerLayout, show_toolbar=True):
+    def add_viewer(self, cls, label, viewer_label=None, data=None, layout=ViewerLayout, show_toolbar=True):
         viewer = self.app.new_data_viewer(cls, data=data, show=False)
+        if viewer_label is not None:
+            viewer.LABEL = viewer_label
         current_viewers = {k: v for k, v in self.viewers.items()}
         viewer_layout = layout(viewer)
         viewer_layout.show_toolbar = show_toolbar
@@ -126,6 +143,11 @@ class Stage(TemplateMixin):
         new_data = Data(label=data.label, **component_dict)
         self.story_state.make_data_writeable(new_data)
         data.update_values_from_data(new_data)
+
+    def get_data_index(self, dc_name, component, condition):
+        data = self.data_collection[dc_name]
+        component = data[component]
+        return next((index for index, x in enumerate(component) if condition(x)), None)
 
     def vue_set_step_index(self, value):
         self.story_state.step_index = value

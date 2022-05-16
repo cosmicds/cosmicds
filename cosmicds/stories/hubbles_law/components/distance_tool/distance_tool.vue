@@ -1,5 +1,23 @@
 <template>
-  <div id="distance-root">
+  <div
+    id="distance-root"
+    v-intersect="(entries, observer, isIntersecting) => {
+
+      /**
+        We can't just use .once
+        since that seems to run before the viewer actually comes into view
+        so we'll just manually keep track of whether the iframe
+        has been updated or not
+      */
+      if (this.ranIntersectObserver) { return; }
+      const root = entries[0].target;
+      const element = root.querySelector('iframe');
+      if (element) {
+        element.src = element.src.replace('/api/kernels', '');
+        this.ranIntersectObserver = true;
+      }
+    }"
+  >
     <v-toolbar
       color="primary"
       dense
@@ -8,19 +26,6 @@
     >
       <v-toolbar-title>Estimate Distance</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-tooltip top>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn icon
-            v-bind="attrs"
-            v-on="on"
-            :disabled="!measuring_allowed || view_changing"
-            @click="toggle_measuring()"
-          >
-            <v-icon>mdi-ruler</v-icon>
-          </v-btn>
-        </template>
-        {{ measuring ? 'Stop measuring' : 'Start measuring'}}
-      </v-tooltip>
 
       <v-btn icon>
         <v-icon>mdi-information-outline</v-icon>
@@ -38,6 +43,28 @@
           class="wwt-widget"
         />
       </v-lazy>
+      <v-tooltip
+        top
+        class="fab-tooltip"
+        >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            fab
+            dark
+            bottom
+            right
+            absolute
+            color="secondary"
+            class="measuring-fab"
+            v-bind="attrs"
+            v-on="on"
+            v-show="measuring_allowed && !view_changing"
+            @click="toggle_measuring()">
+            <v-icon>mdi-ruler</v-icon>
+          </v-btn>
+        </template>
+        {{ measuring ? 'Stop measuring' : 'Start measuring'}}
+      </v-tooltip>
     </div>
   </div>
 </template>
@@ -48,6 +75,7 @@ export default {
   mounted() {
     this.setup();
     this.reset();
+    this.ranIntersectObserver = false;
     window.addEventListener('resize', this.handleResize);
     // We don't get a Window resize event when the canvas first appears
     // so we watch the canvas' dimensions instead
@@ -194,9 +222,6 @@ export default {
       const referenceElement = this.canvas.parentElement;
       this.canvas.width = referenceElement.clientWidth;
       this.canvas.height = referenceElement.clientHeight;
-      console.log("Resize");
-      console.log(referenceElement.clientWidth);
-      console.log(referenceElement.clientHeight);
       const newWidth = referenceElement.clientWidth;
       const newHeight = referenceElement.clientHeight;
       if (newWidth === 0 || newHeight === 0) {
@@ -370,5 +395,18 @@ export default {
 
 .grabbing {
   cursor: grabbing;
+}
+
+.measuring-fab {
+  --margin: 15px;
+  --card-padding: 16px;
+  bottom: 0px !important;
+  margin-bottom: var(--margin);
+  margin-right: calc(var(--margin) - var(--card-padding));
+  z-index: 25 !important;
+}
+
+.fab-tooltip {
+  z-index: 25 !important;
 }
 </style>

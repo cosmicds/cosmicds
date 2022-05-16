@@ -5,8 +5,12 @@ from echo import DictCallbackProperty
 from cosmicds.phases import Story
 from cosmicds.registries import story_registry
 import numpy as np
+from glue.core.component import CategoricalComponent, Component
 from glue.core import Data
 import ipyvuetify as v
+
+import requests
+from cosmicds.utils import API_URL
 
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
@@ -57,8 +61,8 @@ class HubblesLaw(Story):
                 data_dir / "galaxy_data",
                 data_dir / "Hubble 1929-Table 1",
                 data_dir / "HSTkey2001",
-                data_dir / "SDSS_all_sample_filtered",
                 data_dir / "dummy_student_data",
+                #data_dir / "SDSS_all_sample_filtered",
                 output_dir / "HubbleData_ClassSample",
                 output_dir / "HubbleData_All",
                 output_dir / "HubbleSummary_ClassSample",
@@ -67,13 +71,48 @@ class HubblesLaw(Story):
             )
         ])
 
-        # Compose empty data containers to be populated by user
+        # Load in the galaxy data
+        galaxies = requests.get(f"{API_URL}/galaxies").json()
+        galaxies_dict = { k : [x[k] for x in galaxies] for k in galaxies[0] }
+        name_ext = ".fits"
+        galaxies_dict["name"] = [x[:-len(name_ext)] for x in galaxies_dict["name"]]
         self.data_collection.append(Data(
-            label='student_measurements',
-            **{x: np.array([], dtype='float64')
-               for x in ["ID", "RA", "DEC", "Z", "Type", "measwave",
+            label="SDSS_all_sample_filtered",
+            **galaxies_dict
+        ))
+
+        # Compose empty data containers to be populated by user
+        self.student_cols = ["id", "name", "ra", "decl", "z", "type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
-                         "Element"]}))
+                         "element", "angular_size"]
+        self.categorical_cols = ['name', 'element', 'type']
+        student_measurements = Data(label="student_measurements")
+        student_data = Data(label="student_data")
+        for col in self.student_cols:
+            categorical = col in self.categorical_cols
+            ctype = CategoricalComponent if categorical else Component
+            meas_comp = ctype(np.array([]))
+            data = ['X'] if categorical else [0]
+            data_comp = ctype(np.array(data))
+            student_measurements.add_component(meas_comp, col)
+            student_data.add_component(data_comp, col)
+
+        # student_measurements = Data(
+        #     label='student_measurements',
+        #     **{x: np.array([], dtype='float64')
+        #        for x in student_cols})
+        # student_data = Data(
+        #     label="student_data",
+        #     **{x : ['X'] if x in ['id', 'element', 'type'] else [0] 
+        #         for x in student_cols})
+        self.data_collection.append(student_measurements)
+        self.data_collection.append(student_data)
+
+        self.app.add_link(student_measurements, 'id', student_data, 'id')
+        self.app.add_link(student_measurements, 'name', student_data, 'name')
+        self.app.add_link(student_measurements, 'distance', student_data, 'distance')
+        self.app.add_link(student_measurements, 'velocity', student_data, 'velocity')
+        self.app.add_link(student_measurements, 'student_id', student_data, 'student_id')
 
         # Make all data writeable
         for data in self.data_collection:
@@ -102,16 +141,22 @@ class HubblesLaw(Story):
         v.theme.themes.dark.anchor = '' # Unallocated
         v.theme.themes.light.anchor = ''
 
-    def load_spectrum_data(self, spectrum, gal_type):
+    def load_spectrum_data(self, name, gal_type):
         type_folders = {
             "Sp" : "spirals_spectra",
             "E" : "ellipticals_spectra",
             "Ir" : "irregulars_spectra"
         }
-        name = spectrum.split(".")[0]
+
+        ext = ".fits"
+        if not name.endswith(ext):
+            filename = name + ext
+        else:
+            filename = name
+            name = name[:-len(ext)]
         spectra_path = Path(__file__).parent / "data" / "spectra"
         folder = spectra_path / type_folders[gal_type]
-        path = str(folder / spectrum)
+        path = str(folder / filename)
         data_name = name + '[COADD]'
 
         # Don't load data that we've already loaded
@@ -137,3 +182,27 @@ class HubblesLaw(Story):
             data = Data(label=label, **components)
             self.make_data_writeable(data) 
             dc.append(data)
+
+    def update_student_data(self):
+        dc = self.data_collection
+        meas_data = dc['student_measurements']
+        df = meas_data.to_dataframe()
+        df = df[df['distance'].notna() & \
+                df['velocity'].notna() & \
+                df['angular_size'].notna()]
+        df["name"] = df["name"].astype(np.dtype(str))
+        main_components = [x.label for x in meas_data.main_components]
+        components = { col: list(df[col]) for col in main_components }
+        if not all(len(v) > 0 for v in components.values()):
+            return
+
+        new_data = Data(label='student_data')
+        for col, data in components.items():
+            categorical = col in self.categorical_cols
+            ctype = CategoricalComponent if categorical else Component
+            comp = ctype(np.array(data))
+            new_data.add_component(comp, col)
+        
+        student_data = dc['student_data']
+        student_data.update_values_from_data(new_data)
+        self.make_data_writeable(student_data)

@@ -50,81 +50,66 @@
             class="no-transition"
           >
             <v-card-text>
-              How do the observed wavelengths of emission or absorption lines in your galaxies
-              compare with the “rest” wavelength of those lines?
+              <p>
+                Throughout the data story, you will answer questions that are designed to guide your thinking. Your responses will be recorded (as in a scientist’s lab notebook), so you can use this information to support your claims later in the story.
+              </p>
+              <p>
+                Scientists do not work in a vacuum and neither should you. You can consult colleagues (classmates or lab partners) and instructors for help.
+              </p>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="1" 
+            class="no-transition"
+          >
+            <v-card-text>
+              <p>
+                Recall that you are looking at the same kind of observations Vesto Slipher made in 1920. We’ll ask you some of the question astronomers in 1920 might have asked about Slipher’s data.
+              </p>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="2" 
+            class="no-transition"
+          >
+            <v-card-text>
+              <p>
+                How do the observed wavelengths of your galaxies' spectral lines compare with their rest wavelengths? Choose the response that best completes the sentence below.
+              </p>
+              <em>The observed wavelengths of the spectral lines...:</em>
               <mc-radiogroup
                 :radio-options="[
-                  'Lines in the galaxies have the same wavelength as the lines at rest.',
-                  'Some galaxies have lines with smaller wavelengths and some have lines with larger wavelengths than the lines at rest.',
-                  'Most or all of the galaxies have lines with smaller wavelengths than the lines at rest.',
-                  'Most or all of the galaxies have lines with larger wavelengths than the lines at rest.'
+                  'in ALL of my galaxies are the SAME as the rest wavelengths of the lines.',
+                  'in SOME of my galaxies are LONGER than the rest wavelengths of the lines and are SHORTER in other galaxies.',
+                  'in ALL of my galaxies are LONGER than the rest wavelengths of the lines.',
+                  'in ALL of my galaxies are SHORTER than the rest wavelengths of the lines.',
                 ]"
-                :feedbacks="['Try again.', 'Try again.', 'Try again.', 'That\'s right!']"
-                :answer-key="3"
+                :feedbacks="['Try again. For each galaxy (a row in the table), compare the values for rest wavelength (column 3) and observed wavelength (column 4).', 'Try again. For each galaxy (a row in the table), compare the values for rest wavelength (column 3) and observed wavelength (column 4).', 'That is correct.', 'Try again. For each galaxy (a row in the table), compare the values for rest wavelength (column 3) and observed wavelength (column 4).']"
+                :correct-answers="[2]"
+                :selected-callback="(index) => { if([2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 2); } }"
               >
               </mc-radiogroup>
             </v-card-text>
           </v-window-item>
 
-
-          <v-window-item :value="1"
-            class="no-transition"
-          >
-            <v-card-text>
-              From the data you just collected, what can you conclude about how the galaxies are moving relative to our home galaxy, the Milky Way?
-              <mc-radiogroup
-                :radio-options="[
-                  'The galaxies are not moving.',
-                  'Some galaxies are moving toward our galaxy and some galaxies are moving away from our galaxy.',
-                  'Galaxies are mostly moving toward our galaxy.',
-                  'Galaxies are mostly moving away from our galaxy.'
-                ]"
-                :feedbacks="['Try again.', 'Try again.', 'Try again.', 'That\'s right!']"
-                :answer-key="3"
-              >
-              </mc-radiogroup>
-            </v-card-text>
-          </v-window-item>
-
-          <v-window-item :value="2"
-            class="no-transition"
-          >
-            <v-card-text>
-              These were the prevailing viewpoints in the 1920's:
-              <ul class="mb-4">  
-                <li><em>The universe is static and unchanging</em></li>
-                <li><em>Galaxies in the universe are moving randomly</em></li>
-              </ul>
-              <h3>Question 1</h3>
-              Do your data support either of these conclusions?
-              <form-textarea
-                question-label="Question 1"
-              >
-              </form-textarea>
-              <h3>Question 2</h3>
-              What would you tell a scientist from 1920 regarding the prevailing wisdom about galaxies during this time?
-              <form-textarea
-                question-label="Question 2"
-              >
-              </form-textarea>
-            </v-card-text>
-          </v-window-item>
 
           <v-window-item :value="3"
             class="no-transition"
           >
             <v-card-text>
-              These were the prevailing viewpoints in the 1920's:
-              <ul class="mb-4">  
-                <li><em>The universe is static and unchanging</em></li>
-                <li><em>Galaxies in the universe are moving randomly</em></li>
-              </ul>
-              <h3>Question 3</h3>
-              Based on your data, how confident are you about what you told the 1920's scientist? What would improve your confidence in your data and conclusions?
-              <form-textarea
-                question-label="Question 3"
+              From the data you just collected, what can you conclude about how your observed galaxies are moving relative to our home galaxy, the Milky Way?
+              <mc-radiogroup
+                :radio-options="[
+                  'My observed galaxies are not moving.',
+                  'Some of my observed galaxies are moving AWAY from our galaxy and some galaxies are moving TOWARD our galaxy.',
+                  'All my observed galaxies are moving AWAY from our galaxy.',
+                  'All my observed galaxies are moving TOWARD our galaxy.'
+                ]"
+                :feedbacks="['Try again. Recall that when the observed wavelength is LONGER than the rest wavelength, this indicates motion AWAY from the observer.', 'Try again. Recall that when the observed wavelength is LONGER than the rest wavelength, this indicates motion AWAY from the observer.', 'That is correct.', 'Try again. Recall that when the observed wavelength is LONGER than the rest wavelength, this indicates motion AWAY from the observer.']"
+                :correct-answers="[2]"
+                :selected-callback="(index) => { if([2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 3); } }"  
               >
-              </form-textarea>
+              </mc-radiogroup>
             </v-card-text>
           </v-window-item>
 
@@ -133,11 +118,26 @@
           >
             <v-card-text>
               <p>
-                You concluded from your data that your galaxies seem to be moving AWAY from our Milky Way galaxy.
+                You concluded from your data that all five of your galaxies seem to be moving AWAY from our Milky Way galaxy. 
               </p>
+
               <p>
-                The Doppler equation can be used to figure out just how fast the galaxies are moving.
+                Are your data consistent with this 1920’s views of the universe?
               </p>
+
+              <em>The universe is static and unchanging</em>:
+              <mc-radiogroup
+                :radio-options="[
+                  'Yes.',
+                  'No.',
+                  'I am not sure.'
+                ]"
+                :feedbacks="['Actually, your evidence does not support this statement. Galaxies would not be moving in a universe that is static and unchanging.', 'That\'s right.', 'Your evidence does not support this statement. Galaxies would not be moving in a universe that is static and unchanging']"
+                :correct-answers="[1]"
+                :neutral-answers="[2]"
+                :selected-callback="(index) => { if([1,2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 4); } }"  
+              >
+              </mc-radiogroup>
             </v-card-text>
           </v-window-item>
 
@@ -145,7 +145,21 @@
             class="no-transition"
           >
             <v-card-text>
-              MATHJAX Stuff
+              <p>
+                Are your data consistent with this 1920’s views of the universe?
+              </p>
+              <em>Galaxies in the universe are moving randomly</em>:
+              <mc-radiogroup
+                :radio-options="[
+                  'Yes.',
+                  'No.',
+                  'I am not sure.'
+                ]"
+                :feedbacks="['With only 5 galaxies, it may be hard to say, but your galaxies all seem to be moving in the same direction (away from us). If galaxies move randomly, you would expect some to be moving toward us and some to be moving away.', 'Your galaxies all seem to be moving in the same direction (away from us), which is NOT consistent with galaxies that move randomly, but it may be difficult to say for sure with data from only 5 galaxies.', 'With only 5 galaxies it is difficult to draw strong conclusions about the motion of galaxies, but all your data so far seem to show that the motion of galaxies is NOT random.']"
+                :neutral-answers='[0,1,2]'
+                :selected-callback="(index) => { if([0,1,2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 5); } }" 
+              >
+              </mc-radiogroup>
             </v-card-text>
           </v-window-item>
 
@@ -154,13 +168,24 @@
           >
             <v-card-text>
               <p>
-                Great, notice your calculated velocity is now entered in the table.
+                You have looked at spectra for only 5 galaxies. It might give you more confidence if you pool your data with others, so you are drawing conclusions from a larger number of galaxies.
               </p>
               <p>
-                Now that you know how to use this equation, click below to have the velocities of the remaining galaxies calculated as well.
+                Take a minute to talk with your peers. Do their data agree or disagree with yours? 
               </p>
+              <mc-radiogroup
+                :radio-options="[
+                  'Agree. Their galaxies are also moving away from us.',
+                  'Disagree. Their galaxies are not all moving away from us.',
+                  'I am working on my own and do not have someone to check with.'
+                ]"
+                :feedbacks="['Interesting that they also got the same result as you. Does that give you more confidence in your conclusions?', 'Hmm. That is an unexpected result. It might be helpful to check in with your instructor.', 'That\'s ok. From checking the Cosmic Data Stories database, I can tell you that everyone else who has completed this story also found that their galaxies are all moving away from us.']"
+                :correct-answers="[0,2]"
+                :selected-callback="(index) => { if([0,2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 6); } }" 
+              >
+              </mc-radiogroup>
             </v-card-text>
-          </v-window-item>
+          </v-window-item>         
 
           <v-window-item :value="7"
             class="no-transition"
@@ -175,7 +200,7 @@
               <h3 class="text-h6 font-weight-light mb-2">
                 Nice work reflecting!
               </h3>
-              <span class="text-caption grey--text">You can start plotting your data now.</span>
+              <span class="text-caption grey--text">You can start calculating velocities now.</span>
             </div>
           </v-window-item>
         </v-window>
@@ -202,7 +227,9 @@
               :key="`btn-${n}`"
               v-slot="{ active, toggle }"
             >
+            <!-- vue's v-for with a range starts the count at 1, so we have to add 2 in the disabled step instead of 1 to account for the fact that we are otherwise counting the windows from 0 https://v2.vuejs.org/v2/guide/list.html?redirect=true#v-for-with-a-Range-->
               <v-btn
+                :disabled="n > max_step_completed + 2"
                 :input-value="active"
                 icon
                 @click="toggle"
@@ -213,7 +240,7 @@
           </v-item-group>
           <v-spacer></v-spacer>
           <v-btn
-            :disabled="step === 7"
+            :disabled="step > max_step_completed"
             color="accent"
             text
             @click="step++;"
@@ -250,22 +277,31 @@ module.exports = {
     return {
       step: 0,
       length: 8,
-      dialog: false
+      dialog: false,
+      max_step_completed: 0,
+      interact_steps: [2,3,4,5,6] 
     };
   },
   computed: {
     currentTitle () {
       switch (this.step) {
-        case 0: return "Observed vs. Rest Wavelengths"
-        case 1: return "How Galaxies Move"
-        case 2: return "Feedback for a 1920's Scientist"
-        case 3: return "Confidence in Your Conclusions"
-        case 4: return "Moving Away"
-        case 5: return "MATHJAX"
-        case 6: return "Remaining Galaxy Velocities"
+        case 0: return "Reflect on your Data"
+        case 1: return "What would a 1920's Scientist Wonder?" 
+        case 2: return "Observed vs. Rest Wavelengths"
+        case 3: return "How Galaxies Move"  
+        case 4: return "Do Data Agree with 1920's Thinking?"
+        case 5: return "Do Data Agree with 1920's Thinking?"
+        case 6: return "Did your peers find what you found?"
         default: return "Complete"
       }
     },
   },
+  watch: {
+    step(newStep, oldStep) {
+        const isInteractStep = this.interact_steps.includes(newStep);
+        const newCompleted = isInteractStep ? newStep - 1 : newStep;
+        this.max_step_completed = Math.max(this.max_step_completed, newCompleted)
+    }
+}
 };
 </script>

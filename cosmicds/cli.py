@@ -7,6 +7,7 @@ from pathlib import Path
 import click
 from voila.app import Voila
 from voila.configuration import VoilaConfiguration
+from voila.execute import VoilaExecutor
 
 from cosmicds import __version__
 
@@ -49,6 +50,8 @@ def main(data_story):
         VoilaConfiguration.show_tracebacks = True
         # VoilaConfiguration.connection_dir_root = jupyter_runtime_dir()
         VoilaConfiguration.preheat_kernel = True
+        VoilaConfiguration.http_keep_alive_timeout = 30
+        VoilaExecutor.iopub_timeout = 100
         sys.exit(Voila().launch_instance(argv=[]))
     finally:
         os.chdir(start_dir)

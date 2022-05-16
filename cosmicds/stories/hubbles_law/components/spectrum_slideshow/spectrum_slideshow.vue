@@ -13,7 +13,7 @@
     block
     color="secondary"
     elevation="2"
-    @click.stop="dialog = true"
+    @click.stop="() => { dialog = true; state.vel_win_opened = true }"
   >
     Learn More
 
