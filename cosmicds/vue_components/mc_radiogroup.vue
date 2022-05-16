@@ -76,7 +76,6 @@ module.exports = {
       if (this.correctAnswers.includes(index)) {
         this.complete = true;
       }
-      console.log(this.complete);
     },
     color: function(index) {
       return this.correctAnswers?.includes(index) ? this.colorRight : this.neutralAnswers?.includes(index) ? this.colorNeutral : this.colorWrong;
