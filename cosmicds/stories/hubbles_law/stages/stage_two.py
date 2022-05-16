@@ -74,8 +74,6 @@ class StageTwo(HubbleStage):
 
         self.add_component(DistanceTool(), label="c-distance-tool")
         self.stage_state.image_location = "data/images/stage_two_distance"
-        add_callback(self.app_state, 'using_voila',
-                     self._update_image_location)
 
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
