@@ -138,7 +138,7 @@
               button-text="reflect"
               close-text="submit"
               @submit="
-                stage_state.spec_reflect_complete = true;
+                stage_state.reflection_complete = true;
                 console.log('Submit button was clicked.');
               "
             >

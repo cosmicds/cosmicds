@@ -36,6 +36,7 @@ class StageState(State):
     lambda_rest = CallbackProperty(0)
     lambda_obs = CallbackProperty(0)
     element = CallbackProperty("")
+    reflection_complete = CallbackProperty(False)
     doppler_calc_dialog = CallbackProperty(True)
     student_vel = CallbackProperty(0)
     doppler_calc_complete = CallbackProperty(False)

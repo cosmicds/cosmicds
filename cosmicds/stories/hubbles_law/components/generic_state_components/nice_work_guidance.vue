@@ -45,7 +45,7 @@
       </v-col>
       <v-spacer></v-spacer>
       <v-col
-        v-if="!state.spec_reflect_complete"
+        v-if="!state.reflection_complete"
         cols="6"
         class="shrink"
       >
@@ -56,7 +56,7 @@
         </div>
       </v-col>
       <v-col
-        v-if="state.spec_reflect_complete"
+        v-if="state.reflection_complete"
         class="shrink"
       >
         <v-btn
