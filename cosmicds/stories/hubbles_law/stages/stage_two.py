@@ -1,21 +1,23 @@
 import logging
 
-from echo import CallbackProperty, add_callback
+from echo import CallbackProperty, add_callback, ignore_callback
 from glue.core.state_objects import State
+from numpy import pi
 from traitlets import default
 
 from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSidebar
 from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
-from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, format_fov, format_measured_angle
+from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 
 log = logging.getLogger()
 
 class StageState(State):
-    selected_galaxy = CallbackProperty({})
+    galaxy = CallbackProperty({})
+    galaxy_dist = CallbackProperty(None)
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
     advance_marker = CallbackProperty(True)
@@ -75,6 +77,8 @@ class StageTwo(HubbleStage):
                                        'Velocity (km/s)',
                                        'Distance (Mpc)'],
                                title='My Galaxies | Distance Measurements',
+                               selected_color=self.table_selected_color(self.app_state.dark_mode),
+                               use_subset_group=False,
                                single_select=True)
         self.add_widget(distance_table, label="distance_table")
         distance_table.observe(self.distance_table_selected_change, names=["selected"])
@@ -82,6 +86,7 @@ class StageTwo(HubbleStage):
         self.add_component(DistanceSidebar(self.stage_state), label="c-distance-sidebar")
         self.distance_tool.observe(self._angular_size_update, names=["angular_size"])
         self.distance_tool.observe(self._angular_height_update, names=["angular_height"])
+        self.distance_sidebar.angular_height = format_fov(self.distance_tool.angular_height)
 
         add_callback(self.stage_state, 'make_measurement', self._make_measurement)
 
@@ -93,23 +98,32 @@ class StageTwo(HubbleStage):
         index = self.distance_table.index
         data = self.distance_table.glue_data
         galaxy = { x.label : data[x][index] for x in data.main_components }
+        self.distance_tool.reset_canvas()
         self.distance_tool.go_to_location(galaxy["ra"], galaxy["decl"], fov=GALAXY_FOV)
 
-        self.stage_state.selected_galaxy = galaxy
+        self.stage_state.galaxy = galaxy
+        self.stage_state.galaxy_dist = None
         self.distance_tool.measuring_allowed = bool(galaxy)
 
     def _angular_size_update(self, change):
-        self.distance_sidebar.angular_size = format_fov(change["new"])
+        self.distance_sidebar.angular_size = format_measured_angle(change["new"])
 
     def _angular_height_update(self, change):
-        self.distance_sidebar.angular_height = format_measured_angle(change["new"])
+        self.distance_sidebar.angular_height = format_fov(change["new"])
 
     def _make_measurement(self, value):
         if not value:
             return
-        galaxy = self.stage_state.selected_galaxy
-        index = self.get_data_index('student_data', 'id', lambda x: x == galaxy["id"])
-
+        galaxy = self.stage_state.galaxy
+        index = self.get_data_index('student_measurements', 'name', lambda x: x == galaxy["name"])
+        angular_size = self.distance_tool.angular_size.value
+        distance = round(MILKY_WAY_SIZE_MPC * 180 / (angular_size * pi))
+        self.stage_state.galaxy_dist = distance
+        self.update_data_value("student_measurements", "distance", distance, index)
+        self.update_data_value("student_measurements", "angular_size", angular_size, index)
+        self.story_state.update_student_data()
+        with ignore_callback(self.stage_state, 'make_measurement'):
+            self.stage_state.make_measurement = False
         
 
     @property
