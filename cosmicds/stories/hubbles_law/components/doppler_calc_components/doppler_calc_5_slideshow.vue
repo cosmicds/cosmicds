@@ -139,7 +139,7 @@
                 ]"
                 :feedbacks="['Try again. The equation describes a relationship between your galaxy\’s velocity and the speed of light.', 'Correct. The fraction is the ratio of the observed wavelength of my spectral line over the line’s rest wavelength minus 1. This will be the case for all of your galaxies.', 'Try again. You are multiplying the speed of light by a value that is smaller than 1.']"
                 :correct-answers="[1]"
-                :selected-callback="(index) => { if([1].includes(index)) { this.maxStepCompleted5 = Math.max(this.maxStepCompleted5, 3); } }"  
+                :selected-callback="(state) => { if(state.correct) { this.maxStepCompleted5 = Math.max(this.maxStepCompleted5, 3); } }"  
               >
               </mc-radiogroup>
               <v-divider role="presentation"></v-divider> 

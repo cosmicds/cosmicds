@@ -86,7 +86,7 @@
                 ]"
                 :feedbacks="['Try again. For each galaxy (a row in the table), compare the values for rest wavelength (column 3) and observed wavelength (column 4).', 'Try again. For each galaxy (a row in the table), compare the values for rest wavelength (column 3) and observed wavelength (column 4).', 'That is correct.', 'Try again. For each galaxy (a row in the table), compare the values for rest wavelength (column 3) and observed wavelength (column 4).']"
                 :correct-answers="[2]"
-                :selected-callback="(index) => { if([2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 2); } }"
+                :selected-callback="(state) => { if(state.correct) { this.max_step_completed = Math.max(this.max_step_completed, 2); } }"
               >
               </mc-radiogroup>
             </v-card-text>
@@ -107,7 +107,7 @@
                 ]"
                 :feedbacks="['Try again. Recall that when the observed wavelength is LONGER than the rest wavelength, this indicates motion AWAY from the observer.', 'Try again. Recall that when the observed wavelength is LONGER than the rest wavelength, this indicates motion AWAY from the observer.', 'That is correct.', 'Try again. Recall that when the observed wavelength is LONGER than the rest wavelength, this indicates motion AWAY from the observer.']"
                 :correct-answers="[2]"
-                :selected-callback="(index) => { if([2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 3); } }"  
+                :selected-callback="(state) => { if(state.correct) { this.max_step_completed = Math.max(this.max_step_completed, 3); } }"  
               >
               </mc-radiogroup>
             </v-card-text>
@@ -135,7 +135,7 @@
                 :feedbacks="['Actually, your evidence does not support this statement. Galaxies would not be moving in a universe that is static and unchanging.', 'That\'s right.', 'Your evidence does not support this statement. Galaxies would not be moving in a universe that is static and unchanging']"
                 :correct-answers="[1]"
                 :neutral-answers="[2]"
-                :selected-callback="(index) => { if([1,2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 4); } }"  
+                :selected-callback="(state) => { if(state.correct || state.neutral) { this.max_step_completed = Math.max(this.max_step_completed, 4); } }"  
               >
               </mc-radiogroup>
             </v-card-text>
@@ -157,7 +157,7 @@
                 ]"
                 :feedbacks="['With only 5 galaxies, it may be hard to say, but your galaxies all seem to be moving in the same direction (away from us). If galaxies move randomly, you would expect some to be moving toward us and some to be moving away.', 'Your galaxies all seem to be moving in the same direction (away from us), which is NOT consistent with galaxies that move randomly, but it may be difficult to say for sure with data from only 5 galaxies.', 'With only 5 galaxies it is difficult to draw strong conclusions about the motion of galaxies, but all your data so far seem to show that the motion of galaxies is NOT random.']"
                 :neutral-answers='[0,1,2]'
-                :selected-callback="(index) => { if([0,1,2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 5); } }" 
+                :selected-callback="(state) => { if(state.neutral) { this.max_step_completed = Math.max(this.max_step_completed, 5); } }" 
               >
               </mc-radiogroup>
             </v-card-text>
@@ -181,7 +181,7 @@
                 ]"
                 :feedbacks="['Interesting that they also got the same result as you. Does that give you more confidence in your conclusions?', 'Hmm. That is an unexpected result. It might be helpful to check in with your instructor.', 'That\'s ok. From checking the Cosmic Data Stories database, I can tell you that everyone else who has completed this story also found that their galaxies are all moving away from us.']"
                 :correct-answers="[0,2]"
-                :selected-callback="(index) => { if([0,2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 6); } }" 
+                :selected-callback="(state) => { if(state.correct) { this.max_step_completed = Math.max(this.max_step_completed, 6); } }" 
               >
               </mc-radiogroup>
             </v-card-text>

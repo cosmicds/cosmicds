@@ -17,11 +17,6 @@ __all__ = ['SpectrumView', 'SpectrumViewerState']
 
 class SpectrumViewerState(ScatterViewerState):
 
-    x_min = CallbackProperty()
-    x_max = CallbackProperty()
-    y_min = CallbackProperty()
-    y_max = CallbackProperty()
-
     def reset_limits(self):
         with delay_callback(self, 'x_min', 'x_max', 'y_min', 'y_max'):
             super().reset_limits()
@@ -33,7 +28,7 @@ class SpectrumViewLayerArtist(BqplotScatterLayerArtist):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         old_scatter = self.scatter
-        self.scatter = LinesGL(scales=self.scales, x=[0,1], y=[0,1])
+        self.scatter = Lines(scales=self.scales, x=[0,1], y=[0,1], marker=None)
         self.view.figure.marks = list(filter(lambda x: x is not old_scatter, self.view.figure.marks)) + [self.scatter]
         
 class SpectrumView(BqplotScatterView):

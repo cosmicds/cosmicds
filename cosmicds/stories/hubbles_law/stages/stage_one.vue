@@ -180,7 +180,7 @@ export default {
 
 
 <style>
-#spectrum-viewer g text:not(.curve_label, .label, .mainheading) {
+g text:not(.curve_label, .label, .mainheading) {
   color: var(--axis-color) !important;
   font-size: 1.5em !important;
 }

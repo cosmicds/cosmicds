@@ -49,7 +49,7 @@ module.exports = {
     points: {
       type: [Array, Function],
       default(_rawProps) {
-        return function(ntries) { return Math.max(10 - 2 * ntries, 0); };
+        return function(ntries) { return Math.max(12 - 2 * ntries, 0); };
       }
     },
     radioOptions: Array,
@@ -70,11 +70,17 @@ module.exports = {
     selectChoice: function(index) {
       this.feedbackIndex = index;
       this.tries += 1;
-      if (this.selectedCallback != null) {
-        this.selectedCallback(index);
-      }
-      if (this.correctAnswers.includes(index)) {
+      const correct = this.correctAnswers.includes(index);
+      if (correct) {
         this.complete = true;
+      }
+      if (this.selectedCallback != null) {
+        this.selectedCallback({
+          index: index,
+          correct: correct,
+          neutral: this.neutralAnswers.includes(index),
+          tries: tries
+        });
       }
     },
     color: function(index) {
