@@ -38,7 +38,6 @@
   },
   "viewer": {
     "scatter": {
-      "marker": "circle",
       "stroke_width": 2,
       "enable_hover": true
     },
