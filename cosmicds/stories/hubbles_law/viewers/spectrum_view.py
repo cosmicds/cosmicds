@@ -17,8 +17,13 @@ __all__ = ['SpectrumView', 'SpectrumViewerState']
 
 class SpectrumViewerState(ScatterViewerState):
 
+    x_min = CallbackProperty()
+    x_max = CallbackProperty()
+    y_min = CallbackProperty()
+    y_max = CallbackProperty()
+
     def reset_limits(self):
-        with delay_callback(self, 'y_min', 'y_max'):
+        with delay_callback(self, 'x_min', 'x_max', 'y_min', 'y_max'):
             super().reset_limits()
             self.y_max = 1.40 * self.y_max
 

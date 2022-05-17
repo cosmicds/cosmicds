@@ -1,5 +1,7 @@
 <template>
-  <v-container>
+  <v-container
+    :style="cssVars"
+  >
     <v-row>
       <v-col>
         <v-btn
@@ -109,7 +111,9 @@
           :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1' : 'pa-0'"
           outlined
         >
-          <jupyter-widget :widget="viewers.spectrum_viewer"/>
+          <jupyter-widget
+            id="spectrum-viewer"
+            :widget="viewers.spectrum_viewer"/>
         </v-card>
       </v-col>
     </v-row>
@@ -161,3 +165,23 @@
     </v-row>
   </v-container>
 </template>
+
+<script>
+export default {
+  computed: {
+    cssVars() {
+      return {
+        "--axis-color": this.stage_state.axis_color
+      }
+    }
+  }
+}
+</script>
+
+
+<style>
+#spectrum-viewer g text:not(.curve_label, .label, .mainheading) {
+  color: var(--axis-color) !important;
+  font-size: 1.5em !important;
+}
+</style>
