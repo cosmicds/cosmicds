@@ -1,4 +1,4 @@
-from glue.core.message import NumericalDataChangedMessage
+from echo import CallbackProperty
 from glue.viewers.scatter.state import ScatterViewerState
 from glue_jupyter.bqplot.scatter import BqplotScatterView, BqplotScatterLayerArtist
 from bqplot.marks import Lines
@@ -174,4 +174,3 @@ class SpectrumView(BqplotScatterView):
     @property
     def line_visible(self):
         return self.user_line.visible
-

@@ -10,10 +10,11 @@ from random import sample
 from traitlets import default
 
 from cosmicds.registries import register_stage
-from cosmicds.utils import load_template
+from cosmicds.utils import load_template, update_figure_css
 from cosmicds.stories.hubbles_law.viewers import SpectrumView
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.components.table import Table
+from cosmicds.stories.hubbles_law.data.styles import load_style
 from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
 from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
 from cosmicds.stories.hubbles_law.components.doppler_calc_components import DopplerCalc
@@ -187,6 +188,11 @@ class StageOne(HubbleStage):
         add_callback(self.story_state, 'step_index', self._on_step_index_update)
         self.trigger_marker_update_cb = True
 
+        add_callback(spectrum_viewer.state, 'x_min', self._on_spectrum_limits_change)
+        add_callback(spectrum_viewer.state, 'x_max', self._on_spectrum_limits_change)
+        add_callback(spectrum_viewer.state, 'y_min', self._on_spectrum_limits_change)
+        add_callback(spectrum_viewer.state, 'y_max', self._on_spectrum_limits_change)
+
     def _on_marker_update(self, old, new):
         if not self.trigger_marker_update_cb:
             return
@@ -220,6 +226,10 @@ class StageOne(HubbleStage):
             gal_type = galaxy['type']
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
+
+    def _on_spectrum_limits_change(self, _value):
+        print("Spectrum bounds updated!")
+        self.update_spectrum_style(dark=self.app_state.dark_mode)
 
     def _select_from_data(self, dc_name):
         data = self.get_data(dc_name)
@@ -331,4 +341,15 @@ class StageOne(HubbleStage):
     @property
     def galaxy_table(self):
         return self.get_widget("galaxy_table")
+
+    def update_spectrum_style(self, dark):
+        spectrum_viewer = self.get_viewer("spectrum_viewer")
+        theme_name = "dark" if dark else "light"
+        style = load_style(f"default_spectrum_{theme_name}")
+        update_figure_css(spectrum_viewer, style_dict=style)
+
+    def _on_dark_mode_change(self, dark):
+        super()._on_dark_mode_change(dark)
+        self.update_spectrum_style(dark)
+
 
