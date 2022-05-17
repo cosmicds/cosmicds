@@ -35,8 +35,9 @@
             {{ currentTitle }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
+          <!-- @click="() => { dialog = false; if (step == 7)  {step = 0}; }" -->
           <span
-            @click="() => { dialog = false; if (step == 7)  {step = 0}; }"
+            @click="() => { $emit('submit'); dialog = false; step = 0; reflection_complete = true}"
           >
             <v-btn
               icon
