@@ -14,7 +14,8 @@
           "tick_format": ",.0f",
           "tick_style": {
             "font-size": "1.5em",
-            "color": "Black"
+            "color": "Black",
+            "fill": "Black"
           },
           "label_offset": "3em",
           "label": "Wavelength (Angstrom)",
@@ -26,7 +27,8 @@
           "tick_format": ",.0f",
           "tick_style": {
             "font-size": "1.5em",
-            "color": "Black"
+            "color": "Black",
+            "fill": "Black"
           },
           "label_offset": "3.5em",
           "label": "Brightness",

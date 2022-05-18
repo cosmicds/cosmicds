@@ -177,12 +177,3 @@ export default {
   }
 }
 </script>
-
-
-<style>
-g text:not(.curve_label, .label, .mainheading) {
-  color: var(--axis-color) !important;
-  fill: var(--axis-color) !important;
-  font-size: 1.5em !important;
-}
-</style>
