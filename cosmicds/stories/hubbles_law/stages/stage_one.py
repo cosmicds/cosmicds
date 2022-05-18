@@ -216,6 +216,7 @@ class StageOne(HubbleStage):
         else:
             filename = galaxy['name']
             gal_type = galaxy['type']
+            galaxy.pop("element")
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
 
