@@ -10,5 +10,4 @@ def load_style(name):
             with open(filepath, 'r') as f:
                 return json.load(f)
     except:
-        pass
-    return None
+        return None
