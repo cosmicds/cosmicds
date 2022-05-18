@@ -22,7 +22,7 @@ class ApplicationState(State):
     using_voila = CallbackProperty(False)
     dark_mode = CallbackProperty(True)
     student = CallbackProperty({})
-    update_db = CallbackProperty(True)
+    update_db = CallbackProperty(False)
 
 class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
@@ -37,7 +37,7 @@ class Application(VuetifyTemplate, HubListener):
 
         self.app_state = ApplicationState()
 
-        self.app_state.update_db = kwargs.get("update_db", True)
+        self.app_state.update_db = kwargs.get("update_db", False)
         
         # For testing purposes, we create a new dummy student on each startup
         if self.app_state.update_db:
