@@ -23,6 +23,7 @@ class ApplicationState(State):
     dark_mode = CallbackProperty(True)
     student = CallbackProperty({})
     update_db = CallbackProperty(False)
+    show_team_interface = CallbackProperty(True)
 
 class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
@@ -38,6 +39,7 @@ class Application(VuetifyTemplate, HubListener):
         self.app_state = ApplicationState()
 
         self.app_state.update_db = kwargs.get("update_db", False)
+        self.app_state.show_team_interface = kwargs.get("show_team_interface", True)
         
         # For testing purposes, we create a new dummy student on each startup
         if self.app_state.update_db:

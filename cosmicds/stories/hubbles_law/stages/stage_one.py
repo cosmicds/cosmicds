@@ -5,7 +5,7 @@ from echo import add_callback, CallbackProperty
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from random import sample
-from traitlets import default
+from traitlets import default, Bool
 
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
@@ -79,6 +79,7 @@ class StageState(State):
     "Calculate velocities"
 ])
 class StageOne(HubbleStage):
+    show_team_interface = Bool(False).tag(sync=True)
 
     @default('template')
     def _default_template(self):
@@ -96,6 +97,7 @@ class StageOne(HubbleStage):
         super().__init__(*args, **kwargs)
 
         self.stage_state = StageState()
+        self.show_team_interface = self.app_state.show_team_interface
         
         self.stage_state.image_location = join("data", "images", "stage_one_spectrum")
         add_callback(self.app_state, 'using_voila', self._update_image_location)
