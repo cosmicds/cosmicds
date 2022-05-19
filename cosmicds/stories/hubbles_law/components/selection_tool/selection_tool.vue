@@ -2,8 +2,10 @@
   <div
     id="selection-root"
     v-intersect.once="(entries, observer, isIntersecting) => {
+      console.log('Here');
       const root = entries[0].target;
       const element = root.querySelector('iframe');
+      console.log(element);
       if (element) {
         element.src = element.src.replace('/api/kernels', '');
       }
@@ -144,31 +146,140 @@
       </v-dialog>
 
     </v-toolbar>
-    <jupyter-widget
-      :widget="widget"
-      class="wwt-widget"
-    />
-    <v-tooltip top>
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          fab
-          dark
-          bottom
-          right
-          absolute
-          color="secondary"
-          class="selection-fab"
-          v-bind="attrs"
-          v-on="on"
-          v-show="Object.keys(current_galaxy).length !== 0"
-          @click="select_current_galaxy()">
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-      </template>
-      Add galaxy to my dataset
-    </v-tooltip>
+    <div class="selection-content">
+      <canvas
+          class="wwt-canvas"
+          ref="canvas">
+        </canvas>
+        <v-lazy>
+          <jupyter-widget
+            :widget="widget"
+            class="wwt-widget"
+          />
+        </v-lazy>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            fab
+            dark
+            bottom
+            right
+            absolute
+            color="secondary"
+            class="selection-fab"
+            v-bind="attrs"
+            v-on="on"
+            v-show="Object.keys(current_galaxy).length !== 0"
+            @click="select_current_galaxy()">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </template>
+        Add galaxy to my dataset
+      </v-tooltip>
+    </div>
   </div>
 </template>
+
+<script>
+export default {
+  
+  mounted() {
+    this.canvas = this.$refs.canvas;
+    this.height = 400; // See the component CSS
+    this.width = this.canvas.width;
+    this.setupCanvas();
+
+    window.addEventListener('resize', this.handleResize);
+    // We don't get a Window resize event when the canvas first appears
+    // so we watch the canvas' dimensions instead
+    const resizeObserver = new ResizeObserver(_entries => {
+      this.handleResize();
+    });
+    resizeObserver.observe(this.canvas);
+  },
+
+  methods: {
+
+    setupCanvas: function() {
+      this.context = this.canvas.getContext('2d');
+      this.context.lineWidth = 3;
+      this.context.strokeStyle = 'dodgerblue';
+
+      const leftPadding = 5;
+      const verticalPadding = 5;
+      const endcapLength = 10;
+      const gapHeight = 24;
+      const fontSize = 16;
+      const font = `${fontSize}px Arial`;
+      const endcapEndX = leftPadding + endcapLength;
+
+      const verticalX = leftPadding + (endcapLength / 2);
+      const midYTop = (this.canvas.height - gapHeight) / 2;
+      const midYBot = (this.canvas.height + gapHeight) / 2;
+      const bottomEndcapY = this.canvas.height - verticalPadding;
+      this.textCoordinates = [leftPadding, (this.canvas.height / 2) + ((gapHeight - fontSize) / 2)];
+      this.textRect = [0, midYTop, this.canvas.width, gapHeight];
+
+      this.context.beginPath();
+      this.context.moveTo(leftPadding, verticalPadding);
+      this.context.lineTo(endcapEndX, verticalPadding);
+      this.context.stroke();
+
+      this.context.beginPath();
+      this.context.moveTo(verticalX, verticalPadding);
+      this.context.lineTo(verticalX, midYTop);
+      this.context.stroke();
+
+      this.context.beginPath();
+      this.context.moveTo(verticalX, midYBot);
+      this.context.lineTo(verticalX, bottomEndcapY);
+      this.context.stroke();
+
+      this.context.beginPath();
+      this.context.moveTo(leftPadding, bottomEndcapY);
+      this.context.lineTo(endcapEndX, bottomEndcapY);
+      this.context.stroke();
+
+      this.context.font = font;
+      this.context.fillStyle = 'dodgerblue';
+      if (this.fov_text) {
+        this.updateText();
+      }
+    },
+
+    handleResize: function() {
+      const oldWidth = this.canvas.width;
+      const oldHeight = this.canvas.height;
+      const referenceElement = this.canvas.parentElement;
+      this.canvas.width = referenceElement.clientWidth;
+      this.canvas.height = referenceElement.clientHeight;
+      const newWidth = referenceElement.clientWidth;
+      const newHeight = referenceElement.clientHeight;
+      if (newWidth === 0 || newHeight === 0) {
+        this.canvas.width = oldWidth;
+        this.canvas.height = oldHeight;
+        return;
+      }
+      this.canvas.width = newWidth;
+      this.canvas.height = newHeight;
+      this.width = newWidth;
+      this.height = newHeight;
+      this.setupCanvas();
+    },
+
+    updateText: function() {
+      this.context.clearRect(...this.textRect);
+      this.context.fillText(this.fov_text, ...this.textCoordinates);
+    },
+
+    jupyter_update_text: function() {
+      this.updateText();
+    }
+  }
+  
+}
+</script>
+
 
 <style scoped>
 #selection-root {
@@ -178,8 +289,21 @@
   width: 100%;
 }
 
-.wwt-widget {
+.selection-content {
+  width: 100%;
   height: 400px;
+}
+
+.wwt-widget, .wwt-canvas {
+  height: 400px;
+  width: 100%;
+  position: absolute;
+}
+
+.wwt-canvas {
+  background: transparent;
+  z-index: 100;
+  pointer-events: none;
 }
 
 .selection-fab {
