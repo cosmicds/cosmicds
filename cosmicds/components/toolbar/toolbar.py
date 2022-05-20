@@ -69,8 +69,6 @@ class Toolbar(VuetifyTemplate):
         return icon
 
     def update_tools_data(self, tool):
-        if tool.tool_id in self.tools_data:
-            del self.tools_data[tool.tool_id]
         self.tools_data = {
             **self.tools_data, 
             tool.tool_id: {
