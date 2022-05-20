@@ -1,7 +1,4 @@
-from math import sqrt
-
-from bqplot.marks import Scatter
-from bqplot_image_gl import LinesGL
+from bqplot.marks import Lines, Scatter
 from bqplot_image_gl.interacts import MouseInteraction, mouse_events
 from glue.config import viewer_tool
 from glue_jupyter.bqplot.common.tools import InteractCheckableTool
@@ -53,7 +50,7 @@ class LineDrawTool(InteractCheckableTool):
         x, y = domain['x'], domain['y']
 
         if self.line is None:
-            self.line = LinesGL(x=[self.bx, self.viewer.state.x_max], y=[self.bx, self.by], scales=image.scales, colors=['black'])
+            self.line = Lines(x=[self.bx, self.viewer.state.x_max], y=[self.bx, self.by], scales=image.scales, colors=['black'])
             figure.marks = figure.marks + [self.line]
             self._follow_cursor = True
             

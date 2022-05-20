@@ -1,6 +1,6 @@
 from astropy import units as u
+from bqplot.marks import Lines
 from bqplot.scales import LinearScale
-from bqplot_image_gl import LinesGL
 from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
 from glue_jupyter.bqplot.scatter.layer_artist import BqplotScatterLayerArtist
 
@@ -72,7 +72,7 @@ def format_measured_angle(angle):
 
 def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
     """
-    Creates a LinesGL mark between the given start and end points
+    Creates a Lines mark between the given start and end points
     using the scales of the given layer.
 
     Parameters
@@ -100,7 +100,7 @@ def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
             'x': LinearScale(min=layer_x.min, max=layer_x.max, allow_padding=layer_x.allow_padding),
             'y': LinearScale(min=layer_y.min, max=layer_y.max, allow_padding=layer_y.allow_padding),
         }
-    return LinesGL(x=[start_x, end_x],
+    return Lines(x=[start_x, end_x],
                    y=[start_y, end_y],
                    scales=scales,
                    colors=[color],
