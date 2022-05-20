@@ -1,8 +1,6 @@
-from echo import CallbackProperty
 from glue.viewers.scatter.state import ScatterViewerState
 from glue_jupyter.bqplot.scatter import BqplotScatterView, BqplotScatterLayerArtist
 from bqplot.marks import Lines
-from bqplot_image_gl import LinesGL
 from bqplot import Label
 from echo import add_callback, delay_callback
 from glue.config import viewer_tool
@@ -12,7 +10,7 @@ from traitlets import Bool
 from cosmicds.components.toolbar import Toolbar
 from cosmicds.stories.hubbles_law.utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
-__all__ = ['SpectrumView', 'SpectrumViewerState']
+__all__ = ['SpectrumView', 'SpectrumViewLayerArtist', 'SpectrumViewerState']
 
 
 class SpectrumViewerState(ScatterViewerState):
