@@ -18,7 +18,7 @@
           "fill": "White"
         },
         "label_offset": "3em",
-        "label": "Wavelength (Angstrom)",
+        "label": "Wavelength (Angstroms)",
         "color": "White",
         "label_color": "White",
         "grid_color": "White"

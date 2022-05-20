@@ -38,7 +38,6 @@ class StageState(State):
     doppler_calc_dialog = CallbackProperty(True)
     student_vel = CallbackProperty(0)
     doppler_calc_complete = CallbackProperty(False)
-    axis_color = CallbackProperty('white')
 
     markers = CallbackProperty([
         'mee_gui1',
@@ -252,6 +251,8 @@ class StageOne(HubbleStage):
         if len(specview.layers) == 0:
             spec_data = self.get_data("spectrum_data")
             specview.add_data(spec_data)
+            specview.figure.axes[0].label = "Wavelength (Angstroms)"
+            specview.figure.axes[1].label = "Brightness"
         specview.state.reset_limits()
         self.stage_state.waveline_set = False
 
@@ -341,7 +342,6 @@ class StageOne(HubbleStage):
         theme_name = "dark" if dark else "light"
         style = load_style(f"default_spectrum_{theme_name}")
         update_figure_css(spectrum_viewer, style_dict=style)
-        self.stage_state.axis_color = "white" if dark else "black"
 
     def _on_dark_mode_change(self, dark):
         super()._on_dark_mode_change(dark)

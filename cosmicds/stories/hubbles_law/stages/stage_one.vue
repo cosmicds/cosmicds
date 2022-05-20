@@ -1,7 +1,5 @@
 <template>
-  <v-container
-    :style="cssVars"
-  >
+  <v-container>
     <v-row>
       <v-col>
         <v-btn
@@ -165,15 +163,3 @@
     </v-row>
   </v-container>
 </template>
-
-<script>
-export default {
-  computed: {
-    cssVars() {
-      return {
-        "--axis-color": this.stage_state.axis_color
-      }
-    }
-  }
-}
-</script>
