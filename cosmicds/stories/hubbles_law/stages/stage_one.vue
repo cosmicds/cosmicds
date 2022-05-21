@@ -90,7 +90,7 @@
           v-if="stage_state.marker == 'mee_spe1'"/>
         <c-restwave-guidance
           v-if="stage_state.marker == 'res_wav1'" />
-        <c-obswave-alert
+        <c-obswave-1-guidance
           v-if="stage_state.marker == 'obs_wav1'" />
         <c-obswave-2-alert
           v-if="stage_state.marker == 'obs_wav2'" />

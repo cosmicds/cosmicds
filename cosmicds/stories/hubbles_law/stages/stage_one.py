@@ -156,7 +156,7 @@ class StageOne(HubbleStage):
             "choose_row_guidance",
             "spectrum_guidance",
             "restwave_guidance",
-            "obswave_alert",
+            "obswave_1_guidance",
             "obswave_2_alert",            
             "remaining_gals_alert",
             "nice_work_guidance",
