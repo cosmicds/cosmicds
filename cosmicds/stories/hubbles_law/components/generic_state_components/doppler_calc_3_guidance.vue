@@ -20,7 +20,7 @@
       <div
         class="JaxEquation"
       >
-        $$ v=c \left(\frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}}-1\right) $$
+        $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
       </div>
     </div>
   </scaffold-alert>

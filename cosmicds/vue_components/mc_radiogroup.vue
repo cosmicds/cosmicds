@@ -16,7 +16,6 @@
         <template v-slot:label>
           <div
             @mouseup="selectChoice(index)"
-            class="black--text"
           >
             {{ option }}
           </div>

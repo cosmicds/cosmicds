@@ -1,6 +1,6 @@
 <template>
   <v-alert
-    class="mb-4"
+    class="mb-4 doppler_alert"
     color="info"
     elevation="6"
   >
@@ -15,13 +15,13 @@
       v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
     >
       <p>
-        Enter the observed and rest wavelengths of the spectral line for your chosen galaxy into the cells in the equation below.
+        Enter the observed wavelength and rest wavelength for your chosen galaxy into the cells in the equation below.
       </p>
       <div
         class="JaxEquation"
       >
-        $$ v=c \left(\frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}}-1\right) $$ 
-        $$ \text{ }= c \left(\frac{\bbox[#FBE9E7]{\input[lam_obs][]{}} \text{ &#8491;}}{\bbox[#FBE9E7]{\input[lam_rest][]{}}\text{ &#8491;}}-1\right) $$
+        $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$ 
+        $$ v = c \times \left( \frac{\bbox[#FBE9E7]{\input[lam_obs][]{}} \text{ &#8491;}}{\bbox[#FBE9E7]{\input[lam_rest][]{}}\text{ &#8491;}} - 1 \right) $$
       </div>
       <v-card
         outlined
@@ -97,12 +97,13 @@
       v-if="failedValidation4"
     >
     </v-divider>
-
-      <div
+      <v-alert
         v-if="failedValidation4"
+        dense
+        color="info darken-1"
       >
-          Not quite. Make sure you haven't reversed the rest and observed wavelength values.
-      </div>
+        Not quite. Make sure you haven't reversed the rest and observed wavelength values.
+      </v-alert>
     <v-divider
       class="my-4"
     >
@@ -139,7 +140,7 @@
             console.log(state.doppler_calc_dialog, state.marker);          
           }"
         >
-          {{ (!failedValidation4 ) ? 'next' : 'try again' }}
+          next
         </v-btn>
       </v-col>
 
@@ -152,7 +153,19 @@
 <style>
 
 .JaxEquation .MathJax {
-  margin: 0 auto 16px !important;
+  margin: 16px auto !important;
+}
+
+mjx-mfrac {
+  margin: 0 4px !important;
+}
+
+mjx-mstyle {
+  border-radius: 5px;
+}
+
+.doppler_alert .v-alert {
+  font-size: 16px !important;
 }
 
 .v-application .legend {
@@ -164,6 +177,9 @@
 
 #lam_obs, #lam_rest {
   color:  black;
+  font-size: 18px;
+  font-family: "Roboto", Arial, Helvetica, sans-serif;
+  padding: 3px;
 }
 
 </style>
