@@ -35,7 +35,7 @@ class SpectrumView(BqplotScatterView):
     _subset_artist_cls = SpectrumViewLayerArtist
 
     inherit_tools = False
-    tools = ['bqplot:home', 'bqplot:xzoom', 'hubble:restwave', 'cds:info']
+    tools = ['bqplot:home', 'bqplot:xzoom', 'hubble:restwave', 'hubble:specflag', 'cds:info']
     _state_cls = SpectrumViewerState
     show_line = Bool(True)
     LABEL = "Spectrum Viewer"
