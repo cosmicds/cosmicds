@@ -137,7 +137,8 @@ class SpectrumView(BqplotScatterView):
         self.user_line.x = [new_x, new_x]
         self.user_line_label.x = [new_x, new_x]
 
-    def update(self, element, z):
+    def update(self, name, element, z):
+        self.spectrum_name = name
         self.element = element
         self.z = z
         rest = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA

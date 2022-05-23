@@ -260,7 +260,7 @@ class StageOne(HubbleStage):
         sdss_index = next((i for i in range(sdss.size) if sdss["name"][i] == name), None)
         if sdss_index is not None:
             element = sdss['element'][sdss_index]
-            specview.update(element, z)
+            specview.update(name, element, z)
             restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
             index = self.get_widget("galaxy_table").index
             self.update_data_value("student_measurements", "element", element, index)
