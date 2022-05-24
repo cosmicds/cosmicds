@@ -1,14 +1,4 @@
 <template>
-  <v-btn block color="primary" elevation="2" @click.stop="dialog = true">
-    <v-icon class="mr-4"> mdi-pen </v-icon>
-    Info
-
-    <v-dialog v-model="dialog" persistent max-width="1000px">
-      <v-card class="mx-auto">
-        <v-card-title
-          class="text-h6 font-weight-regular justify-space-between my-0"
-        >
-          <span> Light and Spectra </span>
   <v-btn
     block
     color="secondary"
@@ -617,9 +607,6 @@
             </v-item>
           </v-item-group>
           <v-spacer></v-spacer>
-          <v-btn :disabled="step === 8" color="accent" text @click="step++">
-            {{ step < 8 ? "next" : "" }}
-          </v-btn>
           <v-btn
             v-if="step < 10"
             class="black--text"
