@@ -7,7 +7,7 @@ from glue_jupyter.bqplot.scatter import BqplotScatterView
 import ipyvuetify as v
 from numpy import isin
 from random import sample
-from traitlets import default
+from traitlets import default, Bool
 
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
@@ -70,10 +70,11 @@ class StageState(State):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.marker = self.markers[0]
-        self.indices = { marker : idx for idx, marker in enumerate(self.markers) }
+        self.indices = {marker: idx for idx, marker in enumerate(self.markers)}
 
     def marker_before(self, marker):
         return self.indices[self.marker] < self.indices[marker]
+
 
 @register_stage(story="hubbles_law", index=1, steps=[
     #"Explore celestial sky",
@@ -83,6 +84,7 @@ class StageState(State):
     "Calculate velocities"
 ])
 class StageOne(HubbleStage):
+    show_team_interface = Bool(False).tag(sync=True)
 
     @default('template')
     def _default_template(self):
@@ -100,13 +102,16 @@ class StageOne(HubbleStage):
         super().__init__(*args, **kwargs)
 
         self.stage_state = StageState()
+        self.show_team_interface = self.app_state.show_team_interface
         
         self.stage_state.image_location = join("data", "images", "stage_one_spectrum")
         add_callback(self.app_state, 'using_voila', self._update_image_location)
 
         # Set up viewers
-        spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
-        spectrum_viewer.add_event_callback(self.on_spectrum_click, events=['click'])
+        spectrum_viewer = self.add_viewer(
+            SpectrumView, label="spectrum_viewer")
+        spectrum_viewer.add_event_callback(
+            self.on_spectrum_click, events=['click'])
 
         for label in ['hub_const_viewer', 'hub_fit_viewer',
                       'hub_comparison_viewer', 'hub_students_viewer',
@@ -127,13 +132,16 @@ class StageOne(HubbleStage):
                                     'Rest Wavelength (Å)',
                                     'Observed Wavelength (Å)',
                                     'Velocity (km/s)'],
+
                              title='My Galaxies',
                              selected_color=self.table_selected_color(self.app_state.dark_mode),
                              use_subset_group=False,
                              single_select=True) # True for now
+
         self.add_widget(galaxy_table, label="galaxy_table")
         galaxy_table.row_click_callback = self.on_galaxy_row_click
-        galaxy_table.observe(self.galaxy_table_selected_change, names=["selected"])
+        galaxy_table.observe(
+            self.galaxy_table_selected_change, names=["selected"])
 
         # Set up components
         sdss_data = self.get_data("SDSS_all_sample_filtered")
@@ -147,7 +155,8 @@ class StageOne(HubbleStage):
         #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
 
         # Set up the generic state components
-        state_components_dir = str(Path(__file__).parent.parent / "components" / "generic_state_components")
+        state_components_dir = str(
+            Path(__file__).parent.parent / "components" / "generic_state_components")
         path = join(state_components_dir, "")
         state_components = [
             "stage_one_start_guidance",
@@ -167,6 +176,7 @@ class StageOne(HubbleStage):
         ext = ".vue"
         for comp in state_components:
             label = f"c-{comp}".replace("_", "-")
+
             # comp + ext = filename; path = folder where they live.
             component = GenericStateComponent(comp + ext, path, self.stage_state)
             self.add_component(component, label=label)
@@ -188,8 +198,10 @@ class StageOne(HubbleStage):
         def update_count(change):
             self.stage_state.gals_total = change["new"]
         selection_tool.observe(update_count, names=['selected_count'])
-        add_callback(self.stage_state, 'marker', self._on_marker_update, echo_old=True)
-        add_callback(self.story_state, 'step_index', self._on_step_index_update)
+        add_callback(self.stage_state, 'marker',
+                     self._on_marker_update, echo_old=True)
+        add_callback(self.story_state, 'step_index',
+                     self._on_step_index_update)
         self.trigger_marker_update_cb = True
 
         spectrum_viewer = self.get_viewer("spectrum_viewer")
@@ -204,7 +216,8 @@ class StageOne(HubbleStage):
         advancing = markers.index(new) > markers.index(old)
         if new in self.stage_state.step_markers and advancing:
             self.story_state.step_complete = True
-            self.story_state.step_index = self.stage_state.step_markers.index(new)
+            self.story_state.step_index = self.stage_state.step_markers.index(
+                new)
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
@@ -228,6 +241,7 @@ class StageOne(HubbleStage):
         else:
             filename = galaxy['name']
             gal_type = galaxy['type']
+            galaxy.pop("element")
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
 
@@ -241,7 +255,7 @@ class StageOne(HubbleStage):
         need = self.selection_tool.gals_max - measurements.size
         indices = sample(range(data.size), need)
         for index in indices:
-            galaxy = { c: data[c][index] for c in components }
+            galaxy = {c: data[c][index] for c in components}
             self.selection_tool.select_galaxy(galaxy)
 
     def vue_fill_data(self, _args=None):
@@ -335,7 +349,7 @@ class StageOne(HubbleStage):
     @property
     def slideshow(self):
         return self.get_component('c-spectrum-slideshow')
-    
+
     def _update_image_location(self, using_voila):
         prepend = "voila/files/" if using_voila else ""
         self.stage_state.image_location = prepend + "data/images/stage_one_spectrum"
@@ -343,4 +357,3 @@ class StageOne(HubbleStage):
     @property
     def galaxy_table(self):
         return self.get_widget("galaxy_table")
-

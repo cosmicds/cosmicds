@@ -28,14 +28,18 @@
           </v-toolbar-title>
           <v-spacer></v-spacer>
           <span
-            @click="() => { $emit('close'); dialog = false; if (step == 6)  {step = 0}; }"
+            @click="
+              () => {
+                $emit('close');
+                dialog = false;
+                if (step == 8) {
+                  step = 0;
+                }
+              }
+            "
           >
-            <v-btn
-              icon
-            >
-              <v-icon>
-                mdi-close
-              </v-icon>
+            <v-btn icon>
+              <v-icon> mdi-close </v-icon>
             </v-btn>
           </span>
         </v-toolbar>
@@ -50,10 +54,9 @@
           >
             <v-card-text>
               <v-container>
-                <v-row
-                >
+                <v-row>
                   <v-col
-                    cols="6" 
+                    cols="6"
                     class="d-flex flex-column"
                     height="100%"
                     flat
@@ -78,10 +81,14 @@
                         </v-card-text>
                       </v-card>            
                       <p>
-                        The figure illustrates light passing through a diffraction grating (1) and a prism (2).
+                        The figure illustrates light passing through a
+                        diffraction grating (1) and a prism (2).
                       </p>
                       <p>
-                        Diffraction gratings and prisms &#8212; and raindrops, bubbles, and oil slicks &#8212; create spectra because they bend light of different colors by different amounts. See link for more details.
+                        Diffraction gratings and prisms &#8212; and raindrops,
+                        bubbles, and oil slicks &#8212; create spectra because
+                        they bend light of different colors by different
+                        amounts. See link for more details.
                       </p>
                       <p
                         class="text-center grey--text"
@@ -90,29 +97,25 @@
                       </p>
                     </div>
                   </v-col>
-                  <v-col cols="1">
-                  </v-col>
+                  <v-col cols="1"> </v-col>
                   <v-col cols="4">
                     <v-img
                       class="mb-4 mx-a"
-                      contain                      
-                      :src="`${state.image_location}/refraction_diffraction_spectra.png`"></v-img>
+                      contain
+                      :src="`${state.image_location}/refraction_diffraction_spectra.png`"
+                    ></v-img>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
           </v-window-item>
 
-
-          <v-window-item :value="1" 
-            class="no-transition"
-          >
+          <v-window-item :value="1" class="no-transition">
             <v-card-text>
               <v-container>
-                <v-row
-                >
+                <v-row>
                   <v-col
-                    cols="6" 
+                    cols="6"
                     class="d-flex flex-column"
                     height="100%"
                     flat
@@ -146,20 +149,15 @@
                         The spectrum graphs (i.e. the blue data points in each graphic) represent how bright the light is at each specific wavelength.
                       </p>
                     </div>
-
                   </v-col>
                   <v-col cols="6">
-                    <h4>
-                      Light spectrum for LED bulb
-                    </h4>
+                    <h4>Light spectrum for LED bulb</h4>
                     <v-img
                       class="mb-4 mx-a"
                       contain
                       :src="`${state.image_location}/LED_White_spectool.png`"
                     ></v-img>
-                    <h4>
-                      Light spectrum for sodium vapor bulb
-                    </h4>
+                    <h4>Light spectrum for sodium vapor bulb</h4>
                     <v-img
                       class="mx-a"
                       contain
@@ -171,26 +169,18 @@
             </v-card-text>
           </v-window-item>
 
-
-          <v-window-item :value="2" 
-            class="no-transition"
-          >
+          <v-window-item :value="2" class="no-transition">
             <v-card-text>
               <v-container>
-                <v-row
-                >
+                <v-row>
                   <v-col
-                    cols="6" 
+                    cols="6"
                     class="d-flex flex-column"
                     height="100%"
                     flat
                     tile
                   >
-                    <h3
-                      class="mb-4"
-                    >
-                      Interpreting spectrum graphs
-                    </h3>
+                    <h3 class="mb-4">Interpreting spectrum graphs</h3>
                     <div>
                       <v-card
                         class="mt-auto mb-4"
@@ -208,23 +198,21 @@
                         Examine the highlighted regions in the graphics to the right.
                       </p>
                       <p>
-                        At wavelengths where the spectrum graph has a <strong>high brightness</strong> value, the spectrum image is <strong>brightly lit</strong> at the corresponding wavelengths.
+                        At wavelengths where the spectrum graph has a
+                        <strong>high brightness</strong> value, the spectrum
+                        image is <strong>brightly lit</strong> at the
+                        corresponding wavelengths.
                       </p>
                     </div>
-
                   </v-col>
                   <v-col cols="6">
-                    <h4>
-                      Light spectrum for LED bulb
-                    </h4>
+                    <h4>Light spectrum for LED bulb</h4>
                     <v-img
                       class="mb-4 mx-a"
                       contain
                       :src="`${state.image_location}/LED_White_w_highlight_spectool.png`"
                     ></v-img>
-                    <h4>
-                      Light spectrum for sodium vapor bulb
-                    </h4>
+                    <h4>Light spectrum for sodium vapor bulb</h4>
                     <v-img
                       class="mx-a"
                       contain
@@ -236,13 +224,10 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="3" 
-            class="no-transition"
-          >
+          <v-window-item :value="3" class="no-transition">
             <v-card-text>
               <v-container>
-                <v-row
-                >
+                <v-row>
                   <v-col
                     cols="6"
                     class="d-flex flex-column"
@@ -250,11 +235,7 @@
                     flat
                     tile
                   >
-                    <h3
-                      class="mb-4"
-                    >
-                      Interpreting spectrum graphs
-                    </h3>
+                    <h3 class="mb-4">Interpreting spectrum graphs</h3>
                     <div>
                       <v-card
                         class="mt-auto mb-4"
@@ -272,23 +253,21 @@
                         Examine the highlighted regions in the graphics to the right.
                       </p>
                       <p>
-                        At wavelengths where the spectrum graph has a <strong>low brightness</strong> value, the spectrum image is <strong>dim</strong> or <strong>dark</strong> at the corresponding wavelengths.
+                        At wavelengths where the spectrum graph has a
+                        <strong>low brightness</strong> value, the spectrum
+                        image is <strong>dim</strong> or
+                        <strong>dark</strong> at the corresponding wavelengths.
                       </p>
                     </div>
-
                   </v-col>
                   <v-col cols="6">
-                    <h4>
-                      Light spectrum for LED bulb
-                    </h4>
+                    <h4>Light spectrum for LED bulb</h4>
                     <v-img
                       class="mb-4 mx-a"
                       contain
                       :src="`${state.image_location}/LED_White_w_neghighlight_spectool.png`"
                     ></v-img>
-                    <h4>
-                      Light spectrum for sodium vapor bulb
-                    </h4>
+                    <h4>Light spectrum for sodium vapor bulb</h4>
                     <v-img
                       class="mx-a"
                       contain
@@ -300,9 +279,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="4" 
-            class="no-transition"
-          >
+          <v-window-item :value="4" class="no-transition">
             <v-card-text>
               <v-container>
                 <v-row>
@@ -341,9 +318,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="5" 
-            class="no-transition"
-          >
+          <v-window-item :value="5" class="no-transition">
             <v-card-text>
               <v-container>
                 <v-row>
@@ -360,10 +335,18 @@
                         The same <strong>Doppler shift</strong> happens with <strong>light waves</strong> (and all other wave phenomena). But a light source has to be moving very fast for you to notice these changes!
                       </p>
                       <p>
-                        When a light source moves <strong>away from you</strong>, you observe the light to have a <strong>longer (redder)</strong> wavelength than you would if the object were not moving. This effect is called <strong>redshift</strong>.
+                        When a light source moves
+                        <strong>away from you</strong>, you observe the light to
+                        have a <strong>longer (redder)</strong> wavelength than
+                        you would if the object were not moving. This effect is
+                        called <strong>redshift</strong>.
                       </p>
                       <p>
-                        When a light source moves <strong>toward you</strong>, you observe the light to have a <strong>shorter (bluer)</strong> wavelength than you would if the object were not moving. This effect is called <strong>blueshift</strong>.
+                        When a light source moves <strong>toward you</strong>,
+                        you observe the light to have a
+                        <strong>shorter (bluer)</strong> wavelength than you
+                        would if the object were not moving. This effect is
+                        called <strong>blueshift</strong>.
                       </p>
                     </div>
                   </v-col>
@@ -382,9 +365,7 @@
             </v-card-text>
           </v-window-item>
 
-          <v-window-item :value="6" 
-            class="no-transition"
-          >
+          <v-window-item :value="6" class="no-transition">
             <v-card-text>
               <v-container>
                 <v-row no-gutters>
@@ -408,11 +389,7 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col
-                    cols="2"
-                    class="d-flex flex-column"
-                    height="100%"
-                  >
+                  <v-col cols="2" class="d-flex flex-column" height="100%">
                     <v-img
                       class="mx-a"
                       contain
@@ -424,20 +401,14 @@
                       :src="`${state.image_location}/nitrogen_atom_model.png`"
                     ></v-img>
                   </v-col>
-                  <v-col
-                    cols="8"
-                  >
+                  <v-col cols="8">
                     <v-img
                       class="mx-a"
                       contain
                       :src="`${state.image_location}/stsci_spectrum_element_montage.jpg`"
                     ></v-img>
                   </v-col>
-                  <v-col
-                    cols="2"
-                    class="d-flex flex-column"
-                    height="100%"
-                  >
+                  <v-col cols="2" class="d-flex flex-column" height="100%">
                     <v-row>
                       <v-col>
                         <v-img
@@ -462,32 +433,29 @@
             </v-card-text>
           </v-window-item>
 
-
-          <v-window-item :value="7" 
-            class="no-transition"
-          >
+          <v-window-item :value="7" class="no-transition">
             <v-card-text>
               <v-container>
-                <v-row
-                >
+                <v-row>
                   <v-col
-                    cols="6" 
+                    cols="6"
                     class="d-flex flex-column"
                     height="100%"
                     flat
                     tile
                   >
-                    <h3
-                      class="mb-4"
-                    >
+                    <h3 class="mb-4">
                       Emission and absorption lines in spectra
                     </h3>
                     <div>
                       <p>
-                        The top spectrum shows <strong>emission lines</strong> from a source containing hydrogen.
+                        The top spectrum shows
+                        <strong>emission lines</strong> from a source containing
+                        hydrogen.
                       </p>
                       <p>
-                        The bottom spectrum shows <strong>absorption lines</strong> due to hydrogen.
+                        The bottom spectrum shows
+                        <strong>absorption lines</strong> due to hydrogen.
                       </p>
                       <p>
                         Notice that in both spectra, the emission and absorption lines are present at the same combination of wavelengths (i.e. hydrogen’s “chemical fingerprint”).
@@ -507,17 +475,13 @@
                     </v-card>
                   </v-col>
                   <v-col cols="6">
-                    <h4>
-                      Hydrogen emission spectrum
-                    </h4>
+                    <h4>Hydrogen emission spectrum</h4>
                     <v-img
                       class="mb-4 mx-a"
                       contain
                       :src="`${state.image_location}/hydrogen_emission_spectool.png`"
                     ></v-img>
-                    <h4>
-                      Hydrogen absorption spectrum
-                    </h4>
+                    <h4>Hydrogen absorption spectrum</h4>
                     <v-img
                       class="mx-a"
                       contain
@@ -644,21 +608,13 @@
             back
           </v-btn>
           <v-spacer></v-spacer>
-          <v-item-group
-            v-model="step"
-            class="text-center"
-            mandatory
-          >
+          <v-item-group v-model="step" class="text-center" mandatory>
             <v-item
               v-for="n in length"
               :key="`btn-${n}`"
               v-slot="{ active, toggle }"
             >
-              <v-btn
-                :input-value="active"
-                icon
-                @click="toggle"
-              >
+              <v-btn :input-value="active" icon @click="toggle">
                 <v-icon>mdi-record</v-icon>
               </v-btn>
             </v-item>
@@ -678,7 +634,13 @@
             color="accent"
             class="black--text"
             depressed
-            @click="() => { $emit('close'); dialog = false; step = 0; }"
+            @click="
+              () => {
+                $emit('close');
+                dialog = false;
+                step = 0;
+              }
+            "
           >
             done
           </v-btn>
@@ -690,9 +652,7 @@
 
 
 <style>
-
 .no-transition {
   transition: none !important;
 }
-
 </style>

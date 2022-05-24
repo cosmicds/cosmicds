@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row v-if="show_team_interface">
       <v-col>
         <v-btn
           color="error"
@@ -27,7 +27,7 @@
         <c-select-galaxies-2-guidance
           v-if="stage_state.marker == 'sel_gal2'" />
         <v-btn
-          v-if="stage_state.marker == 'sel_gal2' && stage_state.gals_total < stage_state.gals_max"
+          v-if="stage_state.marker == 'sel_gal2' && stage_state.gals_total < stage_state.gals_max && show_team_interface"
           color="error"
           class="black--text"
           block
@@ -149,6 +149,7 @@
           >
             <!-- This alert is temporary -->
             <v-btn
+              v-if="show_team_interface"
               :disabled="!stage_state.waveline_set"
               class="white-text px-a"
               width="100%"

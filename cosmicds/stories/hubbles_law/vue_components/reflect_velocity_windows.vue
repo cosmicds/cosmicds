@@ -364,11 +364,9 @@
 
 
 <style>
-
 .no-transition {
   transition: none;
 }
-
 </style>
 
 
