@@ -32,6 +32,7 @@
       :search="search"
       :single-select="single_select"
       :item-key="key_component"
+      :style="cssVars"
       hide-default-footer
     >
     </v-data-table>
@@ -78,6 +79,14 @@ export default {
       if (newValue === oldValue) return;
       this.updateStyling(newValue, this.sortBy);
     }
+  },
+
+  computed: {
+    cssVars() {
+      return {
+        "--selected-color": this.sel_color
+      }
+    }
   }
 }
 </script>
@@ -85,7 +94,7 @@ export default {
 
 <style scoped>
 tr.v-data-table__selected {
-  background-color: dodgerblue !important;
+  background-color: var(--selected-color) !important;
 }
 
 th.text-start.sortable {

@@ -59,6 +59,8 @@ def format_fov(fov):
     return fov.to_string(unit=u.degree, sep=":", precision=0, pad=True) + " (dd:mm:ss)"
 
 def format_measured_angle(angle):
+    if angle == 0:
+        return ""
     return angle.to_string(unit=u.arcsec, precision=0)[:-6] + " arcseconds"
 
 def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):

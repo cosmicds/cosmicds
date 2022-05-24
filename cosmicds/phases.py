@@ -5,7 +5,6 @@ from cosmicds.components.viewer_layout import ViewerLayout
 from cosmicds.events import WriteToDatabaseMessage
 
 from cosmicds.mixins import TemplateMixin, HubMixin
-from cosmicds.utils import load_template
 from glue.core import Data
 from glue.core.state_objects import State
 from echo import DictCallbackProperty, CallbackProperty, add_callback
@@ -53,10 +52,8 @@ class Story(State, HubMixin):
     def set_layer_visible(self, data, viewers):
         for viewer in self.viewers():
             for layer in viewer.layers:
-                if layer.state.layer == data:
+                if layer.state.layer.label == data.label:
                     layer.state.visible = viewer in viewers
-
-
 
 class Stage(TemplateMixin):
     template = Unicode().tag(sync=True)
