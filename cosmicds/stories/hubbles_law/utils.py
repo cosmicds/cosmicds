@@ -20,8 +20,8 @@ __all__ = [
 MILKY_WAY_SIZE_MPC = 0.03
 
 # Both in angstroms
-H_ALPHA_REST_LAMBDA = 6563
-MG_REST_LAMBDA = 5177
+H_ALPHA_REST_LAMBDA = 6565 # SDSS calibrates to wavelengths in a vacuum
+MG_REST_LAMBDA = 5172 # The value used by SDSS is actually 5176.7, but that wavelength aligns with an upward bump, so we are adjusting it to 5172 to avoid confusing students. Ziegler & Bender 1997 uses lambda_0 ~ 5170, so our choice is justifiable.
 
 GALAXY_FOV = 1.5 * u.arcmin
 FULL_FOV = 60 * u.deg

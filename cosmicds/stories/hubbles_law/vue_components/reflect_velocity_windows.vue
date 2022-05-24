@@ -1,16 +1,16 @@
 <template>
   <v-btn
     block
-    color="primary"
+    color="info"
     elevation="2"
     @click.stop="dialog = true"
   >
-    <v-icon
-      class="mr-4"
-    >
-      mdi-pen
-    </v-icon>
     {{ buttonText }}
+    <v-icon
+      class="ml-4"
+    >
+      {{ reflection_completed ? 'mdi-check-circle-outline' : 'mdi-circle-outline' }}
+    </v-icon>
 
     <v-dialog
         v-model="dialog"
@@ -252,7 +252,7 @@
             color="accent"
             class="black--text"
             depressed
-            @click="() => { $emit('submit'); dialog = false; step = 0; }"
+            @click="() => { $emit('submit'); dialog = false; step = 0; reflection_completed = true}"
           >
             {{ closeText }}
           </v-btn>
@@ -279,7 +279,8 @@ module.exports = {
       length: 8,
       dialog: false,
       max_step_completed: 0,
-      interact_steps: [2,3,4,5,6] 
+      interact_steps: [2,3,4,5,6],
+      reflection_completed: false
     };
   },
   computed: {

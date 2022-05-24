@@ -1,11 +1,11 @@
 <template>
   <v-card
     id="slideshow-root"
-    outlined
     elevation="6"
+    light
   >
     <v-toolbar
-      color="secondary"
+      color="info"
       dense
       dark
     >
@@ -19,6 +19,7 @@
     <v-window
       style="min-height: 300px;"
       v-model="step"
+      class="white"
     >
       <v-window-item :value="0" 
         class="no-transition"
@@ -36,8 +37,9 @@
                 </p>
                 <v-card
                   class="d-flex justify-center pa-4 mx-12 mb-4"
-                  color="secondary"
+                  color="primary lighten-1"
                   style="font-weight:600;"
+                  dark
                 >
                   Has the universe always existed? If not, how long ago did it form?
                 </v-card>
@@ -185,6 +187,155 @@
                       cols="8"
                       offset-lg="1"
                     >   
+                      <c-exploration-tool1 id="exploration-tool1">
+                    </v-col>
+                    <v-col
+                      cols="4"
+                      lg="2"
+                    >
+                      <v-row
+                        justify="space-between"
+                      >
+                        <v-col
+                          cols="12"
+                          lg="6"
+                        >
+                          <v-btn
+                            @click="go_to_location_tool1({
+                                ra: 83.63,
+                                dec: 22.014,
+                                fov: 350, // optional, in arcseconds, default is 90
+                                instant: false // also optional, false by default
+                              })"
+                            color="info"
+                            width="100%"
+                            class="mx-2"
+                          >
+                            M1
+                          </v-btn>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          lg="6"
+                        >
+                          <v-btn
+                            @click="go_to_location_tool1({
+                                ra: 250.4,
+                                dec: 36.46,
+                                fov: 700, // optional, in arcseconds, default is 90
+                                instant: false // also optional, false by default
+                              })"
+                            color="info"
+                            width="100%"
+                            class="mx-2"
+                          >
+                            M13
+                          </v-btn>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          lg="6"
+                        >
+                          <v-btn
+                            @click="go_to_location_tool1({
+                                ra: 10.63,
+                                dec: 41.27,
+                                fov: 6000, // optional, in arcseconds, default is 90
+                                instant: false // also optional, false by default
+                              })"
+                            color="info"
+                            width="100%"
+                            class="mx-2"
+                          >
+                            M31
+                          </v-btn>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          lg="6"
+                        >
+                          <v-btn
+                            @click="go_to_location_tool1({
+                                ra: 83.82,
+                                dec: -5.39,
+                                fov:7500, // optional, in arcseconds, default is 90
+                                instant: false // also optional, false by default
+                              })"
+                            color="info"
+                            width="100%"
+                            class="mx-2"
+                          >
+                            M42
+                          </v-btn>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          lg="6"
+                        >
+                          <v-btn
+                            @click="go_to_location_tool1({
+                                ra: 202.47,
+                                dec: 47.195,
+                                fov: 700, // optional, in arcseconds, default is 90
+                                instant: false // also optional, false by default
+                              })"
+                            color="info"
+                            width="100%"
+                            class="mx-2"
+                          >
+                            M51
+                          </v-btn>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          lg="6"
+                        >
+                          <v-btn
+                            @click="go_to_location_tool1({
+                                ra: 148.97,
+                                dec: 69.68,
+                                fov: 400, // optional, in arcseconds, default is 90
+                                instant: false // also optional, false by default
+                              })"
+                            color="info"
+                            width="100%"
+                            class="mx-2"
+                          >
+                            M82
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </div>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+      </v-window-item>
+
+      <v-window-item :value="4" 
+        class="no-transition"
+      >
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col>
+                <div
+                  style="min-height: 120px;"
+                >
+                  <p>
+                    M31 and M51 are examples of a particular type of nebula that interested astronomers in the early 1900’s. They were known as “spiral” nebulae because of their distinctive spiral shape. In 1920, there was a “Great Debate” between astronomers Harlow Shapley and Heber Curtis questioning whether the spiral nebulae were part of our own Milky Way galaxy or were “island universes” beyond our Milky Way. Do you think the nebulae you’ve observed are within the Milky Way or beyond it?
+                  </p>
+                </div>
+                <div
+                  class="mb-2 mx-4"
+                >    
+                  <v-row>
+                    <v-col
+                      cols="8"
+                      offset-lg="1"
+                    >   
                       <c-exploration-tool2 id="exploration-tool2">
                     </v-col>
                     <v-col
@@ -308,155 +459,6 @@
                 </div>
               </v-col>
             </v-row>
-          </v-container>
-        </v-card-text>
-      </v-window-item>
-
-      <v-window-item :value="4" 
-        class="no-transition"
-      >
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col>
-                <div
-                  style="min-height: 120px;"
-                >
-                  <p>
-                    M31 and M51 are examples of a particular type of nebula that interested astronomers in the early 1900’s. They were known as “spiral” nebulae because of their distinctive spiral shape. In 1920, there was a “Great Debate” between astronomers Harlow Shapley and Heber Curtis questioning whether the spiral nebulae were part of our own Milky Way galaxy or were “island universes” beyond our Milky Way. Do you think the nebulae you’ve observed are within the Milky Way or beyond it?
-                  </p>
-                </div>
-                <div
-                  class="mb-2 mx-4"
-                >    
-                  <v-row>
-                    <v-col
-                      cols="8"
-                      offset-lg="1"
-                    >   
-                      <c-exploration-tool3 id="exploration-tool3">
-                    </v-col>
-                    <v-col
-                      cols="4"
-                      lg="2"
-                    >
-                      <v-row
-                        justify="space-between"
-                      >
-                        <v-col
-                          cols="12"
-                          lg="6"
-                        >
-                          <v-btn
-                            @click="go_to_location_tool3({
-                                ra: 83.63,
-                                dec: 22.014,
-                                fov: 350, // optional, in arcseconds, default is 90
-                                instant: false // also optional, false by default
-                              })"
-                            color="info"
-                            width="100%"
-                            class="mx-2"
-                          >
-                            M1
-                          </v-btn>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          lg="6"
-                        >
-                          <v-btn
-                            @click="go_to_location_tool3({
-                                ra: 250.4,
-                                dec: 36.46,
-                                fov: 700, // optional, in arcseconds, default is 90
-                                instant: false // also optional, false by default
-                              })"
-                            color="info"
-                            width="100%"
-                            class="mx-2"
-                          >
-                            M13
-                          </v-btn>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          lg="6"
-                        >
-                          <v-btn
-                            @click="go_to_location_tool3({
-                                ra: 10.63,
-                                dec: 41.27,
-                                fov: 6000, // optional, in arcseconds, default is 90
-                                instant: false // also optional, false by default
-                              })"
-                            color="info"
-                            width="100%"
-                            class="mx-2"
-                          >
-                            M31
-                          </v-btn>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          lg="6"
-                        >
-                          <v-btn
-                            @click="go_to_location_tool3({
-                                ra: 83.82,
-                                dec: -5.39,
-                                fov:7500, // optional, in arcseconds, default is 90
-                                instant: false // also optional, false by default
-                              })"
-                            color="info"
-                            width="100%"
-                            class="mx-2"
-                          >
-                            M42
-                          </v-btn>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          lg="6"
-                        >
-                          <v-btn
-                            @click="go_to_location_tool3({
-                                ra: 202.47,
-                                dec: 47.195,
-                                fov: 700, // optional, in arcseconds, default is 90
-                                instant: false // also optional, false by default
-                              })"
-                            color="info"
-                            width="100%"
-                            class="mx-2"
-                          >
-                            M51
-                          </v-btn>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          lg="6"
-                        >
-                          <v-btn
-                            @click="go_to_location_tool3({
-                                ra: 148.97,
-                                dec: 69.68,
-                                fov: 400, // optional, in arcseconds, default is 90
-                                instant: false // also optional, false by default
-                              })"
-                            color="info"
-                            width="100%"
-                            class="mx-2"
-                          >
-                            M82
-                          </v-btn>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                </div>
-              </v-col>
-            </v-row>
           </v-container>   
         </v-card-text>
       </v-window-item>
@@ -508,15 +510,16 @@
     <v-divider></v-divider>
 
     <v-card-actions
-      class="justify-space-between"
+      class="justify-space-between grey lighten-4"
     >
       <v-btn
         :disabled="step === 0"
+        class="black--text"
         color="accent"
-        text
+        depressed
         @click="step--"
       >
-        Back
+        back
       </v-btn>
       <v-spacer></v-spacer>
       <v-item-group
@@ -542,16 +545,18 @@
       <!-- Code to use for disable in button below if step 2 depends on exploring WWT first: -->
       <!-- :disabled="step === 6 || (step === 2 && !exploration_complete)" -->
       <v-btn
+        v-if="step < 6"
         :disabled="step === 6"
+        class="black--text"
         color="accent"
-        text
+        depressed
         @click="step++;"
       >
-        {{ step < 6 ? 'next' : '' }}
+        next
       </v-btn>
       <!-- first button below just being used for testing, delete when using live with students -->
       <v-btn
-        :class="step < 6 ? 'd-block' : 'd-none'"
+        v-if="step < 6 && show_team_interface"
         color="error"
         class="black--text"
         depressed
@@ -563,8 +568,8 @@
         get started
       </v-btn>
       <v-btn
+        v-if="step >= 6"
         :disabled="step > 6"
-        :class="step >= 6 ? 'd-block' : 'd-none'"
         color="accent"
         class="black--text"
         depressed

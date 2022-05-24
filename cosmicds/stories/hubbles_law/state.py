@@ -125,17 +125,17 @@ class HubblesLaw(Story):
     def _set_theme(self):
         v.theme.dark = True
         v.theme.themes.dark.primary = 'colors.lightBlue.darken4'   # Overall theme & header bars
-        v.theme.themes.light.primary = 'colors.lightBlue.darken4'
-        v.theme.themes.dark.secondary = 'colors.pink.darken3'    # Headers on dialogs & buttons that pop up dialogs
-        v.theme.themes.light.secondary = 'colors.pink.darken2'
+        v.theme.themes.light.primary = 'colors.lightBlue.darken3'
+        v.theme.themes.dark.secondary = 'colors.cyan.darken3'    # Headers on dialogs & buttons that pop up dialogs
+        v.theme.themes.light.secondary = 'colors.cyan.darken2'
         v.theme.themes.dark.accent = 'colors.amber.accent2'   # Next/Back buttons
         v.theme.themes.light.accent = 'colors.amber.accent3'
-        v.theme.themes.dark.error = 'colors.teal.accent2'  # Team insider buttons that will not appear for user
-        v.theme.themes.light.error = 'colors.teal.accent3'
+        v.theme.themes.dark.error = 'colors.green.accent3'  # Team insider buttons that will not appear for user
+        v.theme.themes.light.error = 'colors.green.accent3'
         v.theme.themes.dark.info = 'colors.deepOrange.darken3'  # Instruction scaffolds & viewer highlights
-        v.theme.themes.light.info = 'colors.deepOrange.lighten2'
-        v.theme.themes.dark.success = 'colors.green'   # Unallocated
-        v.theme.themes.light.success = 'colors.green'
+        v.theme.themes.light.info = 'colors.deepOrange.darken1'
+        v.theme.themes.dark.success = 'colors.indigo.darken2'   # Unallocated
+        v.theme.themes.light.success = 'colors.indigo.darken1'
         v.theme.themes.dark.warning = '' # Unallocated
         v.theme.themes.light.warning = ''
         v.theme.themes.dark.anchor = '' # Unallocated

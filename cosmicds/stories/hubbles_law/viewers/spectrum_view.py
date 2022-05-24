@@ -37,7 +37,7 @@ class SpectrumView(BqplotScatterView):
     _subset_artist_cls = SpectrumViewLayerArtist
 
     inherit_tools = False
-    tools = ['bqplot:home', 'bqplot:xzoom', 'hubble:restwave', 'cds:info']
+    tools = ['bqplot:home', 'hubble:wavezoom', 'hubble:restwave', 'cds:info']
     _state_cls = SpectrumViewerState
     show_line = Bool(True)
     LABEL = "Spectrum Viewer"
@@ -106,7 +106,7 @@ class SpectrumView(BqplotScatterView):
 
     def _active_tool_change(self, change):
         is_tool = change.new is not None
-        line_visible = not is_tool or change.new.tool_id != 'bqplot:xzoom'
+        line_visible = not is_tool or change.new.tool_id != 'hubble:wavezoom'
         self.user_line.visible = line_visible
         self.user_line_label.visible = line_visible
 

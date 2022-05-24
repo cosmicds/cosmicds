@@ -7,7 +7,7 @@ from glue_jupyter.bqplot.scatter import BqplotScatterView
 import ipyvuetify as v
 from numpy import isin
 from random import sample
-from traitlets import default
+from traitlets import default, Bool
 
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
@@ -27,8 +27,11 @@ log = logging.getLogger()
 class StageState(State):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
+    gal_selected = CallbackProperty(False)
     vel_win_opened = CallbackProperty(False)
+    lambda_clicked = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
+
     marker = CallbackProperty("")
     indices = CallbackProperty({})
     image_location = CallbackProperty()
@@ -79,6 +82,7 @@ class StageState(State):
     "Calculate velocities"
 ])
 class StageOne(HubbleStage):
+    show_team_interface = Bool(False).tag(sync=True)
 
     @default('template')
     def _default_template(self):
@@ -96,6 +100,7 @@ class StageOne(HubbleStage):
         super().__init__(*args, **kwargs)
 
         self.stage_state = StageState()
+        self.show_team_interface = self.app_state.show_team_interface
         
         self.stage_state.image_location = join("data", "images", "stage_one_spectrum")
         add_callback(self.app_state, 'using_voila', self._update_image_location)
@@ -138,7 +143,7 @@ class StageOne(HubbleStage):
 
         # Set up components
         sdss_data = self.get_data("SDSS_all_sample_filtered")
-        selection_tool = SelectionTool(data=sdss_data)
+        selection_tool = SelectionTool(data=sdss_data, state=self.stage_state)
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
 
@@ -161,7 +166,7 @@ class StageOne(HubbleStage):
             "obswave_alert",
             "obswave_2_alert",            
             "remaining_gals_alert",
-            "nice_work_alert",
+            "nice_work_guidance",
             "doppler_calc_1_alert",
             "doppler_calc_2_alert",
             "doppler_calc_3_guidance"
@@ -229,6 +234,7 @@ class StageOne(HubbleStage):
         else:
             filename = galaxy['name']
             gal_type = galaxy['type']
+            galaxy.pop("element")
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
 

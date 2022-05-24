@@ -1,5 +1,5 @@
 <template>
-  <div
+  <v-card
     id="selection-root"
     v-intersect.once="(entries, observer, isIntersecting) => {
       const root = entries[0].target;
@@ -27,18 +27,6 @@
           <v-btn icon
             v-bind="attrs"
             v-on="on"
-            @click="reset()">
-            <v-icon>mdi-home</v-icon>
-          </v-btn>
-        </template>
-        Reset view
-      </v-tooltip>
-
-      <v-tooltip top>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn icon
-            v-bind="attrs"
-            v-on="on"
             :disabled="Object.keys(current_galaxy).length == 0"
             @click="mark_galaxy_bad()"
           >
@@ -47,13 +35,22 @@
         </template>
         Flag galaxy as missing image
       </v-tooltip>
-      
-      <v-btn
-        icon
-        @click.stop="dialog = true"
+
+      <v-tooltip
+        top
       >
-        <v-icon>mdi-information-outline</v-icon>
-      </v-btn>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            icon
+            v-bind="attrs"
+            v-on="on"
+            @click.stop="dialog = true"
+          >
+            <v-icon>mdi-information-outline</v-icon>
+          </v-btn>
+        </template>
+        Info for using this tool
+      </v-tooltip>
       
       <v-dialog
           v-model="dialog"
@@ -86,7 +83,9 @@
               </v-btn>
             </span>
           </v-toolbar>
-          <v-card-text>
+          <v-card-text
+            class="white black--text"
+          >
             <v-container>
               <v-row
               >
@@ -102,6 +101,7 @@
                       <v-chip
                         label
                         outlined
+                        color="black"
                       >
                         Pan
                       </v-chip>
@@ -123,6 +123,7 @@
                       <v-chip
                         label
                         outlined
+                        color="black"
                       >
                         Zoom
                       </v-chip>
@@ -150,24 +151,44 @@
     />
     <v-tooltip top>
       <template v-slot:activator="{ on, attrs }">
+        <v-fab-transition>
+          <v-btn
+            fab
+            dark
+            bottom
+            left
+            absolute
+            color="accent"
+            class="selection-fab black--text"
+            v-bind="attrs"
+            v-on="on"
+            v-show="Object.keys(current_galaxy).length !== 0"
+            @click="select_current_galaxy()">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </v-fab-transition>
+      </template>
+      Add galaxy to my dataset
+    </v-tooltip>
+    <v-tooltip top>
+      <template v-slot:activator="{ on, attrs }">
         <v-btn
           fab
           dark
           bottom
           right
           absolute
-          color="secondary"
-          class="selection-fab"
+          color="accent"
+          class="selection-fab black--text"
           v-bind="attrs"
           v-on="on"
-          v-show="Object.keys(current_galaxy).length !== 0"
-          @click="select_current_galaxy()">
-          <v-icon>mdi-plus</v-icon>
+          @click="reset()">
+          <v-icon>mdi-cached</v-icon>
         </v-btn>
       </template>
-      Add galaxy to my dataset
+      Reset view
     </v-tooltip>
-  </div>
+  </v-card>
 </template>
 
 <style scoped>
