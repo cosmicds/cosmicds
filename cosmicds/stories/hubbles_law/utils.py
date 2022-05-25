@@ -17,6 +17,8 @@ __all__ = [
     'line_mark', 'vertical_line_mark',
 ]
 
+HUBBLE_ROUTE_PATH = "hubbles_law"
+
 MILKY_WAY_SIZE_MPC = 0.03
 
 # Both in angstroms
