@@ -3,6 +3,7 @@ import requests
 
 from cosmicds.phases import Stage
 from cosmicds.utils import API_URL, CDSJSONEncoder
+from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
 
 class HubbleStage(Stage):
 
@@ -37,7 +38,7 @@ class HubbleStage(Stage):
 
     def submit_measurement(self, measurement):
         prepared = self._prepare_measurement(measurement)
-        requests.put(f"{API_URL}/submit-measurement", json=prepared)
+        requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/submit-measurement", json=prepared)
 
     def update_data_value(self, dc_name, comp_name, value, index):
         super().update_data_value(dc_name, comp_name, value, index)

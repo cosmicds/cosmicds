@@ -10,6 +10,7 @@ import ipyvuetify as v
 
 import requests
 from cosmicds.utils import API_URL
+from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
 
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
@@ -72,7 +73,7 @@ class HubblesLaw(Story):
         ])
 
         # Load in the galaxy data
-        galaxies = requests.get(f"{API_URL}/galaxies").json()
+        galaxies = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/galaxies").json()
         self.data_collection.append(Data(
             label="SDSS_all_sample_filtered",
             **{ k : [x[k] for x in galaxies] for k in galaxies[0] }

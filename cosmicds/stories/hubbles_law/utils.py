@@ -10,12 +10,15 @@ except ImportError:
     from astropy.cosmology import Planck15 as planck
 
 __all__ = [
+    'HUBBLE_ROUTE_PATH',
     'MILKY_WAY_SIZE_MPC', 'H_ALPHA_REST_LAMBDA',
     'MG_REST_LAMBDA', 'GALAXY_FOV', 'FULL_FOV',
     'angle_to_json', 'angle_from_json',
     'age_in_gyr', 'format_fov', 'format_measured_angle',
     'line_mark', 'vertical_line_mark',
 ]
+
+HUBBLE_ROUTE_PATH = "hubbles_law"
 
 MILKY_WAY_SIZE_MPC = 0.03
 
