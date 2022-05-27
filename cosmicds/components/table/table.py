@@ -12,6 +12,7 @@ from ...utils import convert_material_color, load_template
 
 __all__ = ['Table']
 
+_DEFAULT_TRANSFORM = lambda x: x
 
 class Table(VuetifyTemplate, HubListener):
     default_color = 'dodgerblue'
@@ -56,6 +57,7 @@ class Table(VuetifyTemplate, HubListener):
         self._data_collection_delete_filter = lambda message: message.data == self._glue_data
         self._data_update_filter = lambda message: message.data == self._glue_data and message.attribute in self._glue_components
         self._data_changed_filter = lambda message: message.data == self._glue_data
+        self._transforms = kwargs.get('transforms', {})
 
         def subset_changed_filter(message):
             if self._is_subset_group:
@@ -137,16 +139,19 @@ class Table(VuetifyTemplate, HubListener):
         mask = state.to_mask(self._glue_data)
         return [item for index, item in enumerate(self.items) if mask[index]]
 
+    def _transform(self, component):
+        return self._transforms.get(component, _DEFAULT_TRANSFORM)
+
     def _populate_table(self):
         df = self._glue_data.to_dataframe()
         self.headers = [{
-            'text': self._glue_component_names[index],
-            'value': self._glue_components[index]
-        } for index in range(len(self._glue_components))]
+            'text':  name,
+            'value': component
+        } for name, component in zip(self._glue_component_names, self._glue_components)]
         self.headers[0]['align'] = 'start'
         self.items = [
             {
-                component : getattr(row, component, None) for component in self._glue_components
+                component : self._transform(component)(getattr(row, component, None)) for component in self._glue_components
             } for row in df.itertuples()
         ]
 

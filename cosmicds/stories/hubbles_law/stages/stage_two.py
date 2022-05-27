@@ -67,15 +67,21 @@ class StageTwo(HubbleStage):
 
         self.add_component(DistanceTool(), label="c-distance-tool")
 
+        type_names = { "E" : "Elliptical", "Ir": "Irregular", "Sp": "Spiral" }
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
                                glue_components=['name',
-                                               'velocity',
-                                               'distance'],
+                                                'type',
+                                                'angular_size',
+                                                'velocity',
+                                                'distance'],
                                key_component='name',
+                               transforms={ 'type' : lambda x: type_names.get(x, x) },
                                names=['Galaxy Name',
-                                       'Velocity (km/s)',
-                                       'Distance (Mpc)'],
+                                      'GZ Class',
+                                      'θ (arcsec)',
+                                      'Velocity (km/s)',
+                                      'Distance (Mpc)'],
                                title='My Galaxies | Distance Measurements',
                                selected_color=self.table_selected_color(self.app_state.dark_mode),
                                use_subset_group=False,

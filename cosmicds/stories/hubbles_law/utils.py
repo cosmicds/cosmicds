@@ -63,7 +63,6 @@ def age_in_gyr_simple(H0):
     s_to_gyr = u.s.to(u.Gyr)
     return round(inv * mpc_over_km * s_to_gyr, 1)
 
-
 def format_fov(fov, units=True):
     suffix = " (dd:mm:ss)" if units else ""
     return fov.to_string(unit=u.degree, sep=":", precision=0, pad=True) + suffix
