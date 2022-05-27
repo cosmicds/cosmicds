@@ -307,6 +307,7 @@ class StageOne(HubbleStage):
             return
         value = round(event["domain"]["x"], 0)
         self.stage_state.waveline_set = True
+        self.stage_state.lambda_obs = value
         index = self.galaxy_table.index
         self.update_data_value("student_measurements", "measwave", value, index)
         self.story_state.update_student_data()
