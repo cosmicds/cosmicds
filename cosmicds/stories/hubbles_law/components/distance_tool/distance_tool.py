@@ -1,10 +1,12 @@
+from math import floor
+
 import ipyvue as v
 from astropy.coordinates import Angle, SkyCoord
 import astropy.units as u
 from cosmicds.utils import RepeatedTimer, load_template
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, angle_to_json, angle_from_json
 from pywwt.jupyter import WWTJupyterWidget
-from traitlets import Instance, Bool, Float, Int, observe
+from traitlets import Instance, Bool, Float, Int, Unicode, observe
 from ipywidgets import DOMWidget, widget_serialization
 from datetime import datetime
 
@@ -19,6 +21,7 @@ class DistanceTool(v.VueTemplate):
     width = Int().tag(sync=True)
     view_changing = Bool(False).tag(sync=True)
     measuring_allowed = Bool(False).tag(sync=True)
+    fov_text = Unicode().tag(sync=True)
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
 
@@ -33,6 +36,7 @@ class DistanceTool(v.VueTemplate):
         self.widget._set_message_type_callback('wwt_view_state', self._handle_view_message)
         self.last_update = datetime.now()
         self._rt = RepeatedTimer(self.UPDATE_TIME, self._check_view_changing)
+        self.update_text()
         super().__init__(*args, **kwargs)
 
     def _setup_widget(self):
@@ -42,6 +46,9 @@ class DistanceTool(v.VueTemplate):
 
     def reset_canvas(self):
         self.send({"method": "reset", "args": []})
+
+    def update_text(self):
+        self.send({"method": "update_text", "args": []})
 
     def _height_from_pixel_str(self, s):
         return int(s[:-2]) # Remove the 'px' from the end
@@ -69,6 +76,17 @@ class DistanceTool(v.VueTemplate):
     def _on_measuring_changed(self, measuring):
         if not measuring["new"]:
             self.reset_canvas()
+
+    @observe("angular_height")
+    def _on_fov_change(self, change):
+        d, m, s = change["new"].dms
+        if d > 0:
+            self.fov_text = f"{floor(d)}°"
+        elif m > 0:
+            self.fov_text = f"{floor(m)}'"
+        else:
+            self.fov_text = f"{s}\""
+        self.update_text()
 
     def _handle_view_message(self, wwt, _updated):
         fov = Angle(self.widget.get_fov())
