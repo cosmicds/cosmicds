@@ -121,7 +121,7 @@ class StageTwo(HubbleStage):
         if not value:
             return
         galaxy = self.stage_state.galaxy
-        index = self.get_data_index('student_measurements', 'name', lambda x: x == galaxy["name"])
+        index = self.get_data_indices('student_measurements', 'name', lambda x: x == galaxy["name"], single=True)
         angular_size = self.distance_tool.angular_size.value
         distance = round(MILKY_WAY_SIZE_MPC * 180 / (angular_size * pi))
         self.stage_state.galaxy_dist = distance
