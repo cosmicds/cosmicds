@@ -5,6 +5,7 @@ from glue.config import viewer_tool
 from glue.viewers.common.tool import Tool
 
 from cosmicds.utils import API_URL
+from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
 
 @viewer_tool
 class SpectrumFlagTool(Tool):
@@ -21,6 +22,6 @@ class SpectrumFlagTool(Tool):
         if not galaxy_name.endswith(".fits"):
             galaxy_name += ".fits"
         data = { "galaxy_name": galaxy_name }
-        requests.post(f"{API_URL}/mark-spectrum-bad", json=data)
+        requests.post(f"{API_URL}/{HUBBLE_ROUTE_PATH}/mark-spectrum-bad", json=data)
         self.flagged = True
 

@@ -1,7 +1,8 @@
 from os.path import join
 from pathlib import Path
 
-from echo import add_callback, CallbackProperty
+from echo import add_callback, ignore_callback, CallbackProperty
+from glue.core import Data
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 import ipyvuetify as v
@@ -103,6 +104,8 @@ class StageOne(HubbleStage):
         # Set up viewers
         spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
         spectrum_viewer.add_event_callback(self.on_spectrum_click, events=['click'])
+        sf_tool = spectrum_viewer.toolbar.tools["hubble:specflag"]
+        add_callback(sf_tool, "flagged", self._on_spectrum_flagged)
 
         for label in ['hub_const_viewer', 'hub_fit_viewer',
                       'hub_comparison_viewer', 'hub_students_viewer',
@@ -309,8 +312,9 @@ class StageOne(HubbleStage):
         self.stage_state.waveline_set = True
         self.stage_state.lambda_obs = value
         index = self.galaxy_table.index
-        self.update_data_value("student_measurements", "measwave", value, index)
-        self.story_state.update_student_data()
+        if index is not None:
+            self.update_data_value("student_measurements", "measwave", value, index)
+            self.story_state.update_student_data()
 
     def vue_add_current_velocity(self, _args=None):
         data = self.get_data("student_measurements")
@@ -348,4 +352,23 @@ class StageOne(HubbleStage):
         super()._on_dark_mode_change(dark)
         self.update_spectrum_style(dark)
 
+    def _on_spectrum_flagged(self, flagged):
+        if not flagged:
+            return
+        #index = self.galaxy_table.index
+        item = self.galaxy_table.selected[0]
+        galaxy_name = item["name"]
+        self.remove_measurement(galaxy_name)
 
+        dc_name = "spectrum_data"
+        spec_data = self.get_data(dc_name)
+        data = Data(label=spec_data.label, **{
+            c.label: [0] for c in spec_data.main_components
+        })
+
+        spectrum_viewer = self.get_viewer("spectrum_viewer")
+        self.story_state.update_data(dc_name, data)
+        spectrum_viewer.update("", "", 0)
+        sf_tool = spectrum_viewer.toolbar.tools["hubble:specflag"]
+        with ignore_callback(sf_tool, "flagged"):
+            sf_tool.flagged = False

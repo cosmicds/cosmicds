@@ -15,6 +15,9 @@
         <v-btn
           @click="console.log(stage_state)"
         >State</v-btn>
+        <v-btn
+          @click="console.log(app_state)"
+        >App State</v-btn>
       </v-col>
     </v-row>
 
