@@ -4,6 +4,7 @@ import ipyvue as v
 from astropy.coordinates import Angle, SkyCoord
 import astropy.units as u
 from cosmicds.utils import RepeatedTimer, load_template, API_URL
+from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, angle_to_json, angle_from_json
 from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Instance, Bool, Dict, Float, Int, observe
@@ -22,6 +23,8 @@ class DistanceTool(v.VueTemplate):
     view_changing = Bool(False).tag(sync=True)
     measuring_allowed = Bool(False).tag(sync=True)
     galaxy = Dict().tag(sync=True)
+    flagged = Bool(False).tag(sync=True)
+
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
 
@@ -89,6 +92,7 @@ class DistanceTool(v.VueTemplate):
         coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
         self.widget.center_on_coordinates(coordinates, fov=fov, instant=True)
 
-    def vue_mark_galaxy_bad(self, _args=None):
+    @observe('flagged')
+    def mark_galaxy_bad(self, _args=None):
         data = { "galaxy_id" : int(self.galaxy["id"]) }
-        requests.put(f"{API_URL}/mark-galaxy-bad", json=data)
+        requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/mark-galaxy-bad", json=data)

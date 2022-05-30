@@ -45,7 +45,7 @@
             v-bind="attrs"
             v-on="on"
             :disabled="Object.keys(galaxy).length == 0"
-            @click="mark_galaxy_bad()"
+            @click="flagged = true"
           >
             <v-icon>mdi-flag</v-icon>
           </v-btn>
