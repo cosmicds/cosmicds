@@ -40,6 +40,11 @@ class HubbleStage(Stage):
         prepared = self._prepare_measurement(measurement)
         requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/submit-measurement", json=prepared)
 
+    def remove_measurement(self, galaxy_name):
+        user = self.app_state.student
+        if user.get("id", None) is not None:
+            requests.delete(f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurement/{user['id']}/{galaxy_name}")
+
     def update_data_value(self, dc_name, comp_name, value, index):
         super().update_data_value(dc_name, comp_name, value, index)
 

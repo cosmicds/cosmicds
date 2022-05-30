@@ -361,6 +361,9 @@ class StageOne(HubbleStage):
         if not flagged:
             return
         index = self.galaxy_table.index
+        item = self.galaxy_table.selected[0]
+        galaxy_name = item["name"]
+        self.remove_measurement(galaxy_name)
         galaxy = self._replace_galaxy_at_index(index)
         self.galaxy_table._populate_table()
         self.galaxy_table.selected = [galaxy]
