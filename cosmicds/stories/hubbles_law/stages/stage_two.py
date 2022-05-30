@@ -1,5 +1,6 @@
 import logging
 
+import astropy.units as u
 from echo import CallbackProperty, add_callback, ignore_callback
 from glue.core.state_objects import State
 from numpy import pi
@@ -122,11 +123,13 @@ class StageTwo(HubbleStage):
             return
         galaxy = self.stage_state.galaxy
         index = self.get_data_indices('student_measurements', 'name', lambda x: x == galaxy["name"], single=True)
-        angular_size = self.distance_tool.angular_size.value
-        distance = round(MILKY_WAY_SIZE_MPC * 180 / (angular_size * pi))
+        angular_size = self.distance_tool.angular_size
+        ang_size_deg = angular_size.value
+        distance = round(MILKY_WAY_SIZE_MPC * 180 / (ang_size_deg * pi))
+        angular_size_as = round(angular_size.to(u.arcsec).value)
         self.stage_state.galaxy_dist = distance
         self.update_data_value("student_measurements", "distance", distance, index)
-        self.update_data_value("student_measurements", "angular_size", angular_size, index)
+        self.update_data_value("student_measurements", "angular_size", angular_size_as, index)
         self.story_state.update_student_data()
         with ignore_callback(self.stage_state, 'make_measurement'):
             self.stage_state.make_measurement = False

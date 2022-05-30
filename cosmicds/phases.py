@@ -8,7 +8,7 @@ from cosmicds.mixins import TemplateMixin, HubMixin
 from glue.core import Data
 from glue.core.state_objects import State
 from echo import DictCallbackProperty, CallbackProperty, add_callback
-from numpy import delete, equal
+from numpy import delete
 
 
 class Story(State, HubMixin):
