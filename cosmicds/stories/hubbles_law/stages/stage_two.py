@@ -90,6 +90,8 @@ class StageTwo(HubbleStage):
         self.distance_tool.observe(self._angular_height_update, names=["angular_height"])
         self.distance_sidebar.angular_height = format_fov(self.distance_tool.angular_height)
 
+        self.distance_tool.observe(self._distance_tool_flagged, names=["flagged"])
+
     def distance_table_selected_change(self, change):
         selected = change["new"]
         if not selected or selected == change["old"]:
@@ -150,6 +152,20 @@ class StageTwo(HubbleStage):
         self.distance_tool.go_to_location(0, 0, FULL_FOV)
         self.display_age = False
         self.story_state.start_over()
+
+    def _distance_tool_flagged(self, change):
+        if not change["new"]:
+            return
+        index = self.distance_table.index
+        if index is None:
+            return
+        item = self.distance_table.selected[0]
+        galaxy_name = item["name"]
+        self.remove_measurement(galaxy_name)
+        galaxy = self._replace_galaxy_at_index(index)
+        self.distance_table._populate_table()
+        self.distance_table.selected = [galaxy]
+        self.distance_tool.flagged = False
 
     @property
     def distance_sidebar(self):

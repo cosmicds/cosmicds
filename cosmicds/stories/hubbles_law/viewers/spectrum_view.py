@@ -145,6 +145,11 @@ class SpectrumView(BqplotScatterView):
         self.z = z
         rest = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
         self.shifted = rest * (1 + z)
+        items_visible = bool(z > 0) # The bqplot Mark complained without the explicit bool() call
+        self.element_label.visible = items_visible
+        self.element_tick.visible = items_visible
+        self.user_line.visible = items_visible
+        self.user_line_label.visible = items_visible
         self.element_label.x = [self.shifted, self.shifted]
         self.element_label.text = [element]
         self.element_tick.x = [self.shifted, self.shifted]

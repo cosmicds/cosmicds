@@ -2,9 +2,10 @@ from os.path import join
 from pathlib import Path
 
 from echo import add_callback, ignore_callback, CallbackProperty
+from glue.core import Data
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
-from random import randint, sample
+from random import sample
 from traitlets import default
 
 from cosmicds.registries import register_stage
@@ -234,20 +235,6 @@ class StageOne(HubbleStage):
             self.selection_tool.select_galaxy(galaxy)
             self.story_state.update_student_data()
 
-    def _replace_galaxy_at_index(self, index):
-        sdss_data = self.get_data("SDSS_all_sample_filtered")
-        components = [x.label for x in sdss_data.main_components]
-        meas_data = self.get_data("student_measurements")
-        student_comps = [x.label for x in meas_data.main_components]
-        while True:
-            sdss_index = randint(0, sdss_data.size-1)
-            galaxy = { c: sdss_data[c][sdss_index] for c in components if c in student_comps }
-            if galaxy['name'] not in meas_data['name']:
-                break
-        for c in galaxy.keys():
-            self.update_data_value("student_measurements", c, galaxy[c], index)
-        return galaxy
-
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")
 
@@ -283,6 +270,9 @@ class StageOne(HubbleStage):
             return
 
         index = self.galaxy_table.index
+        if index is None:
+            self._empty_spectrum_viewer()
+            return
         data = self.galaxy_table.glue_data
         galaxy = { x.label : data[x][index] for x in data.main_components }
         name = galaxy["name"]
@@ -356,11 +346,22 @@ class StageOne(HubbleStage):
     def galaxy_table(self):
         return self.get_widget("galaxy_table")
 
+    def _empty_spectrum_viewer(self):
+        dc_name = "spectrum_data"
+        spec_data = self.get_data(dc_name)
+        data = Data(label=spec_data.label, **{
+            c.label: [0] for c in spec_data.main_components
+        })
+        spectrum_viewer = self.get_viewer("spectrum_viewer")
+        self.story_state.update_data(dc_name, data)
+        spectrum_viewer.update("", "", 0)
 
     def _on_spectrum_flagged(self, flagged):
         if not flagged:
             return
         index = self.galaxy_table.index
+        if index is None:
+            return
         item = self.galaxy_table.selected[0]
         galaxy_name = item["name"]
         self.remove_measurement(galaxy_name)

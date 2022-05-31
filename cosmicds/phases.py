@@ -138,6 +138,15 @@ class Stage(TemplateMixin):
         values[index] = value
         data.update_components({data.id[comp_name] : values})
 
+    def update_data_values(self, dc_name, values, index):
+        data = self.data_collection[dc_name]
+        comp_dict = {}
+        for comp, value in values.items():
+            vals = data[comp]
+            vals[index] = value
+            comp_dict[data.id[comp]] = vals
+        data.update_components(comp_dict)
+
     def add_data_values(self, dc_name, values):
         data = self.data_collection[dc_name]
         main_components = [x.label for x in data.main_components]

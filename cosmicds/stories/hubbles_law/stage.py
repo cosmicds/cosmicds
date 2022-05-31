@@ -1,5 +1,6 @@
 import json
 import requests
+from random import randint
 
 from cosmicds.phases import Stage
 from cosmicds.utils import API_URL, CDSJSONEncoder
@@ -45,6 +46,20 @@ class HubbleStage(Stage):
         if user.get("id", None) is not None:
             requests.delete(f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurement/{user['id']}/{galaxy_name}")
 
+    def _replace_galaxy_at_index(self, index):
+        sdss_data = self.get_data("SDSS_all_sample_filtered")
+        components = [x.label for x in sdss_data.main_components]
+        meas_data = self.get_data("student_measurements")
+        student_comps = [x.label for x in meas_data.main_components]
+        while True:
+            sdss_index = randint(0, sdss_data.size-1)
+            galaxy = { c: sdss_data[c][sdss_index] for c in components if c in student_comps }
+            if galaxy['name'] not in meas_data['name']:
+                break
+        values = { c: galaxy.get(c, None) for c in student_comps }
+        self.update_data_values("student_measurements", values, index)    
+        return galaxy
+
     def update_data_value(self, dc_name, comp_name, value, index):
         super().update_data_value(dc_name, comp_name, value, index)
 
@@ -54,6 +69,16 @@ class HubbleStage(Stage):
 
             data = self.data_collection[dc_name]
             measurement = { comp.label: data[comp][index] for comp in data.main_components }
+            self.submit_measurement(measurement)
+
+    def update_data_values(self, dc_name, values, index):
+        super().update_data_values(dc_name, values, index)
+
+        if self.app_state.update_db \
+            and dc_name == "student_measurements":
+
+            data = self.data_collection[dc_name]
+            measurement = { comp.label: data[comp][index] for comp in data.main_components if comp.label in HubbleStage._measurement_mapping.keys() }
             self.submit_measurement(measurement)
 
     def add_data_values(self, dc_name, values):
