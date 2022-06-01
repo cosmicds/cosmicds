@@ -31,6 +31,7 @@ class StageState(State):
     vel_win_opened = CallbackProperty(False)
     lambda_used = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
+    velocity_button = CallbackProperty(False)
 
     marker = CallbackProperty("")
     indices = CallbackProperty({})

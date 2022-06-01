@@ -14,7 +14,6 @@
     >
       <v-card
         class="mx-auto"
-        light
       >
         <v-toolbar
           color="secondary"
@@ -47,7 +46,7 @@
         <v-window
           v-model="step"
           style="height: 70vh;"
-          class="overflow-auto white"
+          class="overflow-auto"
         >
           <v-window-item :value="0" 
             class="no-transition"
@@ -81,14 +80,10 @@
                         </v-card-text>
                       </v-card>            
                       <p>
-                        The figure illustrates light passing through a
-                        diffraction grating (1) and a prism (2).
+                        The figure illustrates light passing through a diffraction grating (1) and a prism (2).
                       </p>
                       <p>
-                        Diffraction gratings and prisms &#8212; and raindrops,
-                        bubbles, and oil slicks &#8212; create spectra because
-                        they bend light of different colors by different
-                        amounts. See link for more details.
+                        Diffraction gratings and prisms &#8212; and raindrops, bubbles, and oil slicks &#8212; create spectra because they bend light of different colors by different amounts. See link for more details.
                       </p>
                       <p
                         class="text-center grey--text"
@@ -97,10 +92,12 @@
                       </p>
                     </div>
                   </v-col>
-                  <v-col cols="1"> </v-col>
-                  <v-col cols="4">
+                  <v-col
+                    cols="4"
+                    offset="1"
+                  >
                     <v-img
-                      class="mb-4 mx-a"
+                      class="mb-4 mx-a mt-n3"
                       contain
                       :src="`${state.image_location}/refraction_diffraction_spectra.png`"
                     ></v-img>
@@ -151,18 +148,25 @@
                     </div>
                   </v-col>
                   <v-col cols="6">
-                    <h4>Light spectrum for LED bulb</h4>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location}/LED_White_spectool.png`"
-                    ></v-img>
-                    <h4>Light spectrum for sodium vapor bulb</h4>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/Sodium_Vapor_spectool.png`"
-                    ></v-img>
+                    <v-card
+                      color="white"
+                      light
+                      outlined
+                      class="my-n3 pa-3"
+                    >
+                      <h4>Light spectrum for LED bulb</h4>
+                      <v-img
+                        class="mb-4 mx-a"
+                        contain
+                        :src="`${state.image_location}/LED_White_spectool.png`"
+                      ></v-img>
+                      <h4>Light spectrum for sodium vapor bulb</h4>
+                      <v-img
+                        class="mx-a"
+                        contain
+                        :src="`${state.image_location}/Sodium_Vapor_spectool.png`"
+                      ></v-img>
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-container>
@@ -206,18 +210,25 @@
                     </div>
                   </v-col>
                   <v-col cols="6">
-                    <h4>Light spectrum for LED bulb</h4>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location}/LED_White_w_highlight_spectool.png`"
-                    ></v-img>
-                    <h4>Light spectrum for sodium vapor bulb</h4>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/Sodium_Vapor_w_highlight_spectool.png`"
-                    ></v-img>
+                    <v-card
+                      color="white"
+                      light
+                      outlined
+                      class="my-n3 pa-3"
+                    >
+                      <h4>Light spectrum for LED bulb</h4>
+                      <v-img
+                        class="mb-4 mx-a"
+                        contain
+                        :src="`${state.image_location}/LED_White_w_highlight_spectool.png`"
+                      ></v-img>
+                      <h4>Light spectrum for sodium vapor bulb</h4>
+                      <v-img
+                        class="mx-a"
+                        contain
+                        :src="`${state.image_location}/Sodium_Vapor_w_highlight_spectool.png`"
+                      ></v-img>
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-container>
@@ -261,18 +272,25 @@
                     </div>
                   </v-col>
                   <v-col cols="6">
-                    <h4>Light spectrum for LED bulb</h4>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location}/LED_White_w_neghighlight_spectool.png`"
-                    ></v-img>
-                    <h4>Light spectrum for sodium vapor bulb</h4>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/Sodium_Vapor_w_neghighlight_spectool.png`"
-                    ></v-img>
+                    <v-card
+                      color="white"
+                      light
+                      outlined
+                      class="my-n3 pa-3"
+                    >
+                      <h4>Light spectrum for LED bulb</h4>
+                      <v-img
+                        class="mb-4 mx-a"
+                        contain
+                        :src="`${state.image_location}/LED_White_w_neghighlight_spectool.png`"
+                      ></v-img>
+                      <h4>Light spectrum for sodium vapor bulb</h4>
+                      <v-img
+                        class="mx-a"
+                        contain
+                        :src="`${state.image_location}/Sodium_Vapor_w_neghighlight_spectool.png`"
+                      ></v-img>
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-container>
@@ -304,14 +322,21 @@
                     </div>
                   </v-col>
                   <v-col cols="6">
-                    <h4>
-                      Doppler shift
-                    </h4>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/siren_moving_white.png`"
-                    ></v-img>
+                    <v-card
+                      color="white"
+                      light
+                      outlined
+                      class="my-n3 pa-3"
+                    >
+                      <h4>
+                        Doppler shift
+                      </h4>
+                      <v-img
+                        class="mx-a"
+                        contain
+                        :src="`${state.image_location}/siren_moving_white.png`"
+                      ></v-img>
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-container>
@@ -335,30 +360,29 @@
                         The same <strong>Doppler shift</strong> happens with <strong>light waves</strong> (and all other wave phenomena). But a light source has to be moving very fast for you to notice these changes!
                       </p>
                       <p>
-                        When a light source moves
-                        <strong>away from you</strong>, you observe the light to
-                        have a <strong>longer (redder)</strong> wavelength than
-                        you would if the object were not moving. This effect is
-                        called <strong>redshift</strong>.
+                        When a light source moves <strong>away from you</strong>, you observe the light to have a <strong>longer (redder)</strong> wavelength than you would if the object were not moving. This effect is called <strong>redshift</strong>.
                       </p>
                       <p>
-                        When a light source moves <strong>toward you</strong>,
-                        you observe the light to have a
-                        <strong>shorter (bluer)</strong> wavelength than you
-                        would if the object were not moving. This effect is
-                        called <strong>blueshift</strong>.
+                        When a light source moves <strong>toward you</strong>, you observe the light to have a <strong>shorter (bluer)</strong> wavelength than you would if the object were not moving. This effect is called <strong>blueshift</strong>.
                       </p>
                     </div>
                   </v-col>
                   <v-col cols="6">
-                    <h4>
-                      Doppler shift
-                    </h4>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/doppler_shift_light_white.png`"
-                    ></v-img>
+                    <v-card
+                      color="white"
+                      light
+                      outlined
+                      class="my-n3 pa-3"
+                    >
+                      <h4>
+                        Doppler shift
+                      </h4>
+                      <v-img
+                        class="mx-a"
+                        contain
+                        :src="`${state.image_location}/doppler_shift_light_white.png`"
+                      ></v-img>
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-container>
@@ -368,7 +392,7 @@
           <v-window-item :value="6" class="no-transition">
             <v-card-text>
               <v-container>
-                <v-row no-gutters>
+                <v-row>
                   <v-col>
                     <h3
                       class="mb-4"
@@ -389,44 +413,62 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="2" class="d-flex flex-column" height="100%">
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/carbon_atom_model.png`"
-                    ></v-img>
-                    <v-img
-                      class="mt-auto mx-a"
-                      contain
-                      :src="`${state.image_location}/nitrogen_atom_model.png`"
-                    ></v-img>
-                  </v-col>
-                  <v-col cols="8">
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/stsci_spectrum_element_montage.jpg`"
-                    ></v-img>
-                  </v-col>
-                  <v-col cols="2" class="d-flex flex-column" height="100%">
-                    <v-row>
-                      <v-col>
-                        <v-img
-                          class="mx-a"
-                          contain
-                          :src="`${state.image_location}/oxygen_atom_model.png`"
-                        ></v-img>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col>
-                        <v-img
-                          class="mt-auto mx-a"
-                          contain
-                          :src="`${state.image_location}/iron_atom_model.png`"
-                        ></v-img>
-                      </v-col>
-                    </v-row>
+                  <v-col
+                    offset="1"
+                    cols="10"
+                  >
+                    <v-card
+                      color="white"
+                      light
+                      outlined
+                      class="px-3"
+                    >
+                      <v-row>
+                        <v-col
+                          cols="2"
+                          class="d-flex flex-column"
+                          height="100%"
+                        >
+                          <v-img
+                            class="mx-a"
+                            contain
+                            :src="`${state.image_location}/carbon_atom_model.png`"
+                          ></v-img>
+                          <v-img
+                            class="mt-auto mx-a"
+                            contain
+                            :src="`${state.image_location}/nitrogen_atom_model.png`"
+                          ></v-img>
+                        </v-col>
+                        <v-col cols="8">
+                          <v-img
+                            class="mx-a"
+                            contain
+                            :src="`${state.image_location}/stsci_spectrum_element_montage.jpg`"
+                          ></v-img>
+                        </v-col>
+                        <v-col cols="2" class="d-flex flex-column" height="100%">
+                          <v-row>
+                            <v-col>
+                              <v-img
+                                class="mx-a"
+                                contain
+                                :src="`${state.image_location}/oxygen_atom_model.png`"
+                              ></v-img>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col>
+                              <v-img
+                                class="mt-auto mx-a"
+                                contain
+                                :src="`${state.image_location}/iron_atom_model.png`"
+                              ></v-img>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-container>
@@ -449,13 +491,10 @@
                     </h3>
                     <div>
                       <p>
-                        The top spectrum shows
-                        <strong>emission lines</strong> from a source containing
-                        hydrogen.
+                        The top spectrum shows <strong>emission lines</strong> from a source containing hydrogen.
                       </p>
                       <p>
-                        The bottom spectrum shows
-                        <strong>absorption lines</strong> due to hydrogen.
+                        The bottom spectrum shows <strong>absorption lines</strong> due to hydrogen.
                       </p>
                       <p>
                         Notice that in both spectra, the emission and absorption lines are present at the same combination of wavelengths (i.e. hydrogen’s “chemical fingerprint”).
@@ -475,18 +514,25 @@
                     </v-card>
                   </v-col>
                   <v-col cols="6">
-                    <h4>Hydrogen emission spectrum</h4>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location}/hydrogen_emission_spectool.png`"
-                    ></v-img>
-                    <h4>Hydrogen absorption spectrum</h4>
-                    <v-img
-                      class="mx-a"
-                      contain
-                      :src="`${state.image_location}/hydrogen_absorption_spectool.png`"
-                    ></v-img>
+                    <v-card
+                      color="white"
+                      light
+                      outlined
+                      class="my-n3 pa-3"
+                    >
+                      <h4>Hydrogen emission spectrum</h4>
+                      <v-img
+                        class="mb-4 mx-a"
+                        contain
+                        :src="`${state.image_location}/hydrogen_emission_spectool.png`"
+                      ></v-img>
+                      <h4>Hydrogen absorption spectrum</h4>
+                      <v-img
+                        class="mx-a"
+                        contain
+                        :src="`${state.image_location}/hydrogen_absorption_spectool.png`"
+                      ></v-img>
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-container>
@@ -512,14 +558,23 @@
                     lg="10"
                     offset-lg="1"
                   >
-                    <p>
-                      The dotted line shows the rest wavelength of a hydrogen line known as <strong>H-&alpha;</strong> (pronounced "H alpha"). The solid line shows the observed wavelength of the H-&alpha; line.
-                    </p>
-                    <v-img
-                      contain
-                      :src="`${state.image_location}/restobs1_dotted_spectool.png`"
+                    <v-card
+                      color="white"
+                      light
+                      outlined
+                      class="my-n3 pa-3"
                     >
-                    </v-img>
+                      <p
+                        class="pa-3"
+                      >
+                        The dotted line shows the rest wavelength of a hydrogen line known as <strong>H-&alpha;</strong> (pronounced "H alpha"). The solid line shows the observed wavelength of the H-&alpha; line.
+                      </p>
+                      <v-img
+                        contain
+                        :src="`${state.image_location}/restobs1_dotted_spectool.png`"
+                      >
+                      </v-img>
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-container>
@@ -545,14 +600,23 @@
                     lg="10"
                     offset-lg="1"
                   >
-                    <p>
-                      The dotted line shows the rest wavelength of a magnesium line known as <strong>Mg I</strong> (pronounced "magnesium one"). The solid line shows the observed wavelength of the Mg I line.
-                    </p>
-                    <v-img
-                      contain
-                      :src="`${state.image_location}/restobs2_dotted_spectool.png`"
+                    <v-card
+                      color="white"
+                      light
+                      outlined
+                      class="my-n3 pa-3"
                     >
-                    </v-img>
+                      <p
+                        class="pa-3"
+                      >
+                        The dotted line shows the rest wavelength of a magnesium line known as <strong>Mg I</strong> (pronounced "magnesium one"). The solid line shows the observed wavelength of the Mg I line.
+                      </p>
+                      <v-img
+                        contain
+                        :src="`${state.image_location}/restobs2_dotted_spectool.png`"
+                      >
+                      </v-img>
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-container>
@@ -595,9 +659,7 @@
 
         <v-divider></v-divider>
 
-        <v-card-actions
-          class="grey lighten-4"
-        >
+        <v-card-actions>
           <v-btn
             :disabled="step === 0"
             class="black--text"
@@ -615,7 +677,11 @@
               v-slot="{ active, toggle }"
             >
               <v-btn :input-value="active" icon @click="toggle">
-                <v-icon>mdi-record</v-icon>
+                <v-icon
+                  color="secondary"
+                >
+                  mdi-record
+                </v-icon>
               </v-btn>
             </v-item>
           </v-item-group>

@@ -21,7 +21,6 @@
     >
       <v-card
         class="mx-auto"
-        light
       >
         <v-toolbar
           color="info"
@@ -30,7 +29,6 @@
         >
           <v-toolbar-title
             class="text-h6 text-uppercase font-weight-regular"
-            justify="space-between"
           >
             {{ currentTitle }}
           </v-toolbar-title>
@@ -53,7 +51,7 @@
           v-model="step"
           vertical
           style="height: 60vh;"
-          class="overflow-auto white"
+          class="overflow-auto"
         >
           <v-window-item :value="0" 
             class="no-transition"
@@ -74,6 +72,7 @@
             </v-card-text>
           </v-window-item>
 
+
           <v-window-item :value="1" 
             class="no-transition"
           >
@@ -89,6 +88,7 @@
               </v-container>
             </v-card-text>
           </v-window-item>
+
 
           <v-window-item :value="2" 
             class="no-transition"
@@ -163,6 +163,7 @@
             </v-card-text>
           </v-window-item>
 
+
           <v-window-item :value="4"
             class="no-transition"
           >
@@ -198,6 +199,7 @@
             </v-card-text>
           </v-window-item>
 
+
           <v-window-item :value="5"
             class="no-transition"
           >
@@ -232,6 +234,7 @@
             </v-card-text>
           </v-window-item>
 
+
           <v-window-item :value="6"
             class="no-transition"
           >
@@ -265,6 +268,7 @@
               </v-container>
             </v-card-text>
           </v-window-item>         
+
 
           <v-window-item :value="7"
             class="no-transition"
@@ -302,9 +306,7 @@
 
         <v-divider></v-divider>
 
-        <v-card-actions
-          class="grey lighten-4"
-        >
+        <v-card-actions>
           <v-btn
             :disabled="step === 0"
             class="black--text"
@@ -332,7 +334,11 @@
                 icon
                 @click="toggle"
               >
-                <v-icon>mdi-record</v-icon>
+                <v-icon
+                  color="info"
+                >
+                  mdi-record
+                </v-icon>
               </v-btn>
             </v-item>
           </v-item-group>

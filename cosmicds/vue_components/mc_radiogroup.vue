@@ -10,7 +10,7 @@
       <v-radio
         v-for="[index, option] of radioOptions.entries()"
         :key="index"
-        :color="`${color(index)} accent-3`"
+        :color="`${color(index)} lighten-1`"
         @mouseup="selectChoice(index)"
       >
         <template v-slot:label>

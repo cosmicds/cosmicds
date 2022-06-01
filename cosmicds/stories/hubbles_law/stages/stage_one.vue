@@ -149,7 +149,7 @@
           >
             <!-- This alert is temporary -->
             <v-btn
-              v-if="show_team_interface"
+              v-if="show_team_interface && stage_state.velocity_button"
               :disabled="!stage_state.waveline_set"
               class="white-text px-a"
               width="100%"
