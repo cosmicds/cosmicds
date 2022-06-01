@@ -1,10 +1,12 @@
+import json
 from math import floor
+import requests
 
 import ipyvue as v
 from astropy.coordinates import Angle, SkyCoord
 import astropy.units as u
-from cosmicds.utils import RepeatedTimer, load_template
-from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, angle_to_json, angle_from_json
+from cosmicds.utils import RepeatedTimer, load_template, API_URL
+from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, HUBBLE_ROUTE_PATH, angle_to_json, angle_from_json
 from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Instance, Bool, Float, Int, Unicode, observe
 from ipywidgets import DOMWidget, widget_serialization
@@ -22,6 +24,7 @@ class DistanceTool(v.VueTemplate):
     view_changing = Bool(False).tag(sync=True)
     measuring_allowed = Bool(False).tag(sync=True)
     fov_text = Unicode().tag(sync=True)
+    flagged = Bool(False).tag(sync=True)
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
 
@@ -80,6 +83,7 @@ class DistanceTool(v.VueTemplate):
     @observe("angular_height")
     def _on_fov_change(self, change):
         d, m, s = change["new"].dms
+        s = int(s)
         if d > 0:
             self.fov_text = f"{floor(d)}°"
         elif m > 0:
@@ -103,3 +107,17 @@ class DistanceTool(v.VueTemplate):
     def go_to_location(self, ra, dec, fov=GALAXY_FOV):
         coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
         self.widget.center_on_coordinates(coordinates, fov=fov, instant=True)
+
+    @observe('flagged')
+    def mark_galaxy_bad(self, change):
+        if not change["new"]:
+            return
+        if self.current_galaxy["id"]:
+            data = { "galaxy_id" : int(self.current_galaxy["id"]) }
+        else:
+            name = self.current_galaxy["name"]
+            if not name.endswith(".fits"):
+                name += ".fits"
+            data = { "galaxy_name" : name }
+        data = json.loads(json.dumps(data))
+        requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/mark-galaxy-bad", json=data)

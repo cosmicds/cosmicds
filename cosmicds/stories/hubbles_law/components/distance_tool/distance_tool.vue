@@ -26,6 +26,19 @@
     >
       <v-toolbar-title>Estimate Distance</v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon
+            v-bind="attrs"
+            v-on="on"
+            :disabled="Object.keys(galaxy).length == 0"
+            @click="flagged = true"
+          >
+            <v-icon>mdi-flag</v-icon>
+          </v-btn>
+        </template>
+        Flag galaxy as missing image
+      </v-tooltip>
 
       <v-btn icon>
         <v-icon>mdi-information-outline</v-icon>
@@ -139,7 +152,7 @@ export default {
       const endcapEndX = leftPadding + endcapLength;
 
       const verticalX = leftPadding + (endcapLength / 2);
-      const fracDown = 0.75;
+      const fracDown = 0.5;
       const midYTop = this.fovCanvas.height * fracDown - (gapHeight / 2);
       const midYBot = this.fovCanvas.height * fracDown + (gapHeight / 2);
       const bottomEndcapY = this.fovCanvas.height - verticalPadding;
