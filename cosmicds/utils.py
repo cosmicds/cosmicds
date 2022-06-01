@@ -11,8 +11,7 @@ __all__ = [
 ]
 
 # The URL for the CosmicDS API
-#API_URL = "https://api.cosmicds.cfa.harvard.edu"
-API_URL = "http://localhost:8080"
+API_URL = "https://api.cosmicds.cfa.harvard.edu"
 
 # JC: I got this from https://stackoverflow.com/a/57915246
 class CDSJSONEncoder(json.JSONEncoder):

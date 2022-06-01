@@ -216,7 +216,7 @@ class Table(VuetifyTemplate, HubListener):
 
     @property
     def index(self):
-        if self.single_select:
+        if self.single_select and len(self.indices) > 0:
             return self.indices[0]
         return None
 
