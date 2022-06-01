@@ -123,4 +123,4 @@ class DistanceTool(v.VueTemplate):
             if not name.endswith(".fits"):
                 name += ".fits"
             data = { "galaxy_name" : name }
-        requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/mark-galaxy-bad", json=data)
+        requests.post(f"{API_URL}/{HUBBLE_ROUTE_PATH}/mark-tileload-bad", json=data)
