@@ -1,4 +1,4 @@
-import datetime
+import json
 
 import ipyvue as v
 import astropy.units as u
@@ -13,6 +13,7 @@ from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, Instance, Int, Bool, Unicode, observe
 
 from cosmicds.utils import API_URL
+from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
 import requests
 class SelectionTool(v.VueTemplate):
     template = load_template("selection_tool.vue", __file__, traitlet=True).tag(sync=True)
@@ -20,6 +21,7 @@ class SelectionTool(v.VueTemplate):
     current_galaxy = Dict().tag(sync=True)
     selected_count = Int().tag(sync=True)
     dialog = Bool(False).tag(sync=True)
+    flagged = Bool(False).tag(sync=True)
 
     UPDATE_TIME = 1 #seconds
     START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
@@ -97,7 +99,16 @@ class SelectionTool(v.VueTemplate):
             self.motions_left -= 1
         self.widget.center_on_coordinates(coordinates, fov=fov, instant=instant)
 
-    def vue_mark_galaxy_bad(self, _args=None):
-        data = { "galaxy_id" : self.current_galaxy["id"] }
-        requests.put(f"{API_URL}/mark-galaxy-bad", json=data)
+    @observe('flagged')
+    def mark_galaxy_bad(self, change):
+        if not change["new"]:
+            return
+        if self.current_galaxy["id"]:
+            data = { "galaxy_id" : int(self.current_galaxy["id"]) }
+        else:
+            name = self.current_galaxy["name"]
+            if not name.endswith(".fits"):
+                name += ".fits"
+            data = { "galaxy_name" : name }
+        requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/mark-galaxy-bad", json=data)
 
