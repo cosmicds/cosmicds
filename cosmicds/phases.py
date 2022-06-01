@@ -135,6 +135,20 @@ class Stage(TemplateMixin):
         values[index] = value
         data.update_components({data.id[comp_name] : values})
 
+    # JC: 
+    # I've added a multi-update function primarily for story-specific subclasses
+    # i.e. a subclass can overwrite this method with some extra behavior
+    # for example, the Hubble story will sometimes make a database update on a call.
+    # It's nice to be able to have ALL the updates before something like that
+    def update_data_values(self, dc_name, values, index):
+        data = self.data_collection[dc_name]
+        comp_dict = {}
+        for comp, value in values.items():
+            vals = data[comp]
+            vals[index] = value
+            comp_dict[data.id[comp]] = vals
+        data.update_components(comp_dict)
+
     def add_data_values(self, dc_name, values):
         data = self.data_collection[dc_name]
         main_components = [x.label for x in data.main_components]
