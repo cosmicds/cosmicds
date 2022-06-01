@@ -54,6 +54,7 @@ class StageState(State):
         'obs_wav2',        
         'rep_rem1',
         'nic_wor1',
+        'dop_cal0',
         'dop_cal1',
         'dop_cal2',
         'dop_cal3',
@@ -169,6 +170,7 @@ class StageOne(HubbleStage):
             "obswave_2_alert",            
             "remaining_gals_alert",
             "nice_work_guidance",
+            "doppler_calc_0_alert",
             "doppler_calc_1_alert",
             "doppler_calc_2_alert",
             "doppler_calc_3_guidance"
