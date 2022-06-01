@@ -12,6 +12,8 @@ from pandas import DataFrame
 from pywwt.jupyter import WWTJupyterWidget
 from traitlets import Dict, Instance, Int, Bool, Unicode, observe
 
+from glue_jupyter.state_traitlets_helpers import GlueState
+
 from cosmicds.utils import API_URL
 from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
 import requests
@@ -22,11 +24,13 @@ class SelectionTool(v.VueTemplate):
     selected_count = Int().tag(sync=True)
     dialog = Bool(False).tag(sync=True)
     flagged = Bool(False).tag(sync=True)
+    state = GlueState().tag(sync=True)
 
     UPDATE_TIME = 1 #seconds
     START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 
-    def __init__(self, data, *args, **kwargs):
+    def __init__(self, data, state, *args, **kwargs):
+        self.state = state
         self.widget = WWTJupyterWidget(hide_all_chrome=True)
         self.widget.background = 'SDSS: Sloan Digital Sky Survey (Optical)'
         self.widget.foreground = 'SDSS: Sloan Digital Sky Survey (Optical)'
@@ -58,6 +62,7 @@ class SelectionTool(v.VueTemplate):
             fov = min(wwt.get_fov(), GALAXY_FOV)
             self.go_to_location(galaxy["ra"], galaxy["decl"], fov=fov)
             self.current_galaxy = galaxy
+            self.state.gal_selected = True
 
         self.widget.set_selection_change_callback(wwt_cb)
 
@@ -83,6 +88,7 @@ class SelectionTool(v.VueTemplate):
         self.selected_layer = layer
         if self._on_galaxy_selected is not None:
             self._on_galaxy_selected(galaxy)
+        self.state.gal_selected = False
 
     def vue_select_current_galaxy(self, _args=None):
         self.select_galaxy(self.current_galaxy)
@@ -91,6 +97,7 @@ class SelectionTool(v.VueTemplate):
     def vue_reset(self, _args=None):
         self.widget.center_on_coordinates(self.START_COORDINATES, fov=FULL_FOV, instant=True)
         self.current_galaxy = {}
+        self.state.gal_selected = False
 
     def go_to_location(self, ra, dec, fov=GALAXY_FOV):
         coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')

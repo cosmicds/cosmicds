@@ -1,5 +1,8 @@
 <template>
-  <v-card flat>
+  <v-card
+    flat
+    color="white"
+  >
     <v-toolbar
       color="primary"
       dense

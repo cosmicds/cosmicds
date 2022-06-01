@@ -10,11 +10,13 @@ from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSid
 from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
+from cosmicds.stories.hubbles_law.components.angsize_distance_slideshow import Angsize_SlideShow
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 
 log = logging.getLogger()
+
 
 class StageState(State):
     galaxy = CallbackProperty({})
@@ -22,6 +24,7 @@ class StageState(State):
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
     advance_marker = CallbackProperty(True)
+    image_location = CallbackProperty()
 
     markers = CallbackProperty([
         "test"
@@ -43,6 +46,7 @@ class StageState(State):
 
     def index(self, marker):
         return self.markers.index(marker)
+
 
 @register_stage(story="hubbles_law", index=2, steps=[
     "Measure distances"
@@ -66,7 +70,11 @@ class StageTwo(HubbleStage):
 
         self.stage_state = StageState()
 
+        angsize_slideshow = Angsize_SlideShow(self.stage_state)
+        self.add_component(angsize_slideshow, label='c-angsize-slideshow')
+
         self.add_component(DistanceTool(self.stage_state), label="c-distance-tool")
+        self.stage_state.image_location = "data/images/stage_two_distance"
 
         type_names = { "E" : "Elliptical", "Ir": "Irregular", "Sp": "Spiral" }
         distance_table = Table(self.session,
@@ -86,7 +94,8 @@ class StageTwo(HubbleStage):
                                use_subset_group=False,
                                single_select=True)
         self.add_widget(distance_table, label="distance_table")
-        distance_table.observe(self.distance_table_selected_change, names=["selected"])
+        distance_table.observe(
+            self.distance_table_selected_change, names=["selected"])
 
         self.add_component(DistanceSidebar(self.stage_state), label="c-distance-sidebar")
         self.distance_tool.observe(self._angular_size_update, names=["angular_size"])
@@ -94,7 +103,8 @@ class StageTwo(HubbleStage):
         self.distance_sidebar.angular_height = format_fov(self.distance_tool.angular_height)
 
         self.distance_tool.observe(self._distance_tool_flagged, names=["flagged"])
-        add_callback(self.stage_state, 'make_measurement', self._make_measurement)
+        add_callback(self.stage_state, 'make_measurement',
+                     self._make_measurement)
 
     def distance_table_selected_change(self, change):
         selected = change["new"]
@@ -151,7 +161,7 @@ class StageTwo(HubbleStage):
     @property
     def distance_tool(self):
         return self.get_component("c-distance-tool")
-        
+
     @property
     def distance_table(self):
         return self.get_widget("distance_table")

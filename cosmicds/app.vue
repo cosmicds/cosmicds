@@ -185,7 +185,7 @@
       </v-content>
     </v-main>
 
-    <v-footer app padless inset>
+    <v-footer app padless inset style="z-index: 5;">
       <v-row justify="center" no-gutters>
         <v-col
           class="primary darken py-2 text-center white--text"

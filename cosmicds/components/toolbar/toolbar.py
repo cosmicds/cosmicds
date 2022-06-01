@@ -11,7 +11,7 @@ class Toolbar(VuetifyTemplate):
         'bqplot:xzoom' : 'mdi-select-search',
         'bqplot:yzoom': 'mdi-select-search',
         'bqplot:rectzoom': 'mdi-select-search',
-        'bqplot:home' : 'mdi-home',
+        'bqplot:home' : 'mdi-cached',
         'bqplot:xrange': 'mdi-select-drag',
         'bqplot:yrange': 'mdi-select-drag',
         'bqplot:rectangle': 'mdi-select-drag',

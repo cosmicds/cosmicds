@@ -24,8 +24,10 @@
       <div
         :class="feedbackIndex !== null ? 'd-block' : 'd-none'"
       >
-        <span :class="`${color(feedbackIndex)}--text`">
-          {{ feedbacks[feedbackIndex] }}
+        <span
+          :class="`${color(feedbackIndex)}--text`" 
+          v-html="feedbacks[feedbackIndex]"
+        >
         </span>
       </div>
     </div>
