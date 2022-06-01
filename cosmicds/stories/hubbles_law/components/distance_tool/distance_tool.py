@@ -8,9 +8,10 @@ import astropy.units as u
 from cosmicds.utils import RepeatedTimer, load_template, API_URL
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, HUBBLE_ROUTE_PATH, angle_to_json, angle_from_json
 from pywwt.jupyter import WWTJupyterWidget
-from traitlets import Instance, Bool, Float, Int, Unicode, observe
+from traitlets import Instance, Bool, Float, Int, Dict, Unicode, observe
 from ipywidgets import DOMWidget, widget_serialization
 from datetime import datetime
+from glue_jupyter.state_traitlets_helpers import GlueState
 
 class DistanceTool(v.VueTemplate):
     template = load_template("distance_tool.vue", __file__, traitlet=True).tag(sync=True)
@@ -25,12 +26,14 @@ class DistanceTool(v.VueTemplate):
     measuring_allowed = Bool(False).tag(sync=True)
     fov_text = Unicode().tag(sync=True)
     flagged = Bool(False).tag(sync=True)
+    state = GlueState().tag(sync=True)
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
 
     UPDATE_TIME = 1 #seconds
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, state, *args, **kwargs):
+        self.state = state
         self.widget = WWTJupyterWidget(hide_all_chrome=True)
         self._setup_widget()
         self.measuring = kwargs.get('measuring', False)
@@ -112,12 +115,12 @@ class DistanceTool(v.VueTemplate):
     def mark_galaxy_bad(self, change):
         if not change["new"]:
             return
-        if self.current_galaxy["id"]:
-            data = { "galaxy_id" : int(self.current_galaxy["id"]) }
+        galaxy = self.state.galaxy
+        if galaxy["id"]:
+            data = { "galaxy_id" : int(galaxy["id"]) }
         else:
-            name = self.current_galaxy["name"]
+            name = galaxy["name"]
             if not name.endswith(".fits"):
                 name += ".fits"
             data = { "galaxy_name" : name }
-        data = json.loads(json.dumps(data))
         requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/mark-galaxy-bad", json=data)

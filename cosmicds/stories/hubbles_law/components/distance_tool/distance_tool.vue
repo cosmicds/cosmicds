@@ -31,7 +31,7 @@
           <v-btn icon
             v-bind="attrs"
             v-on="on"
-            :disabled="Object.keys(galaxy).length == 0"
+            :disabled="Object.keys(state.galaxy).length == 0"
             @click="flagged = true"
           >
             <v-icon>mdi-flag</v-icon>
