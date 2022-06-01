@@ -36,7 +36,6 @@ class SpectrumView(BqplotScatterView):
 
     inherit_tools = False
     tools = ['bqplot:home', 'hubble:wavezoom', 'hubble:restwave', 'hubble:specflag', 'cds:info']
-    tools = ['bqplot:home', 'hubble:wavezoom', 'hubble:restwave', 'cds:info']
     _state_cls = SpectrumViewerState
     show_line = Bool(True)
     LABEL = "Spectrum Viewer"
