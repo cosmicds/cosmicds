@@ -185,7 +185,7 @@
                       :feedbacks="[
                         'Actually, your evidence does not support this statement. Galaxies would not be moving in a universe that is static and unchanging.',
                         'That\'s right.',
-                        'In fact, your evidence does support one of these statements. Consider this: galaxies would not be moving in a universe that is static and unchanging. And you have already concluded that your observed galaxies are moving. So...'
+                        'You <strong>can</strong> draw a conclusion about this statement based on your evidence. Consider this and try again: galaxies would not be moving in a universe that is static and unchanging. And you have already concluded that your observed galaxies are moving. So...'
                       ]"
                       :correct-answers="[1]"
                       :neutral-answers="[2]"
@@ -254,7 +254,7 @@
                       :feedbacks="[
                         'Interesting that they also got the same result as you. Does that give you more confidence in your conclusions?',
                         'Hmm. That is an unexpected result. It might be helpful to check in with your instructor.',
-                        'That\'s ok, here is some useful insight. Checking the Cosmic Data Stories database, everyone else who has completed this story also found that their galaxies are all moving away from us. Does that give you more confidence in your conclusions?']"
+                        'No problem. Checking the Cosmic Data Stories database, everyone else who has completed this story also found that their galaxies are all moving away from us. Does that give you more confidence in your conclusions?']"
                       :correct-answers="[0]"
                       :neutral-answers="[2]"
                       :selected-callback="(index) => { if([0,2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 6); } }" 
