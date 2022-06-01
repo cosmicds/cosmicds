@@ -139,6 +139,7 @@ class StageOne(HubbleStage):
         selection_tool = SelectionTool(data=sdss_data)
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
+        selection_tool.observe(self._on_selection_tool_flagged, names=['flagged'])
 
         spectrum_slideshow = SpectrumSlideshow(self.stage_state)
         self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
@@ -201,6 +202,8 @@ class StageOne(HubbleStage):
         if new in self.stage_state.step_markers and advancing:
             self.story_state.step_complete = True
             self.story_state.step_index = self.stage_state.step_markers.index(new)
+        if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
+            self.stage_state.marker = "mee_spe1"
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
@@ -274,12 +277,17 @@ class StageOne(HubbleStage):
             return
 
         index = self.galaxy_table.index
+        if index is None:
+            self._empty_spectrum_viewer()
+            return
         data = self.galaxy_table.glue_data
         galaxy = { x.label : data[x][index] for x in data.main_components }
         name = galaxy["name"]
         gal_type = galaxy["type"]
         if name is None or gal_type is None:
             return
+
+        self.selection_tool.current_galaxy = galaxy
 
         # Load the spectrum data, if necessary
         filename = name
@@ -352,6 +360,27 @@ class StageOne(HubbleStage):
         super()._on_dark_mode_change(dark)
         self.update_spectrum_style(dark)
 
+    def _empty_spectrum_viewer(self):
+        dc_name = "spectrum_data"
+        spec_data = self.get_data(dc_name)
+        data = Data(label=spec_data.label, **{
+            c.label: [0] for c in spec_data.main_components
+        })
+        spectrum_viewer = self.get_viewer("spectrum_viewer")
+        self.story_state.update_data(dc_name, data)
+        spectrum_viewer.update("", "", 0)
+
+    def _on_selection_tool_flagged(self, change):
+        if not change["new"]:
+            return
+        index = self.galaxy_table.index
+        if index is None:
+            return
+        item = self.galaxy_table.selected[0]
+        galaxy_name = item["name"]
+        self.remove_measurement(galaxy_name)
+        self.selection_tool.flagged = False
+
     def _on_spectrum_flagged(self, flagged):
         if not flagged:
             return
@@ -359,16 +388,9 @@ class StageOne(HubbleStage):
         item = self.galaxy_table.selected[0]
         galaxy_name = item["name"]
         self.remove_measurement(galaxy_name)
-
-        dc_name = "spectrum_data"
-        spec_data = self.get_data(dc_name)
-        data = Data(label=spec_data.label, **{
-            c.label: [0] for c in spec_data.main_components
-        })
+        self._empty_spectrum_viewer()
 
         spectrum_viewer = self.get_viewer("spectrum_viewer")
-        self.story_state.update_data(dc_name, data)
-        spectrum_viewer.update("", "", 0)
         sf_tool = spectrum_viewer.toolbar.tools["hubble:specflag"]
         with ignore_callback(sf_tool, "flagged"):
             sf_tool.flagged = False

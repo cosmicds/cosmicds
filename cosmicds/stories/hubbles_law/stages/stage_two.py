@@ -66,7 +66,7 @@ class StageTwo(HubbleStage):
 
         self.stage_state = StageState()
 
-        self.add_component(DistanceTool(), label="c-distance-tool")
+        self.add_component(DistanceTool(self.stage_state), label="c-distance-tool")
 
         type_names = { "E" : "Elliptical", "Ir": "Irregular", "Sp": "Spiral" }
         distance_table = Table(self.session,
@@ -95,6 +95,7 @@ class StageTwo(HubbleStage):
         self.distance_tool.observe(self._angular_height_update, names=["angular_height"])
         self.distance_sidebar.angular_height = format_fov(self.distance_tool.angular_height)
 
+        self.distance_tool.observe(self._distance_tool_flagged, names=["flagged"])
         add_callback(self.stage_state, 'make_measurement', self._make_measurement)
 
     def distance_table_selected_change(self, change):
@@ -133,7 +134,17 @@ class StageTwo(HubbleStage):
         self.story_state.update_student_data()
         with ignore_callback(self.stage_state, 'make_measurement'):
             self.stage_state.make_measurement = False
-        
+
+    def _distance_tool_flagged(self, change):
+        if not change["new"]:
+            return
+        index = self.distance_table.index
+        if index is None:
+            return
+        item = self.distance_table.selected[0]
+        galaxy_name = item["name"]
+        self.remove_measurement(galaxy_name)
+        self.distance_tool.flagged = False
 
     @property
     def distance_sidebar(self):
