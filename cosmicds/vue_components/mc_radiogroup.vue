@@ -29,6 +29,7 @@
     >
       <span
         :class="`${color(feedbackIndex)}--text text--darken-4`"
+        v-html="feedbacks[feedbackIndex]"
       >
         {{ feedbacks[feedbackIndex] }}
       </span>
