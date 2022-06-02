@@ -86,11 +86,17 @@ class DistanceTool(v.VueTemplate):
     @observe("angular_height")
     def _on_fov_change(self, change):
         d, m, s = change["new"].dms
+        m = m + s/60
+        d = d + m/60
         s = int(s)
-        if d > 0:
-            self.fov_text = f"{floor(d)}°"
-        elif m > 0:
-            self.fov_text = f"{floor(m)}'"
+        if d > 9.95: #to avoid edge case where you can get 10 between 10 and 11 and 10.0 from 9.95-10
+            self.fov_text = f"{d:.0f}°"
+        elif d > 0.99: #to avoid edge case where you can get 60.0 arcmin from 59.5-59.9 arcmin
+            self.fov_text = f"{d:.1f}°"
+        elif m > 9.95:
+            self.fov_text = f"{m:.0f}'"
+        elif m > 0.99:
+            self.fov_text = f"{m:.1f}'"
         else:
             self.fov_text = f"{s}\""
         self.update_text()
