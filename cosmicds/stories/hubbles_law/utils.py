@@ -59,9 +59,9 @@ def age_in_gyr(H0):
 
 def age_in_gyr_simple(H0):
     inv = 1 / H0
-    mpc_over_km = u.Mpc.to(u.km)
+    mpc_to_km = u.Mpc.to(u.km)
     s_to_gyr = u.s.to(u.Gyr)
-    return round(inv * mpc_over_km * s_to_gyr, 1)
+    return round(inv * mpc_to_km * s_to_gyr, 1)
 
 def format_fov(fov, units=True):
     suffix = " (dd:mm:ss)" if units else ""
