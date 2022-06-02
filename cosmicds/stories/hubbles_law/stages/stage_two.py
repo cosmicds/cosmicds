@@ -1,19 +1,22 @@
-import logging
+from os.path import join
+from pathlib import Path
 
 from echo import CallbackProperty, add_callback, ignore_callback
 from glue.core.state_objects import State
 from numpy import pi
 from traitlets import default
 
+from cosmicds.registries import register_stage
+from cosmicds.utils import load_template
+from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSidebar
 from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
-from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.components.angsize_distance_slideshow import Angsize_SlideShow
+from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
-from cosmicds.utils import load_template
-from cosmicds.stories.hubbles_law.stage import HubbleStage
 
+import logging
 log = logging.getLogger()
 
 
@@ -24,9 +27,11 @@ class StageState(State):
     marker = CallbackProperty("")
     advance_marker = CallbackProperty(True)
     image_location = CallbackProperty()
+    distance_sidebar = CallbackProperty(False)
 
     markers = CallbackProperty([
-        "test"
+        'two_sta1',
+        'two_hol1'
     ])
 
     step_markers = CallbackProperty({
@@ -58,7 +63,7 @@ class StageTwo(HubbleStage):
 
     @default('title')
     def _default_title(self):
-        return "Another Stage Name"
+        return "Measure Galaxy Distances"
 
     @default('subtitle')
     def _default_subtitle(self):
@@ -84,10 +89,11 @@ class StageTwo(HubbleStage):
                                names=['Galaxy Name',
                                       'Velocity (km/s)',
                                       'Distance (Mpc)'],
-                               title='My Galaxies | Distance Measurements',
+                               title='My Galaxies',
                                selected_color=self.table_selected_color(self.app_state.dark_mode),
                                use_subset_group=False,
                                single_select=True)
+
         self.add_widget(distance_table, label="distance_table")
         distance_table.observe(
             self.distance_table_selected_change, names=["selected"])
@@ -99,6 +105,25 @@ class StageTwo(HubbleStage):
 
         add_callback(self.stage_state, 'make_measurement',
                      self._make_measurement)
+
+
+
+        # Set up the generic state components
+        state_components_dir = str(
+            Path(__file__).parent.parent / "components" / "generic_state_components" / "stage_two")
+        path = join(state_components_dir, "")
+        state_components = [
+            "stage_two_start_guidance",
+            "stage_two_holder_alert"
+        ]
+        ext = ".vue"
+        for comp in state_components:
+            label = f"c-{comp}".replace("_", "-")
+
+            # comp + ext = filename; path = folder where they live.
+            component = GenericStateComponent(comp + ext, path, self.stage_state)
+            self.add_component(component, label=label)
+
 
     def distance_table_selected_change(self, change):
         selected = change["new"]

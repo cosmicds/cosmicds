@@ -157,7 +157,7 @@ class StageOne(HubbleStage):
 
         # Set up the generic state components
         state_components_dir = str(
-            Path(__file__).parent.parent / "components" / "generic_state_components")
+            Path(__file__).parent.parent / "components" / "generic_state_components" / "stage_one")
         path = join(state_components_dir, "")
         state_components = [
             "stage_one_start_guidance",
