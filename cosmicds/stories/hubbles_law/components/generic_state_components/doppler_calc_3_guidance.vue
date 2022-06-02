@@ -1,6 +1,6 @@
 <template>
   <scaffold-alert
-    header-text="Velocity Calculation"
+    header-text="Select a Galaxy"
     @back="
       state.marker = 'dop_cal2';
     "
@@ -12,11 +12,25 @@
       class="mb-4"
     >
       <p>
-        Click on a row in your table to select one of the galaxies. You will calculate the velocity for this galaxy using the Doppler equation.
+        Click on a row in your table to select one of the galaxies.
       </p>
       <p>
-        $$ v=c \left(\frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}}-1\right) $$
+        You will calculate the velocity for this galaxy using the Doppler equation.
       </p>
+      <div
+        class="JaxEquation"
+      >
+        $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
+      </div>
     </div>
   </scaffold-alert>
 </template>
+
+
+<style>
+
+.JaxEquation .MathJax {
+  margin: 0 auto 16px !important;
+}
+
+</style>

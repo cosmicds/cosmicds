@@ -7,19 +7,16 @@
     <h3
       class="mb-4"
     >
-      Rest Wavelength
+      Observed Wavelength
     </h3>
     <div
       class="mb-4"
     >
       <p>
-        Your galaxy spectrum has {{ state.element == 'Mg-I' ? 'a' : 'an' }} {{ state.element }} {{ state.element == 'Mg-I' ? 'absorption' : 'emission' }} line marked.
+        Hover your mouse in the Spectrum Viewer. A vertical measuring tool identifies the wavelength as you move the tool left and right.
       </p>
       <p>
-        The known <strong>rest wavelength</strong> for the line is recorded in your table.
-      </p>
-      <p>
-        Click the <v-icon>mdi-lambda</v-icon> icon in the Spectrum Viewer toolbar to display the rest wavelength. 
+        Align the measuring tool to the <strong>{{ state.element }} (observed)</strong> marker and click. This records the <strong>observed wavelength</strong> in your table.
       </p>
     </div>
     <v-divider
@@ -37,7 +34,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'mee_spe1';
+            state.marker = 'res_wav1';
           "
         >
           back
@@ -48,24 +45,24 @@
       <v-col
         cols="6"
         class="shrink"
-        v-if="!state.lambda_used"
+        v-if="!state.waveline_set"
       >
         <div
           style="font-size: 16px;"
         >
-          Click the <v-icon>mdi-lambda</v-icon> button.
+          Measure the observed wavelength.
         </div>
       </v-col>
       <v-col
         class="shrink"
-        v-if="state.lambda_used"
+        v-if="state.waveline_set"
       >
         <v-btn
           class="black--text"
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'obs_wav1';
+            state.marker = 'obs_wav2';
           "
         >
           next

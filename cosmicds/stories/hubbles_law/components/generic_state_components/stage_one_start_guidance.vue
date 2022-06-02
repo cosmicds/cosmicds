@@ -14,7 +14,7 @@
       class="mb-4"
     >
       <p>
-        You will be exploring your data through many different representations. These representations will include spatial images, tables, spectrum graphs, and scatter plots.
+        You will explore your data through different representations, including spatial images, tables, spectrum graphs, and scatter plots.
       <p>
       </p>
         <strong>Guidelines</strong> for your exploration will appear in these orange boxes. Next to them you will find relevant data views, highlighted with an orange background.
