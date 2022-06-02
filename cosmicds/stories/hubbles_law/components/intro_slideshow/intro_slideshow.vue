@@ -51,7 +51,7 @@
                   </p>
                 </v-card>
                 <p>
-                  While exploring these questions, you will learn techniques scientists use to assess the reliability of your results, based on your data. After all, when scientists collect data to answer new questions, there is no answer key they can use to check if their conclusions are correct. Like a scientist, you will have to judge for yourself what can be concluded from their data, and how much confidence you should have in your conclusions.
+                  While exploring these questions, you will learn techniques scientists use to assess the <strong>reliability</strong> of your results, based on your data. After all, when scientists collect data to answer new questions, there is no answer key they can use to check if their conclusions are correct. Like a scientist, you will have to judge for yourself what can be concluded from their data, and how much confidence you should have in your conclusions.
                 </p>
                 <p>
                   Let’s get started!
