@@ -45,9 +45,15 @@
 <script>
 module.exports = {
   props: {
-    correctAnswers: Array,
     feedbacks: Array,
-    neutralAnswers: Array,
+    correctAnswers: {
+      type: Array,
+      default: []
+    },
+    neutralAnswers: {
+      type: Array,
+      default: []
+    },
     points: {
       type: [Array, Function],
       default(_rawProps) {
@@ -81,7 +87,7 @@ module.exports = {
           index: index,
           correct: correct,
           neutral: this.neutralAnswers.includes(index),
-          tries: tries
+          tries: this.tries
         });
       }
     },
