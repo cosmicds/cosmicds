@@ -98,6 +98,8 @@
           v-if="stage_state.marker == 'rep_rem1'" />
         <c-nice-work-guidance
           v-if="stage_state.marker == 'nic_wor1'" />
+        <c-doppler-calc-0-alert
+          v-if="stage_state.marker == 'dop_cal0'" />
         <c-doppler-calc-1-alert
           v-if="stage_state.marker == 'dop_cal1'" />
         <c-doppler-calc-2-alert

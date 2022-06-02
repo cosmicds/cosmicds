@@ -756,13 +756,15 @@
           v-if="step==5"
           color="accent"
           class="black--text"
+          v-model="student_vel_calc"
           depressed
           @click="() => { 
             $emit('submit'); 
             state.doppler_calc_dialog = false; 
             step = 0; 
             state.marker='dop_cal6'; 
-            state.dopper_calc_complete = true}"
+            state.dopper_calc_complete = true;
+            student_vel_calc = true}"
         >
           Done
         </v-btn>

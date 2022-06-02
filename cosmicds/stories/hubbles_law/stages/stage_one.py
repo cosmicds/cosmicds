@@ -40,9 +40,9 @@ class StageState(State):
     lambda_obs = CallbackProperty(0)
     element = CallbackProperty("")
     reflection_complete = CallbackProperty(False)
-    doppler_calc_dialog = CallbackProperty(True)
-    student_vel = CallbackProperty(0)
-    doppler_calc_complete = CallbackProperty(False)
+    doppler_calc_dialog = CallbackProperty(True) # Should the doppler calculation be displayed when marker == dop_cal5?
+    student_vel = CallbackProperty(0) # Value of student's calculated velocity
+    doppler_calc_complete = CallbackProperty(False) # Did student finish the doppler calculation?
 
     markers = CallbackProperty([
         'mee_gui1',
@@ -55,6 +55,7 @@ class StageState(State):
         'obs_wav2',        
         'rep_rem1',
         'nic_wor1',
+        'dop_cal0',
         'dop_cal1',
         'dop_cal2',
         'dop_cal3',
@@ -170,6 +171,7 @@ class StageOne(HubbleStage):
             "obswave_2_alert",            
             "remaining_gals_alert",
             "nice_work_guidance",
+            "doppler_calc_0_alert",
             "doppler_calc_1_alert",
             "doppler_calc_2_alert",
             "doppler_calc_3_guidance"
@@ -195,6 +197,10 @@ class StageOne(HubbleStage):
             component = DopplerCalc(comp + ext, path, self.stage_state)
             self.add_component(component, label=label)
 
+        # execute add_student_velocity when student_vel_calc in c-doppler-calc-5-slideshow is updated.
+        doppler_slideshow = self.get_component("c-doppler-calc-5-slideshow")
+        doppler_slideshow.observe(self.add_student_velocity, names=["student_vel_calc"])
+
         # Callbacks
         def update_count(change):
             self.stage_state.gals_total = change["new"]
@@ -204,6 +210,8 @@ class StageOne(HubbleStage):
         add_callback(self.story_state, 'step_index',
                      self._on_step_index_update)
         self.trigger_marker_update_cb = True
+
+
 
         spectrum_viewer = self.get_viewer("spectrum_viewer")
         restwave_tool = spectrum_viewer.toolbar.tools["hubble:restwave"]
@@ -324,6 +332,7 @@ class StageOne(HubbleStage):
         self.stage_state.lambda_rest = data["restwave"][index]
         self.stage_state.lambda_obs = data["measwave"][index]
         self.stage_state.element = data["element"][index]
+        self.stage_state.sel_gal_index = index
 
     def on_spectrum_click(self, event):
         specview = self.get_viewer("spectrum_viewer")
@@ -342,6 +351,12 @@ class StageOne(HubbleStage):
             lamb_meas = data["measwave"][index]
             velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
             self.update_data_value("student_measurements", "velocity", velocity, index)
+
+    def add_student_velocity(self, _args=None):
+        index = self.galaxy_table.index
+        velocity = round(self.stage_state.student_vel)
+        print("index", index, "student vel", self.stage_state.student_vel)
+        self.update_data_value("student_measurements", "velocity", velocity, index)
 
     @property
     def selection_tool(self):
