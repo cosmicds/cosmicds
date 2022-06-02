@@ -30,6 +30,7 @@ class StageState(State):
     gal_selected = CallbackProperty(False)
     vel_win_opened = CallbackProperty(False)
     lambda_used = CallbackProperty(False)
+    lambda_on = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     velocity_button = CallbackProperty(False)
 
@@ -217,6 +218,7 @@ class StageOne(HubbleStage):
         restwave_tool = spectrum_viewer.toolbar.tools["hubble:restwave"]
 
         add_callback(restwave_tool, 'lambda_used', self._on_lambda_used)
+        add_callback(restwave_tool, 'lambda_on', self._on_lambda_on)
 
     def _on_marker_update(self, old, new):
         if not self.trigger_marker_update_cb:
@@ -256,6 +258,9 @@ class StageOne(HubbleStage):
 
     def _on_lambda_used(self, used):
         self.stage_state.lambda_used = used
+
+    def _on_lambda_on(self, on):
+        self.stage_state.lambda_on = on
 
     def _select_from_data(self, dc_name):
         data = self.get_data(dc_name)
