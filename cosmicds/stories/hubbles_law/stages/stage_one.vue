@@ -124,15 +124,16 @@
         </v-row>
         <v-row>
           <v-col
-            cols="3"
+            cols="4"
+            offset="2"
           >
-            <!-- FORM DIALOG as template for reflections/MC -->
+            <!-- LEARN MORE Dialog -->
             <c-spectrum-slideshow v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']" />
           </v-col>
           <v-col
-            cols="3"
+            cols="4"
           >
-            <!-- FORM DIALOG as template for reflections/MC -->
+            <!-- REFLECTION Dialog -->
             <reflect-velocity-windows
               v-if="stage_state.obswaves_total >= 5"
               button-text="reflect"
@@ -143,9 +144,26 @@
               "
             >
             </reflect-velocity-windows>
+            <!-- Placeholder for Reflection button -->
+            <v-btn
+              v-if="stage_state.obswaves_total < 5"
+              disabled
+              block
+              color="info"
+              elevation="2"
+            >
+              <v-spacer></v-spacer>
+              reflect
+              <v-spacer></v-spacer>
+              <v-icon
+                class="ml-4"
+              >
+                mdi-circle-outline
+              </v-icon>
+            </v-btn>
           </v-col>
           <v-col
-            cols="6"
+            cols="12"
           >
             <!-- This alert is temporary -->
             <v-btn

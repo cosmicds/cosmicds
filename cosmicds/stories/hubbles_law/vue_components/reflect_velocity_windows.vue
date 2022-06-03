@@ -35,7 +35,7 @@
           <v-spacer></v-spacer>
           <!-- @click="() => { dialog = false; if (step == 7)  {step = 0}; }" -->
           <span
-            @click="() => { $emit('submit'); dialog = false; step = 0; reflection_complete = true}"
+            @click="() => { $emit('submit'); dialog = false; reflection_complete = true}"
           >
             <v-btn
               icon
@@ -101,7 +101,7 @@
                       How do the observed wavelengths of your galaxies' spectral lines compare with their rest wavelengths?
                     </p>
                     <p>
-                      Choose the best response below.
+                      Choose the best response below. (Note: You can grab this pop-up by the header and move it to the side if you want to see content behind it.)
                     </p>
                     <mc-radiogroup
                       :radio-options="[
