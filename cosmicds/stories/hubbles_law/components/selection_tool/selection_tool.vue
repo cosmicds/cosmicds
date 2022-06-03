@@ -19,7 +19,7 @@
       <v-toolbar-title
         class="text-h6 text-uppercase font-weight-regular"
       >
-        Night Sky Viewer
+        Cosmic Sky Viewer
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -70,7 +70,7 @@
             <v-toolbar-title
               class="text-h6 text-uppercase font-weight-regular"
             >
-              How to Use the Night Sky Viewer
+              How to Use the Cosmic Sky Viewer
             </v-toolbar-title>
             <v-spacer></v-spacer>
             <span
@@ -93,7 +93,7 @@
               >
                 <v-col>
                   <p>
-                    The Night Sky Viewer shows a modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. The green dots mark the locations of galaxies you can collect data for.
+                    The Comsic Sky Viewer shows a modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. The green dots mark the locations of galaxies you can collect data for.
                   </p>
                   <v-row>
                     <v-col

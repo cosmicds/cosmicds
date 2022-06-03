@@ -88,9 +88,9 @@
       >
         <c-spectrum-guidance 
           v-if="stage_state.marker == 'mee_spe1'"/>
-        <c-restwave-alert
+        <c-restwave-guidance
           v-if="stage_state.marker == 'res_wav1'" />
-        <c-obswave-alert
+        <c-obswave-1-guidance
           v-if="stage_state.marker == 'obs_wav1'" />
         <c-obswave-2-alert
           v-if="stage_state.marker == 'obs_wav2'" />
@@ -98,28 +98,32 @@
           v-if="stage_state.marker == 'rep_rem1'" />
         <c-nice-work-guidance
           v-if="stage_state.marker == 'nic_wor1'" />
+        <c-doppler-calc-0-alert
+          v-if="stage_state.marker == 'dop_cal0'" />
         <c-doppler-calc-1-alert
           v-if="stage_state.marker == 'dop_cal1'" />
         <c-doppler-calc-2-alert
           v-if="stage_state.marker == 'dop_cal2'" />            
       </v-col>
       <v-col
+        v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
         cols="12"
         lg="8"
       >
-        <v-card
-          v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
-          :color="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'info' : 'black'"
-          :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1 my-n1' : 'pa-0'"
-          outlined
-        >
-          <jupyter-widget :widget="viewers.spectrum_viewer"/>
+        <v-row>
+          <v-col
+            class="py-0"
+          >
+            <v-card
+              :color="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'info' : 'black'"
+              :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1 my-n1' : 'pa-0'"
+              outlined
+            >
+              <jupyter-widget :widget="viewers.spectrum_viewer"/>
 
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" lg="8" offset-lg="4">
+            </v-card>
+          </v-col>
+        </v-row>
         <v-row>
           <v-col
             cols="3"
@@ -136,7 +140,7 @@
               button-text="reflect"
               close-text="submit"
               @submit="
-                stage_state.spec_reflect_complete = true;
+                stage_state.reflection_complete = true;
                 console.log('Submit button was clicked.');
               "
             >

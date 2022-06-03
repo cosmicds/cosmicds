@@ -1,5 +1,5 @@
 from bqplot.marks import Label, Lines
-from echo import add_callback
+from echo import add_callback, CallbackProperty
 from glue.config import viewer_tool
 from glue.viewers.common.tool import CheckableTool
 from cosmicds.stories.hubbles_law.utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
@@ -14,6 +14,8 @@ class RestWavelengthTool(CheckableTool):
 
     observed_text = ' (observed)'
     rest_text = ' (rest)'
+
+    lambda_used = CallbackProperty(False)
 
     def __init__(self, viewer, **kwargs):
         super().__init__(viewer, **kwargs)
@@ -59,6 +61,7 @@ class RestWavelengthTool(CheckableTool):
         self.active = True
         self._on_view_change()
         self.viewer.figure.marks = self.viewer.figure.marks + self.marks
+        self.lambda_used = True
 
     def deactivate(self):
         self.viewer.figure.marks = [mark for mark in self.viewer.figure.marks if mark not in self.marks]

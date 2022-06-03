@@ -18,7 +18,7 @@
       dark
       class="text-uppercase"
     >
-      <v-toolbar-title>Night Sky Viewer</v-toolbar-title>
+      <v-toolbar-title>Cosmic Sky Viewer</v-toolbar-title>
       <v-spacer></v-spacer>          
       <div class="text-center">
         <v-dialog v-model="dialog" width="600">

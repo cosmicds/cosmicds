@@ -62,19 +62,24 @@
                     flat
                     tile
                   >
-                    <h3 class="mb-4">Refraction and Diffraction</h3>
+                    <h3
+                      class="mb-4"
+                    >
+                      Refraction and diffraction
+                    </h3>
                     <div>
-                    <v-card
-                      class="mt-auto"
-                      flat
-                      color="secondary lighten-3"
-                      light
-                    >                  
-                      <v-card-text>
-                        A <strong>spectrum</strong> is created when you pass light from a source through a <strong>spectrograph</strong>, which separates the light into its different colors (like a rainbow) and measures how much light there is at each color (or wavelength).
-                      </v-card-text>
-                    </v-card>
-                    <br>
+                      <v-card
+                        class="mt-auto mb-4"
+                        flat
+                        color="secondary lighten-3"
+                        light
+                      >                  
+                        <v-card-text
+                          class="black--text"
+                        >
+                          A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
+                        </v-card-text>
+                      </v-card>            
                       <p>
                         The figure illustrates light passing through a
                         diffraction grating (1) and a prism (2).
@@ -84,6 +89,11 @@
                         bubbles, and oil slicks &#8212; create spectra because
                         they bend light of different colors by different
                         amounts. See link for more details.
+                      </p>
+                      <p
+                        class="text-center grey--text"
+                      >
+                        [ Insert link as described above ]
                       </p>
                     </div>
                   </v-col>
@@ -111,36 +121,32 @@
                     flat
                     tile
                   >
-                    <h3 class="mb-4">Spectrum images and graphs</h3>
+                    <h3
+                      class="mb-4"
+                    >
+                      Spectrum images and graphs
+                    </h3>
                     <div>
                       <v-card
-                        class="mt-auto"
+                        class="mt-auto mb-4"
                         flat
                         color="secondary lighten-3"
                         light
-                      >
-                        <v-card-text>
-                          A <strong>spectrum</strong> is created when you pass
-                          light from a source through a
-                          <strong>spectrograph</strong>, which separates the
-                          light into its different colors (like a rainbow) and
-                          measures how much light there is at each color (or
-                          wavelength).
+                      >                  
+                        <v-card-text
+                          class="black--text"
+                        >
+                          A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
                         </v-card-text>
                       </v-card>
-                      <br />
                       <p>
-                        These graphics show sample spectra for two different
-                        types of light bulbs.
+                        The graphics to the right show sample spectra for two different types of light bulbs.
                       </p>
                       <p>
-                        The spectrum images (top) show what the light looks like
-                        when it is separated into its colors by the
-                        spectrograph.
+                        The spectrum images (i.e. the wide bar above the blue data points in each graphic) show what the light from each bulb looks like when it is separated into its colors by the spectrograph. 
                       </p>
                       <p>
-                        The spectrum graphs (bottom) represent how bright the
-                        light is at each specific wavelength.
+                        The spectrum graphs (i.e. the blue data points in each graphic) represent how bright the light is at each specific wavelength.
                       </p>
                     </div>
                   </v-col>
@@ -177,21 +183,20 @@
                     <h3 class="mb-4">Interpreting spectrum graphs</h3>
                     <div>
                       <v-card
-                        class="mt-auto"
+                        class="mt-auto mb-4"
                         flat
                         color="secondary lighten-3"
                         light
-                      >
-                        <v-card-text>
-                          A <strong>spectrum</strong> is created when you pass
-                          light from a source through a
-                          <strong>spectrograph</strong>, which separates the
-                          light into its different colors (like a rainbow) and
-                          measures how much light there is at each color (or
-                          wavelength).
+                      >                  
+                        <v-card-text
+                          class="black--text"
+                        >
+                          A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
                         </v-card-text>
                       </v-card>
-                      <br />
+                      <p>
+                        Examine the highlighted regions in the graphics to the right.
+                      </p>
                       <p>
                         At wavelengths where the spectrum graph has a
                         <strong>high brightness</strong> value, the spectrum
@@ -233,21 +238,20 @@
                     <h3 class="mb-4">Interpreting spectrum graphs</h3>
                     <div>
                       <v-card
-                        class="mt-auto"
+                        class="mt-auto mb-4"
                         flat
                         color="secondary lighten-3"
                         light
-                      >
-                        <v-card-text>
-                          A <strong>spectrum</strong> is created when you pass
-                          light from a source through a
-                          <strong>spectrograph</strong>, which separates the
-                          light into its different colors (like a rainbow) and
-                          measures how much light there is at each color (or
-                          wavelength).
+                      >                  
+                        <v-card-text
+                          class="black--text"
+                        >
+                          A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
                         </v-card-text>
                       </v-card>
-                      <br />
+                      <p>
+                        Examine the highlighted regions in the graphics to the right.
+                      </p>
                       <p>
                         At wavelengths where the spectrum graph has a
                         <strong>low brightness</strong> value, the spectrum
@@ -279,29 +283,30 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="6">
-                    <h3 class="mb-4">
-                      How do spectra tell us about a source's motion?
+                  <v-col
+                    cols="6"
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      How do spectra indicate a source's motion?
                     </h3>
                     <div>
                       <p>
-                        You have probably heard the pitch of a fire truck siren
-                        change as the truck is moving toward or away from you.
-                        When the truck is moving toward you, the siren’s pitch
-                        is higher, and when the truck is moving away from you,
-                        the siren’s pitch is lower. The faster the truck is
-                        moving, the bigger the change in pitch.
+                        Think about a firetruck racing down the street. Have you noticed how the pitch of the siren changes depending whether the truck is moving toward or away from you? When the truck is moving toward you, the siren’s pitch is higher. When the truck is moving away from you, the siren’s pitch is lower. The faster the truck is moving, the bigger the change in pitch.
                       </p>
                       <p>
-                        This is due to a phenomenon called the
-                        <strong>Doppler shift</strong>, where the observed
-                        properties of a sound wave change due to the motion of
-                        the object emitting the sound.
+                        This pitch change is due to a phenomenon called the <strong>Doppler shift</strong>, where the observed properties of a sound wave change due to the motion of the object emitting the sound.
+                      </p>
+                      <p>
+                        So what does this have to do with light waves and spectra?
                       </p>
                     </div>
                   </v-col>
                   <v-col cols="6">
-                    <h4>Doppler Shift</h4>
+                    <h4>
+                      Doppler shift
+                    </h4>
                     <v-img
                       class="mx-a"
                       contain
@@ -317,16 +322,17 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="6">
-                    <h3 class="mb-4">
-                      How do spectra tell us about a source's motion?
+                  <v-col
+                    cols="6"
+                  >
+                    <h3
+                      class="mb-4"
+                    >
+                      How do spectra indicate a source's motion?
                     </h3>
                     <div>
                       <p>
-                        The same <strong>Doppler shift</strong> happens with
-                        <strong>light</strong> (and all other wave phenomena),
-                        but a light source has to be moving very fast for you to
-                        notice these changes!
+                        The same <strong>Doppler shift</strong> happens with <strong>light waves</strong> (and all other wave phenomena). But a light source has to be moving very fast for you to notice these changes!
                       </p>
                       <p>
                         When a light source moves
@@ -345,7 +351,9 @@
                     </div>
                   </v-col>
                   <v-col cols="6">
-                    <h4>Doppler Shift</h4>
+                    <h4>
+                      Doppler shift
+                    </h4>
                     <v-img
                       class="mx-a"
                       contain
@@ -362,29 +370,20 @@
               <v-container>
                 <v-row no-gutters>
                   <v-col>
-                    <h3 class="mb-4">
-                      How do we know the wavelength of the light when the source
-                      is at rest?
+                    <h3
+                      class="mb-4"
+                    >
+                      How do we know the rest wavelength of the light?
                     </h3>
                     <div>
                       <p>
-                        A key to using the Doppler Shift to determine the
-                        velocity of an astronomical source is to know the
-                        wavelength of its light when it is
-                        <strong>not</strong> moving. (This is called the
-                        <strong>rest wavelength</strong> of light).
+                        A key to using the Doppler shift to determine the velocity of an astronomical source is to know the wavelength of its light when it is <strong>not moving</strong>. (This is called the <strong>rest wavelength</strong> of light).
                       </p>
                       <p>
-                        Luckily, elements emit and absorb light at specific
-                        wavelengths that are unique to those elements, providing
-                        “chemical fingerprints” that we can use to identify the
-                        presence of an element in an astronomical source (like a
-                        star or a gas cloud).
+                        Luckily, elements emit and absorb light at specific wavelengths that are unique to those elements. These unique patterns provide “chemical fingerprints” that we can use to identify the presence of an element in an astronomical source (like a star or a gas cloud). 
                       </p>
                       <p>
-                        This image shows the pattern of emission lines that are
-                        produced by four different elements. The emission line
-                        patterns are unique to each element.
+                        The spectrum images below show the pattern of emission lines that are produced by four different elements. The emission line patterns are unique to each element.
                       </p>
                     </div>
                   </v-col>
@@ -459,9 +458,7 @@
                         <strong>absorption lines</strong> due to hydrogen.
                       </p>
                       <p>
-                        Notice that in both spectra, the emission and absorption
-                        lines are present at the same combination of wavelengths
-                        (hydrogen’s “chemical fingerprint”).
+                        Notice that in both spectra, the emission and absorption lines are present at the same combination of wavelengths (i.e. hydrogen’s “chemical fingerprint”).
                       </p>
                     </div>
                     <v-card
@@ -469,11 +466,11 @@
                       flat
                       color="secondary lighten-3"
                       light
-                    >
-                      <v-card-text>
-                        Elements emit light at specific wavelengths, and they
-                        can also absorb light at the same wavelengths, depending
-                        on the conditions associated with a light source.
+                    > 
+                      <v-card-text
+                        class="black--text"
+                      >
+                        Elements emit light at specific wavelengths, and they can also absorb light at the same wavelengths, depending on the conditions associated with a light source.
                       </v-card-text>
                     </v-card>
                   </v-col>
@@ -506,7 +503,7 @@
                     cols="12"
                   >
                     <p>
-                      Since we know the wavelengths emitted or absorbed by an element when it is not moving, we can use these <strong>rest wavelengths</strong> as a reference to compare against the <strong>observed wavelengths</strong> of the light when an object is moving.
+                      Since we know the wavelengths emitted or absorbed by an element when it is not moving, we can use these <strong>rest wavelengths</strong> as a reference to compare against the <strong>observed wavelengths</strong> of the light when an object <em>is</em> moving.
                     </p>
                 </v-row>
                 <v-row>
@@ -520,7 +517,7 @@
                     </p>
                     <v-img
                       contain
-                      :src="`${state.image_location}/restobs1_spectool.png`"
+                      :src="`${state.image_location}/restobs1_dotted_spectool.png`"
                     >
                     </v-img>
                   </v-col>
@@ -539,7 +536,7 @@
                     cols="12"
                   >
                     <p>
-                      Since we know the wavelengths emitted or absorbed by an element when it is not moving, we can use these <strong>rest wavelengths</strong> as a reference to compare against the <strong>observed wavelengths</strong> of the light when an object is moving.
+                      Since we know the wavelengths emitted or absorbed by an element when it is not moving, we can use these <strong>rest wavelengths</strong> as a reference to compare against the <strong>observed wavelengths</strong> of the light when an object <em>is</em> moving.
                     </p>
                 </v-row>
                 <v-row>
@@ -549,11 +546,11 @@
                     offset-lg="1"
                   >
                     <p>
-                      The dotted line shows the rest wavelength of a hydrogen line known as <strong>Mg I</strong> (pronounced "magnesium one"). The solid line shows the observed wavelength of the Mg I line.
+                      The dotted line shows the rest wavelength of a magnesium line known as <strong>Mg I</strong> (pronounced "magnesium one"). The solid line shows the observed wavelength of the Mg I line.
                     </p>
                     <v-img
                       contain
-                      :src="`${state.image_location}/restobs2_spectool.png`"
+                      :src="`${state.image_location}/restobs2_dotted_spectool.png`"
                     >
                     </v-img>
                   </v-col>
@@ -564,26 +561,42 @@
 
           <v-window-item :value="10" 
             class="no-transition"
+            style="height: 100%;"
           >
-            <div class="pa-4 text-center my-auto">
-              <v-img
-                class="mb-4"
-                contain
-                height="128"
-                src="https://www.pngrepo.com/png/211744/512/rocket-ship-launch-missile.png"
-              ></v-img>
-              <h3 class="text-h6 font-weight-light mb-2">
-                You're ready to start measuring galaxy velocities now.
-              </h3>
-              <span class="text-caption grey--text">Click on "LEARN MORE" if you'd like to come back for a refresher.</span>
-            </div>
+            <v-card-text
+              style="height: 100%;"
+            >
+              <v-container
+                style="height: 100%;"
+              >
+                <v-row
+                  style="height: 100%;"
+                  align="center"
+                >
+                  <v-col
+                    class="pa-4 text-center my-auto"
+                  >
+                    <v-img
+                      class="mb-4"
+                      contain
+                      height="128"
+                      src="https://www.pngrepo.com/png/211744/512/rocket-ship-launch-missile.png"
+                    ></v-img>
+                    <h3 class="text-h6 font-weight-light mb-2">
+                      You're ready to start measuring galaxy velocities now.
+                    </h3>
+                    <span class="text-caption grey--text">Click the LEARN MORE button again if you'd like to come back for a refresher.</span>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
           </v-window-item>
         </v-window>
 
         <v-divider></v-divider>
 
         <v-card-actions
-          class="justify-space-between grey lighten-4"
+          class="grey lighten-4"
         >
           <v-btn
             :disabled="step === 0"

@@ -15,7 +15,7 @@
       class="mb-4"
     >
       <p>
-        The green dots mark the locations of galaxies you can collect data for. 
+        The green dots in the Cosmic Sky Viewer mark the locations of galaxies you can collect data for. 
       </p>
       <p>
         Pan around the sky and click on one of these dots to select that galaxy.
@@ -26,7 +26,7 @@
       class="mb-4"
     >
       <p>
-        Notice that the table now has a row for your selected galaxy.
+        Notice that your My Galaxies table now has a row for your selected galaxy.
       </p>
       <p>
         Choose another galaxy to enter into your table. You can pan around the sky from where you are or click the <v-icon>mdi-cached</v-icon> button to reset the view.
@@ -40,7 +40,7 @@
         Check it out, your table is growing.
       </p>
       <p>
-        Keep selecting random galaxies until you have 5 rows in your table.
+        Keep selecting galaxies until you have 5 rows in your table.
       </p>
     </div>
     <div
@@ -48,17 +48,20 @@
       class="mb-4"
     >
       <p>
-        Great, you've got all the galaxies that you need in order to start.
+        Great, you've got all the galaxies that you need in order to start the investigation.
       </p>
       <p>
-        Now you can start making measurements from your data.
+        You're ready to begin making measurements from your data. Let's turn now to your table of galaxies.
       </p>
     </div>
     <div
       v-if="state.gals_total < 5 & state.gal_selected"
     >
       <p>
-        What do you think of this galaxy? If it looks good to you, click the <v-icon>mdi-plus</v-icon> button to add it to your galaxy collection.
+        What do you think of this galaxy?
+      </p>
+      <p>
+        If it looks good to you, click the <v-icon>mdi-plus</v-icon> button to add it to your galaxy collection.
       </p>
       <p>
         If you’d rather look for another galaxy, click the <v-icon>mdi-cached</v-icon> button to reset the view and choose a different green dot.

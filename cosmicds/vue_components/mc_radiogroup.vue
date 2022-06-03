@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container
+    fluid
+    class="px-8"
+  >
     <v-radio-group
       v-model="column"
       column
@@ -8,29 +11,34 @@
       <v-radio
         v-for="[index, option] of radioOptions.entries()"
         :key="index"
-        :color="color(index)"
+        :color="color(index) accent-3`"
         @change="selectChoice(index)"
       >
         <template v-slot:label>
-          <div>
+          <div
+            @mouseup="selectChoice(index)"
+          >
           {{ option }}
           </div>
         </template>
       </v-radio>
     </v-radio-group>
-    <div
-      class="text-center"
+    <v-alert
+      dense
+      :color="`${color(feedbackIndex)} lighten-4`"
+      :class="feedbackIndex !== null ? 'd-block' : 'd-none'"
     >
-      <div
-        :class="feedbackIndex !== null ? 'd-block' : 'd-none'"
+      <span
+        :class="`${color(feedbackIndex)}--text text--darken-4`"
+        v-html="feedbacks[feedbackIndex]"
       >
         <span
           :class="`${color(feedbackIndex)}--text`" 
           v-html="feedbacks[feedbackIndex]"
         >
         </span>
-      </div>
-    </div>
+      </span>
+    </v-alert>
     <div
       v-if="complete"
       class="text-right">
@@ -38,7 +46,6 @@
         {{ `Score: ${score(tries)} points` }}
       </span>
     </div>
-
   </v-container>
 </template>
 
@@ -67,7 +74,7 @@ module.exports = {
     return {
       column: null,
       colorRight: 'green',
-      colorNeutral: 'yellow',
+      colorNeutral: 'orange',
       colorWrong: 'red',
       complete: false,
       feedbackIndex: null,
