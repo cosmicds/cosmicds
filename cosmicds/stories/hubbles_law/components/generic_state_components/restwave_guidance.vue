@@ -28,12 +28,12 @@
       <p
         v-if="state.lambda_on"
       >
-        The rest wavelength of your line is now displayed in the graph as a vertical dotted line.
+        The rest wavelength of your line appears in the graph as a vertical dotted line.
       </p>
       <p
         v-if="state.lambda_on"
       >
-        You can click the <v-icon>mdi-lambda</v-icon> icon again if you want to toggle rest wavelength back off.
+        You can click the <v-icon>mdi-lambda</v-icon> icon again to toggle the rest wavelength back off.
       </p>
     </div>
     <v-divider

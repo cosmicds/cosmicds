@@ -65,7 +65,6 @@
           v-if="stage_state.marker == 'dop_cal5'"/>
         <c-doppler-calc-6-component
           v-if="stage_state.marker == 'dop_cal6'"/> 
-          
       </v-col>
       <v-col
         cols="12"
@@ -87,14 +86,14 @@
         lg="4"
       >
         <c-spectrum-guidance 
-          v-if="stage_state.marker == 'mee_spe1'"/>
+          v-if="stage_state.marker == 'mee_spe1'" />
         <c-restwave-guidance
           v-if="stage_state.marker == 'res_wav1'" />
         <c-obswave-1-guidance
           v-if="stage_state.marker == 'obs_wav1'" />
         <c-obswave-2-alert
           v-if="stage_state.marker == 'obs_wav2'" />
-        <c-remaining-gals-alert
+        <c-remaining-gals-guidance
           v-if="stage_state.marker == 'rep_rem1'" />
         <c-nice-work-guidance
           v-if="stage_state.marker == 'nic_wor1'" />
@@ -103,7 +102,7 @@
         <c-doppler-calc-1-alert
           v-if="stage_state.marker == 'dop_cal1'" />
         <c-doppler-calc-2-alert
-          v-if="stage_state.marker == 'dop_cal2'" />            
+          v-if="stage_state.marker == 'dop_cal2'" />
       </v-col>
       <v-col
         v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
@@ -120,7 +119,6 @@
               outlined
             >
               <jupyter-widget :widget="viewers.spectrum_viewer"/>
-
             </v-card>
           </v-col>
         </v-row>
@@ -136,7 +134,7 @@
           >
             <!-- FORM DIALOG as template for reflections/MC -->
             <reflect-velocity-windows
-              v-if="stage_state.waveline_set"
+              v-if="stage_state.obswaves_total >= 5"
               button-text="reflect"
               close-text="submit"
               @submit="

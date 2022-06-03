@@ -1,24 +1,26 @@
 <template>
   <v-alert
-    class="mb-4"
     color="info"
+    class="mb-4 mx-auto"
+    max-width="800"
     elevation="6"
   >
     <h3
       class="mb-4"
     >
-      Observed Wavelength
+      Select Five Galaxies
     </h3>
     <div
       class="mb-4"
     >
       <p>
-        Hover your mouse in the Spectrum Viewer. A vertical measuring tool identifies the wavelength as you move the tool left and right.
+        Your measurement of the line’s observed wavelength is now recorded in the table for your selected galaxy.
       </p>
       <p>
-        Align the measuring tool to the <strong>{{ state.element }} (observed)</strong> marker and click. This records the <strong>observed wavelength</strong> in your table.
+        Go through each of the remaining galaxies in your table and repeat these measurements, until you have recorded rest and observed wavelengths for each of your galaxies.
       </p>
     </div>
+    
     <v-divider
       class="my-4"
     >
@@ -34,35 +36,34 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'res_wav1';
+            state.marker = 'obs_wav2'
           "
         >
           back
         </v-btn>
       </v-col>
       <v-spacer></v-spacer>
-      
       <v-col
+        v-if="state.obswaves_total < 5"
         cols="6"
         class="shrink"
-        v-if="state.obswaves_total < 1"
       >
         <div
           style="font-size: 16px;"
         >
-          Measure the observed wavelength.
+          Measure wavelengths for {{ 5 - state.obswaves_total }} more <span v-if="state.obswaves_total < 4">galaxies</span><span v-if="state.obswaves_total == 4">galaxy</span>.
         </div>
       </v-col>
       <v-col
+        v-if="state.obswaves_total >= 5"
         class="shrink"
-        v-if="state.obswaves_total >= 1"
       >
         <v-btn
           class="black--text"
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'obs_wav2';
+            state.marker = 'cho_row1'
           "
         >
           next
