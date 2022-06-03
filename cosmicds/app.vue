@@ -64,15 +64,19 @@
         <v-list class="ma-0 pa-0">
           <v-list-item>
             <v-list-item-action>
-              <v-avatar color="indigo">
+              <v-avatar
+                color="info lighten-1"
+              >
                 <v-icon dark>mdi-account-circle</v-icon>
               </v-avatar>
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>Nicholas Earl</v-list-item-title>
-              <v-list-item-subtitle
-              >nearl@gluesolutions.io
+              <v-list-item-title>
+                Nicholas Earl
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                nearl@gluesolutions.io
               </v-list-item-subtitle
               >
             </v-list-item-content>
@@ -97,7 +101,6 @@
               editable
           >
             {{ stage.title }}
-            <small>{{ stage.subtitle }}</small>
           </v-stepper-step>
 
           <v-stepper-content :key="index" :step="index" class="my-0 py-0">
@@ -176,7 +179,6 @@
             >
               <v-card flat>
                 <v-card-title>{{ stage.title }}</v-card-title>
-                <v-card-subtitle>{{ stage.subtitle }}</v-card-subtitle>
                 <jupyter-widget :widget="stage.model_id"/>
               </v-card>
             </v-tab-item>

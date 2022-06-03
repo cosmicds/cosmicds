@@ -31,7 +31,10 @@
             >
               <v-col cols="6">
                 <p>
-                  Welcome to the Cosmic Data Story about Hubble's Law. In this investigation, you will use real astronomical data to form answers to major questions about our universe:
+                  Welcome to the Cosmic Data Story about Hubble's Law.
+                </p>
+                <p>
+                  In this investigation, you will use real astronomical data to form answers to major questions about our universe:
                 </p>
                 <v-card
                   class="justify-center pa-2 mx-12 my-8"
