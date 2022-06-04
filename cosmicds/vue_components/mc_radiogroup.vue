@@ -11,7 +11,7 @@
       <v-radio
         v-for="[index, option] of radioOptions.entries()"
         :key="index"
-        :color="color(index) accent-3`"
+        :color="`${color(index)} accent-3`"
         @change="selectChoice(index)"
       >
         <template v-slot:label>
