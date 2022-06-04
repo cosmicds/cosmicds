@@ -2,10 +2,8 @@
   <v-card
     id="selection-root"
     v-intersect.once="(entries, observer, isIntersecting) => {
-      console.log('Here');
       const root = entries[0].target;
       const element = root.querySelector('iframe');
-      console.log(element);
       if (element) {
         element.src = element.src.replace('/api/kernels', '');
       }
