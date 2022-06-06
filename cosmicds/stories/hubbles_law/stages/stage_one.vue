@@ -22,7 +22,7 @@
       >
         <c-stage-one-start-guidance
           v-if="stage_state.marker == 'mee_gui1'" />
-        <c-select-galaxies-alert
+        <c-select-galaxies-1-alert
           v-if="stage_state.marker == 'sel_gal1'" />
         <c-select-galaxies-2-guidance
           v-if="stage_state.marker == 'sel_gal2'" />
@@ -95,8 +95,8 @@
           v-if="stage_state.marker == 'obs_wav2'" />
         <c-remaining-gals-guidance
           v-if="stage_state.marker == 'rep_rem1'" />
-        <c-nice-work-guidance
-          v-if="stage_state.marker == 'nic_wor1'" />
+        <c-reflect-on-data-guidance
+          v-if="stage_state.marker == 'ref_dat1'" />
         <c-doppler-calc-0-alert
           v-if="stage_state.marker == 'dop_cal0'" />
         <c-doppler-calc-1-alert

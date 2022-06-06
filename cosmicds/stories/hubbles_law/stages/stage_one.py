@@ -58,7 +58,7 @@ class StageState(State):
         'obs_wav1',
         'obs_wav2',        
         'rep_rem1',
-        'nic_wor1',
+        'ref_dat1',
         'dop_cal0',
         'dop_cal1',
         'dop_cal2',
@@ -71,6 +71,8 @@ class StageState(State):
     step_markers = CallbackProperty([
         'mee_gui1',
         'mee_spe1',
+        'ref_dat1',
+        'dop_cal0',
     ])
 
     def __init__(self, *args, **kwargs):
@@ -169,7 +171,7 @@ class StageOne(HubbleStage):
         path = join(state_components_dir, "")
         state_components = [
             "stage_one_start_guidance",
-            "select_galaxies_alert",
+            "select_galaxies_1_alert",
             "select_galaxies_2_guidance",
             "choose_row_guidance",
             "spectrum_guidance",
@@ -177,7 +179,7 @@ class StageOne(HubbleStage):
             "obswave_1_guidance",
             "obswave_2_alert",            
             "remaining_gals_guidance",
-            "nice_work_guidance",
+            "reflect_on_data_guidance",
             "doppler_calc_0_alert",
             "doppler_calc_1_alert",
             "doppler_calc_2_alert",
@@ -368,7 +370,7 @@ class StageOne(HubbleStage):
 
         self.stage_state.waveline_set = True
         self.stage_state.lambda_obs = new_value
-        
+
         if index is not None:
             self.update_data_value("student_measurements", "measwave", new_value, index)
             self.story_state.update_student_data()

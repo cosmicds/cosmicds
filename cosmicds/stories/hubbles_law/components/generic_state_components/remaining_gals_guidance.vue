@@ -8,7 +8,7 @@
     <h3
       class="mb-4"
     >
-      Select Five Galaxies
+      Repeat for Remaining Galaxies
     </h3>
     <div
       class="mb-4"
@@ -63,7 +63,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'nic_wor1'
+            state.marker = 'ref_dat1'
           "
         >
           next

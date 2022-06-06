@@ -8,7 +8,7 @@
     <h3
       class="mb-4"
     >
-      Nice Work
+      Reflect on Your Data
     </h3>
 
     <div
