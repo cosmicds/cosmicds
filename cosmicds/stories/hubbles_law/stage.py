@@ -2,6 +2,7 @@ import json
 import requests
 
 from echo import add_callback
+from glue.core import Data
 import ipyvuetify as v
 
 from cosmicds.components import Table
@@ -44,12 +45,25 @@ class HubbleStage(Stage):
         prepared = { HubbleStage._map_key(k) : measurement.get(k, None) for k in HubbleStage._measurement_mapping.keys() }
         prepared.update(HubbleStage._units)
         prepared["student_id"] = self.app_state.student["id"]
+        ext = ".fits"
+        if not prepared["galaxy_name"].endswith(ext):
+            prepared["galaxy_name"] += ext
         prepared = json.loads(json.dumps(prepared, cls=CDSJSONEncoder))
         return prepared
 
     def submit_measurement(self, measurement):
         prepared = self._prepare_measurement(measurement)
         requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/submit-measurement", json=prepared)
+
+    def remove_measurement(self, galaxy_name):
+        name = str(galaxy_name)
+        condition = lambda x: x == name
+        if not galaxy_name.endswith(".fits"):
+            galaxy_name += ".fits"
+        self.remove_data_values("student_measurements", "name", condition, single=True)
+        user = self.app_state.student
+        if user.get("id", None) is not None:
+            requests.delete(f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurement/{user['id']}/{galaxy_name}")
 
     def update_data_value(self, dc_name, comp_name, value, index):
         super().update_data_value(dc_name, comp_name, value, index)

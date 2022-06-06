@@ -1,5 +1,6 @@
 import logging
 
+import astropy.units as u
 from echo import CallbackProperty, add_callback, ignore_callback
 from glue.core.state_objects import State
 from numpy import pi
@@ -72,17 +73,21 @@ class StageTwo(HubbleStage):
         angsize_slideshow = Angsize_SlideShow(self.stage_state)
         self.add_component(angsize_slideshow, label='c-angsize-slideshow')
 
-        self.add_component(DistanceTool(), label="c-distance-tool")
+        self.add_component(DistanceTool(self.stage_state), label="c-distance-tool")
         self.stage_state.image_location = "data/images/stage_two_distance"
 
+        type_names = { "E" : "Elliptical", "Ir": "Irregular", "Sp": "Spiral" }
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
                                glue_components=['name',
-                                               'velocity',
-                                               'distance'],
+                                                'type',
+                                                'angular_size',
+                                                'distance'],
                                key_component='name',
+                               transforms={ 'type' : lambda x: type_names.get(x, x) },
                                names=['Galaxy Name',
-                                      'Velocity (km/s)',
+                                      'GZ Class',
+                                      'θ (arcsec)',
                                       'Distance (Mpc)'],
                                title='My Galaxies | Distance Measurements',
                                selected_color=self.table_selected_color(self.app_state.dark_mode),
@@ -97,6 +102,7 @@ class StageTwo(HubbleStage):
         self.distance_tool.observe(self._angular_height_update, names=["angular_height"])
         self.distance_sidebar.angular_height = format_fov(self.distance_tool.angular_height)
 
+        self.distance_tool.observe(self._distance_tool_flagged, names=["flagged"])
         add_callback(self.stage_state, 'make_measurement',
                      self._make_measurement)
 
@@ -125,16 +131,29 @@ class StageTwo(HubbleStage):
         if not value:
             return
         galaxy = self.stage_state.galaxy
-        index = self.get_data_index('student_measurements', 'name', lambda x: x == galaxy["name"])
-        angular_size = self.distance_tool.angular_size.value
-        distance = round(MILKY_WAY_SIZE_MPC * 180 / (angular_size * pi))
+        index = self.get_data_indices('student_measurements', 'name', lambda x: x == galaxy["name"], single=True)
+        angular_size = self.distance_tool.angular_size
+        ang_size_deg = angular_size.value
+        distance = round(MILKY_WAY_SIZE_MPC * 180 / (ang_size_deg * pi))
+        angular_size_as = round(angular_size.to(u.arcsec).value)
         self.stage_state.galaxy_dist = distance
         self.update_data_value("student_measurements", "distance", distance, index)
-        self.update_data_value("student_measurements", "angular_size", angular_size, index)
+        self.update_data_value("student_measurements", "angular_size", angular_size_as, index)
         self.story_state.update_student_data()
         with ignore_callback(self.stage_state, 'make_measurement'):
             self.stage_state.make_measurement = False
-        
+
+    def _distance_tool_flagged(self, change):
+        if not change["new"]:
+            return
+        index = self.distance_table.index
+        if index is None:
+            return
+        item = self.distance_table.selected[0]
+        galaxy_name = item["name"]
+        self.remove_measurement(galaxy_name)
+        self.distance_tool.flagged = False
+
     @property
     def distance_sidebar(self):
         return self.get_component("c-distance-sidebar")

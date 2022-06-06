@@ -8,6 +8,7 @@ from cosmicds.mixins import TemplateMixin, HubMixin
 from glue.core import Data
 from glue.core.state_objects import State
 from echo import DictCallbackProperty, CallbackProperty, add_callback
+from numpy import delete
 
 
 class Story(State, HubMixin):
@@ -134,6 +135,20 @@ class Stage(TemplateMixin):
         values[index] = value
         data.update_components({data.id[comp_name] : values})
 
+    # JC: 
+    # I've added a multi-update function primarily for story-specific subclasses
+    # i.e. a subclass can overwrite this method with some extra behavior
+    # for example, the Hubble story will sometimes make a database update on a call.
+    # It's nice to be able to have ALL the updates before something like that
+    def update_data_values(self, dc_name, values, index):
+        data = self.data_collection[dc_name]
+        comp_dict = {}
+        for comp, value in values.items():
+            vals = data[comp]
+            vals[index] = value
+            comp_dict[data.id[comp]] = vals
+        data.update_components(comp_dict)
+
     def add_data_values(self, dc_name, values):
         data = self.data_collection[dc_name]
         main_components = [x.label for x in data.main_components]
@@ -144,10 +159,25 @@ class Stage(TemplateMixin):
         self.story_state.make_data_writeable(new_data)
         data.update_values_from_data(new_data)
 
-    def get_data_index(self, dc_name, component, condition):
+    def get_data_indices(self, dc_name, component, condition, single=False):
         data = self.data_collection[dc_name]
         component = data[component]
-        return next((index for index, x in enumerate(component) if condition(x)), None)
+        if single:
+            return next((index for index, x in enumerate(component) if condition(x)), None)
+        else:
+            return list(index for index, x in enumerate(component) if condition(x))
+
+    def remove_data_values(self, dc_name, component, condition, single=False):
+        indices = self.get_data_indices(dc_name, component, condition, single=single)
+        if single:
+            indices = [indices]
+        data = self.get_data(dc_name)
+        component = data[component]
+        main_components = [x.label for x in data.main_components]
+        component_dict = {c : delete(data[c], indices) for c in main_components}
+        new_data = Data(label=data.label, **component_dict)
+        self.story_state.make_data_writeable(new_data)
+        data.update_values_from_data(new_data)
 
     def vue_set_step_index(self, value):
         self.story_state.step_index = value

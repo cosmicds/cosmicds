@@ -1,7 +1,6 @@
 <template>
   <v-card
     flat
-    color="white"
   >
     <v-toolbar
       color="primary"

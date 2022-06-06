@@ -26,6 +26,19 @@
     >
       <v-toolbar-title>Estimate Distance</v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon
+            v-bind="attrs"
+            v-on="on"
+            :disabled="Object.keys(state.galaxy).length == 0"
+            @click="flagged = true"
+          >
+            <v-icon>mdi-flag</v-icon>
+          </v-btn>
+        </template>
+        Flag galaxy as missing image
+      </v-tooltip>
 
       <v-btn icon>
         <v-icon>mdi-information-outline</v-icon>
@@ -37,6 +50,10 @@
         class="distance-canvas"
         ref="canvas">
       </canvas>
+      <canvas
+        class="fov-canvas"
+        ref="fovCanvas"
+      ></canvas>
       <v-lazy>
         <jupyter-widget
           :widget="widget"
@@ -82,6 +99,9 @@ export default {
     const resizeObserver = new ResizeObserver(_entries => {
       this.handleResize();
     });
+
+    // The two canvases have the same dimensions
+    // so we only need to observe one
     resizeObserver.observe(this.canvas);
   },
 
@@ -92,8 +112,13 @@ export default {
 
   methods: {
 
-    // This stuff only needs to be done once
     setup: function() {
+      this.setupMeasuringCanvas();
+      this.setupFOVCanvas();
+    },
+
+    // This stuff only needs to be done once
+    setupMeasuringCanvas: function() {
       // Constants
       this.pointRadius = 2;
       this.grabRadius = 4;
@@ -106,7 +131,64 @@ export default {
       this.canvas = this.$refs.canvas;
       this.height = 400; // See the component CSS
       this.width = this.canvas.width;
-      this.setupCanvasContext();
+      this.setupMeasuringCanvasContext();
+    },
+
+    setupFOVCanvas: function() {
+      this.fovCanvas = this.$refs.fovCanvas;
+      const parent = this.fovCanvas.parentElement;
+      this.fovCanvas.width = parent.clientWidth;
+      this.fovCanvas.height = parent.clientHeight;
+      this.fovContext = this.fovCanvas.getContext('2d');
+      this.fovContext.lineWidth = 3;
+      this.fovContext.strokeStyle = 'dodgerblue';
+
+      const leftPadding = 5;
+      const verticalPadding = 5;
+      const endcapLength = 10;
+      const gapHeight = 24;
+      const fontSize = 16;
+      const font = `${fontSize}px Arial`;
+      const endcapEndX = leftPadding + endcapLength;
+
+      const verticalX = leftPadding + (endcapLength / 2);
+      const fracDown = 0.5;
+      const midYTop = this.fovCanvas.height * fracDown - (gapHeight / 2);
+      const midYBot = this.fovCanvas.height * fracDown + (gapHeight / 2);
+      const bottomEndcapY = this.fovCanvas.height - verticalPadding;
+      this.textCoordinates = [leftPadding, this.fovCanvas.height * fracDown + ((gapHeight - fontSize) / 2)];
+      this.textRect = [0, midYTop, this.fovCanvas.width, gapHeight];
+
+      this.fovContext.beginPath();
+      this.fovContext.moveTo(leftPadding, verticalPadding);
+      this.fovContext.lineTo(endcapEndX, verticalPadding);
+      this.fovContext.stroke();
+
+      this.fovContext.beginPath();
+      this.fovContext.moveTo(verticalX, verticalPadding);
+      this.fovContext.lineTo(verticalX, midYTop);
+      this.fovContext.stroke();
+
+      this.fovContext.beginPath();
+      this.fovContext.moveTo(verticalX, midYBot);
+      this.fovContext.lineTo(verticalX, bottomEndcapY);
+      this.fovContext.stroke();
+
+      this.fovContext.beginPath();
+      this.fovContext.moveTo(leftPadding, bottomEndcapY);
+      this.fovContext.lineTo(endcapEndX, bottomEndcapY);
+      this.fovContext.stroke();
+
+      this.fovContext.font = font;
+      this.fovContext.fillStyle = 'dodgerblue';
+      if (this.fov_text) {
+        this.updateFOVText();
+      }
+    },
+
+    updateFOVText: function() {
+      this.fovContext.clearRect(...this.textRect);
+      this.fovContext.fillText(this.fov_text, ...this.textCoordinates);
     },
 
     // This needs to be done any time we want to reset the state
@@ -131,7 +213,7 @@ export default {
       this.clearCanvas();
     },
 
-    setupCanvasContext: function() {
+    setupMeasuringCanvasContext: function() {
       this.context = this.canvas.getContext('2d');
       this.context.lineWidth = 3;
       this.context.strokeStyle = 'dodgerblue';
@@ -139,14 +221,11 @@ export default {
 
     addInitialPoint: function(event) {
 
-      console.log(this.canvas);
-
       // If we haven't put the first point down
       const coordinates = this.position(event);
       if (this.startPoint == null) {
         this.startPoint = coordinates;
         this.drawPoint(this.startPoint, 1);
-        console.log(`Drew startPoint: ${JSON.stringify(this.startPoint)}`);
         this.canvas.onmousemove = (e) => this.lineFollow(e, false);
 
       // If we haven't put the second point down
@@ -222,18 +301,22 @@ export default {
       const referenceElement = this.canvas.parentElement;
       this.canvas.width = referenceElement.clientWidth;
       this.canvas.height = referenceElement.clientHeight;
+      this.fovCanvas.width = referenceElement.clientWidth;
+      this.fovCanvas.height = referenceElement.clientHeight;
       const newWidth = referenceElement.clientWidth;
       const newHeight = referenceElement.clientHeight;
       if (newWidth === 0 || newHeight === 0) {
         this.canvas.width = oldWidth;
         this.canvas.height = oldHeight;
+        this.fovCanvas.width = oldWidth;
+        this.fovCanvas.height = oldHeight;
         return;
       }
-      this.canvas.width = newWidth;
-      this.canvas.height = newHeight;
       this.width = newWidth;
       this.height = newHeight;
-      this.setupCanvasContext();
+
+      // Update the measuring canvas
+      this.setupMeasuringCanvasContext();
       if (this.startPoint && this.endPoint) {
         const xRatio = this.canvas.width / oldWidth;
         const yRatio = this.canvas.height / oldHeight;
@@ -242,6 +325,9 @@ export default {
         this.drawEndcaps(this.startPoint, this.endPoint);
         this.updateMeasuredDistance();
       }
+
+      // Update the FOV canvas
+      this.setupFOVCanvas();
     },
 
     position: function(event) {
@@ -351,6 +437,10 @@ export default {
     jupyter_reset: function() {
       this.reset();
     },
+
+    jupyter_update_text: function() {
+      this.updateFOVText();
+    }
   }
 }
 </script>
@@ -368,7 +458,7 @@ export default {
   height: 400px;
 }
 
-.wwt-widget, .distance-canvas {
+.wwt-widget, .distance-canvas, .fov-canvas {
   height: 400px;
   width: 100%;
   position: absolute;
@@ -383,6 +473,12 @@ export default {
 .distance-canvas {
   background: transparent;
   z-index: 20;
+}
+
+.fov-canvas {
+  background: transparent;
+  z-index: 30;
+  pointer-events: none;
 }
 
 .pointer {
