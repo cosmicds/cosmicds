@@ -1,17 +1,15 @@
-from math import sqrt
-
-from bqplot.marks import Scatter
-from bqplot_image_gl import LinesGL
+from bqplot.marks import Lines, Scatter
 from bqplot_image_gl.interacts import MouseInteraction, mouse_events
 from glue.config import viewer_tool
 from glue_jupyter.bqplot.common.tools import InteractCheckableTool
+from traitlets import Unicode, HasTraits
 
 @viewer_tool
-class LineDrawTool(InteractCheckableTool):
+class LineDrawTool(InteractCheckableTool, HasTraits):
 
     tool_id = 'cds:linedraw'
     action_text = 'Draw line'
-    tool_tip = 'Draw a best fit line'
+    tool_tip = Unicode('Draw a best fit line').tag(sync=True)
     mdi_icon = "mdi-message-draw"
 
     def __init__(self, viewer, bx=0, by=0, **kwargs):
@@ -53,7 +51,7 @@ class LineDrawTool(InteractCheckableTool):
         x, y = domain['x'], domain['y']
 
         if self.line is None:
-            self.line = LinesGL(x=[self.bx, self.viewer.state.x_max], y=[self.bx, self.by], scales=image.scales, colors=['black'])
+            self.line = Lines(x=[self.bx, self.viewer.state.x_max], y=[self.bx, self.by], scales=image.scales, colors=['black'])
             figure.marks = figure.marks + [self.line]
             self._follow_cursor = True
             
@@ -87,6 +85,7 @@ class LineDrawTool(InteractCheckableTool):
             endpoint.enable_move = True
             figure.marks = figure.marks + [endpoint]
             self.endpoint = endpoint
+            self.tool_tip = "Update best fit line"
 
             # End drawing
             self.deactivate()

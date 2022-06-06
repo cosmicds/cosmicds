@@ -1,6 +1,6 @@
 from astropy import units as u
+from bqplot.marks import Lines
 from bqplot.scales import LinearScale
-from bqplot_image_gl import LinesGL
 from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
 from glue_jupyter.bqplot.scatter.layer_artist import BqplotScatterLayerArtist
 
@@ -57,9 +57,15 @@ def age_in_gyr(H0):
     unit = age.unit
     return age.value * unit.to(u.Gyr)
 
+def age_in_gyr_simple(H0):
+    inv = 1 / H0
+    mpc_to_km = u.Mpc.to(u.km)
+    s_to_gyr = u.s.to(u.Gyr)
+    return round(inv * mpc_to_km * s_to_gyr, 1)
 
-def format_fov(fov):
-    return fov.to_string(unit=u.degree, sep=":", precision=0, pad=True) + " (dd:mm:ss)"
+def format_fov(fov, units=True):
+    suffix = " (dd:mm:ss)" if units else ""
+    return fov.to_string(unit=u.degree, sep=":", precision=0, pad=True) + suffix
 
 def format_measured_angle(angle):
     if angle == 0:
@@ -68,7 +74,7 @@ def format_measured_angle(angle):
 
 def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
     """
-    Creates a LinesGL mark between the given start and end points
+    Creates a Lines mark between the given start and end points
     using the scales of the given layer.
 
     Parameters
@@ -96,7 +102,7 @@ def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
             'x': LinearScale(min=layer_x.min, max=layer_x.max, allow_padding=layer_x.allow_padding),
             'y': LinearScale(min=layer_y.min, max=layer_y.max, allow_padding=layer_y.allow_padding),
         }
-    return LinesGL(x=[start_x, end_x],
+    return Lines(x=[start_x, end_x],
                    y=[start_y, end_y],
                    scales=scales,
                    colors=[color],

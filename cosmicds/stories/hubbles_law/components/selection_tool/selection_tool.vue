@@ -28,7 +28,7 @@
             v-bind="attrs"
             v-on="on"
             :disabled="Object.keys(current_galaxy).length == 0"
-            @click="mark_galaxy_bad()"
+            @click="flagged = true"
           >
             <v-icon>mdi-flag</v-icon>
           </v-btn>
@@ -145,12 +145,15 @@
       </v-dialog>
 
     </v-toolbar>
-    <jupyter-widget
-      :widget="widget"
-      class="wwt-widget"
-    />
-    <v-tooltip top>
-      <template v-slot:activator="{ on, attrs }">
+    <div class="selection-content">
+        <v-lazy>
+          <jupyter-widget
+            :widget="widget"
+            class="wwt-widget"
+          />
+        </v-lazy>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
         <v-fab-transition>
           <v-btn
             fab
@@ -199,8 +202,15 @@
   width: 100%;
 }
 
+.selection-content {
+  width: 100%;
+  height: 400px;
+}
+
 .wwt-widget {
   height: 400px;
+  width: 100%;
+  position: absolute;
 }
 
 .selection-fab {
