@@ -108,7 +108,7 @@
             <v-list dense nav>
               <v-list-item-group
                   v-model="story_state.step_index"
-                  color="primary"
+                  color="info"
               >
                 <v-list-item
                     v-for="(step, i) in story_state.stages[key].steps"
@@ -190,9 +190,9 @@
     <v-footer app padless inset style="z-index: 5;">
       <v-row justify="center" no-gutters>
         <v-col
-          class="primary darken py-2 text-center white--text"
+          class="py-2 text-center white--text"
           cols="12"
-          color="light-blue darken-5"
+          color="primary darken-2"
         >
           {{ new Date().getFullYear() }} — <strong>CosmicDS</strong>
         </v-col>
