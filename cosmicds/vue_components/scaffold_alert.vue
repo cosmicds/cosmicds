@@ -1,7 +1,8 @@
 <template>             
   <v-alert
-    class="mb-4"
     color="info"
+    class="mb-4 mx-auto"
+    max-width="800"
     elevation="6"
   >
     <h3
