@@ -97,6 +97,7 @@
                     offset="1"
                   >
                     <v-img
+                      id="grating_and_prism"
                       class="mb-4 mx-a mt-n3"
                       contain
                       :src="`${state.image_location}/refraction_diffraction_spectra.png`"
@@ -720,5 +721,9 @@
 <style>
 .no-transition {
   transition: none !important;
+}
+
+#grating_and_prism .v-image__image {
+  border-radius: 4px;
 }
 </style>
