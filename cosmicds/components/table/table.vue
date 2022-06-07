@@ -23,7 +23,7 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-tooltip
-        v-for="tool in tools"
+        v-for="[index, tool] of Object.entries(tools)"
         :key="tool.id"
         top
       >
@@ -32,7 +32,7 @@
             v-bind="attrs"
             v-on="on"
             :disabled="tool.disabled || false"
-            @click="() => activate_tool(tool.id)"
+            @click="() => { tool_activated(index, tool); }"
           >
             <v-icon>{{tool.icon}}</v-icon>
           </v-btn>
@@ -89,7 +89,19 @@ export default {
           row.classList.remove(this.selectedClass);
         }
       }
+    },
+
+    jupyter_update_tool: function(tool, index) {
+      this.$set(this.tools, index, tool);
+    },
+
+    tool_activated: function(index, tool) {
+      this.activate_tool({
+        tool: tool,
+        index: index
+      });
     }
+
   },
 
   watch: {

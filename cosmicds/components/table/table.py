@@ -6,7 +6,7 @@ from glue.core.message import (DataCollectionAddMessage, DataCollectionDeleteMes
 from glue.core import HubListener
 from glue.core.subset import SubsetState
 from ipyvuetify import VuetifyTemplate
-from traitlets import Bool, Dict, List, Unicode, observe
+from traitlets import Bool, List, Unicode, observe
 
 from ...utils import convert_material_color, load_template
 
@@ -43,9 +43,12 @@ class Table(VuetifyTemplate, HubListener):
         else:
             self._subset_label = kwargs.get("subset_label", "selected")
 
+        # TODO - JC: At some point in the future, explore making
+        # these regular glue tools
         if tools:
             for tool in tools:
-                self.tool_functions[tool["id"]] = tool["activate"]
+                tool_id = tool["id"]
+                self.tool_functions[tool_id] = tool["activate"]
                 del tool["activate"]
             self.tools = tools
 
@@ -255,8 +258,18 @@ class Table(VuetifyTemplate, HubListener):
         # which is empty is there isn't a sort field selected
         # We default to the key component
         self.sort_by = field[0] if len(field) > 0 else self.key_component
+
+    def update_tool(self, tool, index):
+        self.send({"method": "update_tool", "args": [tool, index]})
+
+    def tool(self, tool_id):
+        return next((t for t in self.tools if t["id"] == tool_id), None)
         
-    def vue_activate_tool(self, tool_id):
+    def vue_activate_tool(self, args):
+        tool = args["tool"]
+        tool_id = tool["id"]
         func = self.tool_functions.get(tool_id, None)
-        if func:
-            func()
+        if tool and func:
+            func(self, tool)
+            self.update_tool(tool, args["index"])
+            
