@@ -258,6 +258,7 @@ class StageOne(HubbleStage):
             galaxy.pop("element")
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
+            self.galaxy_table.selected = [{'name': filename}]
 
     def _on_lambda_used(self, used):
         self.stage_state.lambda_used = used
