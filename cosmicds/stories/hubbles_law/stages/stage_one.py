@@ -303,6 +303,7 @@ class StageOne(HubbleStage):
             index = self.get_widget("galaxy_table").index
             self.update_data_value("student_measurements", "element", element, index)
             self.update_data_value("student_measurements", "restwave", restwave, index)
+            self.stage_state.element = element
 
     def galaxy_table_selected_change(self, change):
         if change["new"] == change["old"]:
@@ -343,7 +344,6 @@ class StageOne(HubbleStage):
         self.selection_tool.go_to_location(data["ra"][index], data["decl"][index], fov=GALAXY_FOV)
         self.stage_state.lambda_rest = data["restwave"][index]
         self.stage_state.lambda_obs = data["measwave"][index]
-        self.stage_state.element = data["element"][index]
         self.stage_state.sel_gal_index = index
 
     def on_spectrum_click(self, event):
