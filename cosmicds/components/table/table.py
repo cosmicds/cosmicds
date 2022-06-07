@@ -259,11 +259,14 @@ class Table(VuetifyTemplate, HubListener):
         # We default to the key component
         self.sort_by = field[0] if len(field) > 0 else self.key_component
 
-    def update_tool(self, tool, index):
+    def update_tool_with_index(self, tool, index):
         self.send({"method": "update_tool", "args": [tool, index]})
 
-    def tool(self, tool_id):
-        return next((t for t in self.tools if t["id"] == tool_id), None)
+    def update_tool(self, tool_id):
+        self.update_tool_with_index(*self.tool_info(tool_id))
+
+    def tool_info(self, tool_id):
+        return next(((i,t) for i ,t in enumerate(self.tools) if t["id"] == tool_id), None)
         
     def vue_activate_tool(self, args):
         tool = args["tool"]
@@ -271,5 +274,5 @@ class Table(VuetifyTemplate, HubListener):
         func = self.tool_functions.get(tool_id, None)
         if tool and func:
             func(self, tool)
-            self.update_tool(tool, args["index"])
+            self.update_tool_with_index(tool, args["index"])
             
