@@ -21,6 +21,24 @@
           hide-details
         ></v-text-field>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-tooltip
+        v-for="tool in tools"
+        :key="tool.id"
+        top
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon
+            v-bind="attrs"
+            v-on="on"
+            :disabled="tool.disabled || false"
+            @click="() => activate_tool(tool.id)"
+          >
+            <v-icon>{{tool.icon}}</v-icon>
+          </v-btn>
+        </template>
+        {{tool.tooltip}}
+      </v-tooltip>
     </v-toolbar>
     <v-data-table
       dense

@@ -6,7 +6,7 @@ from glue.core.message import (DataCollectionAddMessage, DataCollectionDeleteMes
 from glue.core import HubListener
 from glue.core.subset import SubsetState
 from ipyvuetify import VuetifyTemplate
-from traitlets import Bool, List, Unicode, observe
+from traitlets import Bool, Dict, List, Unicode, observe
 
 from ...utils import convert_material_color, load_template
 
@@ -27,19 +27,27 @@ class Table(VuetifyTemplate, HubListener):
     sel_color = Unicode().tag(sync=True)
     sort_by = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
+    tools = List().tag(sync=True)
     use_search = Bool(False).tag(sync=True)
     
 
-    def __init__(self, session, data, *args, **kwargs):
+    def __init__(self, session, data, tools=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._session = session
+        self.tool_functions = {}
         self._subset = kwargs.get('subset', None) # Can be either a subset or subset group
         self._is_subset_group = isinstance(self._subset, SubsetGroup)
         if self._subset is not None:
             self._subset_label = self._subset.label
         else:
             self._subset_label = kwargs.get("subset_label", "selected")
+
+        if tools:
+            for tool in tools:
+                self.tool_functions[tool["id"]] = tool["activate"]
+                del tool["activate"]
+            self.tools = tools
 
         self.subset_color = kwargs.get('color', Table.default_color)
         self.use_subset_group = kwargs.get('use_subset_group', True)
@@ -248,3 +256,7 @@ class Table(VuetifyTemplate, HubListener):
         # We default to the key component
         self.sort_by = field[0] if len(field) > 0 else self.key_component
         
+    def vue_activate_tool(self, tool_id):
+        func = self.tool_functions.get(tool_id, None)
+        if func:
+            func()
