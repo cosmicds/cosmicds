@@ -23,8 +23,8 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-tooltip
-        v-for="[index, tool] of Object.entries(tools)"
-        :key="tool.id"
+        v-for="[tool_id, tool] of Object.entries(tools)"
+        :key="tool_id"
         top
       >
         <template v-slot:activator="{ on, attrs }">
@@ -32,7 +32,7 @@
             v-bind="attrs"
             v-on="on"
             :disabled="tool.disabled || false"
-            @click="() => { tool_activated(index, tool); }"
+            @click="() => { tool_activated(tool_id); }"
           >
             <v-icon>{{tool.icon}}</v-icon>
           </v-btn>
@@ -65,6 +65,12 @@ export default {
     selectedClass: "v-data-table__selected"
   },
 
+  mounted() {
+    console.log(this);
+    console.log(this.tools);
+    console.log(Object.entries(this.tools));
+  },
+
   methods: {
     updateStyling: function(selected, sortBy) {
       const sortFunc = function(x,y) {
@@ -91,15 +97,12 @@ export default {
       }
     },
 
-    jupyter_update_tool: function(tool, index) {
-      this.$set(this.tools, index, tool);
+    jupyter_update_tool: function(tool, tool_id) {
+      this.$set(this.tools, tool_id, tool);
     },
 
-    tool_activated: function(index, tool) {
-      this.activate_tool({
-        tool: tool,
-        index: index
-      });
+    tool_activated: function(tool_id) {
+      this.activate_tool(tool_id);
     }
 
   },

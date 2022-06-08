@@ -6,7 +6,7 @@ from glue.core.message import (DataCollectionAddMessage, DataCollectionDeleteMes
 from glue.core import HubListener
 from glue.core.subset import SubsetState
 from ipyvuetify import VuetifyTemplate
-from traitlets import Bool, List, Unicode, observe
+from traitlets import Bool, Dict, List, Unicode, observe
 
 from ...utils import convert_material_color, load_template
 
@@ -27,9 +27,8 @@ class Table(VuetifyTemplate, HubListener):
     sel_color = Unicode().tag(sync=True)
     sort_by = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
-    tools = List().tag(sync=True)
+    tools = Dict(default_value={}).tag(sync=True)
     use_search = Bool(False).tag(sync=True)
-    
 
     def __init__(self, session, data, tools=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -50,7 +49,10 @@ class Table(VuetifyTemplate, HubListener):
                 tool_id = tool["id"]
                 self.tool_functions[tool_id] = tool["activate"]
                 del tool["activate"]
-            self.tools = tools
+                self.tools = {
+                    tool_id: tool,
+                    **self.tools
+                }
 
         self.subset_color = kwargs.get('color', Table.default_color)
         self.use_subset_group = kwargs.get('use_subset_group', True)
@@ -259,23 +261,16 @@ class Table(VuetifyTemplate, HubListener):
         # We default to the key component
         self.sort_by = field[0] if len(field) > 0 else self.key_component
 
-    def update_tool_with_index(self, tool, index):
-        self.send({"method": "update_tool", "args": [tool, index]})
-
-    def update_tool(self, tool_id):
-        self.update_tool_with_index(*self.tool_info(tool_id))
+    def update_tool(self, tool, tool_id):
+        self.send({"method": "update_tool", "args": [tool, tool_id]})
 
     def get_tool(self, tool_id):
-        return next((t for t in self.tools if t["id"] == tool_id), None)
-
-    def tool_info(self, tool_id):
-        return next(((i,t) for i ,t in enumerate(self.tools) if t["id"] == tool_id), None)
+        return self.tools[tool_id]
         
-    def vue_activate_tool(self, args):
-        tool = args["tool"]
-        tool_id = tool["id"]
+    def vue_activate_tool(self, tool_id):
+        tool = self.get_tool(tool_id)
         func = self.tool_functions.get(tool_id, None)
         if tool and func:
             func(self, tool)
-            self.update_tool_with_index(tool, args["index"])
+            self.update_tool(tool, tool_id)
             
