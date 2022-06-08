@@ -125,18 +125,6 @@
                       Spectrum images and graphs
                     </h3>
                     <div>
-                      <v-card
-                        class="mt-auto mb-4"
-                        flat
-                        color="secondary lighten-3"
-                        light
-                      >                  
-                        <v-card-text
-                          class="black--text"
-                        >
-                          A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
-                        </v-card-text>
-                      </v-card>
                       <p>
                         The graphics to the right show sample spectra for two different types of light bulbs.
                       </p>
@@ -187,18 +175,6 @@
                   >
                     <h3 class="mb-4">Interpreting spectrum graphs</h3>
                     <div>
-                      <v-card
-                        class="mt-auto mb-4"
-                        flat
-                        color="secondary lighten-3"
-                        light
-                      >                  
-                        <v-card-text
-                          class="black--text"
-                        >
-                          A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
-                        </v-card-text>
-                      </v-card>
                       <p>
                         Examine the highlighted regions in the graphics to the right.
                       </p>
@@ -249,18 +225,6 @@
                   >
                     <h3 class="mb-4">Interpreting spectrum graphs</h3>
                     <div>
-                      <v-card
-                        class="mt-auto mb-4"
-                        flat
-                        color="secondary lighten-3"
-                        light
-                      >                  
-                        <v-card-text
-                          class="black--text"
-                        >
-                          A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
-                        </v-card-text>
-                      </v-card>
                       <p>
                         Examine the highlighted regions in the graphics to the right.
                       </p>
@@ -725,9 +689,5 @@
 
 #grating_and_prism .v-image__image {
   border-radius: 4px;
-}
-
-.v-dialog > .v-card {
-  border: solid hsla(0,0%,100%,.12) 1px !important;
 }
 </style>
