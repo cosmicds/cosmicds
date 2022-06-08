@@ -123,26 +123,12 @@ class StageOne(HubbleStage):
                       'hub_morphology_viewer', 'hub_prodata_viewer']:
             self.add_viewer(BqplotScatterView, label=label)
 
-        # Set up widgets
-        def update_velocities(table, tool):
-            data = table.glue_data
-            for item in table.items:
-                index = table.indices_from_items([item])[0]
-                if index is not None and data["velocity"][index] is None:
-                    lamb_obs = data["restwave"][index]
-                    lamb_meas = data["measwave"][index]
-                    velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
-                    self.update_data_value("student_measurements", "velocity", velocity, index)
-            self.story_state.update_student_data()
-            tool.disabled = True
-            table.update_tool(tool, tool["id"])
-
         add_velocities_tool = \
             dict(id="update-velocities",
                  icon="mdi-run-fast",
                  tooltip="Fill in velocities",
                  disabled=True,
-                 activate=update_velocities)
+                 activate=self.update_velocities)
         galaxy_table = Table(self.session,
                              data=self.get_data('student_measurements'),
                              glue_components=['name',
@@ -241,12 +227,6 @@ class StageOne(HubbleStage):
         restwave_tool = spectrum_viewer.toolbar.tools["hubble:restwave"]
 
         add_callback(restwave_tool, 'lambda_used', self._on_lambda_used)
-
-        def enabled_velocity_tool(complete):
-            if complete:
-                tool = self.galaxy_table.get_tool("update-velocities")
-                tool["disabled"] = False
-                self.galaxy_table.update_tool(tool)
 
     def _on_marker_update(self, old, new):
         if not self.trigger_marker_update_cb:
@@ -460,3 +440,22 @@ class StageOne(HubbleStage):
         sf_tool = spectrum_viewer.toolbar.tools["hubble:specflag"]
         with ignore_callback(sf_tool, "flagged"):
             sf_tool.flagged = False
+
+    def update_velocities(self, table, tool):
+        data = table.glue_data
+        for item in table.items:
+            index = table.indices_from_items([item])[0]
+            if index is not None and data["velocity"][index] is None:
+                lamb_obs = data["restwave"][index]
+                lamb_meas = data["measwave"][index]
+                velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
+                self.update_data_value("student_measurements", "velocity", velocity, index)
+        self.story_state.update_student_data()
+        tool.disabled = True
+        table.update_tool(tool, tool["id"])
+
+    def enable_velocity_tool(self, enable):
+        if enable:
+            tool = self.galaxy_table.get_tool("update-velocities")
+            tool["disabled"] = False
+            self.galaxy_table.update_tool(tool)
