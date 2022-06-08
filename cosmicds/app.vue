@@ -449,4 +449,8 @@ input {
 .v-dialog.v-dialog--active .v-toolbar__content.dragging {
   cursor: grabbing;
 }
+
+.v-dialog > .v-card {
+  border: solid hsla(0,0%,100%,.12) 1px !important;
+}
 </style>

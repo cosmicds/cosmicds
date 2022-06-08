@@ -726,4 +726,8 @@
 #grating_and_prism .v-image__image {
   border-radius: 4px;
 }
+
+.v-dialog > .v-card {
+  border: solid hsla(0,0%,100%,.12) 1px !important;
+}
 </style>
