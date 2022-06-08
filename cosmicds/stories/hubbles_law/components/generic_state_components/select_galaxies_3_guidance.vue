@@ -22,6 +22,36 @@
       </p>
     </div>
     <div
+      v-if="state.gals_total == 1 & !state.gal_selected"
+      class="mb-4"
+    >
+      <p>
+        Choose another galaxy to enter into your table. You can pan around the sky from where you are or click the <v-icon>mdi-cached</v-icon> button to reset the view.
+      </p>
+    </div>
+    <div
+      v-if="state.gals_total > 1 & state.gals_total < 5 & !state.gal_selected"
+      class="mb-4"
+    >
+      <p>
+        Check it out, your table is growing.
+      </p>
+      <p>
+        Keep selecting galaxies until you have 5 rows in your table.
+      </p>
+    </div>
+    <div
+      v-if="state.gals_total == 5"
+      class="mb-4"
+    >
+      <p>
+        Great, you've got all the galaxies that you need and you're now ready to begin making measurements from your data.
+      </p>
+      <p>
+        Let's turn now to your table of galaxies.
+      </p>
+    </div>
+    <div
       v-if="state.gals_total < 5 & state.gal_selected"
     >
       <p>
@@ -67,6 +97,21 @@
         >
           Select {{ 5 - state.gals_total }} <span v-if="state.gals_total>0">more</span> <span v-if="state.gals_total < 4">galaxies</span><span v-if="state.gals_total == 4">galaxy</span> before moving on.
         </div>
+      </v-col>
+      <v-col
+        v-if="state.gals_total >= 5"
+        class="shrink"
+      >
+        <v-btn
+          class="black--text"
+          color="accent"
+          elevation="2"
+          @click="
+            state.marker = 'cho_row1'
+          "
+        >
+          next
+        </v-btn>
       </v-col>
     </v-row>
   </v-alert>
