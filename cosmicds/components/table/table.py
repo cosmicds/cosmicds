@@ -265,6 +265,9 @@ class Table(VuetifyTemplate, HubListener):
     def update_tool(self, tool_id):
         self.update_tool_with_index(*self.tool_info(tool_id))
 
+    def get_tool(self, tool_id):
+        return next((t for t in self.tools if t["id"] == tool_id), None)
+
     def tool_info(self, tool_id):
         return next(((i,t) for i ,t in enumerate(self.tools) if t["id"] == tool_id), None)
         
