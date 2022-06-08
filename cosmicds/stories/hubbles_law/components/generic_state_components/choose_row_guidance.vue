@@ -32,7 +32,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'sel_gal2';
+            state.marker = 'sel_gal3';
           "
         >
           back
