@@ -32,7 +32,7 @@
             v-bind="attrs"
             v-on="on"
             :disabled="tool.disabled || false"
-            @click="() => { tool_activated(tool_id); }"
+            @click="() => { activate_tool(tool_id); }"
           >
             <v-icon>{{tool.icon}}</v-icon>
           </v-btn>
@@ -65,12 +65,6 @@ export default {
     selectedClass: "v-data-table__selected"
   },
 
-  mounted() {
-    console.log(this);
-    console.log(this.tools);
-    console.log(Object.entries(this.tools));
-  },
-
   methods: {
     updateStyling: function(selected, sortBy) {
       const sortFunc = function(x,y) {
@@ -97,13 +91,9 @@ export default {
       }
     },
 
-    jupyter_update_tool: function(tool, tool_id) {
-      this.$set(this.tools, tool_id, tool);
+    jupyter_update_tool: function(tool) {
+      this.$set(this.tools, tool.id, tool);
     },
-
-    tool_activated: function(tool_id) {
-      this.activate_tool(tool_id);
-    }
 
   },
 

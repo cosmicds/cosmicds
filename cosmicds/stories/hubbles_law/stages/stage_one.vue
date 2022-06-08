@@ -86,7 +86,7 @@
         cols="12"
         lg="4"
       >
-        <c-spectrum-guidance 
+        <c-spectrum-guidance
           v-if="stage_state.marker == 'mee_spe1'"/>
         <c-restwave-guidance
           v-if="stage_state.marker == 'res_wav1'" />

@@ -6,7 +6,7 @@ from glue.core.message import (DataCollectionAddMessage, DataCollectionDeleteMes
 from glue.core import HubListener
 from glue.core.subset import SubsetState
 from ipyvuetify import VuetifyTemplate
-from traitlets import Bool, Dict, List, Unicode, observe
+from traitlets import Bool, Dict, List, Unicode, observe, HasTraits
 
 from ...utils import convert_material_color, load_template
 
@@ -261,8 +261,8 @@ class Table(VuetifyTemplate, HubListener):
         # We default to the key component
         self.sort_by = field[0] if len(field) > 0 else self.key_component
 
-    def update_tool(self, tool, tool_id):
-        self.send({"method": "update_tool", "args": [tool, tool_id]})
+    def update_tool(self, tool):
+        self.send({"method": "update_tool", "args": [tool]})
 
     def get_tool(self, tool_id):
         return self.tools[tool_id]
@@ -272,5 +272,5 @@ class Table(VuetifyTemplate, HubListener):
         func = self.tool_functions.get(tool_id, None)
         if tool and func:
             func(self, tool)
-            self.update_tool(tool, tool_id)
+            self.update_tool(tool)
             
