@@ -12,12 +12,24 @@
     </h3>
     <div
       class="mb-4"
+      v-if="state.obswaves_total < 5"
     >
       <p>
         Your measurement of the line’s observed wavelength is now recorded in the table for your selected galaxy.
       </p>
       <p>
         Go through each of the remaining galaxies in your table and repeat these measurements, until you have recorded rest and observed wavelengths for each of your galaxies.
+      </p>
+    </div>
+    <div
+      class="mb-4"
+      v-if="state.obswaves_total >= 5"
+    >
+      <p>
+        Great! You have measured observed wavelengths of the spectral lines for all of your galaxies.
+      </p>
+      <p>
+        You can continue to refine your measurements, or, if you are satisfied with your measurements, you can move on.
       </p>
     </div>
     
