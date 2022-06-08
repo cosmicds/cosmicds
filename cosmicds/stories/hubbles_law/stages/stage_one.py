@@ -167,7 +167,7 @@ class StageOne(HubbleStage):
         path = join(state_components_dir, "")
         state_components = [
             "stage_one_start_guidance",
-            "select_galaxies_alert",
+            "select_galaxies_1_guidance",
             "select_galaxies_2_guidance",
             "notice_galaxy_table",
             "select_galaxies_3_guidance",
@@ -237,6 +237,8 @@ class StageOne(HubbleStage):
             self.galaxy_table.selected = []
         if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
             self.stage_state.marker = "mee_spe1"
+        if advancing and old == "dop_cal2":
+            self.galaxy_table.selected = []
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
@@ -280,9 +282,13 @@ class StageOne(HubbleStage):
 
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")
+        self.galaxy_table.selected = []
+        self.stage_state.marker = "sel_gal3"  
 
     def vue_select_galaxies(self, _args=None):
         self._select_from_data("SDSS_all_sample_filtered")
+        self.galaxy_table.selected = []
+        self.stage_state.marker = "sel_gal3"        
 
     def update_spectrum_viewer(self, name, z):
         specview = self.get_viewer("spectrum_viewer")
