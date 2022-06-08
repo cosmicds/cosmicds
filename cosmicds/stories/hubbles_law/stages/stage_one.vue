@@ -21,11 +21,35 @@
         lg="4"
       >
         <c-stage-one-start-guidance
-          v-if="stage_state.marker == 'mee_gui1'" />
+          v-if="stage_state.marker == 'mee_gui1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-select-galaxies-1-alert
-          v-if="stage_state.marker == 'sel_gal1'" />
+          v-if="stage_state.marker == 'sel_gal1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-select-galaxies-2-guidance
-          v-if="stage_state.marker == 'sel_gal2'" />
+          v-if="stage_state.marker == 'sel_gal2'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <v-btn
           v-if="stage_state.marker == 'sel_gal2' && stage_state.gals_total < stage_state.gals_max && show_team_interface"
           color="error"
@@ -56,15 +80,55 @@
         lg="4"
       >
         <c-choose-row-guidance
-          v-if="stage_state.marker == 'cho_row1'" />
+          v-if="stage_state.marker == 'cho_row1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-doppler-calc-3-guidance
-          v-if="stage_state.marker == 'dop_cal3'" /> 
+          v-if="stage_state.marker == 'dop_cal3'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" /> 
         <c-doppler-calc-4-component
-          v-if="stage_state.marker == 'dop_cal4' || stage_state.marker == 'dop_cal5'"/>
+          v-if="stage_state.marker == 'dop_cal4' || stage_state.marker == 'dop_cal5'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-doppler-calc-5-slideshow
-          v-if="stage_state.marker == 'dop_cal5'"/>
+          v-if="stage_state.marker == 'dop_cal5'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-doppler-calc-6-component
-          v-if="stage_state.marker == 'dop_cal6'"/> 
+          v-if="stage_state.marker == 'dop_cal6'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" /> 
       </v-col>
       <v-col
         cols="12"
@@ -86,23 +150,95 @@
         lg="4"
       >
         <c-spectrum-guidance 
-          v-if="stage_state.marker == 'mee_spe1'" />
+          v-if="stage_state.marker == 'mee_spe1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-restwave-guidance
-          v-if="stage_state.marker == 'res_wav1'" />
+          v-if="stage_state.marker == 'res_wav1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-obswave-1-guidance
-          v-if="stage_state.marker == 'obs_wav1'" />
+          v-if="stage_state.marker == 'obs_wav1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-obswave-2-alert
-          v-if="stage_state.marker == 'obs_wav2'" />
+          v-if="stage_state.marker == 'obs_wav2'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-remaining-gals-guidance
-          v-if="stage_state.marker == 'rep_rem1'" />
+          v-if="stage_state.marker == 'rep_rem1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-reflect-on-data-guidance
-          v-if="stage_state.marker == 'ref_dat1'" />
+          v-if="stage_state.marker == 'ref_dat1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-doppler-calc-0-alert
-          v-if="stage_state.marker == 'dop_cal0'" />
+          v-if="stage_state.marker == 'dop_cal0'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-doppler-calc-1-alert
-          v-if="stage_state.marker == 'dop_cal1'" />
+          v-if="stage_state.marker == 'dop_cal1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-doppler-calc-2-alert
-          v-if="stage_state.marker == 'dop_cal2'" />
+          v-if="stage_state.marker == 'dop_cal2'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
       </v-col>
       <v-col
         v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
@@ -128,7 +264,8 @@
             offset="2"
           >
             <!-- LEARN MORE Dialog -->
-            <c-spectrum-slideshow v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']" />
+            <c-spectrum-slideshow
+              v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']" />
           </v-col>
           <v-col
             cols="4"

@@ -187,12 +187,18 @@
       </v-content>
     </v-main>
 
-    <v-footer app padless inset style="z-index: 5;">
+    <v-footer
+      app
+      padless
+      inset
+      style="z-index: 5;"
+      dark
+      color="primary darken-1"
+    >
       <v-row justify="center" no-gutters>
         <v-col
-          class="py-2 text-center white--text"
+          class="py-2 text-center"
           cols="12"
-          color="primary darken-2"
         >
           {{ new Date().getFullYear() }} — <strong>CosmicDS</strong>
         </v-col>
