@@ -73,7 +73,7 @@ class HubblesLaw(Story):
         ])
 
         # Load in the galaxy data
-        galaxies = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/galaxies").json()
+        galaxies = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/unchecked-galaxies").json()
         galaxies_dict = { k : [x[k] for x in galaxies] for k in galaxies[0] }
         name_ext = ".fits"
         galaxies_dict["name"] = [x[:-len(name_ext)] for x in galaxies_dict["name"]]
