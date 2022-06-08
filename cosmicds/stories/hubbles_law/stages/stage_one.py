@@ -233,6 +233,8 @@ class StageOne(HubbleStage):
         if new in self.stage_state.step_markers and advancing:
             self.story_state.step_complete = True
             self.story_state.step_index = self.stage_state.step_markers.index(new)
+        if advancing and old == "sel_gal3":
+            self.galaxy_table.selected = []
         if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
             self.stage_state.marker = "mee_spe1"
 
