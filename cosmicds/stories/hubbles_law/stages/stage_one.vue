@@ -127,7 +127,7 @@
             cols="4"
             offset="2"
           >
-            <!-- LEARN MORE Dialog -->
+            <!-- SPECTRUM TUTORIAL Dialog -->
             <c-spectrum-slideshow v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']" />
           </v-col>
           <v-col

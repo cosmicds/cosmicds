@@ -7,8 +7,15 @@
   >
     <h3
       class="mb-4"
+      v-if="state.obswaves_total < 5"
     >
       Repeat for Remaining Galaxies
+    </h3>
+    <h3
+      class="mb-4"
+      v-if="state.obswaves_total >= 5"
+    >
+      Nice Work
     </h3>
     <div
       class="mb-4"
@@ -26,7 +33,7 @@
       v-if="state.obswaves_total >= 5"
     >
       <p>
-        Great! You have measured observed wavelengths of the spectral lines for all of your galaxies.
+        You have measured the spectral line wavelengths for all of your galaxies.
       </p>
       <p>
         You can continue to refine your measurements, or, if you are satisfied with your measurements, you can move on.

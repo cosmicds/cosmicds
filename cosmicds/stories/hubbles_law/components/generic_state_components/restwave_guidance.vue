@@ -24,7 +24,7 @@
       <p
         v-if="!state.lambda_on"
       >
-        Click the <v-icon>mdi-lambda</v-icon> icon in the Spectrum Viewer toolbar to display the rest wavelength.
+        Click the <v-icon>mdi-lambda</v-icon> icon in the Spectrum Viewer toolbar to display the line's rest wavelength on the graph.
       </p>
       <p
         v-if="state.lambda_on"
