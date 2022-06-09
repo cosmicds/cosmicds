@@ -16,6 +16,7 @@ class RestWavelengthTool(CheckableTool):
     rest_text = ' (rest)'
 
     lambda_used = CallbackProperty(False)
+    lambda_on = CallbackProperty(False)
 
     def __init__(self, viewer, **kwargs):
         super().__init__(viewer, **kwargs)
@@ -62,11 +63,13 @@ class RestWavelengthTool(CheckableTool):
         self._on_view_change()
         self.viewer.figure.marks = self.viewer.figure.marks + self.marks
         self.lambda_used = True
+        self.lambda_on = True
 
     def deactivate(self):
         self.viewer.figure.marks = [mark for mark in self.viewer.figure.marks if mark not in self.marks]
         self.viewer.element_label.text = [self.viewer.element]
         self.active = False
+        self.lambda_on = False
 
     def _on_view_change(self, event=None):
         if not self.active:

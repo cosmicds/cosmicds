@@ -1,7 +1,8 @@
 <template>
   <v-alert
-    class="mb-4"
     color="info"
+    class="mb-4 mx-auto"
+    max-width="800"
     elevation="6"
   >
     <h3
@@ -45,7 +46,7 @@
       <v-col
         cols="6"
         class="shrink"
-        v-if="!state.waveline_set"
+        v-if="state.obswaves_total < 1"
       >
         <div
           style="font-size: 16px;"
@@ -55,7 +56,7 @@
       </v-col>
       <v-col
         class="shrink"
-        v-if="state.waveline_set"
+        v-if="state.obswaves_total >= 1"
       >
         <v-btn
           class="black--text"

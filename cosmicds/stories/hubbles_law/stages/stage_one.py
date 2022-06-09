@@ -32,7 +32,10 @@ class StageState(State):
     gal_selected = CallbackProperty(False)
     vel_win_opened = CallbackProperty(False)
     lambda_used = CallbackProperty(False)
+    lambda_on = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
+    obswaves_total = CallbackProperty(0)
+    velocity_button = CallbackProperty(False)
 
     marker = CallbackProperty("")
     indices = CallbackProperty({})
@@ -55,7 +58,7 @@ class StageState(State):
         'obs_wav1',
         'obs_wav2',        
         'rep_rem1',
-        'nic_wor1',
+        'ref_dat1',
         'dop_cal0',
         'dop_cal1',
         'dop_cal2',
@@ -68,6 +71,8 @@ class StageState(State):
     step_markers = CallbackProperty([
         'mee_gui1',
         'mee_spe1',
+        'ref_dat1',
+        'dop_cal0',
     ])
 
     def __init__(self, *args, **kwargs):
@@ -172,15 +177,15 @@ class StageOne(HubbleStage):
         path = join(state_components_dir, "")
         state_components = [
             "stage_one_start_guidance",
-            "select_galaxies_alert",
+            "select_galaxies_1_alert",
             "select_galaxies_2_guidance",
             "choose_row_guidance",
             "spectrum_guidance",
             "restwave_guidance",
             "obswave_1_guidance",
             "obswave_2_alert",            
-            "remaining_gals_alert",
-            "nice_work_guidance",
+            "remaining_gals_guidance",
+            "reflect_on_data_guidance",
             "doppler_calc_0_alert",
             "doppler_calc_1_alert",
             "doppler_calc_2_alert",
@@ -230,6 +235,7 @@ class StageOne(HubbleStage):
         restwave_tool = spectrum_viewer.toolbar.tools["hubble:restwave"]
 
         add_callback(restwave_tool, 'lambda_used', self._on_lambda_used)
+        add_callback(restwave_tool, 'lambda_on', self._on_lambda_on)
 
     def _on_marker_update(self, old, new):
         if not self.trigger_marker_update_cb:
@@ -270,6 +276,9 @@ class StageOne(HubbleStage):
 
     def _on_lambda_used(self, used):
         self.stage_state.lambda_used = used
+
+    def _on_lambda_on(self, on):
+        self.stage_state.lambda_on = on
 
     def _select_from_data(self, dc_name):
         data = self.get_data(dc_name)
@@ -359,12 +368,20 @@ class StageOne(HubbleStage):
         specview = self.get_viewer("spectrum_viewer")
         if event["event"] != "click" or not specview.line_visible:
             return
-        value = round(event["domain"]["x"], 0)
-        self.stage_state.waveline_set = True
-        self.stage_state.lambda_obs = value
+
+        new_value = round(event["domain"]["x"], 0)
         index = self.galaxy_table.index
+        data = self.galaxy_table.glue_data
+        curr_value = data["measwave"][index]
+
+        if curr_value is None:
+            self.stage_state.obswaves_total = self.stage_state.obswaves_total + 1
+
+        self.stage_state.waveline_set = True
+        self.stage_state.lambda_obs = new_value
+
         if index is not None:
-            self.update_data_value("student_measurements", "measwave", value, index)
+            self.update_data_value("student_measurements", "measwave", new_value, index)
             self.story_state.update_student_data()
 
     def vue_add_current_velocity(self, _args=None):
