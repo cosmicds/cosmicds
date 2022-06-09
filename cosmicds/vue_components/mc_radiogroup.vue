@@ -92,7 +92,13 @@ module.exports = {
       }
     },
     color: function(index) {
-      return this.correctAnswers?.includes(index) ? this.colorRight : this.neutralAnswers?.includes(index) ? this.colorNeutral : this.colorWrong;
+      if (this.correctAnswers.includes(index)) {
+        return this.colorRight;
+      } else if (this.neutralAnswers.includes(index)) {
+        return this.colorNeutral;
+      } else {
+        return this.colorWrong;
+      }
     },
     score: function(ntries) {
       if (Array.isArray(this.points)) {
