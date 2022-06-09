@@ -231,8 +231,6 @@ class StageOne(HubbleStage):
 
         add_callback(restwave_tool, 'lambda_used', self._on_lambda_used)
 
-        self.vue_select_galaxies()
-
     def _on_marker_update(self, old, new):
         if not self.trigger_marker_update_cb:
             return
