@@ -5,7 +5,7 @@
     elevation="2"
     @click.stop="() => { dialog = true; state.vel_win_opened = true }"
   >
-    Learn More
+    Spectrum tutorial
 
     <v-dialog
         v-model="dialog"
