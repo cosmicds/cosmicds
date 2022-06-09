@@ -30,7 +30,8 @@ class StageState(State):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
     gal_selected = CallbackProperty(False)
-    vel_win_opened = CallbackProperty(False)
+    spec_viewer_reached = CallbackProperty(False)
+    spec_tutorial_opened = CallbackProperty(False)
     lambda_used = CallbackProperty(False)
     lambda_on = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
@@ -238,6 +239,7 @@ class StageOne(HubbleStage):
             self.story_state.step_index = self.stage_state.step_markers.index(new)
         if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
             self.stage_state.marker = "mee_spe1"
+            self.stage_state.spec_viewer_reached = True
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
@@ -340,6 +342,7 @@ class StageOne(HubbleStage):
 
         if self.stage_state.marker == 'cho_row1':
             self.stage_state.marker = 'mee_spe1'
+            self.stage_state.spec_viewer_reached = True
 
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]

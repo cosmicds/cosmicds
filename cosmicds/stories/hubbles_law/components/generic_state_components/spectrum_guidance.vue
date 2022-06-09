@@ -12,7 +12,7 @@
     </h3>
     <div
       class="mb-4"
-      v-if="!state.vel_win_opened"
+      v-if="!state.spec_tutorial_opened"
     >
       <p>
         Here is a spectrum of light measured from your chosen galaxy.
@@ -23,7 +23,7 @@
     </div>
     <div
       class="mb-4"
-      v-if="state.vel_win_opened"
+      v-if="state.spec_tutorial_opened"
     >
       <p>
         Here is a spectrum of light measured from your chosen galaxy.
@@ -59,7 +59,7 @@
       <v-col
         cols="7"
         class="shrink"
-        v-if="!state.vel_win_opened"
+        v-if="!state.spec_tutorial_opened"
       >
         <div
           style="font-size: 16px;"
@@ -69,7 +69,7 @@
       </v-col>
       <v-col
         class="shrink"
-        v-if="state.vel_win_opened"
+        v-if="state.spec_tutorial_opened"
       >
         <v-btn
           class="black--text"

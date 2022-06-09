@@ -241,7 +241,7 @@
           }" />
       </v-col>
       <v-col
-        v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
+        v-if="stage_state.spec_viewer_reached"
         cols="12"
         lg="8"
       >
@@ -250,8 +250,8 @@
             class="py-0"
           >
             <v-card
-              :color="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'info' : 'black'"
-              :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1 my-n1' : 'pa-0'"
+              :color="stage_state.spec_viewer_reached ? 'info' : 'black'"
+              :class="stage_state.spec_viewer_reached ? 'pa-1 my-n1' : 'pa-0'"
               outlined
             >
               <jupyter-widget :widget="viewers.spectrum_viewer"/>
@@ -264,8 +264,7 @@
             offset="2"
           >
             <!-- LEARN MORE Dialog -->
-            <c-spectrum-slideshow
-              v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']" />
+            <c-spectrum-slideshow />
           </v-col>
           <v-col
             cols="4"

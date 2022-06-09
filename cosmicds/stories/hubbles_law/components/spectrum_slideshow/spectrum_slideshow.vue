@@ -3,7 +3,7 @@
     block
     color="secondary"
     elevation="2"
-    @click.stop="() => { dialog = true; state.vel_win_opened = true }"
+    @click.stop="() => { dialog = true; state.spec_tutorial_opened = true }"
   >
     Spectrum tutorial
 
