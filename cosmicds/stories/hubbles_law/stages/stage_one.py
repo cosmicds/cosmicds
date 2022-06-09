@@ -231,6 +231,8 @@ class StageOne(HubbleStage):
 
         add_callback(restwave_tool, 'lambda_used', self._on_lambda_used)
 
+        self.vue_select_galaxies()
+
     def _on_marker_update(self, old, new):
         if not self.trigger_marker_update_cb:
             return
@@ -380,7 +382,6 @@ class StageOne(HubbleStage):
     def add_student_velocity(self, _args=None):
         index = self.galaxy_table.index
         velocity = round(self.stage_state.student_vel)
-        print("index", index, "student vel", self.stage_state.student_vel)
         self.update_data_value("student_measurements", "velocity", velocity, index)
 
     @property
@@ -451,15 +452,15 @@ class StageOne(HubbleStage):
             if index is not None and data["velocity"][index] is None:
                 lamb_obs = data["restwave"][index]
                 lamb_meas = data["measwave"][index]
+                if lamb_obs is None or lamb_meas is None:
+                    continue
                 velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
                 self.update_data_value("student_measurements", "velocity", velocity, index)
         self.story_state.update_student_data()
-        tool["disabled"] = True
-        table.update_tool(tool, tool["id"])
+        table.update_tool(tool)
 
     def enable_velocity_tool(self, enable):
         if enable:
             tool = self.galaxy_table.get_tool("update-velocities")
             tool["disabled"] = False
             self.galaxy_table.update_tool(tool)
-            print("velocity tool enabled")
