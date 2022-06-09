@@ -15,37 +15,10 @@ from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
 
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
-    measurements = DictCallbackProperty({
-        "galax_id": 123,
-        "rest_wave_value": 6563.0,
-        "rest_wave_unit": "Angstrom",
-        "obs_wave_value": 6863.0,
-        "obs_wave_unit": "Angstrom",
-        "velocity_value": 120.0,
-        "velocity_unit": "km / s",
-        "ang_size": 50,
-        "est_dist_value": 100,
-        "est_dist_unit": "lyr"
-    })
-    calculations = DictCallbackProperty({
-        "hubble_value_fit_value": 65.0,
-        "hubble_value_fit_unit": "km / s / Mpc",
-        "hubble_value_guess_value": 80.0,
-        "hubble_value_guess_unit": "km / s / Mpc",
-        "age_value": 1.3e9,
-        "age_unit": "Gyr"
-    })
-    validation_failure_counts = DictCallbackProperty({
-        "doppler_equation": 1,
-        "final_velocity": 3,
-        "mc_q1": 2
-    })
-    responses = DictCallbackProperty({
-        "dialog1": {
-            "free_response": "I'm 90% confident about my answer.",
-            "finished": True
-        }
-    })
+    measurements = DictCallbackProperty({})
+    calculations = DictCallbackProperty({})
+    validation_failure_counts = DictCallbackProperty({})
+    responses = DictCallbackProperty({})
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
