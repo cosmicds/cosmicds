@@ -223,6 +223,9 @@ class StageOne(HubbleStage):
 
         self.update_spectrum_style(dark=self.app_state.dark_mode)
 
+
+        add_callback(self.stage_state, 'doppler_calc_complete', self.enable_velocity_tool)
+
         spectrum_viewer = self.get_viewer("spectrum_viewer")
         restwave_tool = spectrum_viewer.toolbar.tools["hubble:restwave"]
 
@@ -451,7 +454,7 @@ class StageOne(HubbleStage):
                 velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
                 self.update_data_value("student_measurements", "velocity", velocity, index)
         self.story_state.update_student_data()
-        tool.disabled = True
+        tool["disabled"] = True
         table.update_tool(tool, tool["id"])
 
     def enable_velocity_tool(self, enable):
@@ -459,3 +462,4 @@ class StageOne(HubbleStage):
             tool = self.galaxy_table.get_tool("update-velocities")
             tool["disabled"] = False
             self.galaxy_table.update_tool(tool)
+            print("velocity tool enabled")
