@@ -1,7 +1,8 @@
 <template>
   <v-alert
-    class="mb-4"
     color="info"
+    class="mb-4 mx-auto"
+    max-width="800"
     elevation="6"
   >
     <h3
@@ -11,12 +12,24 @@
     </h3>
     <div
       class="mb-4"
+      v-if="!state.vel_win_opened"
     >
       <p>
         Here is a spectrum of light measured from your chosen galaxy.
       </p>
       <p>
-        Click the LEARN MORE button to learn how a spectrum can reveal if an object (such as a galaxy) is moving toward or away from an observer.
+        Not familiar with spectra? Click the <strong>SPECTRUM TUTORIAL</strong> button to learn what spectra can tell us about galaxies.
+      </p>
+    </div>
+    <div
+      class="mb-4"
+      v-if="state.vel_win_opened"
+    >
+      <p>
+        Here is a spectrum of light measured from your chosen galaxy.
+      </p>
+      <p>
+        You can reopen the <strong>SPECTRUM TUTORIAL</strong> any time you need a refresher about spectra.
       </p>
     </div>
     <v-divider
@@ -44,14 +57,14 @@
       <v-spacer></v-spacer>
       
       <v-col
-        cols="6"
+        cols="7"
         class="shrink"
         v-if="!state.vel_win_opened"
       >
         <div
           style="font-size: 16px;"
         >
-          Click the LEARN MORE button.
+          Click the <strong>SPECTRUM TUTORIAL</strong> button.
         </div>
       </v-col>
       <v-col

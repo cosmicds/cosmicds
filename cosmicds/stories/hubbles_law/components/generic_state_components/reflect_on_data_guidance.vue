@@ -8,7 +8,7 @@
     <h3
       class="mb-4"
     >
-      Nice Work
+      Reflect on Your Data
     </h3>
 
     <div
@@ -18,7 +18,7 @@
         As scientists do, let’s examine what conclusions you might draw from your data.
       </p>
       <p>
-        Click the REFLECT button to complete the reflection sequence before moving on.
+        Click the <strong>REFLECT</strong> button to complete the reflection sequence before moving on.
       </p>
     </div>
     
@@ -52,7 +52,7 @@
         <div
           style="font-size: 16px;"
         >
-          Click the REFLECT button.
+          Click the <strong>REFLECT</strong> button.
         </div>
       </v-col>
       <v-col

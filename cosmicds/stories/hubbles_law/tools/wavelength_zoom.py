@@ -6,7 +6,7 @@ from glue.config import viewer_tool
 class WavelengthZoom(BqplotXZoom):
 
     icon = 'glue_zoom_to_rect'
-    mdi_icon = "mdi-select-drag"
+    mdi_icon = "mdi-select-search"
     tool_id = 'hubble:wavezoom'
     action_text = 'x axis zoom'
     tool_tip = 'Zoom in on a region of the x-axis'

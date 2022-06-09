@@ -64,15 +64,19 @@
         <v-list class="ma-0 pa-0">
           <v-list-item>
             <v-list-item-action>
-              <v-avatar color="indigo">
+              <v-avatar
+                color="info lighten-1"
+              >
                 <v-icon dark>mdi-account-circle</v-icon>
               </v-avatar>
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>Nicholas Earl</v-list-item-title>
-              <v-list-item-subtitle
-              >nearl@gluesolutions.io
+              <v-list-item-title>
+                Nicholas Earl
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                nearl@gluesolutions.io
               </v-list-item-subtitle
               >
             </v-list-item-content>
@@ -97,7 +101,6 @@
               editable
           >
             {{ stage.title }}
-            <small>{{ stage.subtitle }}</small>
           </v-stepper-step>
 
           <v-stepper-content :key="index" :step="index" class="my-0 py-0">
@@ -105,7 +108,7 @@
             <v-list dense nav>
               <v-list-item-group
                   v-model="story_state.step_index"
-                  color="primary"
+                  color="info"
               >
                 <v-list-item
                     v-for="(step, i) in story_state.stages[key].steps"
@@ -176,7 +179,6 @@
             >
               <v-card flat>
                 <v-card-title>{{ stage.title }}</v-card-title>
-                <v-card-subtitle>{{ stage.subtitle }}</v-card-subtitle>
                 <jupyter-widget :widget="stage.model_id"/>
               </v-card>
             </v-tab-item>
@@ -188,9 +190,9 @@
     <v-footer app padless inset style="z-index: 5;">
       <v-row justify="center" no-gutters>
         <v-col
-          class="primary darken py-2 text-center white--text"
+          class="py-2 text-center white--text"
           cols="12"
-          color="light-blue darken-5"
+          color="primary darken-2"
         >
           {{ new Date().getFullYear() }} — <strong>CosmicDS</strong>
         </v-col>

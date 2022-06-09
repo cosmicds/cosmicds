@@ -98,7 +98,7 @@
         <div
           style="font-size: 16px;"
         >
-          Select {{ 5 - state.gals_total }} more <span v-if="state.gals_total < 4">galaxies</span><span v-if="state.gals_total == 4">galaxy</span> before moving on.
+          Select {{ 5 - state.gals_total }} more <span v-if="state.gals_total < 4">galaxies</span><span v-if="state.gals_total == 4">galaxy</span>.
         </div>
       </v-col>
       <v-col

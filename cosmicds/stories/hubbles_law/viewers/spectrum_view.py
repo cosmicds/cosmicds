@@ -132,7 +132,7 @@ class SpectrumView(BqplotScatterView):
         new_x = event['domain']['x']
         pixel_x = event['pixel']['x']
         self.resolution = (new_x - self.state.x_min) / pixel_x
-        self.user_line_label.text = [f"{new_x:.0f}"]
+        self.user_line_label.text = [f"{new_x:.0f} Å"]
 
         self.user_line.x = [new_x, new_x]
         self.user_line_label.x = [new_x, new_x]
