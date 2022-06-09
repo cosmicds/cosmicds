@@ -15,9 +15,7 @@
         @change="selectChoice(index)"
       >
         <template v-slot:label>
-          <div
-            @mouseup="selectChoice(index)"
-          >
+          <div>
           {{ option }}
           </div>
         </template>
