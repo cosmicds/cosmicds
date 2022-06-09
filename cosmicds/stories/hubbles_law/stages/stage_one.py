@@ -373,7 +373,7 @@ class StageOne(HubbleStage):
         if index is not None:
             lamb_obs = data["restwave"][index]
             lamb_meas = data["measwave"][index]
-            velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
+            velocity = round((3 * (10 ** 5) * (lamb_meas/lamb_obs - 1)),0)
             self.update_data_value("student_measurements", "velocity", velocity, index)
             self.story_state.update_student_data()
 
@@ -452,7 +452,7 @@ class StageOne(HubbleStage):
                 lamb_meas = data["measwave"][index]
                 if lamb_obs is None or lamb_meas is None:
                     continue
-                velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
+                velocity = round((3 * (10 ** 5) * (lamb_meas/lamb_obs - 1)),0)
                 self.update_data_value("student_measurements", "velocity", velocity, index)
         self.story_state.update_student_data()
         table.update_tool(tool)
