@@ -15,6 +15,8 @@
       <v-col cols="3">
         <!-- FORM DIALOG as template for reflections/MC -->
         <c-angsize-slideshow />
+        <!-- DIALOG template for Angular Size Do's/Don'ts Slideshow reflections/MC -->
+        <c-dosdonts-slideshow />
       </v-col>
     </v-row>
   </v-container>

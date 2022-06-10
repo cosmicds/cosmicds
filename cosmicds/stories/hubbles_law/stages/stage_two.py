@@ -11,6 +11,7 @@ from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.components.angsize_distance_slideshow import Angsize_SlideShow
+from cosmicds.stories.hubbles_law.components.angsize_dosdonts_slideshow import DosDonts_SlideShow
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
@@ -24,7 +25,8 @@ class StageState(State):
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
     advance_marker = CallbackProperty(True)
-    image_location = CallbackProperty()
+    image_location_distance = CallbackProperty()
+    image_location_dosdonts = CallbackProperty()
 
     markers = CallbackProperty([
         "test"
@@ -71,10 +73,13 @@ class StageTwo(HubbleStage):
         self.stage_state = StageState()
 
         angsize_slideshow = Angsize_SlideShow(self.stage_state)
+        dosdonts_slideshow = DosDonts_SlideShow(self.stage_state)
         self.add_component(angsize_slideshow, label='c-angsize-slideshow')
+        self.add_component(dosdonts_slideshow, label='c-dosdonts-slideshow')
 
         self.add_component(DistanceTool(self.stage_state), label="c-distance-tool")
-        self.stage_state.image_location = "data/images/stage_two_distance"
+        self.stage_state.image_location_distance = "data/images/stage_two_distance"
+        self.stage_state.image_location_dosdonts = "data/images/stage_two_dos_donts"
 
         type_names = { "E" : "Elliptical", "Ir": "Irregular", "Sp": "Spiral" }
         distance_table = Table(self.session,

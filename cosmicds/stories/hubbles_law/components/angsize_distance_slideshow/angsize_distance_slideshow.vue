@@ -113,7 +113,7 @@
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location}/People near and far - will replace with uncopyrighted.png`"
+                      :src="`${state.image_location_distance}/People near and far - will replace with uncopyrighted.png`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -147,7 +147,7 @@
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location}/People near and far - will replace with uncopyrighted.png`"
+                      :src="`${state.image_location_distance}/People near and far - will replace with uncopyrighted.png`"
                     ></v-img>
                   </v-col>
                   <v-col cols="6">
@@ -157,7 +157,7 @@
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.jpg`"
+                      :src="`${state.image_location_distance}/esahubble_potw2031a_1600_cleaned.jpg`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -195,7 +195,7 @@
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                     :src="`${state.image_location}/People near and far labeled.png`"
+                     :src="`${state.image_location_distance}/People near and far labeled.png`"
                     ></v-img>
                   </v-col>
                   <v-col cols="6">
@@ -205,7 +205,7 @@
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.jpg`"
+                      :src="`${state.image_location_distance}/esahubble_potw2031a_1600_cleaned.jpg`"
                     ></v-img>
                   </v-col> 
                 </v-row> 
@@ -261,7 +261,7 @@
                     class="mx-a"
                     contain
                     max-height="300"
-                    :src="`${state.image_location}/ErinPinkyAnnaArt.png`"
+                    :src="`${state.image_location_distance}/ErinPinkyAnnaArt.png`"
                   ></v-img>
                 </v-row>
               </v-container>
@@ -313,7 +313,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      :src="`${state.image_location}/theta_L_over_D_janky_schematic.jpg`"
+                      :src="`${state.image_location_distance}/theta_L_over_D_janky_schematic.jpg`"
                     ></v-img>
                   </v-col>
                 </v-row>
@@ -375,7 +375,7 @@
                       <v-img
                         class="mx-a"
                         contain
-                        :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                        :src="`${state.image_location_distance}/galaxies A B boxed - Harry may update with nicer boxes.png`"
                       ></v-img>
                     </v-col>
                 </v-row> 
@@ -469,7 +469,7 @@
                     <v-img
                       class="mx-a"
                       contain
-                      :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                      :src="`${state.image_location_distance}/galaxies A B boxed - Harry may update with nicer boxes.png`"
                     ></v-img>
                     </div>
                   </v-col>
