@@ -43,12 +43,28 @@
       <v-col
         cols="6"
         class="shrink"
+        v-if="!state.spec_viewer_reached"
       >
         <div
           style="font-size: 16px;"
         >
           Select a galaxy from your table.
         </div>
+      </v-col>
+      <v-col
+        class="shrink"
+        v-if="state.spec_viewer_reached"
+      >
+        <v-btn
+          class="black--text"
+          color="accent"
+          elevation="2"
+          @click="
+            state.marker = 'mee_spe1';
+          "
+        >
+          next
+        </v-btn>
       </v-col>
     </v-row>
   </v-alert>
