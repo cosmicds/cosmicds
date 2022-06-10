@@ -36,7 +36,7 @@
       v-if="scoring && complete"
       class="text-right">
       <span class="yellow--text">
-        {{ `Score: ${score} points` }}
+        {{ `Score: ${score} ${score == 1 ? 'point' : 'points'}` }}
       </span>
     </div>
   </v-container>
