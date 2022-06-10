@@ -1,7 +1,8 @@
 <template>
   <v-alert
-    class="mb-4 doppler_alert"
     color="info"
+    class="mb-4 mx-auto doppler_alert"
+    max-width="800"
     elevation="6"
   >
     <h3

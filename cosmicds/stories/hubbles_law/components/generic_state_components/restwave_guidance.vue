@@ -1,7 +1,8 @@
 <template>
   <v-alert
-    class="mb-4"
     color="info"
+    class="mb-4 mx-auto"
+    max-width="800"
     elevation="6"
   >
     <h3
@@ -15,11 +16,25 @@
       <p>
         Your galaxy spectrum has {{ state.element == 'Mg-I' ? 'a' : 'an' }} {{ state.element }} {{ state.element == 'Mg-I' ? 'absorption' : 'emission' }} line marked.
       </p>
-      <p>
+      <p
+        v-if="!state.lambda_used"
+      >
         The known <strong>rest wavelength</strong> for the line is recorded in your table.
       </p>
-      <p>
-        Click the <v-icon>mdi-lambda</v-icon> icon in the Spectrum Viewer toolbar to display the rest wavelength. 
+      <p
+        v-if="!state.lambda_on"
+      >
+        Click the <v-icon>mdi-lambda</v-icon> icon in the Spectrum Viewer toolbar to display the line's rest wavelength on the graph.
+      </p>
+      <p
+        v-if="state.lambda_on"
+      >
+        The rest wavelength of your line appears in the graph as a vertical dotted line.
+      </p>
+      <p
+        v-if="state.lambda_on"
+      >
+        You can click the <v-icon>mdi-lambda</v-icon> icon again to toggle the rest wavelength back off.
       </p>
     </div>
     <v-divider

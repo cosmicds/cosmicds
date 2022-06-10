@@ -2,7 +2,7 @@
   <scaffold-alert
     header-text="Velocity Calculation"
     @back="
-      state.marker = 'nic_wor1';
+      state.marker = 'ref_dat1';
     "
     @next="
       state.marker = 'dop_cal1';

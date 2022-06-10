@@ -2,7 +2,6 @@
   <v-card
     id="slideshow-root"
     elevation="6"
-    light
   >
     <v-toolbar
       color="info"
@@ -19,7 +18,6 @@
     <v-window
       style="min-height: 300px;"
       v-model="step"
-      class="white"
     >
       <v-window-item :value="0" 
         class="no-transition"
@@ -33,7 +31,10 @@
             >
               <v-col cols="6">
                 <p>
-                  Welcome to the Cosmic Data Story about Hubble's Law. In this investigation, you will use real astronomical data to form answers to major questions about our universe:
+                  Welcome to the Cosmic Data Story about Hubble's Law.
+                </p>
+                <p>
+                  In this investigation, you will use real astronomical data to form answers to major questions about our universe:
                 </p>
                 <v-card
                   class="justify-center pa-2 mx-12 my-8"
@@ -522,7 +523,7 @@
     <v-divider></v-divider>
 
     <v-card-actions
-      class="justify-space-between grey lighten-4"
+      class="justify-space-between"
     >
       <v-btn
         :disabled="step === 0"
@@ -549,7 +550,11 @@
             icon
             @click="toggle"
           >
-            <v-icon>mdi-record</v-icon>
+            <v-icon
+              color="info lighten-1"
+            >
+              mdi-record
+            </v-icon>
           </v-btn>
         </v-item>
       </v-item-group>

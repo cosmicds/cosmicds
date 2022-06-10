@@ -165,7 +165,7 @@
             class="selection-fab black--text"
             v-bind="attrs"
             v-on="on"
-            v-show="Object.keys(current_galaxy).length !== 0"
+            v-show="Object.keys(candidate_galaxy).length !== 0"
             @click="select_current_galaxy()">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
