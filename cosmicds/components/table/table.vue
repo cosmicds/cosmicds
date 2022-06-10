@@ -21,6 +21,24 @@
           hide-details
         ></v-text-field>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-tooltip
+        v-for="[tool_id, tool] of Object.entries(tools)"
+        :key="tool_id"
+        top
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon
+            v-bind="attrs"
+            v-on="on"
+            :disabled="tool.disabled || false"
+            @click="() => { activate_tool(tool_id); }"
+          >
+            <v-icon>{{tool.icon}}</v-icon>
+          </v-btn>
+        </template>
+        {{tool.tooltip}}
+      </v-tooltip>
     </v-toolbar>
     <v-data-table
       dense
@@ -71,7 +89,12 @@ export default {
           row.classList.remove(this.selectedClass);
         }
       }
-    }
+    },
+
+    jupyter_update_tool: function(tool) {
+      this.$set(this.tools, tool.id, tool);
+    },
+
   },
 
   watch: {

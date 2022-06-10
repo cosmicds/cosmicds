@@ -129,7 +129,12 @@ class StageOne(HubbleStage):
                       'hub_morphology_viewer', 'hub_prodata_viewer']:
             self.add_viewer(BqplotScatterView, label=label)
 
-        # Set up widgets
+        add_velocities_tool = \
+            dict(id="update-velocities",
+                 icon="mdi-run-fast",
+                 tooltip="Fill in velocities",
+                 disabled=True,
+                 activate=self.update_velocities)
         galaxy_table = Table(self.session,
                              data=self.get_data('student_measurements'),
                              glue_components=['name',
@@ -147,7 +152,8 @@ class StageOne(HubbleStage):
                              title='My Galaxies',
                              selected_color=self.table_selected_color(self.app_state.dark_mode),
                              use_subset_group=False,
-                             single_select=True) # True for now
+                             single_select=True, # True for now
+                             tools=[add_velocities_tool])
 
         self.add_widget(galaxy_table, label="galaxy_table")
         galaxy_table.row_click_callback = self.on_galaxy_row_click
@@ -222,6 +228,9 @@ class StageOne(HubbleStage):
         self.trigger_marker_update_cb = True
 
         self.update_spectrum_style(dark=self.app_state.dark_mode)
+
+
+        add_callback(self.stage_state, 'doppler_calc_complete', self.enable_velocity_tool)
 
         spectrum_viewer = self.get_viewer("spectrum_viewer")
         restwave_tool = spectrum_viewer.toolbar.tools["hubble:restwave"]
@@ -384,14 +393,13 @@ class StageOne(HubbleStage):
         if index is not None:
             lamb_obs = data["restwave"][index]
             lamb_meas = data["measwave"][index]
-            velocity = int(3 * (10 ** 5) * (lamb_meas/lamb_obs - 1))
+            velocity = round((3 * (10 ** 5) * (lamb_meas/lamb_obs - 1)),0)
             self.update_data_value("student_measurements", "velocity", velocity, index)
             self.story_state.update_student_data()
 
     def add_student_velocity(self, _args=None):
         index = self.galaxy_table.index
         velocity = round(self.stage_state.student_vel)
-        print("index", index, "student vel", self.stage_state.student_vel)
         self.update_data_value("student_measurements", "velocity", velocity, index)
 
     @property
@@ -454,3 +462,23 @@ class StageOne(HubbleStage):
         sf_tool = spectrum_viewer.toolbar.tools["hubble:specflag"]
         with ignore_callback(sf_tool, "flagged"):
             sf_tool.flagged = False
+
+    def update_velocities(self, table, tool):
+        data = table.glue_data
+        for item in table.items:
+            index = table.indices_from_items([item])[0]
+            if index is not None and data["velocity"][index] is None:
+                lamb_obs = data["restwave"][index]
+                lamb_meas = data["measwave"][index]
+                if lamb_obs is None or lamb_meas is None:
+                    continue
+                velocity = round((3 * (10 ** 5) * (lamb_meas/lamb_obs - 1)),0)
+                self.update_data_value("student_measurements", "velocity", velocity, index)
+        self.story_state.update_student_data()
+        table.update_tool(tool)
+
+    def enable_velocity_tool(self, enable):
+        if enable:
+            tool = self.galaxy_table.get_tool("update-velocities")
+            tool["disabled"] = False
+            self.galaxy_table.update_tool(tool)
