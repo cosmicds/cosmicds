@@ -78,10 +78,7 @@
                         >
                           A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
                         </v-card-text>
-                      </v-card>            
-                      <p>
-                        The figure illustrates light passing through a diffraction grating (1) and a prism (2).
-                      </p>
+                      </v-card>
                       <p>
                         Diffraction gratings and prisms &#8212; and raindrops, bubbles, and oil slicks &#8212; create spectra because they bend light of different colors by different amounts. See link for more details.
                       </p>
@@ -89,6 +86,9 @@
                         class="text-center grey--text"
                       >
                         [ Insert link as described above ]
+                      </p>         
+                      <p>
+                        The figure illustrates light passing through a diffraction grating (1) and a prism (2).
                       </p>
                     </div>
                   </v-col>
@@ -513,6 +513,9 @@
                   <v-col
                     cols="12"
                   >
+                    <h3 class="mb-4">
+                      Rest vs. Observed Wavelengths
+                    </h3>
                     <p>
                       Since we know the wavelengths emitted or absorbed by an element when it is not moving, we can use these <strong>rest wavelengths</strong> as a reference to compare against the <strong>observed wavelengths</strong> of the light when an object <em>is</em> moving.
                     </p>
@@ -529,11 +532,16 @@
                       outlined
                       class="mt-n3 pa-3"
                     >
-                      <p
+                      <div
                         class="pa-3"
                       >
-                        The dotted line shows the rest wavelength of a hydrogen line known as <strong>H-&alpha;</strong> (pronounced "H alpha"). The solid line shows the observed wavelength of the H-&alpha; line.
-                      </p>
+                        <h4>
+                          Looking for the H-&alpha; emission line
+                        </h4>
+                        <p>
+                          The dotted line shows the rest wavelength of a hydrogen line known as <strong>H-&alpha;</strong> (pronounced "H alpha"). The solid line shows the observed wavelength of the H-&alpha; line.
+                        </p>
+                      </div>
                       <v-img
                         contain
                         :src="`${state.image_location}/restobs1_dotted_spectool.png`"
@@ -555,6 +563,9 @@
                   <v-col
                     cols="12"
                   >
+                    <h3 class="mb-4">
+                      Rest vs. Observed Wavelengths
+                    </h3>
                     <p>
                       Since we know the wavelengths emitted or absorbed by an element when it is not moving, we can use these <strong>rest wavelengths</strong> as a reference to compare against the <strong>observed wavelengths</strong> of the light when an object <em>is</em> moving.
                     </p>
@@ -571,11 +582,16 @@
                       outlined
                       class="mt-n3 pa-3"
                     >
-                      <p
+                      <div
                         class="pa-3"
                       >
-                        The dotted line shows the rest wavelength of a magnesium line known as <strong>Mg I</strong> (pronounced "magnesium one"). The solid line shows the observed wavelength of the Mg I line.
-                      </p>
+                        <h4>
+                          Looking for the Mg I absorption line
+                        </h4>
+                        <p>
+                          The dotted line shows the rest wavelength of a magnesium line known as <strong>Mg I</strong> (pronounced "magnesium one"). The solid line shows the observed wavelength of the Mg I line.
+                        </p>
+                      </div>
                       <v-img
                         contain
                         :src="`${state.image_location}/restobs2_dotted_spectool.png`"
