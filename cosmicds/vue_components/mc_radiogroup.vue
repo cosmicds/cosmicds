@@ -41,10 +41,15 @@
     </v-alert>
     <div
       v-if="complete"
-      class="text-right">
-      <span class="yellow--text">
+      class="text-right"
+    >
+      <v-chip
+        color="info"
+        dark
+        pill
+      >
         {{ `Score: ${score(tries)} points` }}
-      </span>
+      </v-chip>
     </div>
   </v-container>
 </template>
