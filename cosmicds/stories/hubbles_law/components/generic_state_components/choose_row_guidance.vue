@@ -12,7 +12,7 @@
     </h3>
     <div class="mb-4">
       <p>
-      Let's take a look at the light spectrum for one of your galaxies.
+      Let's look at the light spectrum for one of your galaxies.
       </p>
       <p>
       Click on a row in your table to choose that galaxy.

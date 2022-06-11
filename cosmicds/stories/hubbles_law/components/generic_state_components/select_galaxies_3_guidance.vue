@@ -22,6 +22,19 @@
       </p>
     </div>
     <div
+      v-if="state.gals_total < 5 & state.gal_selected"
+    >
+      <p>
+        What do you think of this galaxy?
+      </p>
+      <p>
+        If it looks good to you, click the <v-icon>mdi-plus</v-icon> button to add it to your galaxy collection.
+      </p>
+      <p>
+        If you’d rather look for another galaxy, click the <v-icon>mdi-cached</v-icon> button to reset the view and choose a different green dot.
+      </p>
+    </div>
+    <div
       v-if="state.gals_total == 1 & !state.gal_selected"
       class="mb-4"
     >
@@ -45,26 +58,12 @@
       class="mb-4"
     >
       <p>
-        Great, you've got all the galaxies that you need and you're now ready to begin making measurements from your data.
+        Great, you have all the galaxies that you need and you're now ready to begin making measurements from your data.
       </p>
       <p>
-        Let's turn now to your table of galaxies.
+        Let's turn to your table of galaxies.
       </p>
-    </div>
-    <div
-      v-if="state.gals_total < 5 & state.gal_selected"
-    >
-      <p>
-        What do you think of this galaxy?
-      </p>
-      <p>
-        If it looks good to you, click the <v-icon>mdi-plus</v-icon> button to add it to your galaxy collection.
-      </p>
-      <p>
-        If you’d rather look for another galaxy, click the <v-icon>mdi-cached</v-icon> button to reset the view and choose a different green dot.
-      </p>
-    </div>
-    
+    </div>    
     <v-divider
       class="my-4"
     >
@@ -95,7 +94,7 @@
         <div
           style="font-size: 16px;"
         >
-          Select {{ 5 - state.gals_total }} <span v-if="state.gals_total>0">more</span> <span v-if="state.gals_total < 4">galaxies</span><span v-if="state.gals_total == 4">galaxy</span> before moving on.
+          Select {{ 5 - state.gals_total }} <span v-if="state.gals_total>0">more</span> <span v-if="state.gals_total < 4">galaxies</span><span v-if="state.gals_total == 4">galaxy</span>.
         </div>
       </v-col>
       <v-col
