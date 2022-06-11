@@ -63,8 +63,8 @@
         lg="8"
       >
         <v-card
-          :color="stage_state.marker == 'sel_gal1' || stage_state.marker == 'sel_gal2' ? 'info' : 'black'"
-          :class="stage_state.marker == 'sel_gal1' || stage_state.marker == 'sel_gal2' ? 'pa-1 my-n1' : 'pa-0'"
+          :color="stage_state.csv_highlights.includes(stage_state.marker) ? 'info' : 'black'"
+          :class="stage_state.csv_highlights.includes(stage_state.marker) ? 'pa-1 my-n1' : 'pa-0'"
           outlined
         >
           <c-selection-tool/>
@@ -136,8 +136,8 @@
         class="galtable_column"
       >
         <v-card
-          :color="stage_state.marker == 'cho_row1' ? 'info' : 'black'"
-          :class="stage_state.marker == 'cho_row1' ? 'pa-1 my-n1' : 'pa-0'"
+          :color="stage_state.table_highlights.includes(stage_state.marker) ? 'info' : 'black'"
+          :class="stage_state.table_highlights.includes(stage_state.marker) ? 'pa-1 my-n1' : 'pa-0'"
           outlined
         >
           <jupyter-widget :widget="widgets.galaxy_table"/>
@@ -250,8 +250,8 @@
             class="py-0"
           >
             <v-card
-              :color="stage_state.spec_viewer_reached ? 'info' : 'black'"
-              :class="stage_state.spec_viewer_reached ? 'pa-1 my-n1' : 'pa-0'"
+              :color="stage_state.spec_highlights.includes(stage_state.marker) ? 'info' : 'black'"
+              :class="stage_state.spec_highlights.includes(stage_state.marker) ? 'pa-1 my-n1' : 'pa-0'"
               outlined
             >
               <jupyter-widget :widget="viewers.spectrum_viewer"/>

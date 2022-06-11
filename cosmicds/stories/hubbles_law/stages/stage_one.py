@@ -76,6 +76,31 @@ class StageState(State):
         'dop_cal0',
     ])
 
+    csv_highlights = CallbackProperty([
+        'sel_gal1',
+        'sel_gal2',
+    ])
+
+    table_highlights = CallbackProperty([
+        'cho_row1',
+        'dop_cal3',
+        'dop_cal4',
+        'dop_cal5',
+        'dop_cal6',
+    ])
+
+    spec_highlights = CallbackProperty([
+        'mee_spe1',
+        'res_wav1',
+        'obs_wav1',
+        'obs_wav2',        
+        'rep_rem1',
+        'ref_dat1',
+        'dop_cal0',
+        'dop_cal1',
+        'dop_cal2',
+    ])
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.marker = self.markers[0]
