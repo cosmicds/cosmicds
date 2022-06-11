@@ -8,16 +8,17 @@
     <h3
       class="mb-4"
     >
-      Choose a Row
+      Table Data
     </h3>
-    <div class="mb-4">
+    <div
+      v-if="state.gals_total == 1 & !state.gal_selected"
+      class="mb-4"
+    >
       <p>
-      Let's look at the light spectrum for one of your galaxies.
-      </p>
-      <p>
-      Click on a row in your table to choose that galaxy.
+        Notice that your My Galaxies table now has a row for your selected galaxy.
       </p>
     </div>
+    
     <v-divider
       class="my-4"
     >
@@ -33,7 +34,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'sel_gal3';
+            state.marker = 'sel_gal1'
           "
         >
           back
@@ -41,14 +42,18 @@
       </v-col>
       <v-spacer></v-spacer>
       <v-col
-        cols="6"
         class="shrink"
       >
-        <div
-          style="font-size: 16px;"
+        <v-btn
+          class="black--text"
+          color="accent"
+          elevation="2"
+          @click="
+            state.marker = 'sel_gal3'
+          "
         >
-          Select a galaxy from your table.
-        </div>
+          next
+        </v-btn>
       </v-col>
     </v-row>
   </v-alert>

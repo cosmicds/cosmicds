@@ -52,6 +52,7 @@ class StageState(State):
         'mee_gui1',
         'sel_gal1',
         'sel_gal2',
+        'sel_gal3',
         'cho_row1',
         'mee_spe1',
         'res_wav1',
@@ -177,8 +178,10 @@ class StageOne(HubbleStage):
         path = join(state_components_dir, "")
         state_components = [
             "stage_one_start_guidance",
-            "select_galaxies_1_alert",
+            "select_galaxies_1_guidance",
             "select_galaxies_2_guidance",
+            "notice_galaxy_table",
+            "select_galaxies_3_guidance",
             "choose_row_guidance",
             "spectrum_guidance",
             "restwave_guidance",
@@ -245,8 +248,12 @@ class StageOne(HubbleStage):
         if new in self.stage_state.step_markers and advancing:
             self.story_state.step_complete = True
             self.story_state.step_index = self.stage_state.step_markers.index(new)
+        if advancing and old == "sel_gal3":
+            self.galaxy_table.selected = []
         if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
             self.stage_state.marker = "mee_spe1"
+        if advancing and old == "dop_cal2":
+            self.galaxy_table.selected = []
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
@@ -273,6 +280,7 @@ class StageOne(HubbleStage):
             galaxy.pop("element")
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
+            self.galaxy_table.selected = [{'name': filename}]
 
     def _on_lambda_used(self, used):
         self.stage_state.lambda_used = used
@@ -292,9 +300,13 @@ class StageOne(HubbleStage):
 
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")
+        self.galaxy_table.selected = []
+        self.stage_state.marker = "sel_gal3"  
 
     def vue_select_galaxies(self, _args=None):
         self._select_from_data("SDSS_all_sample_filtered")
+        self.galaxy_table.selected = []
+        self.stage_state.marker = "sel_gal3"        
 
     def update_spectrum_viewer(self, name, z):
         specview = self.get_viewer("spectrum_viewer")
@@ -321,6 +333,7 @@ class StageOne(HubbleStage):
             index = self.get_widget("galaxy_table").index
             self.update_data_value("student_measurements", "element", element, index)
             self.update_data_value("student_measurements", "restwave", restwave, index)
+            self.stage_state.element = element
 
     def galaxy_table_selected_change(self, change):
         if change["new"] == change["old"]:
@@ -361,7 +374,6 @@ class StageOne(HubbleStage):
         self.selection_tool.go_to_location(data["ra"][index], data["decl"][index], fov=GALAXY_FOV)
         self.stage_state.lambda_rest = data["restwave"][index]
         self.stage_state.lambda_obs = data["measwave"][index]
-        self.stage_state.element = data["element"][index]
         self.stage_state.sel_gal_index = index
 
     def on_spectrum_click(self, event):
