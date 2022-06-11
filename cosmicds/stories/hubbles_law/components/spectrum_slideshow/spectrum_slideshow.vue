@@ -141,7 +141,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>Light spectrum for LED bulb</h4>
                       <v-img
@@ -191,7 +191,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>Light spectrum for LED bulb</h4>
                       <v-img
@@ -241,7 +241,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>Light spectrum for LED bulb</h4>
                       <v-img
@@ -291,7 +291,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>
                         Doppler shift
@@ -337,7 +337,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>
                         Doppler shift
@@ -483,7 +483,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>Hydrogen emission spectrum</h4>
                       <v-img
@@ -527,7 +527,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <p
                         class="pa-3"
@@ -569,7 +569,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <p
                         class="pa-3"
@@ -614,7 +614,7 @@
                     <h3 class="text-h6 font-weight-light mb-2">
                       You're ready to start measuring galaxy velocities now.
                     </h3>
-                    <span class="text-caption grey--text">Click the LEARN MORE button again if you'd like to come back for a refresher.</span>
+                    <span class="text-caption grey--text">Click the <strong>SPECTRUM TUTORIAL</strong> button again if you'd like to come back for a refresher.</span>
                   </v-col>
                 </v-row>
               </v-container>
