@@ -41,7 +41,17 @@
             }
           }" />
         <c-guideline-select-galaxies-2
-          v-if="stage_state.marker == 'sel_gal2'"
+          v-if="stage_state.marker == 'sel_gal2' & stage_state.gals_total == 0"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
+        <c-select-galaxies-3-guidance
+          v-if="stage_state.marker == 'sel_gal3'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
               entries[0].target.scrollIntoView({
@@ -51,7 +61,7 @@
             }
           }" />
         <v-btn
-          v-if="stage_state.marker == 'sel_gal2' && stage_state.gals_total < stage_state.gals_max && show_team_interface"
+          v-if="stage_state.marker == 'sel_gal2' || 'sel_gal3' && stage_state.gals_total < stage_state.gals_max && show_team_interface"
           color="error"
           class="black--text"
           block
@@ -79,6 +89,16 @@
         cols="12"
         lg="4"
       >
+        <c-notice-galaxy-table 
+          v-if="stage_state.marker == 'sel_gal2' & stage_state.gals_total == 1 & !stage_state.gal_selected"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-guideline-choose-row
           v-if="stage_state.marker == 'cho_row1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
@@ -128,7 +148,7 @@
                 block: 'center'
               })
             }
-          }" /> 
+          }" />
       </v-col>
       <v-col
         cols="12"
