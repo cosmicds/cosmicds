@@ -450,7 +450,7 @@ input {
   cursor: grabbing;
 }
 
-.v-dialog > .v-card {
+.v-dialog > .v-card, #slideshow-root {
   border: solid hsla(0,0%,100%,.12) 1px !important;
 }
 </style>
