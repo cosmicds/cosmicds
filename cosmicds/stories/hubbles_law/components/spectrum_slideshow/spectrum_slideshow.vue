@@ -544,7 +544,7 @@
                       </div>
                       <v-img
                         contain
-                        :src="`${state.image_location}/restobs1_dotted_spectool.png`"
+                        :src="`${state.image_location}/restobs1_dotted.png`"
                       >
                       </v-img>
                     </v-card>
@@ -594,7 +594,7 @@
                       </div>
                       <v-img
                         contain
-                        :src="`${state.image_location}/restobs2_dotted_spectool.png`"
+                        :src="`${state.image_location}/restobs2_dotted.png`"
                       >
                       </v-img>
                     </v-card>
