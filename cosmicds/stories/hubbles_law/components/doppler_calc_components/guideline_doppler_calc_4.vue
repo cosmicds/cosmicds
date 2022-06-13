@@ -19,17 +19,28 @@
         Enter the observed wavelength and rest wavelength for your chosen galaxy into the cells in the equation below.
       </p>
       <div
-        class="JaxEquation"
+        class="JaxEquation my-8"
       >
-        $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$ 
         $$ v = c \times \left( \frac{\bbox[#FBE9E7]{\input[lam_obs][]{}} \text{ &#8491;}}{\bbox[#FBE9E7]{\input[lam_rest][]{}}\text{ &#8491;}} - 1 \right) $$
       </div>
       <v-card
         outlined
-        class="legend mt-4"
+        class="legend mt-8"
         color="info"
       >
         <v-container>
+          <v-row
+            no-gutters
+          >
+            <v-col>
+              <div
+                class="JaxEquation"
+              >
+                $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
+              </div>
+            </v-col>
+          </v-row>
+          <v-divider></v-divider>
           <v-row
             no-gutters
             class="my-1"

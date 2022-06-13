@@ -59,7 +59,7 @@
               color="info"
               class="JaxEquation pa-3"
             >
-              $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) = c \times \left( \frac{\textcolor{black}{\colorbox{#FFAB91}{ {{ state.lambda_obs }} }} \text{ &#8491;}}{\textcolor{black}{\colorbox{#FFAB91}{ {{ state.lambda_rest }} }} \text{ &#8491;}} - 1 \right) $$
+              $$ v = c \times \left( \frac{\textcolor{black}{\colorbox{#FFAB91}{ {{ state.lambda_obs }} }} \text{ &#8491;}}{\textcolor{black}{\colorbox{#FFAB91}{ {{ state.lambda_rest }} }} \text{ &#8491;}} - 1 \right) $$
               <v-divider role="presentation"></v-divider>
               <div
                 class="font-weight-medium mt-3"
@@ -69,9 +69,21 @@
             </v-card>
             <v-divider role="presentation"></v-divider>
             <v-card
-              class="legend mt-4"
+              class="legend mt-8"
             >
               <v-container>
+                <v-row
+                  no-gutters
+                >
+                  <v-col>
+                    <div
+                      class="JaxEquation"
+                    >
+                      $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-divider></v-divider>
                 <v-row
                   no-gutters
                   class="my-1"
@@ -152,7 +164,7 @@
             <v-card
               class="JaxEquation past_block pa-3"
             >
-              $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) = c \times \left( \frac{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_obs }} }} \text{ &#8491;}}{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_rest }} }} \text{ &#8491;}} - 1 \right) $$
+              $$ v = c \times \left( \frac{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_obs }} }} \text{ &#8491;}}{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_rest }} }} \text{ &#8491;}} - 1 \right) $$
             </v-card>
             <p>
               Dividing the fraction gives you <strong>{{ (state.lambda_obs/state.lambda_rest).toFixed(4) }}</strong>. Now we have:
@@ -171,9 +183,21 @@
             </v-card>
             <v-divider role="presentation"></v-divider>
             <v-card
-              class="legend mt-4"
+              class="legend mt-8"
             >
               <v-container>
+                <v-row
+                  no-gutters
+                >
+                  <v-col>
+                    <div
+                      class="JaxEquation"
+                    >
+                      $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-divider></v-divider>
                 <v-row
                   no-gutters
                   class="my-1"
@@ -254,7 +278,7 @@
             <v-card
               class="JaxEquation past_block pa-3"
             >
-              $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) = c \times \left( \frac{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_obs }} }} \text{ &#8491;}}{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_rest }} }} \text{ &#8491;}} - 1 \right) $$ 
+              $$ v = c \times \left( \frac{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_obs }} }} \text{ &#8491;}}{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_rest }} }} \text{ &#8491;}} - 1 \right) $$ 
 
               $$ v = c \times \left( \textcolor{black}{\colorbox{#9E9E9E}{ {{(state.lambda_obs/state.lambda_rest).toFixed(4)}} } } - 1 \right) $$
             </v-card>
@@ -275,10 +299,22 @@
             </v-card>
             <v-divider role="presentation"></v-divider>
             <v-card
-              class="legend mt-4"
+              class="legend mt-8"
               outlined
             >
               <v-container>
+                <v-row
+                  no-gutters
+                >
+                  <v-col>
+                    <div
+                      class="JaxEquation"
+                    >
+                      $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-divider></v-divider>
                 <v-row
                   no-gutters
                   class="my-1"
@@ -388,9 +424,21 @@
             </v-container>
             <v-divider role="presentation"></v-divider>
             <v-card
-              class="legend mt-4"
+              class="legend mt-8"
             >
               <v-container>
+                <v-row
+                  no-gutters
+                >
+                  <v-col>
+                    <div
+                      class="JaxEquation"
+                    >
+                      $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-divider></v-divider>
                 <v-row
                   no-gutters
                   class="my-1"
@@ -495,9 +543,21 @@
             </v-card>
             <v-divider role="presentation"></v-divider>
             <v-card
-              class="legend mt-4"
+              class="legend mt-8"
             >
               <v-container>
+                <v-row
+                  no-gutters
+                >
+                  <v-col>
+                    <div
+                      class="JaxEquation"
+                    >
+                      $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-divider></v-divider>
                 <v-row
                   no-gutters
                   class="my-1"
@@ -599,7 +659,7 @@
             <v-card
               class="JaxEquation past_block pa-3"
             >
-              $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) = c \times \left( \frac{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_obs }} }} \text{ &#8491;}}{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_rest }} }} \text{ &#8491;}} - 1 \right) $$ 
+              $$ v = c \times \left( \frac{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_obs }} }} \text{ &#8491;}}{\textcolor{black}{\colorbox{#9E9E9E}{ {{ state.lambda_rest }} }} \text{ &#8491;}} - 1 \right) $$ 
 
               $$ v = c \times \left( \textcolor{black}{\colorbox{#9E9E9E}{ {{(state.lambda_obs/state.lambda_rest).toFixed(4)}} } } - 1 \right) $$
 
@@ -624,9 +684,21 @@
             </v-card>
             <v-divider role="presentation"></v-divider>
             <v-card
-              class="legend mt-4"
+              class="legend mt-8"
             >
               <v-container>
+                <v-row
+                  no-gutters
+                >
+                  <v-col>
+                    <div
+                      class="JaxEquation"
+                    >
+                      $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-divider></v-divider>
                 <v-row
                   no-gutters
                   class="my-1"
@@ -788,6 +860,7 @@ mjx-mpadded {
 
 .v-application .past_block {
   border: 1px solid #FF5722 !important;
+  margin-bottom: 16px;
 }
 
 .v-application .past_block mjx-math {

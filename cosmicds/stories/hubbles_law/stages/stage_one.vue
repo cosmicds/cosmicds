@@ -65,6 +65,7 @@
           color="error"
           class="black--text"
           block
+          max-width="800"
           @click="select_galaxies();"
         >select 5 galaxies</v-btn>
       </v-col>
