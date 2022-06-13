@@ -20,7 +20,7 @@
         cols="12"
         lg="4"
       >
-        <c-stage-one-start-guidance
+        <c-guideline-stage-one-start
           v-if="stage_state.marker == 'mee_gui1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -30,7 +30,7 @@
               })
             }
           }" />
-        <c-select-galaxies-1-alert
+        <c-guideline-select-galaxies-1
           v-if="stage_state.marker == 'sel_gal1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -40,7 +40,7 @@
               })
             }
           }" />
-        <c-select-galaxies-2-guidance
+        <c-guideline-select-galaxies-2
           v-if="stage_state.marker == 'sel_gal2'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -79,7 +79,7 @@
         cols="12"
         lg="4"
       >
-        <c-choose-row-guidance
+        <c-guideline-choose-row
           v-if="stage_state.marker == 'cho_row1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -89,7 +89,7 @@
               })
             }
           }" />
-        <c-doppler-calc-3-guidance
+        <c-guideline-doppler-calc-3
           v-if="stage_state.marker == 'dop_cal3'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -99,7 +99,7 @@
               })
             }
           }" /> 
-        <c-doppler-calc-4-component
+        <c-guideline-doppler-calc-4
           v-if="stage_state.marker == 'dop_cal4' || stage_state.marker == 'dop_cal5'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -109,7 +109,7 @@
               })
             }
           }" />
-        <c-doppler-calc-5-slideshow
+        <c-slideshow-doppler-calc-5
           v-if="stage_state.marker == 'dop_cal5'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -119,7 +119,7 @@
               })
             }
           }" />
-        <c-doppler-calc-6-component
+        <c-guideline-doppler-calc-6
           v-if="stage_state.marker == 'dop_cal6'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -149,7 +149,7 @@
         cols="12"
         lg="4"
       >
-        <c-spectrum-guidance 
+        <c-guideline-spectrum
           v-if="stage_state.marker == 'mee_spe1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -159,7 +159,7 @@
               })
             }
           }" />
-        <c-restwave-guidance
+        <c-guideline-restwave
           v-if="stage_state.marker == 'res_wav1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -169,7 +169,7 @@
               })
             }
           }" />
-        <c-obswave-1-guidance
+        <c-guideline-obswave-1
           v-if="stage_state.marker == 'obs_wav1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -179,7 +179,7 @@
               })
             }
           }" />
-        <c-obswave-2-alert
+        <c-guideline-obswave-2
           v-if="stage_state.marker == 'obs_wav2'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -189,7 +189,7 @@
               })
             }
           }" />
-        <c-remaining-gals-guidance
+        <c-guideline-remaining-gals
           v-if="stage_state.marker == 'rep_rem1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -199,7 +199,7 @@
               })
             }
           }" />
-        <c-reflect-on-data-guidance
+        <c-guideline-reflect-on-data
           v-if="stage_state.marker == 'ref_dat1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -209,7 +209,7 @@
               })
             }
           }" />
-        <c-doppler-calc-0-alert
+        <c-guideline-doppler-calc-0
           v-if="stage_state.marker == 'dop_cal0'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -219,7 +219,7 @@
               })
             }
           }" />
-        <c-doppler-calc-1-alert
+        <c-guideline-doppler-calc-1
           v-if="stage_state.marker == 'dop_cal1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -229,7 +229,7 @@
               })
             }
           }" />
-        <c-doppler-calc-2-alert
+        <c-guideline-doppler-calc-2
           v-if="stage_state.marker == 'dop_cal2'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {

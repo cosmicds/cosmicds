@@ -202,20 +202,20 @@ class StageOne(HubbleStage):
             Path(__file__).parent.parent / "components" / "generic_state_components")
         path = join(state_components_dir, "")
         state_components = [
-            "stage_one_start_guidance",
-            "select_galaxies_1_alert",
-            "select_galaxies_2_guidance",
-            "choose_row_guidance",
-            "spectrum_guidance",
-            "restwave_guidance",
-            "obswave_1_guidance",
-            "obswave_2_alert",            
-            "remaining_gals_guidance",
-            "reflect_on_data_guidance",
-            "doppler_calc_0_alert",
-            "doppler_calc_1_alert",
-            "doppler_calc_2_alert",
-            "doppler_calc_3_guidance"
+            "guideline_stage_one_start",
+            "guideline_select_galaxies_1",
+            "guideline_select_galaxies_2",
+            "guideline_choose_row",
+            "guideline_spectrum",
+            "guideline_restwave",
+            "guideline_obswave_1",
+            "guideline_obswave_2",            
+            "guideline_remaining_gals",
+            "guideline_reflect_on_data",
+            "guideline_doppler_calc_0",
+            "guideline_doppler_calc_1",
+            "guideline_doppler_calc_2",
+            "guideline_doppler_calc_3"
         ]
         ext = ".vue"
         for comp in state_components:
@@ -229,9 +229,9 @@ class StageOne(HubbleStage):
         doppler_calc_components_dir = str(Path(__file__).parent.parent / "components" / "doppler_calc_components")
         path = join(doppler_calc_components_dir,"")
         doppler_components = [
-            "doppler_calc_4_component",
-            "doppler_calc_5_slideshow",
-            "doppler_calc_6_component"
+            "guideline_doppler_calc_4",
+            "slideshow_doppler_calc_5",
+            "guideline_doppler_calc_6"
         ]
         for comp in doppler_components:
             label = f"c-{comp}".replace("_", "-")
@@ -239,7 +239,7 @@ class StageOne(HubbleStage):
             self.add_component(component, label=label)
 
         # execute add_student_velocity when student_vel_calc in c-doppler-calc-5-slideshow is updated.
-        doppler_slideshow = self.get_component("c-doppler-calc-5-slideshow")
+        doppler_slideshow = self.get_component("c-slideshow-doppler-calc-5")
         doppler_slideshow.observe(self.add_student_velocity, names=["student_vel_calc"])
 
         # Callbacks
