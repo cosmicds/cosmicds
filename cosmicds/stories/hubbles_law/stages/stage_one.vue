@@ -50,7 +50,7 @@
               })
             }
           }" />
-        <c-select-galaxies-3-guidance
+        <c-guideline-select-galaxies-3
           v-if="stage_state.marker == 'sel_gal3'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -90,7 +90,7 @@
         cols="12"
         lg="4"
       >
-        <c-notice-galaxy-table 
+        <c-guideline-notice-galaxy-table 
           v-if="stage_state.marker == 'sel_gal2' & stage_state.gals_total == 1 & !stage_state.gal_selected"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {

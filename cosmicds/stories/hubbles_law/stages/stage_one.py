@@ -10,6 +10,9 @@ from numpy import isin
 from random import sample
 from traitlets import default, Bool
 
+import astropy.units as u
+from astropy.coordinates import Angle, SkyCoord
+
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template, update_figure_css
 from cosmicds.stories.hubbles_law.viewers import SpectrumView, spectrum_view
@@ -80,6 +83,7 @@ class StageState(State):
     csv_highlights = CallbackProperty([
         'sel_gal1',
         'sel_gal2',
+        'sel_gal3',
     ])
 
     table_highlights = CallbackProperty([
@@ -120,6 +124,7 @@ class StageState(State):
 ])
 class StageOne(HubbleStage):
     show_team_interface = Bool(False).tag(sync=True)
+    START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 
     @default('template')
     def _default_template(self):
@@ -206,8 +211,8 @@ class StageOne(HubbleStage):
             "guideline_stage_one_start",
             "guideline_select_galaxies_1",
             "guideline_select_galaxies_2",
-            "notice_galaxy_table",
-            "select_galaxies_3_guidance",
+            "guideline_select_galaxies_3",
+            "guideline_notice_galaxy_table",
             "guideline_choose_row",
             "guideline_spectrum",
             "guideline_restwave",
@@ -276,11 +281,14 @@ class StageOne(HubbleStage):
             self.story_state.step_index = self.stage_state.step_markers.index(new)
         if advancing and old == "sel_gal3":
             self.galaxy_table.selected = []
+            self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
         if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
             self.stage_state.marker = "mee_spe1"
             self.stage_state.spec_viewer_reached = True
         if advancing and old == "dop_cal2":
             self.galaxy_table.selected = []
+            self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
+            self.selection_tool
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
@@ -328,11 +336,13 @@ class StageOne(HubbleStage):
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")
         self.galaxy_table.selected = []
+        self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
         self.stage_state.marker = "sel_gal3"  
 
     def vue_select_galaxies(self, _args=None):
         self._select_from_data("SDSS_all_sample_filtered")
         self.galaxy_table.selected = []
+        self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
         self.stage_state.marker = "sel_gal3"        
 
     def update_spectrum_viewer(self, name, z):

@@ -1,13 +1,15 @@
 <template>
-  <scaffold-alert
-    header-text="Select Five Galaxies"
-    @back="
-      state.marker = 'mee_gui1';
-    "
-    @next="
-      state.marker = 'sel_gal2';
-    "
+  <v-alert
+    color="info"
+    class="mb-4 mx-auto"
+    max-width="800"
+    elevation="6"
   >
+    <h3
+      class="mb-4"
+    >
+      Select Five Galaxies
+    </h3>
     <div
       class="mb-4"
     >
@@ -18,5 +20,59 @@
         This Data Story will focus on a nearby subset of galaxies.
       </p>
     </div>
-  </scaffold-alert>
+    
+    <v-divider
+      class="my-4"
+    >
+    </v-divider>
+
+    <v-row
+      align="center"
+      no-gutters
+    >
+      <v-col>
+        <v-btn
+          class="black--text"
+          color="accent"
+          elevation="2"
+          @click="
+            state.marker = 'mee_gui1'
+          "
+        >
+          back
+        </v-btn>
+      </v-col>
+      <v-spacer></v-spacer>
+      <v-col
+        v-if="state.gals_total == 0"
+        class="shrink"
+      >
+        <v-btn
+          class="black--text"
+          color="accent"
+          elevation="2"
+          @click="
+            state.marker = 'sel_gal2'
+          "
+        >
+          next
+        </v-btn>
+      </v-col>
+      <v-col
+        v-if="state.gals_total > 0"
+        class="shrink"
+      >
+        <v-btn
+          class="black--text"
+          color="accent"
+          elevation="2"
+          @click="
+            state.marker = 'sel_gal3'
+          "
+        >
+          next
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-alert>
 </template>
