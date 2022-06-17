@@ -9,7 +9,7 @@ from numpy import isnan
 from numpy.linalg import LinAlgError
 from traitlets import Unicode, HasTraits
 
-from cosmicds.stories.hubbles_law.utils import line_mark
+from cosmicds.stories.hubbles_law.utils import line_mark, age_in_gyr_simple
 
 @viewer_tool
 class LineFitTool(Tool, HubListener, HasTraits):
@@ -113,7 +113,8 @@ class LineFitTool(Tool, HubListener, HasTraits):
         start_x, end_x = self.x_range
         start_y, end_y = y
         slope = fit_line.slope.value
-        label = self.label(slope)
+        age = age_in_gyr_simple(slope)
+        label = self.label(slope, age)
         color = layer.state.color if layer.state.color != '0.35' else 'black'
         line = line_mark(layer, start_x, start_y, end_x, end_y, color, label)
         return line, slope
@@ -126,8 +127,9 @@ class LineFitTool(Tool, HubListener, HasTraits):
             mark.x = self.x_range
             mark.y = fit_line(self.x_range)
             slope = fit_line.slope.value
+            age = age_in_gyr_simple(slope)
             self.slopes[data] = slope
-            label = self.label(slope)
+            label = self.label(slope, age)
             is_label = label is not None
             mark.display_legend = is_label
             mark.labels = [label] if is_label else []
@@ -181,8 +183,8 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def refresh(self):
         self._fit_to_layers()
 
-    def label(self, slope):
-        return 'Slope = %.0f km / s / Mpc' % slope if not isnan(slope) else None
+    def label(self, slope, age):
+        return 'H0=%.0f km/s/Mpc;  %.0f Gyr' % (slope, age) if not isnan(slope) else None
             
     @property
     def line_marks(self):
