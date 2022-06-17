@@ -133,7 +133,7 @@ class StageOne(HubbleStage):
 
     @default('title')
     def _default_title(self):
-        return "Collect Galaxy Data"
+        return "Spectra and Velocities"
 
     @default('subtitle')
     def _default_subtitle(self):

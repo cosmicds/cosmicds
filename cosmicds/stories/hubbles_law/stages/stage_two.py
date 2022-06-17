@@ -49,7 +49,7 @@ class StageState(State):
 
 
 @register_stage(story="hubbles_law", index=2, steps=[
-    "Measure distances"
+    "Measure angular size"
 ])
 class StageTwo(HubbleStage):
 
@@ -59,7 +59,7 @@ class StageTwo(HubbleStage):
 
     @default('title')
     def _default_title(self):
-        return "Another Stage Name"
+        return "Galaxy Distances"
 
     @default('subtitle')
     def _default_subtitle(self):
