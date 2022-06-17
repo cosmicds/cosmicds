@@ -40,6 +40,7 @@ class StageState(State):
     waveline_set = CallbackProperty(False)
     obswaves_total = CallbackProperty(0)
     velocity_button = CallbackProperty(False)
+    velocities_total = CallbackProperty(0)
 
     marker = CallbackProperty("")
     indices = CallbackProperty({})
@@ -243,7 +244,7 @@ class StageOne(HubbleStage):
         ]
         for comp in doppler_components:
             label = f"c-{comp}".replace("_", "-")
-            component = DopplerCalc(comp + ext, path, self.stage_state)
+            component = DopplerCalc(comp + ext, path, self.stage_state, self.story_state)
             self.add_component(component, label=label)
 
         # execute add_student_velocity when student_vel_calc in c-doppler-calc-5-slideshow is updated.
@@ -448,6 +449,7 @@ class StageOne(HubbleStage):
         index = self.galaxy_table.index
         velocity = round(self.stage_state.student_vel)
         self.update_data_value("student_measurements", "velocity", velocity, index)
+        self.stage_state.velocities_total = self.stage_state.velocities_total + 1
 
     @property
     def selection_tool(self):
@@ -521,6 +523,7 @@ class StageOne(HubbleStage):
                     continue
                 velocity = round((3 * (10 ** 5) * (lamb_meas/lamb_obs - 1)),0)
                 self.update_data_value("student_measurements", "velocity", velocity, index)
+                self.stage_state.velocities_total = self.stage_state.velocities_total + 1
         self.story_state.update_student_data()
         table.update_tool(tool)
 
