@@ -73,12 +73,8 @@
 
             <v-list-item-content>
               <v-list-item-title>
-                Nicholas Earl
+                Guest Student {{ student_id }}
               </v-list-item-title>
-              <v-list-item-subtitle>
-                nearl@gluesolutions.io
-              </v-list-item-subtitle
-              >
             </v-list-item-content>
           </v-list-item>
         </v-list>
