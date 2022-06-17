@@ -258,8 +258,7 @@
                         'Interesting that they also got the same result as you. Does that give you more confidence in your conclusions?',
                         'Hmm. That is an unexpected result. It might be helpful to check in with your instructor.',
                         'No problem. Checking the Cosmic Data Stories database, everyone else who has completed this story also found that their galaxies are all moving away from us. Does that give you more confidence in your conclusions?']"
-                      :correct-answers="[0]"
-                      :neutral-answers="[2]"
+                      :neutral-answers="[0,2]"
                       :selected-callback="(state) => { if(state.correct || state.neutral) { max_step_completed = Math.max(max_step_completed, 6); } }" 
                     >
                     </mc-radiogroup>
