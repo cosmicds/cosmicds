@@ -8,16 +8,19 @@
     <h3
       class="mb-4"
     >
-      Stage Two Start
+      Angular Size Measurements
     </h3>
     <div
       class="mb-4"
     >
       <p>
-        lorem ipsum
+        This is the same sky viewer you used earlier to view and choose your galaxies.
       <p>
       </p>
-        lorem ipsum
+        The vertical line on the left tells you the angular size of the patch of sky being displayed.
+      </p>
+      <p>
+        We have added a new tool that you can use to measure the angular sizes of your galaxies.
       </p>
     </div>
     

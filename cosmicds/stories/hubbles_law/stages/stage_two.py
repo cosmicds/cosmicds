@@ -38,6 +38,14 @@ class StageState(State):
 
     })
 
+    csv_highlights = CallbackProperty([
+        'two_sta1'
+    ])
+
+    table_highlights = CallbackProperty([
+
+    ])
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.marker_index = 0
@@ -113,7 +121,7 @@ class StageTwo(HubbleStage):
             Path(__file__).parent.parent / "components" / "generic_state_components" / "stage_two")
         path = join(state_components_dir, "")
         state_components = [
-            "stage_two_start_guidance",
+            "guideline_stage_two_start",
             "stage_two_holder_alert"
         ]
         ext = ".vue"

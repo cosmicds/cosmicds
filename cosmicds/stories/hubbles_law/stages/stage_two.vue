@@ -5,14 +5,18 @@
         cols="12"
         lg="4"
       >
-        <c-stage-two-start-guidance
+        <c-guideline-stage-two-start
           v-if="stage_state.marker == 'two_sta1'" />
       </v-col>
       <v-col
         cols="12"
         lg="8"
       >
-        <v-card class="align-self-stretch">
+        <v-card
+          :color="stage_state.csv_highlights.includes(stage_state.marker) ? 'info' : 'black'"
+          :class="stage_state.csv_highlights.includes(stage_state.marker) ? 'pa-1 my-n1' : 'pa-0'"
+          outlined
+        >
           <c-distance-tool />
         </v-card>
       </v-col>
