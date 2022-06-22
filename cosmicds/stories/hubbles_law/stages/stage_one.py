@@ -10,6 +10,9 @@ from numpy import isin
 from random import sample
 from traitlets import default, Bool
 
+import astropy.units as u
+from astropy.coordinates import Angle, SkyCoord
+
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template, update_figure_css
 from cosmicds.stories.hubbles_law.viewers import SpectrumView, spectrum_view
@@ -30,12 +33,14 @@ class StageState(State):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
     gal_selected = CallbackProperty(False)
-    vel_win_opened = CallbackProperty(False)
+    spec_viewer_reached = CallbackProperty(False)
+    spec_tutorial_opened = CallbackProperty(False)
     lambda_used = CallbackProperty(False)
     lambda_on = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     obswaves_total = CallbackProperty(0)
     velocity_button = CallbackProperty(False)
+    velocities_total = CallbackProperty(0)
 
     marker = CallbackProperty("")
     indices = CallbackProperty({})
@@ -76,6 +81,32 @@ class StageState(State):
         'dop_cal0',
     ])
 
+    csv_highlights = CallbackProperty([
+        'sel_gal1',
+        'sel_gal2',
+        'sel_gal3',
+    ])
+
+    table_highlights = CallbackProperty([
+        'cho_row1',
+        'dop_cal3',
+        'dop_cal4',
+        'dop_cal5',
+        'dop_cal6',
+    ])
+
+    spec_highlights = CallbackProperty([
+        'mee_spe1',
+        'res_wav1',
+        'obs_wav1',
+        'obs_wav2',        
+        'rep_rem1',
+        'ref_dat1',
+        'dop_cal0',
+        'dop_cal1',
+        'dop_cal2',
+    ])
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.marker = self.markers[0]
@@ -94,6 +125,7 @@ class StageState(State):
 ])
 class StageOne(HubbleStage):
     show_team_interface = Bool(False).tag(sync=True)
+    START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 
     @default('template')
     def _default_template(self):
@@ -101,7 +133,7 @@ class StageOne(HubbleStage):
 
     @default('title')
     def _default_title(self):
-        return "Collect Galaxy Data"
+        return "Spectra and Velocities"
 
     @default('subtitle')
     def _default_subtitle(self):
@@ -177,22 +209,22 @@ class StageOne(HubbleStage):
             Path(__file__).parent.parent / "components" / "generic_state_components")
         path = join(state_components_dir, "")
         state_components = [
-            "stage_one_start_guidance",
-            "select_galaxies_1_guidance",
-            "select_galaxies_2_guidance",
-            "notice_galaxy_table",
-            "select_galaxies_3_guidance",
-            "choose_row_guidance",
-            "spectrum_guidance",
-            "restwave_guidance",
-            "obswave_1_guidance",
-            "obswave_2_alert",            
-            "remaining_gals_guidance",
-            "reflect_on_data_guidance",
-            "doppler_calc_0_alert",
-            "doppler_calc_1_alert",
-            "doppler_calc_2_alert",
-            "doppler_calc_3_guidance"
+            "guideline_stage_one_start",
+            "guideline_select_galaxies_1",
+            "guideline_select_galaxies_2",
+            "guideline_select_galaxies_3",
+            "guideline_notice_galaxy_table",
+            "guideline_choose_row",
+            "guideline_spectrum",
+            "guideline_restwave",
+            "guideline_obswave_1",
+            "guideline_obswave_2",
+            "guideline_remaining_gals",
+            "guideline_reflect_on_data",
+            "guideline_doppler_calc_0",
+            "guideline_doppler_calc_1",
+            "guideline_doppler_calc_2",
+            "guideline_doppler_calc_3"
         ]
         ext = ".vue"
         for comp in state_components:
@@ -206,17 +238,17 @@ class StageOne(HubbleStage):
         doppler_calc_components_dir = str(Path(__file__).parent.parent / "components" / "doppler_calc_components")
         path = join(doppler_calc_components_dir,"")
         doppler_components = [
-            "doppler_calc_4_component",
-            "doppler_calc_5_slideshow",
-            "doppler_calc_6_component"
+            "guideline_doppler_calc_4",
+            "slideshow_doppler_calc_5",
+            "guideline_doppler_calc_6"
         ]
         for comp in doppler_components:
             label = f"c-{comp}".replace("_", "-")
-            component = DopplerCalc(comp + ext, path, self.stage_state)
+            component = DopplerCalc(comp + ext, path, self.stage_state, self.story_state)
             self.add_component(component, label=label)
 
         # execute add_student_velocity when student_vel_calc in c-doppler-calc-5-slideshow is updated.
-        doppler_slideshow = self.get_component("c-doppler-calc-5-slideshow")
+        doppler_slideshow = self.get_component("c-slideshow-doppler-calc-5")
         doppler_slideshow.observe(self.add_student_velocity, names=["student_vel_calc"])
 
         # Callbacks
@@ -250,10 +282,14 @@ class StageOne(HubbleStage):
             self.story_state.step_index = self.stage_state.step_markers.index(new)
         if advancing and old == "sel_gal3":
             self.galaxy_table.selected = []
+            self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
         if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
             self.stage_state.marker = "mee_spe1"
+            self.stage_state.spec_viewer_reached = True
         if advancing and old == "dop_cal2":
             self.galaxy_table.selected = []
+            self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
+            self.selection_tool
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
@@ -301,11 +337,13 @@ class StageOne(HubbleStage):
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")
         self.galaxy_table.selected = []
+        self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
         self.stage_state.marker = "sel_gal3"  
 
     def vue_select_galaxies(self, _args=None):
         self._select_from_data("SDSS_all_sample_filtered")
         self.galaxy_table.selected = []
+        self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
         self.stage_state.marker = "sel_gal3"        
 
     def update_spectrum_viewer(self, name, z):
@@ -362,6 +400,7 @@ class StageOne(HubbleStage):
 
         if self.stage_state.marker == 'cho_row1':
             self.stage_state.marker = 'mee_spe1'
+            self.stage_state.spec_viewer_reached = True
 
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]
@@ -410,6 +449,7 @@ class StageOne(HubbleStage):
         index = self.galaxy_table.index
         velocity = round(self.stage_state.student_vel)
         self.update_data_value("student_measurements", "velocity", velocity, index)
+        self.stage_state.velocities_total = self.stage_state.velocities_total + 1
 
     @property
     def selection_tool(self):
@@ -483,6 +523,7 @@ class StageOne(HubbleStage):
                     continue
                 velocity = round((3 * (10 ** 5) * (lamb_meas/lamb_obs - 1)),0)
                 self.update_data_value("student_measurements", "velocity", velocity, index)
+                self.stage_state.velocities_total = self.stage_state.velocities_total + 1
         self.story_state.update_student_data()
         table.update_tool(tool)
 

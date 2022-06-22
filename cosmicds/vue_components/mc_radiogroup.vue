@@ -34,10 +34,15 @@
     </v-alert>
     <div
       v-if="scoring && complete"
-      class="text-right">
-      <span class="yellow--text">
+      class="text-right"
+    >
+      <v-chip
+        color="info"
+        dark
+        pill
+      >
         {{ `Score: ${score} ${score == 1 ? 'point' : 'points'}` }}
-      </span>
+      </v-chip>
     </div>
   </v-container>
 </template>

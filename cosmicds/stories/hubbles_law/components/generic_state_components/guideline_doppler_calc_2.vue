@@ -14,17 +14,24 @@
       <p>
         The <strong>Doppler equation</strong> looks like this:
       </p>
-      <div
-        class="JaxEquation"
-      >
-        $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
-      </div>
       <v-card
         outlined
-        class="legend mt-4"
+        class="legend mt-8"
         color="info"
       >
         <v-container>
+          <v-row
+            no-gutters
+          >
+            <v-col>
+              <div
+                class="JaxEquation"
+              >
+                $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
+              </div>
+            </v-col>
+          </v-row>
+          <v-divider></v-divider>
           <v-row
             no-gutters
             class="my-1"
@@ -94,7 +101,7 @@
 <style>
 
 .JaxEquation {
-  margin: 24px 0;
+  margin: 0;
 }
 
 .JaxEquation .MathJax {

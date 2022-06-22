@@ -83,9 +83,7 @@
               </v-btn>
             </span>
           </v-toolbar>
-          <v-card-text
-            class="white black--text"
-          >
+          <v-card-text>
             <v-container>
               <v-row
               >
@@ -101,7 +99,6 @@
                       <v-chip
                         label
                         outlined
-                        color="black"
                       >
                         Pan
                       </v-chip>
@@ -123,7 +120,6 @@
                       <v-chip
                         label
                         outlined
-                        color="black"
                       >
                         Zoom
                       </v-chip>
