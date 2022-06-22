@@ -40,6 +40,7 @@ class StageState(State):
 
     csv_highlights = CallbackProperty([
         'two_sta1',
+        'ang_sca1'
     ])
 
     table_highlights = CallbackProperty([
@@ -122,7 +123,8 @@ class StageTwo(HubbleStage):
         path = join(state_components_dir, "")
         state_components = [
             "guideline_stage_two_start",
-            "guideline_choose_row"
+            "guideline_choose_row",
+            "guideline_angular_scale"
         ]
         ext = ".vue"
         for comp in state_components:

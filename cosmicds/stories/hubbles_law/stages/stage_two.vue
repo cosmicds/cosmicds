@@ -7,6 +7,8 @@
       >
         <c-guideline-stage-two-start
           v-if="stage_state.marker == 'two_sta1'" />
+        <c-guideline-angular-scale
+          v-if="stage_state.marker == 'ang_sca1'" />
       </v-col>
       <v-col
         cols="12"

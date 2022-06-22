@@ -46,7 +46,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'cho_row1'
+            state.marker = 'ang_sca1'
           "
         >
           next
