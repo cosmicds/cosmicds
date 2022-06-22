@@ -8,19 +8,13 @@
     <h3
       class="mb-4"
     >
-      Angular Size Measurements
+      Choose a Galaxy
     </h3>
     <div
       class="mb-4"
     >
       <p>
-        This is the same sky viewer you used earlier to view and choose your galaxies.
-      <p>
-      </p>
-        The vertical line on the left tells you the angular size of the patch of sky being displayed.
-      </p>
-      <p>
-        We have added a new tool that you can use to measure the angular sizes of your galaxies.
+        Click a row in your table to choose one of your galaxies.
       </p>
     </div>
     
@@ -33,6 +27,16 @@
       align="center"
       no-gutters
     >
+        <v-btn
+          class="black--text"
+          color="accent"
+          elevation="2"
+          @click="
+            state.marker = 'two_sta1'
+          "
+        >
+          back
+        </v-btn>
       <v-spacer></v-spacer>
       <v-col
         class="shrink"

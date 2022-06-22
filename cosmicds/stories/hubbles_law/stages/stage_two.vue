@@ -34,8 +34,8 @@
         cols="12"
         lg="4"
       >
-        <c-stage-two-holder-alert
-          v-if="stage_state.marker == 'two_hol1'" />
+        <c-guideline-choose-row
+          v-if="stage_state.marker == 'cho_row1'" />
       </v-col>
       <v-col
         cols="12"
@@ -46,7 +46,8 @@
             class="py-0"
           >
             <v-card
-              class="align-self-stretch"
+              :color="stage_state.table_highlights.includes(stage_state.marker) ? 'info' : 'black'"
+              :class="stage_state.table_highlights.includes(stage_state.marker) ? 'pa-1 my-n1' : 'pa-0'"
               outlined
             >
               <jupyter-widget :widget="widgets.distance_table" />

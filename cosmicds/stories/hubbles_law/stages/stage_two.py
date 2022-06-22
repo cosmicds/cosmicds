@@ -39,11 +39,11 @@ class StageState(State):
     })
 
     csv_highlights = CallbackProperty([
-        'two_sta1'
+        'two_sta1',
     ])
 
     table_highlights = CallbackProperty([
-
+        'cho_row1'
     ])
 
     def __init__(self, *args, **kwargs):
@@ -122,7 +122,7 @@ class StageTwo(HubbleStage):
         path = join(state_components_dir, "")
         state_components = [
             "guideline_stage_two_start",
-            "stage_two_holder_alert"
+            "guideline_choose_row"
         ]
         ext = ".vue"
         for comp in state_components:
