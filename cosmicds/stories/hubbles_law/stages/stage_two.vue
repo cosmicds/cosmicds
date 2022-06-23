@@ -85,6 +85,16 @@
               })
             }
           }" />
+        <c-guideline-estimate-distance2
+          v-if="stage_state.marker == 'est_dis2'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
       </v-col>
       <v-col
         cols="12"

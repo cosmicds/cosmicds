@@ -5,7 +5,7 @@
       state.marker = 'rep_rem1';
     "
     @next="
-      state.marker = 'est_dis1';
+      state.marker = 'est_dis2';
     "
   >
     <div

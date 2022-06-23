@@ -39,7 +39,8 @@ class StageState(State):
         'ang_siz5',
         'ang_siz6',
         'rep_rem1',
-        'est_dis1'
+        'est_dis1',
+        'est_dis2'
     ])
 
     step_markers = CallbackProperty({
@@ -54,7 +55,8 @@ class StageState(State):
         'ang_siz5',
         'ang_siz6',
         'rep_rem1',
-        'est_dis1'
+        'est_dis1',
+        'est_dis2'
     ])
 
     table_highlights = CallbackProperty([
@@ -149,7 +151,8 @@ class StageTwo(HubbleStage):
             "guideline_measuring_tool3",
             "guideline_measuring_tool4",
             "guideline_repeat_remaining_galaxies",
-            "guideline_estimate_distance1"
+            "guideline_estimate_distance1",
+            "guideline_estimate_distance2"
         ]
         ext = ".vue"
         for comp in state_components:
