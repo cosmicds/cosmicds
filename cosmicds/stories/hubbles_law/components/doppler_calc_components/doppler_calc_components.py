@@ -9,6 +9,7 @@ class DopplerCalc(v.VuetifyTemplate):
     length = Int(6).tag(sync=True)
     currentTitle = Unicode("").tag(sync=True)
     state = GlueState().tag(sync=True)
+    story_state = GlueState().tag(sync=True)
     failedValidation4 = Bool(False).tag(sync=True)
     failedValidation5 = Bool(False).tag(sync=True)
     interactSteps5 = List([3,4]).tag(sync=True)
@@ -26,8 +27,9 @@ class DopplerCalc(v.VuetifyTemplate):
     ]
     _default_title = "Doppler Calculation"    
 
-    def __init__(self, filename, path, state, *args, **kwargs):
+    def __init__(self, filename, path, state, story_state, *args, **kwargs):
         self.state = state
+        self.story_state = story_state
         super().__init__(*args, **kwargs)
         self.template = load_template(filename, path)
         self.currentTitle = self._default_title

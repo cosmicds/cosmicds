@@ -1,10 +1,10 @@
 from glue.config import viewer_tool
 from glue.viewers.common.tool import Tool
 
-from traitlets import Bool
+from traitlets import Bool, HasTraits
 
 @viewer_tool
-class InfoTool(Tool):
+class InfoTool(Tool, HasTraits):
 
     tool_id = "cds:info"
     action_text = "Show information"

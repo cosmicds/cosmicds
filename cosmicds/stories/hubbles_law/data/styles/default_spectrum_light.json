@@ -1,0 +1,52 @@
+{
+    "figure": {
+      "background_style": {
+        "fill": "#fffef5"
+      },
+      "fig_margin": {
+        "left": 100,
+        "bottom": 60,
+        "top": 10,
+        "right": 10
+      },
+      "axes": [
+        {
+          "tick_format": ",.0f",
+          "tick_style": {
+            "font-size": "1.5em",
+            "color": "Black",
+            "fill": "Black"
+          },
+          "label_offset": "3em",
+          "label": "Wavelength (Angstroms)",
+          "color": "Black",
+          "label_color": "Black",
+          "grid_color": "Black"
+        },
+        {
+          "tick_format": ",.0f",
+          "tick_style": {
+            "font-size": "1.5em",
+            "color": "Black",
+            "fill": "Black"
+          },
+          "label_offset": "3.5em",
+          "label": "Brightness",
+          "color": "Black",
+          "label_color": "Black",
+          "grid_color": "Black"
+        }
+      ]
+    },
+    "viewer": {
+      "scatter": {
+        "stroke_width": 2,
+        "enable_hover": true
+      },
+      "state": {
+        "size": 3,
+        "color": "gray"
+      }
+    }
+  }
+  

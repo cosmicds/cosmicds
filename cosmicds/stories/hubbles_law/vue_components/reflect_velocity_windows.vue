@@ -35,7 +35,7 @@
           <v-spacer></v-spacer>
           <!-- @click="() => { dialog = false; if (step == 7)  {step = 0}; }" -->
           <span
-            @click="() => { $emit('submit'); dialog = false; step = 0; reflection_complete = true}"
+            @click="() => { $emit('submit'); dialog = false; reflection_complete = true}"
           >
             <v-btn
               icon
@@ -101,7 +101,7 @@
                       How do the observed wavelengths of your galaxies' spectral lines compare with their rest wavelengths?
                     </p>
                     <p>
-                      Choose the best response below.
+                      Choose the best response below. (Note: You can grab this pop-up by the header and move it to the side if you want to see content behind it.)
                     </p>
                     <mc-radiogroup
                       :radio-options="[
@@ -117,7 +117,7 @@
                         'Try again. For each galaxy (a row in the table), compare the values for rest wavelength (column 3) and observed wavelength (column 4).'
                       ]"
                       :correct-answers="[1]"
-                      :selected-callback="(index) => { if([1].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 2); } }"
+                      :selected-callback="(state) => { if(state.correct) { max_step_completed = Math.max(max_step_completed, 2); } }"
                     >
                     </mc-radiogroup>
                   </v-col>
@@ -154,7 +154,7 @@
                         'Try again. Recall that when the observed wavelength is LONGER than the rest wavelength, this indicates motion AWAY from the observer.'
                       ]"
                       :correct-answers="[1]"
-                      :selected-callback="(index) => { if([1].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 3); } }"  
+                      :selected-callback="(state) => { if(state.correct) { max_step_completed = Math.max(max_step_completed, 3); } }"
                     >
                     </mc-radiogroup>
                   </v-col>
@@ -190,7 +190,7 @@
                       ]"
                       :correct-answers="[1]"
                       :neutral-answers="[2]"
-                      :selected-callback="(index) => { if([1,2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 4); } }"  
+                      :selected-callback="(state) => { if(state.correct || state.neutral) { max_step_completed = Math.max(max_step_completed, 4); } }"  
                     >
                     </mc-radiogroup>
                   </v-col>
@@ -225,7 +225,7 @@
                         'That\'s fair. With only 5 galaxies, it is difficult to draw strong conclusions about the motion of galaxies. However, note that your galaxies all seem to be moving in the same direction (away from us). If galaxies move randomly, you would expect some to be moving toward us and some to be moving away.'
                       ]"
                       :neutral-answers='[0,1,2]'
-                      :selected-callback="(index) => { if([0,1,2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 5); } }" 
+                      :selected-callback="(state) => { if(state.neutral) { max_step_completed = Math.max(max_step_completed, 5); } }" 
                     >
                     </mc-radiogroup>
                   </v-col>
@@ -258,9 +258,8 @@
                         'Interesting that they also got the same result as you. Does that give you more confidence in your conclusions?',
                         'Hmm. That is an unexpected result. It might be helpful to check in with your instructor.',
                         'No problem. Checking the Cosmic Data Stories database, everyone else who has completed this story also found that their galaxies are all moving away from us. Does that give you more confidence in your conclusions?']"
-                      :correct-answers="[0]"
-                      :neutral-answers="[2]"
-                      :selected-callback="(index) => { if([0,2].includes(index)) { this.max_step_completed = Math.max(this.max_step_completed, 6); } }" 
+                      :neutral-answers="[0,2]"
+                      :selected-callback="(state) => { if(state.correct || state.neutral) { max_step_completed = Math.max(max_step_completed, 6); } }" 
                     >
                     </mc-radiogroup>
                   </v-col>

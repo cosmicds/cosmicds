@@ -8,17 +8,16 @@
     <h3
       class="mb-4"
     >
-      Reflect on Your Data
+      Select Five Galaxies
     </h3>
-
     <div
       class="mb-4"
     >
       <p>
-        As scientists do, let’s examine what conclusions you might draw from your data.
+        This is a view of the cosmic sky, like the one you explored in the introduction. This view shows a more modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. 
       </p>
       <p>
-        Click the <strong>REFLECT</strong> button to complete the reflection sequence before moving on.
+        This Data Story will focus on a nearby subset of galaxies.
       </p>
     </div>
     
@@ -37,7 +36,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'rep_rem1'
+            state.marker = 'mee_gui1'
           "
         >
           back
@@ -45,18 +44,7 @@
       </v-col>
       <v-spacer></v-spacer>
       <v-col
-        v-if="!state.reflection_complete"
-        cols="6"
-        class="shrink"
-      >
-        <div
-          style="font-size: 16px;"
-        >
-          Click the <strong>REFLECT</strong> button.
-        </div>
-      </v-col>
-      <v-col
-        v-if="state.reflection_complete"
+        v-if="state.gals_total == 0"
         class="shrink"
       >
         <v-btn
@@ -64,7 +52,22 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'dop_cal0'
+            state.marker = 'sel_gal2'
+          "
+        >
+          next
+        </v-btn>
+      </v-col>
+      <v-col
+        v-if="state.gals_total > 0"
+        class="shrink"
+      >
+        <v-btn
+          class="black--text"
+          color="accent"
+          elevation="2"
+          @click="
+            state.marker = 'sel_gal3'
           "
         >
           next

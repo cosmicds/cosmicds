@@ -1,30 +1,33 @@
+import json
+
 import ipyvue as v
 import astropy.units as u
 
 from astropy.table import Table
-from astropy.coordinates import SkyCoord
+from astropy.coordinates import Angle, SkyCoord
 from cosmicds.utils import load_template
-from cosmicds.stories.hubbles_law.utils import FULL_FOV, GALAXY_FOV
+from cosmicds.stories.hubbles_law.utils import FULL_FOV, GALAXY_FOV, format_fov, angle_to_json, angle_from_json
 from ipywidgets import DOMWidget, widget_serialization
 from pandas import DataFrame
 from pywwt.jupyter import WWTJupyterWidget
-from traitlets import Dict, Instance, Int, Bool
+from traitlets import Dict, Instance, Int, Bool, Unicode, observe
 
 from glue_jupyter.state_traitlets_helpers import GlueState
 
 from cosmicds.utils import API_URL
+from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
 import requests
 class SelectionTool(v.VueTemplate):
     template = load_template("selection_tool.vue", __file__, traitlet=True).tag(sync=True)
     widget = Instance(DOMWidget, allow_none=True).tag(sync=True, **widget_serialization)
     current_galaxy = Dict().tag(sync=True)
+    candidate_galaxy = Dict().tag(sync=True)
     selected_count = Int().tag(sync=True)
     dialog = Bool(False).tag(sync=True)
-
+    flagged = Bool(False).tag(sync=True)
     state = GlueState().tag(sync=True)
 
-
-
+    UPDATE_TIME = 1 #seconds
     START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 
     def __init__(self, data, state, *args, **kwargs):
@@ -46,6 +49,7 @@ class SelectionTool(v.VueTemplate):
         self.selected_data = DataFrame()
         self.selected_layer = None
         self.current_galaxy = {}
+        self.candidate_galaxy = {}
         self._on_galaxy_selected = None
 
         def wwt_cb(wwt, updated):
@@ -60,6 +64,10 @@ class SelectionTool(v.VueTemplate):
             fov = min(wwt.get_fov(), GALAXY_FOV)
             self.go_to_location(galaxy["ra"], galaxy["decl"], fov=fov)
             self.current_galaxy = galaxy
+            self.candidate_galaxy = galaxy
+            gal_names = [k for k in self.selected_data["name"]]
+            if self.current_galaxy["name"] in gal_names:
+                self.candidate_galaxy = {}
             self.state.gal_selected = True
 
         self.widget.set_selection_change_callback(wwt_cb)
@@ -91,10 +99,12 @@ class SelectionTool(v.VueTemplate):
     def vue_select_current_galaxy(self, _args=None):
         self.select_galaxy(self.current_galaxy)
         self.current_galaxy = {}
+        self.candidate_galaxy = {}
 
     def vue_reset(self, _args=None):
         self.widget.center_on_coordinates(self.START_COORDINATES, fov=FULL_FOV, instant=True)
         self.current_galaxy = {}
+        self.candidate_galaxy = {}
         self.state.gal_selected = False
 
     def go_to_location(self, ra, dec, fov=GALAXY_FOV):
@@ -104,6 +114,16 @@ class SelectionTool(v.VueTemplate):
             self.motions_left -= 1
         self.widget.center_on_coordinates(coordinates, fov=fov, instant=instant)
 
-    def vue_mark_galaxy_bad(self, _args=None):
-        data = { "galaxy_id" : self.current_galaxy["id"] }
-        requests.put(f"{API_URL}/mark-galaxy-bad", json=data)
+    @observe('flagged')
+    def mark_galaxy_bad(self, change):
+        if not change["new"]:
+            return
+        if self.current_galaxy["id"]:
+            data = { "galaxy_id" : int(self.current_galaxy["id"]) }
+        else:
+            name = self.current_galaxy["name"]
+            if not name.endswith(".fits"):
+                name += ".fits"
+            data = { "galaxy_name" : name }
+        requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/mark-galaxy-bad", json=data)
+

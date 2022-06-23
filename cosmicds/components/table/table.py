@@ -6,12 +6,13 @@ from glue.core.message import (DataCollectionAddMessage, DataCollectionDeleteMes
 from glue.core import HubListener
 from glue.core.subset import SubsetState
 from ipyvuetify import VuetifyTemplate
-from traitlets import Bool, List, Unicode, observe
+from traitlets import Bool, Dict, List, Unicode, observe, HasTraits
 
 from ...utils import convert_material_color, load_template
 
 __all__ = ['Table']
 
+_DEFAULT_TRANSFORM = lambda x: x
 
 class Table(VuetifyTemplate, HubListener):
     default_color = 'dodgerblue'
@@ -26,19 +27,32 @@ class Table(VuetifyTemplate, HubListener):
     sel_color = Unicode().tag(sync=True)
     sort_by = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
+    tools = Dict(default_value={}).tag(sync=True)
     use_search = Bool(False).tag(sync=True)
-    
 
-    def __init__(self, session, data, *args, **kwargs):
+    def __init__(self, session, data, tools=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._session = session
+        self.tool_functions = {}
         self._subset = kwargs.get('subset', None) # Can be either a subset or subset group
         self._is_subset_group = isinstance(self._subset, SubsetGroup)
         if self._subset is not None:
             self._subset_label = self._subset.label
         else:
             self._subset_label = kwargs.get("subset_label", "selected")
+
+        # TODO - JC: At some point in the future, explore making
+        # these regular glue tools
+        if tools:
+            for tool in tools:
+                tool_id = tool["id"]
+                self.tool_functions[tool_id] = tool["activate"]
+                del tool["activate"]
+                self.tools = {
+                    tool_id: tool,
+                    **self.tools
+                }
 
         self.subset_color = kwargs.get('color', Table.default_color)
         self.use_subset_group = kwargs.get('use_subset_group', True)
@@ -56,6 +70,7 @@ class Table(VuetifyTemplate, HubListener):
         self._data_collection_delete_filter = lambda message: message.data == self._glue_data
         self._data_update_filter = lambda message: message.data == self._glue_data and message.attribute in self._glue_components
         self._data_changed_filter = lambda message: message.data == self._glue_data
+        self._transforms = kwargs.get('transforms', {})
 
         def subset_changed_filter(message):
             if self._is_subset_group:
@@ -137,16 +152,19 @@ class Table(VuetifyTemplate, HubListener):
         mask = state.to_mask(self._glue_data)
         return [item for index, item in enumerate(self.items) if mask[index]]
 
+    def _transform(self, component):
+        return self._transforms.get(component, _DEFAULT_TRANSFORM)
+
     def _populate_table(self):
         df = self._glue_data.to_dataframe()
         self.headers = [{
-            'text': self._glue_component_names[index],
-            'value': self._glue_components[index]
-        } for index in range(len(self._glue_components))]
+            'text':  name,
+            'value': component
+        } for name, component in zip(self._glue_component_names, self._glue_components)]
         self.headers[0]['align'] = 'start'
         self.items = [
             {
-                component : getattr(row, component, None) for component in self._glue_components
+                component : self._transform(component)(getattr(row, component, None)) for component in self._glue_components
             } for row in df.itertuples()
         ]
 
@@ -211,7 +229,7 @@ class Table(VuetifyTemplate, HubListener):
 
     @property
     def index(self):
-        if self.single_select:
+        if self.single_select and len(self.indices) > 0:
             return self.indices[0]
         return None
 
@@ -242,4 +260,17 @@ class Table(VuetifyTemplate, HubListener):
         # which is empty is there isn't a sort field selected
         # We default to the key component
         self.sort_by = field[0] if len(field) > 0 else self.key_component
+
+    def update_tool(self, tool):
+        self.send({"method": "update_tool", "args": [tool]})
+
+    def get_tool(self, tool_id):
+        return self.tools[tool_id]
         
+    def vue_activate_tool(self, tool_id):
+        tool = self.get_tool(tool_id)
+        func = self.tool_functions.get(tool_id, None)
+        if tool and func:
+            func(self, tool)
+            self.update_tool(tool)
+            

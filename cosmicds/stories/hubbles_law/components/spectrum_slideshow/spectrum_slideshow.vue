@@ -3,9 +3,9 @@
     block
     color="secondary"
     elevation="2"
-    @click.stop="() => { dialog = true; state.vel_win_opened = true }"
+    @click.stop="() => { dialog = true; state.spec_tutorial_opened = true }"
   >
-    Learn More
+    Spectrum tutorial
 
     <v-dialog
         v-model="dialog"
@@ -78,10 +78,7 @@
                         >
                           A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
                         </v-card-text>
-                      </v-card>            
-                      <p>
-                        The figure illustrates light passing through a diffraction grating (1) and a prism (2).
-                      </p>
+                      </v-card>
                       <p>
                         Diffraction gratings and prisms &#8212; and raindrops, bubbles, and oil slicks &#8212; create spectra because they bend light of different colors by different amounts. See link for more details.
                       </p>
@@ -89,6 +86,9 @@
                         class="text-center grey--text"
                       >
                         [ Insert link as described above ]
+                      </p>         
+                      <p>
+                        The figure illustrates light passing through a diffraction grating (1) and a prism (2).
                       </p>
                     </div>
                   </v-col>
@@ -97,6 +97,7 @@
                     offset="1"
                   >
                     <v-img
+                      id="grating_and_prism"
                       class="mb-4 mx-a mt-n3"
                       contain
                       :src="`${state.image_location}/refraction_diffraction_spectra.png`"
@@ -124,18 +125,6 @@
                       Spectrum images and graphs
                     </h3>
                     <div>
-                      <v-card
-                        class="mt-auto mb-4"
-                        flat
-                        color="secondary lighten-3"
-                        light
-                      >                  
-                        <v-card-text
-                          class="black--text"
-                        >
-                          A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
-                        </v-card-text>
-                      </v-card>
                       <p>
                         The graphics to the right show sample spectra for two different types of light bulbs.
                       </p>
@@ -152,7 +141,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>Light spectrum for LED bulb</h4>
                       <v-img
@@ -186,18 +175,6 @@
                   >
                     <h3 class="mb-4">Interpreting spectrum graphs</h3>
                     <div>
-                      <v-card
-                        class="mt-auto mb-4"
-                        flat
-                        color="secondary lighten-3"
-                        light
-                      >                  
-                        <v-card-text
-                          class="black--text"
-                        >
-                          A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
-                        </v-card-text>
-                      </v-card>
                       <p>
                         Examine the highlighted regions in the graphics to the right.
                       </p>
@@ -214,7 +191,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>Light spectrum for LED bulb</h4>
                       <v-img
@@ -248,18 +225,6 @@
                   >
                     <h3 class="mb-4">Interpreting spectrum graphs</h3>
                     <div>
-                      <v-card
-                        class="mt-auto mb-4"
-                        flat
-                        color="secondary lighten-3"
-                        light
-                      >                  
-                        <v-card-text
-                          class="black--text"
-                        >
-                          A <strong>spectrum</strong> is created when you pass light from a source through a spectrograph. A <strong>spectrograph</strong> separates the light into its different colors (like a rainbow) and measures how much light there is at each color (i.e. wavelength).
-                        </v-card-text>
-                      </v-card>
                       <p>
                         Examine the highlighted regions in the graphics to the right.
                       </p>
@@ -276,7 +241,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>Light spectrum for LED bulb</h4>
                       <v-img
@@ -326,7 +291,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>
                         Doppler shift
@@ -372,7 +337,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>
                         Doppler shift
@@ -518,7 +483,7 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
                       <h4>Hydrogen emission spectrum</h4>
                       <v-img
@@ -548,6 +513,9 @@
                   <v-col
                     cols="12"
                   >
+                    <h3 class="mb-4">
+                      Rest vs. Observed Wavelengths
+                    </h3>
                     <p>
                       Since we know the wavelengths emitted or absorbed by an element when it is not moving, we can use these <strong>rest wavelengths</strong> as a reference to compare against the <strong>observed wavelengths</strong> of the light when an object <em>is</em> moving.
                     </p>
@@ -562,16 +530,21 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
-                      <p
+                      <div
                         class="pa-3"
                       >
-                        The dotted line shows the rest wavelength of a hydrogen line known as <strong>H-&alpha;</strong> (pronounced "H alpha"). The solid line shows the observed wavelength of the H-&alpha; line.
-                      </p>
+                        <h4>
+                          Looking for the H-&alpha; emission line
+                        </h4>
+                        <p>
+                          The dotted line shows the rest wavelength of a hydrogen line known as <strong>H-&alpha;</strong> (pronounced "H alpha"). The solid line shows the observed wavelength of the H-&alpha; line.
+                        </p>
+                      </div>
                       <v-img
                         contain
-                        :src="`${state.image_location}/restobs1_dotted_spectool.png`"
+                        :src="`${state.image_location}/restobs1_dotted.png`"
                       >
                       </v-img>
                     </v-card>
@@ -590,6 +563,9 @@
                   <v-col
                     cols="12"
                   >
+                    <h3 class="mb-4">
+                      Rest vs. Observed Wavelengths
+                    </h3>
                     <p>
                       Since we know the wavelengths emitted or absorbed by an element when it is not moving, we can use these <strong>rest wavelengths</strong> as a reference to compare against the <strong>observed wavelengths</strong> of the light when an object <em>is</em> moving.
                     </p>
@@ -604,16 +580,21 @@
                       color="white"
                       light
                       outlined
-                      class="my-n3 pa-3"
+                      class="mt-n3 pa-3"
                     >
-                      <p
+                      <div
                         class="pa-3"
                       >
-                        The dotted line shows the rest wavelength of a magnesium line known as <strong>Mg I</strong> (pronounced "magnesium one"). The solid line shows the observed wavelength of the Mg I line.
-                      </p>
+                        <h4>
+                          Looking for the Mg I absorption line
+                        </h4>
+                        <p>
+                          The dotted line shows the rest wavelength of a magnesium line known as <strong>Mg I</strong> (pronounced "magnesium one"). The solid line shows the observed wavelength of the Mg I line.
+                        </p>
+                      </div>
                       <v-img
                         contain
-                        :src="`${state.image_location}/restobs2_dotted_spectool.png`"
+                        :src="`${state.image_location}/restobs2_dotted.png`"
                       >
                       </v-img>
                     </v-card>
@@ -649,7 +630,7 @@
                     <h3 class="text-h6 font-weight-light mb-2">
                       You're ready to start measuring galaxy velocities now.
                     </h3>
-                    <span class="text-caption grey--text">Click the LEARN MORE button again if you'd like to come back for a refresher.</span>
+                    <span class="text-caption grey--text">Click the <strong>SPECTRUM TUTORIAL</strong> button again if you'd like to come back for a refresher.</span>
                   </v-col>
                 </v-row>
               </v-container>
@@ -720,5 +701,9 @@
 <style>
 .no-transition {
   transition: none !important;
+}
+
+#grating_and_prism .v-image__image {
+  border-radius: 4px;
 }
 </style>

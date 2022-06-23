@@ -8,14 +8,16 @@
     <h3
       class="mb-4"
     >
-      Table Data
+      Introducing the Guidelines
     </h3>
     <div
-      v-if="state.gals_total == 1 & !state.gal_selected"
       class="mb-4"
     >
       <p>
-        Notice that your My Galaxies table now has a row for your selected galaxy.
+        You will explore your data through different representations, including spatial images, tables, spectrum graphs, and scatter plots.
+      <p>
+      </p>
+        <strong>Guidelines</strong> for your exploration will appear in these orange boxes. Next to them you will find relevant data views, highlighted with an orange background.
       </p>
     </div>
     
@@ -28,18 +30,6 @@
       align="center"
       no-gutters
     >
-      <v-col>
-        <v-btn
-          class="black--text"
-          color="accent"
-          elevation="2"
-          @click="
-            state.marker = 'sel_gal1'
-          "
-        >
-          back
-        </v-btn>
-      </v-col>
       <v-spacer></v-spacer>
       <v-col
         class="shrink"
@@ -49,7 +39,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'sel_gal3'
+            state.marker = 'sel_gal1'
           "
         >
           next

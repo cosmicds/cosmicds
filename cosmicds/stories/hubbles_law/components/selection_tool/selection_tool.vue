@@ -28,7 +28,7 @@
             v-bind="attrs"
             v-on="on"
             :disabled="Object.keys(current_galaxy).length == 0"
-            @click="mark_galaxy_bad()"
+            @click="flagged = true"
           >
             <v-icon>mdi-flag</v-icon>
           </v-btn>
@@ -83,15 +83,13 @@
               </v-btn>
             </span>
           </v-toolbar>
-          <v-card-text
-            class="white black--text"
-          >
+          <v-card-text>
             <v-container>
               <v-row
               >
                 <v-col>
                   <p>
-                    The Comsic Sky Viewer shows a modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. The green dots mark the locations of galaxies you can collect data for.
+                    The Cosmic Sky Viewer shows a modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. The green dots mark the locations of galaxies you can collect data for.
                   </p>
                   <v-row>
                     <v-col
@@ -101,7 +99,6 @@
                       <v-chip
                         label
                         outlined
-                        color="black"
                       >
                         Pan
                       </v-chip>
@@ -123,7 +120,6 @@
                       <v-chip
                         label
                         outlined
-                        color="black"
                       >
                         Zoom
                       </v-chip>
@@ -145,12 +141,15 @@
       </v-dialog>
 
     </v-toolbar>
-    <jupyter-widget
-      :widget="widget"
-      class="wwt-widget"
-    />
-    <v-tooltip top>
-      <template v-slot:activator="{ on, attrs }">
+    <div class="selection-content">
+        <v-lazy>
+          <jupyter-widget
+            :widget="widget"
+            class="wwt-widget"
+          />
+        </v-lazy>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
         <v-fab-transition>
           <v-btn
             fab
@@ -162,7 +161,7 @@
             class="selection-fab black--text"
             v-bind="attrs"
             v-on="on"
-            v-show="Object.keys(current_galaxy).length !== 0"
+            v-show="Object.keys(candidate_galaxy).length !== 0"
             @click="select_current_galaxy()">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
@@ -199,8 +198,15 @@
   width: 100%;
 }
 
+.selection-content {
+  width: 100%;
+  height: 400px;
+}
+
 .wwt-widget {
   height: 400px;
+  width: 100%;
+  position: absolute;
 }
 
 .selection-fab {

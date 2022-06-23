@@ -1,8 +1,6 @@
-from glue.core.message import NumericalDataChangedMessage
 from glue.viewers.scatter.state import ScatterViewerState
 from glue_jupyter.bqplot.scatter import BqplotScatterView, BqplotScatterLayerArtist
 from bqplot.marks import Lines
-from bqplot_image_gl import LinesGL
 from bqplot import Label
 from echo import add_callback, delay_callback
 from glue.config import viewer_tool
@@ -12,13 +10,13 @@ from traitlets import Bool
 from cosmicds.components.toolbar import Toolbar
 from cosmicds.stories.hubbles_law.utils import H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
-__all__ = ['SpectrumView', 'SpectrumViewerState']
+__all__ = ['SpectrumView', 'SpectrumViewLayerArtist', 'SpectrumViewerState']
 
 
 class SpectrumViewerState(ScatterViewerState):
 
     def reset_limits(self):
-        with delay_callback(self, 'y_min', 'y_max'):
+        with delay_callback(self, 'x_min', 'x_max', 'y_min', 'y_max'):
             super().reset_limits()
             self.y_max = 1.40 * self.y_max
 
@@ -28,7 +26,7 @@ class SpectrumViewLayerArtist(BqplotScatterLayerArtist):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         old_scatter = self.scatter
-        self.scatter = Lines(scales=self.scales, x=[0,1], y=[0,1])
+        self.scatter = Lines(scales=self.scales, x=[0,1], y=[0,1], marker=None)
         self.view.figure.marks = list(filter(lambda x: x is not old_scatter, self.view.figure.marks)) + [self.scatter]
         
 class SpectrumView(BqplotScatterView):
@@ -37,7 +35,7 @@ class SpectrumView(BqplotScatterView):
     _subset_artist_cls = SpectrumViewLayerArtist
 
     inherit_tools = False
-    tools = ['bqplot:home', 'hubble:wavezoom', 'hubble:restwave', 'cds:info']
+    tools = ['bqplot:home', 'hubble:wavezoom', 'hubble:restwave', 'hubble:specflag', 'cds:info']
     _state_cls = SpectrumViewerState
     show_line = Bool(True)
     LABEL = "Spectrum Viewer"
@@ -134,16 +132,22 @@ class SpectrumView(BqplotScatterView):
         new_x = event['domain']['x']
         pixel_x = event['pixel']['x']
         self.resolution = (new_x - self.state.x_min) / pixel_x
-        self.user_line_label.text = [f"{new_x:.0f}"]
+        self.user_line_label.text = [f"{new_x:.0f} Å"]
 
         self.user_line.x = [new_x, new_x]
         self.user_line_label.x = [new_x, new_x]
 
-    def update(self, element, z):
+    def update(self, name, element, z):
+        self.spectrum_name = name
         self.element = element
         self.z = z
         rest = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
         self.shifted = rest * (1 + z)
+        items_visible = bool(z > 0) # The bqplot Mark complained without the explicit bool() call
+        self.element_label.visible = items_visible
+        self.element_tick.visible = items_visible
+        self.user_line.visible = items_visible
+        self.user_line_label.visible = items_visible
         self.element_label.x = [self.shifted, self.shifted]
         self.element_label.text = [element]
         self.element_tick.x = [self.shifted, self.shifted]
@@ -174,4 +178,3 @@ class SpectrumView(BqplotScatterView):
     @property
     def line_visible(self):
         return self.user_line.visible
-

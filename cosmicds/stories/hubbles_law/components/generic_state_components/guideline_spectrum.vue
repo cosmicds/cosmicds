@@ -8,20 +8,30 @@
     <h3
       class="mb-4"
     >
-      Reflect on Your Data
+      Meet the Spectrum Viewer
     </h3>
-
     <div
       class="mb-4"
+      v-if="!state.spec_tutorial_opened"
     >
       <p>
-        As scientists do, let’s examine what conclusions you might draw from your data.
+        Here is a spectrum of light measured from your chosen galaxy.
       </p>
       <p>
-        Click the <strong>REFLECT</strong> button to complete the reflection sequence before moving on.
+        Not familiar with spectra? Click the <strong>SPECTRUM TUTORIAL</strong> button to learn what spectra can tell us about galaxies.
       </p>
     </div>
-    
+    <div
+      class="mb-4"
+      v-if="state.spec_tutorial_opened"
+    >
+      <p>
+        Here is a spectrum of light measured from your chosen galaxy.
+      </p>
+      <p>
+        You can reopen the <strong>SPECTRUM TUTORIAL</strong> any time you need a refresher about spectra.
+      </p>
+    </div>
     <v-divider
       class="my-4"
     >
@@ -37,34 +47,36 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'rep_rem1'
+            state.marker = 'cho_row1';
+            state.spectrum_tool_visible = 0;
           "
         >
           back
         </v-btn>
       </v-col>
       <v-spacer></v-spacer>
+      
       <v-col
-        v-if="!state.reflection_complete"
-        cols="6"
+        cols="7"
         class="shrink"
+        v-if="!state.spec_tutorial_opened"
       >
         <div
           style="font-size: 16px;"
         >
-          Click the <strong>REFLECT</strong> button.
+          Click the <strong>SPECTRUM TUTORIAL</strong> button.
         </div>
       </v-col>
       <v-col
-        v-if="state.reflection_complete"
         class="shrink"
+        v-if="state.spec_tutorial_opened"
       >
         <v-btn
           class="black--text"
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'dop_cal0'
+            state.marker = 'res_wav1';
           "
         >
           next
