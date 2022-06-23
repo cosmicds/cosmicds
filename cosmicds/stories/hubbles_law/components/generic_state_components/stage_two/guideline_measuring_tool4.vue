@@ -5,7 +5,7 @@
       state.marker = 'ang_siz5';
     "
     @next="
-      state.marker = 'ang_siz6';
+      state.marker = 'rep_rem1';
     "
   >
     <div
