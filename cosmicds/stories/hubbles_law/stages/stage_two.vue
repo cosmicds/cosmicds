@@ -25,8 +25,18 @@
               })
             }
           }" />
-        <c-guideline-measuring-tool
+        <c-guideline-measuring-tool1
           v-if="stage_state.marker == 'ang_siz3'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
+        <c-guideline-measuring-tool2
+          v-if="stage_state.marker == 'ang_siz4'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
               entries[0].target.scrollIntoView({

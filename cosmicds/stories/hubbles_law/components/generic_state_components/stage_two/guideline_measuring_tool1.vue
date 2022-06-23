@@ -2,10 +2,10 @@
   <scaffold-alert
     header-text="Angular Size Measurement"
     @back="
-      state.marker = 'ang_siz1';
+      state.marker = 'ang_siz2';
     "
     @next="
-      state.marker = 'ang_siz3';
+      state.marker = 'ang_siz4';
     "
   >
     <div
