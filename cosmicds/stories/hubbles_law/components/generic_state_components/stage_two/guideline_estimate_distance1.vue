@@ -1,8 +1,8 @@
 <template>
   <scaffold-alert
-    header-text="Repeat for Remaining Galaxies"
+    header-text="Estimate Distance"
     @back="
-      state.marker = 'ang_siz6';
+      state.marker = 'rep_rem1';
     "
     @next="
       state.marker = 'est_dis1';
@@ -12,7 +12,7 @@
       class="mb-4"
     >
       <p>
-        Repeat the angular size measurements for your remaining galaxies.
+        Now that you have an angular size measurement for each galaxy, let’s estimate how far away they are.
       </p>
     </div>
   </scaffold-alert>
