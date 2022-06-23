@@ -6,9 +6,35 @@
         lg="4"
       >
         <c-guideline-stage-two-start
-          v-if="stage_state.marker == 'two_sta1'" />
+          v-if="stage_state.marker == 'ang_siz1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
         <c-guideline-angular-scale
-          v-if="stage_state.marker == 'ang_sca1'" />
+          v-if="stage_state.marker == 'ang_siz2'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
+        <c-guideline-measuring-tool
+          v-if="stage_state.marker == 'ang_siz3'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
       </v-col>
       <v-col
         cols="12"
@@ -37,7 +63,15 @@
         lg="4"
       >
         <c-guideline-choose-row
-          v-if="stage_state.marker == 'cho_row1'" />
+          v-if="stage_state.marker == 'cho_row1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
       </v-col>
       <v-col
         cols="12"

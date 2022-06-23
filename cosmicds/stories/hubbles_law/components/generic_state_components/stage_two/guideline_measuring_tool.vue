@@ -2,7 +2,7 @@
   <scaffold-alert
     header-text="Angular Size Measurement"
     @back="
-      state.marker = 'cho_row1';
+      state.marker = 'ang_siz1';
     "
     @next="
       state.marker = 'ang_siz3';
@@ -12,10 +12,7 @@
       class="mb-4"
     >
       <p>
-        Your galaxy now appears in the sky viewer. 
-      </p>
-      <p>
-        Notice that the angular scale of the sky viewer window changes as you zoom towards or away from  your galaxy.
+        Click the <v-icon>mdi-ruler</v-icon> icon to activate the angular size measuring tool.
       </p>
     </div>
   </scaffold-alert>

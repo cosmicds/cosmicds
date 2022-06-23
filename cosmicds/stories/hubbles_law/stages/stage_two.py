@@ -31,8 +31,10 @@ class StageState(State):
     distance_sidebar = CallbackProperty(False)
 
     markers = CallbackProperty([
-        'two_sta1',
-        'two_hol1'
+        'ang_siz1',
+        'cho_row1',
+        'ang_siz2',
+        'ang_siz3'
     ])
 
     step_markers = CallbackProperty({
@@ -40,8 +42,9 @@ class StageState(State):
     })
 
     csv_highlights = CallbackProperty([
-        'two_sta1',
-        'ang_sca1'
+        'ang_siz1',
+        'ang_siz2',
+        'ang_siz3'
     ])
 
     table_highlights = CallbackProperty([
@@ -130,7 +133,8 @@ class StageTwo(HubbleStage):
         state_components = [
             "guideline_stage_two_start",
             "guideline_choose_row",
-            "guideline_angular_scale"
+            "guideline_angular_scale",
+            "guideline_measuring_tool"
         ]
         ext = ".vue"
         for comp in state_components:

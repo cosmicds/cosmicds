@@ -32,7 +32,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'two_sta1'
+            state.marker = 'ang_siz1'
           "
         >
           back
@@ -46,7 +46,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'ang_sca1'
+            state.marker = 'ang_siz2'
           "
         >
           next
