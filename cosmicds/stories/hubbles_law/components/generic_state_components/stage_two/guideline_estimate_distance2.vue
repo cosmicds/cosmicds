@@ -5,7 +5,7 @@
       state.marker = 'est_dis1';
     "
     @next="
-      state.marker = 'est_dis2';
+      state.marker = 'cho_row2';
     "
   >
     <div

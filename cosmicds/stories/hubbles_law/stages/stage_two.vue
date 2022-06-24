@@ -122,8 +122,28 @@
         cols="12"
         lg="4"
       >
-        <c-guideline-choose-row
+        <c-guideline-choose-row1
           v-if="stage_state.marker == 'cho_row1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
+        <c-guideline-choose-row2
+          v-if="stage_state.marker == 'cho_row2'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
+        <c-guideline-estimate-distance3
+          v-if="stage_state.marker == 'est_dis3'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
               entries[0].target.scrollIntoView({
