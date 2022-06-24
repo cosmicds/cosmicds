@@ -141,20 +141,21 @@ export default {
       this.fovCanvas.height = parent.clientHeight;
       this.fovContext = this.fovCanvas.getContext('2d');
       this.fovContext.lineWidth = 3;
-      this.fovContext.strokeStyle = 'dodgerblue';
+      this.fovContext.strokeStyle = 'lime';
 
       const leftPadding = 5;
       const verticalPadding = 5;
       const endcapLength = 10;
-      const gapHeight = 24;
-      const fontSize = 16;
-      const font = `${fontSize}px Arial`;
+      const gapHeight = 26;
+      const fontSize = 18;
+      const font = `${fontSize}px monospace`;
       const endcapEndX = leftPadding + endcapLength;
 
       const verticalX = leftPadding + (endcapLength / 2);
       const fracDown = 0.5;
-      const midYTop = this.fovCanvas.height * fracDown - (gapHeight / 2);
-      const midYBot = this.fovCanvas.height * fracDown + (gapHeight / 2);
+      const adjustY = 1;
+      const midYTop = this.fovCanvas.height * fracDown - (gapHeight / 2) - adjustY;
+      const midYBot = this.fovCanvas.height * fracDown + (gapHeight / 2) - adjustY;
       const bottomEndcapY = this.fovCanvas.height - verticalPadding;
       this.textCoordinates = [leftPadding, this.fovCanvas.height * fracDown + ((gapHeight - fontSize) / 2)];
       this.textRect = [0, midYTop, this.fovCanvas.width, gapHeight];
@@ -180,7 +181,7 @@ export default {
       this.fovContext.stroke();
 
       this.fovContext.font = font;
-      this.fovContext.fillStyle = 'dodgerblue';
+      this.fovContext.fillStyle = 'white';
       if (this.fov_text) {
         this.updateFOVText();
       }
