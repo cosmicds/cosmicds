@@ -23,6 +23,7 @@ log = logging.getLogger()
 
 class StageState(State):
     galaxy = CallbackProperty({})
+    galaxy_selected = CallbackProperty(False)
     galaxy_dist = CallbackProperty(None)
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
@@ -192,6 +193,10 @@ class StageTwo(HubbleStage):
         self.stage_state.galaxy = galaxy
         self.stage_state.galaxy_dist = None
         self.distance_tool.measuring_allowed = bool(galaxy)
+
+        if self.stage_state.marker == 'cho_row1':
+            self.stage_state.marker = 'ang_siz2'
+            self.stage_state.galaxy_selected = True
 
     def _angular_size_update(self, change):
         self.distance_sidebar.angular_size = format_measured_angle(change["new"])

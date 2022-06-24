@@ -39,7 +39,19 @@
         </v-btn>
       <v-spacer></v-spacer>
       <v-col
+        cols="6"
         class="shrink"
+        v-if="!state.galaxy_selected"
+      >
+        <div
+          style="font-size: 16px;"
+        >
+          Select a galaxy from your table.
+        </div>
+      </v-col>
+      <v-col
+        class="shrink"
+        v-if="state.galaxy_selected"
       >
         <v-btn
           class="black--text"
