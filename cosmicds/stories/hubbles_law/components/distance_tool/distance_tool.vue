@@ -71,13 +71,14 @@
             bottom
             right
             absolute
-            color="secondary"
-            class="measuring-fab"
+            :color="measuring ? 'orange' : 'accent'"
+            class="measuring-fab black--text"
+            :ripple="false"
             v-bind="attrs"
             v-on="on"
             v-show="measuring_allowed && !view_changing"
             @click="toggle_measuring()">
-            <v-icon>mdi-ruler</v-icon>
+            <v-icon>{{ measuring ? 'mdi-stop' : 'mdi-ruler' }}</v-icon>
           </v-btn>
         </template>
         {{ measuring ? 'Stop measuring' : 'Start measuring'}}

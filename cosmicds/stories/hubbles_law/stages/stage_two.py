@@ -25,6 +25,7 @@ class StageState(State):
     galaxy = CallbackProperty({})
     galaxy_selected = CallbackProperty(False)
     galaxy_dist = CallbackProperty(None)
+    ruler_clicked = CallbackProperty(False)
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
     advance_marker = CallbackProperty(True)
