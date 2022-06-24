@@ -43,7 +43,8 @@ class StageState(State):
         'est_dis2',
         'cho_row2',
         'est_dis3',
-        'est_dis4'
+        'est_dis4',
+        'fil_rem1'
     ])
 
     step_markers = CallbackProperty({
@@ -66,7 +67,8 @@ class StageState(State):
         'cho_row1',
         'cho_row2',
         'est_dis3',
-        'est_dis4'
+        'est_dis4',
+        'fil_rem1'
     ])
 
     def __init__(self, *args, **kwargs):
@@ -161,7 +163,8 @@ class StageTwo(HubbleStage):
             "guideline_estimate_distance2",
             "guideline_choose_row2",
             "guideline_estimate_distance3",
-            "guideline_estimate_distance4"
+            "guideline_estimate_distance4",
+            "guideline_fill_remaining_galaxies"
         ]
         ext = ".vue"
         for comp in state_components:

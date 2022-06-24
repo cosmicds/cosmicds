@@ -2,7 +2,7 @@
   <scaffold-alert
     header-text="Estimate Distance"
     @back="
-      state.marker = 'est_dis3';
+      state.marker = 'est_dis4';
     "
     @next="
       state.marker = 'fil_rem1';
@@ -12,10 +12,7 @@
       class="mb-4"
     >
       <p>
-        Enter the angular size of your galaxy in the box and click calculate to estimate the distance.
-      </p>
-      <p>
-        MathJax stuff2
+        Click the <v-icon>mdi-spider-thread</v-icon> icon in the table toolbar to calculate the distances for the remaining galaxies.
       </p>
     </div>
   </scaffold-alert>
