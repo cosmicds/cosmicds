@@ -2,7 +2,7 @@
   <scaffold-alert
     header-text="Estimate Distance"
     @back="
-      state.marker = 'cho_row2';
+      state.marker = 'est_dis3';
     "
     @next="
       state.marker = 'est_dis4';
@@ -15,7 +15,7 @@
         Enter the angular size of your galaxy in the box and click calculate to estimate the distance.
       </p>
       <p>
-        MathJax stuff
+        MathJax stuff2
       </p>
     </div>
   </scaffold-alert>
