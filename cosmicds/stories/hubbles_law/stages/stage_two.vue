@@ -172,6 +172,16 @@
               })
             }
           }" />
+        <c-guideline-stage-two-complete
+          v-if="stage_state.marker == 'two_com1'"
+          v-intersect.once="(entries, observer, isIntersecting) => {
+            if (isIntersecting) {
+              entries[0].target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }" />
       </v-col>
       <v-col
         cols="12"
