@@ -17,11 +17,3 @@ for comp_path in vue_comp_dir.iterdir():
 
 from .stories import *
 from .tools import *
-
-# Monkey-patch pywwt kernel connection function
-from pywwt import jupyter_relay
-
-def _override_compute_notebook_server_base_url():
-    return "/api/kernels/"
-
-jupyter_relay._compute_notebook_server_base_url = _override_compute_notebook_server_base_url
