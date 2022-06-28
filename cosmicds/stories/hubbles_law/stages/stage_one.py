@@ -19,9 +19,7 @@ from cosmicds.stories.hubbles_law.viewers import SpectrumView, spectrum_view
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.components.table import Table
 from cosmicds.stories.hubbles_law.data.styles import load_style
-from cosmicds.stories.hubbles_law.components.selection_tool import SelectionTool
-from cosmicds.stories.hubbles_law.components.spectrum_slideshow import SpectrumSlideshow
-from cosmicds.stories.hubbles_law.components.doppler_calc_components import DopplerCalc
+from cosmicds.stories.hubbles_law.components import DopplerCalc, SpectrumSlideshow, SelectionTool
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, H_ALPHA_REST_LAMBDA, MG_REST_LAMBDA
 
