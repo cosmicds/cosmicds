@@ -198,6 +198,7 @@
         </v-col>
       </v-row>
     </v-footer>
+    <div id="test-element"> $$x =  \input[test][][measurements]{} $$</div>
   </v-app>
 </template>
 
@@ -205,6 +206,54 @@
 
 export default {
   mounted() {
+
+    window.cdsApp = this;
+    const app = this;
+
+    class TaggedInputElement extends HTMLInputElement {
+      static get observedAttributes() {
+        return ['value'];
+      }
+
+      constructor() {
+        super();
+        console.log("In constructor");
+      }
+
+      onUpdateText(text) {
+        console.log("In tagged input onchange");
+        const tg = this.getAttribute("tag");
+        const id = this.getAttribute("id");
+        if (!(tg && id)) { return; }
+        app.story_state[tg][id] = text;
+        console.log(window.cdsApp.story_state);
+      }
+
+      attributeChangedCallback(name, oldValue, newValue) {
+        console.log("attributeChangedCallback");
+        if (name === "value") {
+          this.value = newValue;
+          this.onUpdateText(newValue);
+        }
+      }
+
+      set value(text) {
+        console.log("Setter");
+        this.onUpdateText(text);
+      }
+
+      connectedCallback() {
+        console.log("In connectedCallback");
+      }
+
+    }
+
+    window.TaggedInputElement = TaggedInputElement
+    window.customElements.whenDefined('tagged-input').then(() => {
+      const els = document.querySelectorAll("[is='tagged-input']");
+      els.forEach(el => el.connectedCallback());
+    });
+    window.customElements.define('tagged-input', window.TaggedInputElement, { extends: 'input' });
 
     // Check whether or not we're using voila
     // Based on the approach used here: https://github.com/widgetti/ipyvuetify/blob/master/js/src/jupyterEnvironment.js
@@ -235,10 +284,13 @@ export default {
               const xml = parser.create('node', 'XML');
               const id = parser.GetBrackets(name, '');
               const cls = parser.GetBrackets(name, '');
+              const tag = parser.GetBrackets(name, '');
               const value = parser.GetArgument(name);
-              xml.setXML(MathJax.startup.adaptor.node('input', {
-                id: id, class: cls, value: value, xmlns: 'http://www.w3.org/1999/xhtml'
-              }), MathJax.startup.adaptor);
+              const elementData = {
+                id: id, class: cls, tag: tag, value: value,
+                xmlns: 'http://www.w3.org/1999/xhtml', type: "text", is: "tagged-input",
+              };
+              xml.setXML(MathJax.startup.adaptor.node('input', elementData), MathJax.startup.adaptor);
               xml.getSerializedXML = function () {
                 return this.adaptor.outerHTML(this.xml) + '</input>';
               }
@@ -257,7 +309,7 @@ export default {
 
           MathJax.startup.defaultReady();
         }
-      }
+      }, 
     };
 
     // Grab MathJax itself
@@ -265,6 +317,7 @@ export default {
     mathJaxScript.async = false;
     mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
     document.head.appendChild(mathJaxScript);
+    console.log(MathJax);
 
     // Not all of our elements are initially in the DOM,
     // so we need to account for that in order to get MathJax
