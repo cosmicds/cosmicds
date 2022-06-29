@@ -12,6 +12,7 @@ import ipyvuetify as v
 import requests
 from cosmicds.utils import API_URL
 from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
+from cosmicds.stories.hubbles_law.data_management import STATE_TO_MEAS
 
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
@@ -90,11 +91,7 @@ class HubblesLaw(Story):
 
         # Make all data writeable
         for data in self.data_collection:
-            self.make_data_writeable(data)
-
-    def make_data_writeable(self, data):
-        for comp in data.main_components:
-            data[comp.label].setflags(write=True)
+            HubblesLaw.make_data_writeable(data)
 
     def _set_theme(self):
         v.theme.dark = True
@@ -141,7 +138,7 @@ class HubblesLaw(Story):
             data['lambda'] = 10 ** data['loglam']
             dc.remove(dc[name + '[SPECOBJ]'])
             dc.remove(dc[name + '[SPZLINE]'])
-            self.make_data_writeable(data)
+            HubblesLaw.make_data_writeable(data)
         return dc[data_name]
 
     def update_data(self, label, new_data):
@@ -154,7 +151,7 @@ class HubblesLaw(Story):
             main_comps = [x.label for x in new_data.main_components]
             components = { col: list(new_data[col]) for col in main_comps }
             data = Data(label=label, **components)
-            self.make_data_writeable(data) 
+            HubblesLaw.make_data_writeable(data) 
             dc.append(data)
 
     def update_student_data(self):
@@ -179,4 +176,50 @@ class HubblesLaw(Story):
         
         student_data = dc['student_data']
         student_data.update_values_from_data(new_data)
-        self.make_data_writeable(student_data)
+        HubblesLaw.make_data_writeable(student_data)
+
+    @staticmethod
+    def make_data_writeable(data):
+        for comp in data.main_components:
+            data[comp.label].setflags(write=True)
+
+    def galaxy_info(self, galaxy_ids):
+        sdss = self.data_collection["SDSS_all_sample_filtered"]
+        indices = [i for i in range(sdss.size) if sdss['id'][i] in galaxy_ids]
+        components = [x for x in sdss.main_components if x.label != 'id']
+        return { sdss['id'][index]: { comp.label: sdss[comp][index] for comp in components } for index in indices }
+
+    # TODO: Revisit the name of this function
+    # Even if we don't use all of the arguments here,
+    # other stories might, and it's nice to keep
+    # a consistent signature
+    def setup_for_student(self, student, classroom, story_state):
+        response = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{student['id']}")
+        res_json = response.json()
+        measurements = res_json["measurements"]
+        galaxy_ids = [m['galaxy_id'] for m in measurements]
+        galaxy_info = self.galaxy_info(galaxy_ids)
+
+        measurement_keys = [
+            "obs_wave_value",
+            "rest_wave_value",
+            "velocity_value",
+            "est_dist_value",
+            "ang_size_value"
+        ]
+        galaxy_keys = [
+            "ra",
+            "decl",
+            "name",
+            "z",
+            "type"
+        ]
+        components = { STATE_TO_MEAS.get(k, k) : [measurement.get(k, None) for measurement in measurements] for k in measurement_keys }
+        components.update({ k: [x[k] for x in galaxy_info.values()] for k in galaxy_keys})
+        print(components)
+        data = Data(label="student_measurements", **components)
+        student_measurements = self.data_collection['student_measurements']
+        student_measurements.update_values_from_data(data)
+        HubblesLaw.make_data_writeable(student_measurements)
+        self.update_student_data()
+        

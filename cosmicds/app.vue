@@ -205,7 +205,6 @@
 </template>
 
 <script>
-
 export default {
   async mounted() {
 
@@ -316,6 +315,8 @@ export default {
     };
 
     // Grab MathJax itself
+    // We want to wait for it to finish loading, in case there are
+    // any elements that need to be typeset on the initial screen
     await new Promise((resolve, reject) => {
       const mathJaxScript = document.createElement('script');
       mathJaxScript.async = false;

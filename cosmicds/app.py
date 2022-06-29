@@ -53,7 +53,7 @@ class Application(VuetifyTemplate, HubListener):
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
-        
+
         # Initialize from database
         if self.app_state.update_db:
             #self._initialize_from_database()
@@ -101,7 +101,6 @@ class Application(VuetifyTemplate, HubListener):
             state = data["state"]
             if state is not None:
                 self.story_state.update_from_dict(state)
-                self._on_change_story_state(state)
         except Exception as e:
             print(e)
 
@@ -122,6 +121,3 @@ class Application(VuetifyTemplate, HubListener):
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
-
-    def _on_change_story_state(self, state):
-        pass

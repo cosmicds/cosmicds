@@ -66,8 +66,11 @@ class StoryRegistry(UniqueDictRegistry):
         response = requests.get(f"{API_URL}/story-state/{student['id']}/{name}")
         data = response.json()
         state = data["state"]
+
         if state is not None:
             story_state.update_from_dict(state)
+
+        story_state.setup_for_student(student, app_state.classroom, story_state)
 
         for k, v in story_entry['stages'].items():
             stage = v['cls'](session, story_state, app_state)
