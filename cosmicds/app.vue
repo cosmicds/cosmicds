@@ -210,7 +210,8 @@ export default {
     window.cdsApp = this;
     const app = this;
 
-    class TaggedInputElement extends HTMLInputElement {
+    class CustomInput extends HTMLElement {
+
       static get observedAttributes() {
         return ['value'];
       }
@@ -218,6 +219,16 @@ export default {
       constructor() {
         super();
         console.log("In constructor");
+        this.attachShadow({mode: "open"});
+        const input = document.createElement('input');
+        input.onchange = this.handleChangeEvent.bind(this);
+        this.shadowRoot.append(input);
+      }
+
+      handleChangeEvent(event) {
+        const element = event.target;
+        const text = element.value;
+        this.onUpdateText(text);
       }
 
       onUpdateText(text) {
@@ -225,21 +236,8 @@ export default {
         const tg = this.getAttribute("tag");
         const id = this.getAttribute("id");
         if (!(tg && id)) { return; }
-        app.story_state[tg][id] = text;
+        window.cdsApp.story_state[tg][id] = text;
         console.log(window.cdsApp.story_state);
-      }
-
-      attributeChangedCallback(name, oldValue, newValue) {
-        console.log("attributeChangedCallback");
-        if (name === "value") {
-          this.value = newValue;
-          this.onUpdateText(newValue);
-        }
-      }
-
-      set value(text) {
-        console.log("Setter");
-        this.onUpdateText(text);
       }
 
       connectedCallback() {
@@ -248,12 +246,7 @@ export default {
 
     }
 
-    window.TaggedInputElement = TaggedInputElement
-    window.customElements.whenDefined('tagged-input').then(() => {
-      const els = document.querySelectorAll("[is='tagged-input']");
-      els.forEach(el => el.connectedCallback());
-    });
-    window.customElements.define('tagged-input', window.TaggedInputElement, { extends: 'input' });
+    window.customElements.define("cds-input", CustomInput);
 
     // Check whether or not we're using voila
     // Based on the approach used here: https://github.com/widgetti/ipyvuetify/blob/master/js/src/jupyterEnvironment.js
@@ -288,11 +281,11 @@ export default {
               const value = parser.GetArgument(name);
               const elementData = {
                 id: id, class: cls, tag: tag, value: value,
-                xmlns: 'http://www.w3.org/1999/xhtml', type: "text", is: "tagged-input",
+                xmlns: 'http://www.w3.org/1999/xhtml'
               };
-              xml.setXML(MathJax.startup.adaptor.node('input', elementData), MathJax.startup.adaptor);
+              xml.setXML(MathJax.startup.adaptor.node('cds-input', elementData), MathJax.startup.adaptor);
               xml.getSerializedXML = function () {
-                return this.adaptor.outerHTML(this.xml) + '</input>';
+                return this.adaptor.outerHTML(this.xml) + '</cds-input>';
               }
               parser.Push(
                 parser.create('node', 'TeXAtom', [
