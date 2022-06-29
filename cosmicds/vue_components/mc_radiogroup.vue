@@ -15,9 +15,7 @@
         @change="selectChoice(index)"
       >
         <template v-slot:label>
-          <div
-            @mouseup="selectChoice(index)"
-          >
+          <div>
           {{ option }}
           </div>
         </template>
@@ -32,19 +30,19 @@
         :class="`${color(feedbackIndex)}--text text--darken-4`"
         v-html="feedbacks[feedbackIndex]"
       >
-        <span
-          :class="`${color(feedbackIndex)}--text`" 
-          v-html="feedbacks[feedbackIndex]"
-        >
-        </span>
       </span>
     </v-alert>
     <div
-      v-if="complete"
-      class="text-right">
-      <span class="yellow--text">
-        {{ `Score: ${score(tries)} points` }}
-      </span>
+      v-if="scoring && complete"
+      class="text-right"
+    >
+      <v-chip
+        color="info"
+        dark
+        pill
+      >
+        {{ `Score: ${score} ${score == 1 ? 'point' : 'points'}` }}
+      </v-chip>
     </div>
   </v-container>
 </template>
@@ -56,6 +54,10 @@ module.exports = {
     correctAnswers: {
       type: Array,
       default: []
+    },
+    scoring: {
+      type: Boolean,
+      default: true
     },
     neutralAnswers: {
       type: Array,
@@ -79,6 +81,7 @@ module.exports = {
       complete: false,
       feedbackIndex: null,
       tries: 0,
+      score: 0
     };
   },
   methods: {
@@ -88,6 +91,9 @@ module.exports = {
       const correct = this.correctAnswers.includes(index);
       if (correct) {
         this.complete = true;
+        if (this.scoring) {
+          this.score = this.getScore(this.tries);
+        }
       }
       if (this.selectedCallback != null) {
         this.selectedCallback({
@@ -99,11 +105,17 @@ module.exports = {
       }
     },
     color: function(index) {
-      return this.correctAnswers?.includes(index) ? this.colorRight : this.neutralAnswers?.includes(index) ? this.colorNeutral : this.colorWrong;
+      if (this.correctAnswers.includes(index)) {
+        return this.colorRight;
+      } else if (this.neutralAnswers.includes(index)) {
+        return this.colorNeutral;
+      } else {
+        return this.colorWrong;
+      }
     },
-    score: function(ntries) {
+    getScore: function(ntries) {
       if (Array.isArray(this.points)) {
-        return this.points[ntries-1];
+        return ntries <= this.points.length ? this.points[ntries-1] : 0;
       } else {
         return this.points(ntries);
       }

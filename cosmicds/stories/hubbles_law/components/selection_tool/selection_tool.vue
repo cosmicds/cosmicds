@@ -83,15 +83,13 @@
               </v-btn>
             </span>
           </v-toolbar>
-          <v-card-text
-            class="white black--text"
-          >
+          <v-card-text>
             <v-container>
               <v-row
               >
                 <v-col>
                   <p>
-                    The Comsic Sky Viewer shows a modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. The green dots mark the locations of galaxies you can collect data for.
+                    The Cosmic Sky Viewer shows a modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. The green dots mark the locations of galaxies you can collect data for.
                   </p>
                   <v-row>
                     <v-col
@@ -101,7 +99,6 @@
                       <v-chip
                         label
                         outlined
-                        color="black"
                       >
                         Pan
                       </v-chip>
@@ -123,7 +120,6 @@
                       <v-chip
                         label
                         outlined
-                        color="black"
                       >
                         Zoom
                       </v-chip>

@@ -17,11 +17,6 @@
       <p>
         You will calculate the velocity for this galaxy using the Doppler equation.
       </p>
-      <div
-        class="JaxEquation"
-      >
-        $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
-      </div>
     </div>
   </scaffold-alert>
 </template>

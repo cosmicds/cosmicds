@@ -73,12 +73,8 @@
 
             <v-list-item-content>
               <v-list-item-title>
-                Nicholas Earl
+                Guest Student {{ student_id }}
               </v-list-item-title>
-              <v-list-item-subtitle>
-                nearl@gluesolutions.io
-              </v-list-item-subtitle
-              >
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -188,13 +184,18 @@
       </v-content>
     </v-main>
 
-
-    <v-footer app padless inset style="z-index: 5;">
+    <v-footer
+      app
+      padless
+      inset
+      style="z-index: 5;"
+      dark
+      color="primary darken-1"
+    >
       <v-row justify="center" no-gutters>
         <v-col
-          class="py-2 text-center white--text"
+          class="py-2 text-center"
           cols="12"
-          color="primary darken-2"
         >
           {{ new Date().getFullYear() }} — <strong>CosmicDS</strong>
         </v-col>
@@ -490,5 +491,9 @@ input {
 .v-dialog.v-dialog--active .v-card__title.dragging,
 .v-dialog.v-dialog--active .v-toolbar__content.dragging {
   cursor: grabbing;
+}
+
+.v-dialog > .v-card, #slideshow-root {
+  border: solid hsla(0,0%,100%,.12) 1px !important;
 }
 </style>

@@ -8,28 +8,14 @@
     <h3
       class="mb-4"
     >
-      Meet the Spectrum Viewer
+      Choose a Row
     </h3>
-    <div
-      class="mb-4"
-      v-if="!state.vel_win_opened"
-    >
+    <div class="mb-4">
       <p>
-        Here is a spectrum of light measured from your chosen galaxy.
+      Let's look at the light spectrum for one of your galaxies.
       </p>
       <p>
-        Not familiar with spectra? Click the <strong>SPECTRUM TUTORIAL</strong> button to learn what spectra can tell us about galaxies.
-      </p>
-    </div>
-    <div
-      class="mb-4"
-      v-if="state.vel_win_opened"
-    >
-      <p>
-        Here is a spectrum of light measured from your chosen galaxy.
-      </p>
-      <p>
-        You can reopen the <strong>SPECTRUM TUTORIAL</strong> any time you need a refresher about spectra.
+      Click on a row in your table to choose that galaxy.
       </p>
     </div>
     <v-divider
@@ -47,36 +33,34 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'cho_row1';
-            state.spectrum_tool_visible = 0;
+            state.marker = 'sel_gal3';
           "
         >
           back
         </v-btn>
       </v-col>
       <v-spacer></v-spacer>
-      
       <v-col
-        cols="7"
+        cols="6"
         class="shrink"
-        v-if="!state.vel_win_opened"
+        v-if="!state.spec_viewer_reached"
       >
         <div
           style="font-size: 16px;"
         >
-          Click the <strong>SPECTRUM TUTORIAL</strong> button.
+          Select a galaxy from your table.
         </div>
       </v-col>
       <v-col
         class="shrink"
-        v-if="state.vel_win_opened"
+        v-if="state.spec_viewer_reached"
       >
         <v-btn
           class="black--text"
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'res_wav1';
+            state.marker = 'mee_spe1';
           "
         >
           next

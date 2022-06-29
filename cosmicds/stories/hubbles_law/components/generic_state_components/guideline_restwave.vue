@@ -13,7 +13,9 @@
     <div
       class="mb-4"
     >
-      <p>
+      <p
+        v-if="!state.lambda_on"      
+      >
         Your galaxy spectrum has {{ state.element == 'Mg-I' ? 'a' : 'an' }} {{ state.element }} {{ state.element == 'Mg-I' ? 'absorption' : 'emission' }} line marked.
       </p>
       <p
