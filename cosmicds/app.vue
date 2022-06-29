@@ -218,7 +218,6 @@ export default {
 
       constructor() {
         super();
-        console.log("In constructor");
         this.attachShadow({mode: "open"});
         const input = document.createElement('input');
         input.onchange = this.handleChangeEvent.bind(this);
@@ -232,16 +231,10 @@ export default {
       }
 
       onUpdateText(text) {
-        console.log("In tagged input onchange");
         const tg = this.getAttribute("tag");
         const id = this.getAttribute("id");
         if (!(tg && id)) { return; }
-        window.cdsApp.story_state[tg][id] = text;
-        console.log(window.cdsApp.story_state);
-      }
-
-      connectedCallback() {
-        console.log("In connectedCallback");
+        app.story_state[tg][id] = text;
       }
 
     }
