@@ -1,5 +1,5 @@
 <template>
-  <div
+  <v-card
     id="distance-root"
     v-intersect="(entries, observer, isIntersecting) => {
 
@@ -45,7 +45,7 @@
       </v-btn>
     </v-toolbar>
     <div class="distance-content">
-      <canvas
+      <!-- <canvas
         v-show="measuring"
         class="distance-canvas"
         ref="canvas">
@@ -53,7 +53,7 @@
       <canvas
         class="fov-canvas"
         ref="fovCanvas"
-      ></canvas>
+      ></canvas> -->
       <v-lazy>
         <jupyter-widget
           :widget="widget"
@@ -84,7 +84,7 @@
         {{ measuring ? 'Stop measuring' : 'Start measuring'}}
       </v-tooltip>
     </div>
-  </div>
+  </v-card>
 </template>
 
 <script>
