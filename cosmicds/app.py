@@ -22,6 +22,7 @@ class ApplicationState(State):
     using_voila = CallbackProperty(False)
     dark_mode = CallbackProperty(True)
     student = CallbackProperty({})
+    class_id = CallbackProperty(None)
     update_db = CallbackProperty(False)
     show_team_interface = CallbackProperty(True)
 
@@ -38,17 +39,19 @@ class Application(VuetifyTemplate, HubListener):
 
         self.app_state = ApplicationState()
 
-        self.app_state.update_db = kwargs.get("update_db", False)
+        self.app_state.update_db = kwargs.get("update_db", True)
         self.app_state.show_team_interface = kwargs.get("show_team_interface", True)
         
-        # For testing purposes, we create a new dummy student on each startup
-        if self.app_state.update_db:
-            response = requests.get(f"{API_URL}/new-dummy-student").json()
-            self.app_state.student = response["student"]
+        # # For testing purposes, we create a new dummy student on each startup
+        # if self.app_state.update_db:
+        #     response = requests.get(f"{API_URL}/new-dummy-student").json()
+        #     self.app_state.student = response["student"]
+
+        self.app_state.class_id = kwargs.get("class_id", 0)
+        self.app_state.student["id"] = kwargs.get("student_id", 0)
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
-        print(self.story_state)
 
         # Initialize from database
         if self.app_state.update_db:
@@ -59,6 +62,7 @@ class Application(VuetifyTemplate, HubListener):
                            handler=self._on_write_to_database)
 
         add_callback(self.app_state, 'dark_mode', self._theme_toggle)
+        self.observe(self._on_change_story_state, names=['story_state'])
 
     def reload(self):
         """
@@ -119,7 +123,4 @@ class Application(VuetifyTemplate, HubListener):
     def _on_change_story_state(self, change):
         state = change["new"]
         self.send({"method": "onStoryStateChange", "args": [state]})
-
-        # TODO: Finish this logic
-        self.story_state._on_stage_index_changed(self.story_state.stage_index)
-        self.story_state._on_step_index_changed(self.story_state.step_index)
+        # TODO: What else do we need to do here?

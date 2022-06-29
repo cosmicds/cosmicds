@@ -184,7 +184,7 @@
             </v-tab-item>
           </v-tabs-items>
         </v-container>
-        <div id="test-element"> $$x =  \input[test][][test]{} $$</div>
+        <div id="test-element"> $$x = \input[test][][test]{} $$</div>
       </v-content>
     </v-main>
 
