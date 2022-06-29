@@ -8,6 +8,7 @@
         clipped-right
         flat
         height="72"
+        style="z-index: 25;"
     >
       <template v-slot:img="{ props }">
         <v-img
@@ -187,7 +188,7 @@
       app
       padless
       inset
-      style="z-index: 5;"
+      style="z-index: 25;"
       dark
       color="primary darken-1"
     >
