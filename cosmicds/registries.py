@@ -64,6 +64,7 @@ class StoryRegistry(UniqueDictRegistry):
             
             story_state.stages[k] = {"title": stage.title,
                                      "subtitle": stage.subtitle,
+                                     "state": stage.stage_state,
                                      "step_index": 0,
                                      "steps": [{'title': x, 'completed': False} 
                                                for x in v['steps']],
