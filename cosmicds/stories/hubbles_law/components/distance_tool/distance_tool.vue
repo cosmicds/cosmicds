@@ -218,7 +218,7 @@ export default {
     setupMeasuringCanvasContext: function() {
       this.context = this.canvas.getContext('2d');
       this.context.lineWidth = 3;
-      this.context.strokeStyle = 'dodgerblue';
+      this.context.strokeStyle = 'lime';
     },
 
     addInitialPoint: function(event) {
