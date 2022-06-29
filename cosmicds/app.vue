@@ -184,8 +184,10 @@
             </v-tab-item>
           </v-tabs-items>
         </v-container>
+        <div id="test-element"> $$x =  \input[test][][test]{} $$</div>
       </v-content>
     </v-main>
+
 
     <v-footer app padless inset style="z-index: 5;">
       <v-row justify="center" no-gutters>
@@ -198,7 +200,6 @@
         </v-col>
       </v-row>
     </v-footer>
-    <div id="test-element"> $$x =  \input[test][][measurements]{} $$</div>
   </v-app>
 </template>
 
@@ -212,16 +213,12 @@ export default {
 
     class CustomInput extends HTMLElement {
 
-      static get observedAttributes() {
-        return ['value'];
-      }
-
       constructor() {
         super();
         this.attachShadow({mode: "open"});
-        const input = document.createElement('input');
-        input.onchange = this.handleChangeEvent.bind(this);
-        this.shadowRoot.append(input);
+        this.input = document.createElement('input');
+        this.input.onchange = this.handleChangeEvent.bind(this);
+        this.shadowRoot.append(this.input);
       }
 
       handleChangeEvent(event) {
@@ -230,11 +227,17 @@ export default {
         this.onUpdateText(text);
       }
 
+      set value(text) {
+        this.input.value = text;
+      }
+
       onUpdateText(text) {
-        const tg = this.getAttribute("tag");
-        const id = this.getAttribute("id");
-        if (!(tg && id)) { return; }
-        app.story_state[tg][id] = text;
+        const tag = this.getAttribute("tag");
+        if (!tag) { return; }
+        if (app.story_state.inputs === undefined) {
+          app.story_state.inputs = {};
+        }
+        app.story_state.inputs[tag] = text;
       }
 
     }
@@ -303,7 +306,6 @@ export default {
     mathJaxScript.async = false;
     mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
     document.head.appendChild(mathJaxScript);
-    console.log(MathJax);
 
     // Not all of our elements are initially in the DOM,
     // so we need to account for that in order to get MathJax
@@ -407,6 +409,13 @@ export default {
     getCurrentStage: function () {
       return this.$data.story_state.stages[this.$data.story_state.stage_index];
     },
+    onStoryStateChange: function(state) {
+      if (state.inputs === undefined) return;
+      for (const [key, value] of Object.entries(state.inputs)) {
+        const els = document.querySelectorAll(`[tag=${key}]`);
+        els.forEach(el => { el.value = String(value); });
+      }
+    }
   },
 };
 </script>

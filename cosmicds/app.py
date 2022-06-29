@@ -48,6 +48,7 @@ class Application(VuetifyTemplate, HubListener):
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
+        print(self.story_state)
 
         # Initialize from database
         if self.app_state.update_db:
@@ -103,7 +104,7 @@ class Application(VuetifyTemplate, HubListener):
             return
 
         # User information for a JupyterHub notebook session is stored in an
-        # environment  variable
+        # environment variable
         # user = os.environ['JUPYTERHUB_USER']
 
         user = self.app_state.student
@@ -114,3 +115,11 @@ class Application(VuetifyTemplate, HubListener):
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
+
+    def _on_change_story_state(self, change):
+        state = change["new"]
+        self.send({"method": "onStoryStateChange", "args": [state]})
+
+        # TODO: Finish this logic
+        self.story_state._on_stage_index_changed(self.story_state.stage_index)
+        self.story_state._on_step_index_changed(self.story_state.step_index)
