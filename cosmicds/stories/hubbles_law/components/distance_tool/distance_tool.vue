@@ -45,7 +45,7 @@
       </v-btn>
     </v-toolbar>
     <div class="distance-content">
-      <!-- <canvas
+      <canvas
         v-show="measuring"
         class="distance-canvas"
         ref="canvas">
@@ -53,7 +53,7 @@
       <canvas
         class="fov-canvas"
         ref="fovCanvas"
-      ></canvas> -->
+      ></canvas>
       <v-lazy>
         <jupyter-widget
           :widget="widget"
