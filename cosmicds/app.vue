@@ -207,43 +207,56 @@
 <script>
 
 export default {
-  mounted() {
+  async mounted() {
 
+    // We ultimately don't want to expose this
+    // It's just for testing purposes
     window.cdsApp = this;
+
     const app = this;
+    console.log(this);
+    if (!window.customElements.get("cds-input")) {
 
-    class CustomInput extends HTMLElement {
+      class CustomInput extends HTMLElement {
 
-      constructor() {
-        super();
-        this.attachShadow({mode: "open"});
-        this.input = document.createElement('input');
-        this.input.onchange = this.handleChangeEvent.bind(this);
-        this.shadowRoot.append(this.input);
-      }
+        static app = app;
 
-      handleChangeEvent(event) {
-        const element = event.target;
-        const text = element.value;
-        this.onUpdateText(text);
-      }
-
-      set value(text) {
-        this.input.value = text;
-      }
-
-      onUpdateText(text) {
-        const tag = this.getAttribute("tag");
-        if (!tag) { return; }
-        if (app.story_state.inputs === undefined) {
-          app.story_state.inputs = {};
+        constructor() {
+          super();
+          this.attachShadow({mode: "open"});
+          this.input = document.createElement('input');
+          this.input.onchange = this.handleChangeEvent.bind(this);
+          this.shadowRoot.append(this.input);
         }
-        app.story_state.inputs[tag] = text;
+
+        handleChangeEvent(event) {
+          const element = event.target;
+          const text = element.value;
+          this.onUpdateText(text);
+        }
+
+        set value(text) {
+          this.input.value = text;
+        }
+
+        onUpdateText(text) {
+          const tag = this.getAttribute("tag");
+          console.log(tag);
+          if (!tag) { return; }
+          const application = CustomInput.app;
+          console.log(application);
+          application.story_state.inputs[tag] = text;
+          console.log(application);
+          console.log(application.story_state);
+        }
       }
 
+      window.customElements.define("cds-input", CustomInput);
+    } else {
+      const inputClass = window.customElements.get("cds-input");
+      inputClass.app = app;
+      console.log(inputClass);
     }
-
-    window.customElements.define("cds-input", CustomInput);
 
     // Check whether or not we're using voila
     // Based on the approach used here: https://github.com/widgetti/ipyvuetify/blob/master/js/src/jupyterEnvironment.js
@@ -303,10 +316,15 @@ export default {
     };
 
     // Grab MathJax itself
-    const mathJaxScript = document.createElement('script');
-    mathJaxScript.async = false;
-    mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
-    document.head.appendChild(mathJaxScript);
+    await new Promise((resolve, reject) => {
+      const mathJaxScript = document.createElement('script');
+      mathJaxScript.async = false;
+      mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
+      document.head.appendChild(mathJaxScript);
+      mathJaxScript.onload = (_e) => resolve();
+      mathJaxScript.onerror = (_e) => reject();
+    });
+    await MathJax.startup.promise;
 
     // Not all of our elements are initially in the DOM,
     // so we need to account for that in order to get MathJax
@@ -325,6 +343,8 @@ export default {
             }
           });
           if (needTypesetting.length > 0) {
+            console.log(needTypesetting);
+            console.log(MathJax);
             MathJax.typesetPromise(needTypesetting);
           }
 
@@ -404,13 +424,14 @@ export default {
       });
     });
     resizeObserver.observe(document.body);
+    this.onLoadStoryState(this.story_state);
 
   },
   methods: {
     getCurrentStage: function () {
       return this.$data.story_state.stages[this.$data.story_state.stage_index];
     },
-    onStoryStateChange: function(state) {
+    onLoadStoryState: function(state) {
       if (state.inputs === undefined) return;
       for (const [key, value] of Object.entries(state.inputs)) {
         const els = document.querySelectorAll(`[tag=${key}]`);

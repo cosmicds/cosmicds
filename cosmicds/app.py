@@ -22,7 +22,7 @@ class ApplicationState(State):
     using_voila = CallbackProperty(False)
     dark_mode = CallbackProperty(True)
     student = CallbackProperty({})
-    class_id = CallbackProperty(None)
+    classroom = CallbackProperty({})
     update_db = CallbackProperty(False)
     show_team_interface = CallbackProperty(True)
 
@@ -48,22 +48,22 @@ class Application(VuetifyTemplate, HubListener):
         #     response = requests.get(f"{API_URL}/new-dummy-student").json()
         #     self.app_state.student = response["student"]
 
-        self.app_state.class_id = kwargs.get("class_id", 0)
+        self.app_state.classroom["id"] = kwargs.get("class_id", 0)
         self.app_state.student["id"] = kwargs.get("student_id", 0)
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
-
+        
         # Initialize from database
         if self.app_state.update_db:
-            self._initialize_from_database()
+            #self._initialize_from_database()
+            pass
 
         # Subscribe to events
         self.hub.subscribe(self, WriteToDatabaseMessage,
                            handler=self._on_write_to_database)
 
         add_callback(self.app_state, 'dark_mode', self._theme_toggle)
-        self.observe(self._on_change_story_state, names=['story_state'])
 
     def reload(self):
         """
@@ -100,7 +100,8 @@ class Application(VuetifyTemplate, HubListener):
             data = response.json()
             state = data["state"]
             if state is not None:
-                self.story_state = state
+                self.story_state.update_from_dict(state)
+                self._on_change_story_state(state)
         except Exception as e:
             print(e)
 
@@ -115,13 +116,12 @@ class Application(VuetifyTemplate, HubListener):
         user = self.app_state.student
         story = self.story_state.name
         data = json.loads(json.dumps(self.story_state.as_dict()))
+        print(data)
         if data:
             requests.put(f"{API_URL}/story-state/{user['id']}/{story}", json=data)
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
 
-    def _on_change_story_state(self, change):
-        state = change["new"]
-        self.send({"method": "onStoryStateChange", "args": [state]})
-        # TODO: What else do we need to do here?
+    def _on_change_story_state(self, state):
+        pass

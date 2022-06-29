@@ -1,5 +1,5 @@
 <template>
-  <div
+  <v-card
     id="distance-root"
     v-intersect="(entries, observer, isIntersecting) => {
 
@@ -12,7 +12,7 @@
       if (this.ranIntersectObserver) { return; }
       const root = entries[0].target;
       const element = root.querySelector('iframe');
-      if (element) {
+      if (element && element.src.includes('/api/kernels')) {
         element.src = element.src.replace('/api/kernels', '');
         this.ranIntersectObserver = true;
       }
@@ -83,7 +83,7 @@
         {{ measuring ? 'Stop measuring' : 'Start measuring'}}
       </v-tooltip>
     </div>
-  </div>
+  </v-card>
 </template>
 
 <script>

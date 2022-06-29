@@ -12,6 +12,7 @@ from numpy import delete
 
 
 class Story(State, HubMixin):
+    inputs = CallbackProperty({})
     name = CallbackProperty()
     stage_index = CallbackProperty(0)
     step_index = CallbackProperty(0)

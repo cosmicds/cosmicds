@@ -3,6 +3,9 @@ from ipyvuetify import VuetifyTemplate
 from ipywidgets import Widget
 from glue.core.state_objects import State
 import warnings
+import requests
+
+from cosmicds.utils import API_URL
 
 __all__ = ['stage_registry']
 
@@ -58,13 +61,20 @@ class StoryRegistry(UniqueDictRegistry):
         story_entry = self.members[name]
         story_state = story_entry['cls'](session)
         story_state.name = name
+        student = app_state.student
+
+        response = requests.get(f"{API_URL}/story-state/{student['id']}/{name}")
+        data = response.json()
+        state = data["state"]
+        if state is not None:
+            story_state.update_from_dict(state)
 
         for k, v in story_entry['stages'].items():
             stage = v['cls'](session, story_state, app_state)
             
             story_state.stages[k] = {"title": stage.title,
                                      "subtitle": stage.subtitle,
-                                     "state": stage.stage_state,
+                                     #"state": stage.stage_state,
                                      "step_index": 0,
                                      "steps": [{'title': x, 'completed': False} 
                                                for x in v['steps']],
