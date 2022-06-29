@@ -1,5 +1,14 @@
 <template>
   <v-container>
+    <v-row v-if="show_team_interface">
+      <v-col>
+        <v-btn
+          @click="console.log(stage_state)"
+        >
+          State
+        </v-btn>
+      </v-col>
+    </v-row>
     <v-row class="d-flex align-stretch">
       <v-col
         cols="12"

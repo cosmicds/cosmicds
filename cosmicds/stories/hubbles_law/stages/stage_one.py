@@ -289,7 +289,6 @@ class StageOne(HubbleStage):
         if advancing and old == "dop_cal2":
             self.galaxy_table.selected = []
             self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
-            self.selection_tool
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback

@@ -1,11 +1,13 @@
 from os.path import join
 from pathlib import Path
 
-import astropy.units as u
 from echo import CallbackProperty, add_callback, ignore_callback
 from glue.core.state_objects import State
 from numpy import pi
-from traitlets import default
+from traitlets import default, Bool
+
+import astropy.units as u
+from astropy.coordinates import Angle, SkyCoord
 
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
@@ -47,12 +49,12 @@ class StageState(State):
         'est_dis3',
         'est_dis4',
         'fil_rem1',
-        'two_com1'
+        'two_com1',
     ])
 
-    step_markers = CallbackProperty({
-
-    })
+    step_markers = CallbackProperty([
+        'ang_siz1',
+    ])
 
     csv_highlights = CallbackProperty([
         'ang_siz1',
@@ -63,7 +65,7 @@ class StageState(State):
         'ang_siz6',
         'rep_rem1',
         'est_dis1',
-        'est_dis2'
+        'est_dis2',
     ])
 
     table_highlights = CallbackProperty([
@@ -72,7 +74,7 @@ class StageState(State):
         'est_dis3',
         'est_dis4',
         'fil_rem1',
-        'two_com1'
+        'two_com1',
     ])
 
     def __init__(self, *args, **kwargs):
@@ -93,6 +95,8 @@ class StageState(State):
     "Measure angular size"
 ])
 class StageTwo(HubbleStage):
+    show_team_interface = Bool(False).tag(sync=True)
+    START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 
     @default('template')
     def _default_template(self):
@@ -110,6 +114,7 @@ class StageTwo(HubbleStage):
         super().__init__(*args, **kwargs)
 
         self.stage_state = StageState()
+        self.show_team_interface = self.app_state.show_team_interface
 
         angsize_slideshow = Angsize_SlideShow(self.stage_state)
         self.add_component(angsize_slideshow, label='c-angsize-slideshow')
@@ -179,6 +184,30 @@ class StageTwo(HubbleStage):
             component = GenericStateComponent(comp + ext, path, self.stage_state)
             self.add_component(component, label=label)
 
+        # Callbacks
+        add_callback(self.stage_state, 'marker',
+                     self._on_marker_update, echo_old=True)
+        add_callback(self.story_state, 'step_index',
+                     self._on_step_index_update)
+        self.trigger_marker_update_cb = True
+
+
+    def _on_marker_update(self, old, new):
+        if not self.trigger_marker_update_cb:
+            return
+        markers = self.stage_state.markers
+        advancing = markers.index(new) > markers.index(old)
+        if advancing and new == "cho_row1":
+            self.distance_table.selected = []
+            self.distance_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
+
+    def _on_step_index_update(self, index):
+        # Change the marker without firing the associated stage callback
+        # We can't just use ignore_callback, since other stuff (i.e. the frontend)
+        # may depend on marker callbacks
+        self.trigger_marker_update_cb = False
+        self.stage_state.marker = self.stage_state.step_markers[index]
+        self.trigger_marker_update_cb = True
 
     def distance_table_selected_change(self, change):
         selected = change["new"]
