@@ -284,8 +284,8 @@ class StageOne(HubbleStage):
             self.galaxy_table.selected = []
             self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
         if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
-            self.stage_state.marker = "mee_spe1"
             self.stage_state.spec_viewer_reached = True
+            self.stage_state.marker = "mee_spe1"
         if advancing and old == "dop_cal2":
             self.galaxy_table.selected = []
             self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
@@ -398,8 +398,8 @@ class StageOne(HubbleStage):
         self.update_spectrum_viewer(name, z)
 
         if self.stage_state.marker == 'cho_row1':
-            self.stage_state.marker = 'mee_spe1'
             self.stage_state.spec_viewer_reached = True
+            self.stage_state.marker = 'mee_spe1'
 
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]
