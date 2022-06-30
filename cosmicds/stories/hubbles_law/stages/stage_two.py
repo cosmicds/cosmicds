@@ -261,6 +261,9 @@ class StageTwo(HubbleStage):
         self.remove_measurement(galaxy_name)
         self.distance_tool.flagged = False
 
+    def vue_add_distance_data_point(self, _args=None):
+        self.stage_state.make_measurement = True
+
     @property
     def distance_sidebar(self):
         return self.get_component("c-distance-sidebar")

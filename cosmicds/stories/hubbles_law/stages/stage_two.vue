@@ -7,6 +7,9 @@
         >
           State
         </v-btn>
+        <v-chip>
+          {{ stage_state.make_measurement }}
+        </v-chip>
       </v-col>
     </v-row>
     <v-row class="d-flex align-stretch">
@@ -215,6 +218,16 @@
           >
             <!-- FORM DIALOG as template for reflections/MC -->
             <c-angsize-slideshow />
+          </v-col>
+          <v-col
+            cols="4"
+          >
+            <v-btn
+              color="info"
+              @click="add_distance_data_point();"
+            >
+              log data
+            </v-btn>
           </v-col>
         </v-row>
       </v-col>
