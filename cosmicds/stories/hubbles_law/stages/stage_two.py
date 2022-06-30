@@ -6,11 +6,9 @@ from glue.core.state_objects import State
 from numpy import pi
 from traitlets import default
 
-from cosmicds.stories.hubbles_law.components.distance_sidebar import DistanceSidebar
-from cosmicds.stories.hubbles_law.components.distance_tool import DistanceTool
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
-from cosmicds.stories.hubbles_law.components.angsize_distance_slideshow import Angsize_SlideShow
+from cosmicds.stories.hubbles_law.components import Angsize_SlideShow, DistanceSidebar, DistanceTool
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
