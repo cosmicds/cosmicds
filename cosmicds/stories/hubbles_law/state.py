@@ -208,11 +208,17 @@ class HubblesLaw(Story):
             "decl",
             "name",
             "z",
-            "type"
+            "type",
+            "element"
         ]
         for measurement in measurements:
             measurement.update(measurement.get("galaxy", {}))
         components = { STATE_TO_MEAS.get(k, k) : [measurement.get(k, None) for measurement in measurements] for k in measurement_keys }
+        
+        name_ext = ".fits"
+        for i, name in enumerate(components["name"]):
+            if name.endswith(name_ext):
+                components["name"][i] = name[:-len(name_ext)]
         data = Data(label="student_measurements", **components)
         student_measurements = self.data_collection['student_measurements']
         student_measurements.update_values_from_data(data)
