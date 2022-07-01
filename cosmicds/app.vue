@@ -243,10 +243,7 @@ export default {
           console.log(tag);
           if (!tag) { return; }
           const application = CustomInput.app;
-          console.log(application);
           application.story_state.inputs[tag] = text;
-          console.log(application);
-          console.log(application.story_state);
         }
       }
 
@@ -254,7 +251,6 @@ export default {
     } else {
       const inputClass = window.customElements.get("cds-input");
       inputClass.app = app;
-      console.log(inputClass);
     }
 
     // Check whether or not we're using voila

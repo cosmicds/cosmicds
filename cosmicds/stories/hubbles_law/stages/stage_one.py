@@ -8,6 +8,7 @@ from glue_jupyter.bqplot.scatter import BqplotScatterView
 import ipyvuetify as v
 from numpy import isin
 from random import sample
+from soupsieve import select
 from traitlets import default, Bool
 
 import astropy.units as u
@@ -140,11 +141,22 @@ class StageOne(HubbleStage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        print("Stage one initialization")
+
         self.stage_state = StageState()
         self.show_team_interface = self.app_state.show_team_interface
         
         self.stage_state.image_location = join("data", "images", "stage_one_spectrum")
         add_callback(self.app_state, 'using_voila', self._update_image_location)
+
+        # Set up any Data-based values
+        self.stage_state.gals_total = int(self.get_data("student_measurements").size)
+        print(self.get_data("student_measurements"))
+        print(f"Gals total: {self.stage_state.gals_total}")
+
+        def count_updated(count):
+            print(f"Updated count: {count}")
+        add_callback(self.stage_state, 'gals_total', count_updated)
 
         # Set up viewers
         spectrum_viewer = self.add_viewer(
@@ -192,7 +204,8 @@ class StageOne(HubbleStage):
 
         # Set up components
         sdss_data = self.get_data("SDSS_all_sample_filtered")
-        selection_tool = SelectionTool(data=sdss_data, state=self.stage_state)
+        selected = self.get_data("student_measurements").to_dataframe()
+        selection_tool = SelectionTool(data=sdss_data, state=self.stage_state, selected_data=selected)
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
         selection_tool.observe(self._on_selection_tool_flagged, names=['flagged'])
@@ -251,6 +264,7 @@ class StageOne(HubbleStage):
 
         # Callbacks
         def update_count(change):
+            print("In update_count")
             self.stage_state.gals_total = change["new"]
         selection_tool.observe(update_count, names=['selected_count'])
         add_callback(self.stage_state, 'marker',

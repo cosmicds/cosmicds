@@ -12,7 +12,7 @@ from glue.core import HubListener
 
 from .events import StepChangeMessage, WriteToDatabaseMessage
 from .registries import story_registry
-from .utils import load_template
+from .utils import CDSJSONEncoder, load_template
 
 from cosmicds.utils import API_URL
 
@@ -65,6 +65,8 @@ class Application(VuetifyTemplate, HubListener):
 
         add_callback(self.app_state, 'dark_mode', self._theme_toggle)
 
+        print("app init end")
+
     def reload(self):
         """
         Reload only the UI elements of the application.
@@ -89,14 +91,18 @@ class Application(VuetifyTemplate, HubListener):
     def hub(self):
         return self._application_handler.session.hub
 
+    @property
+    def story_state_endpoint(self):
+        user = self.app_state.student
+        story = self.story_state.name
+        return f"{API_URL}/story-state/{user['id']}/{story}"
+
     def _initialize_from_database(self):
         try:
             # User information for a JupyterHub notebook session is stored in an
             # environment variable
             # user = os.environ['JUPYTERHUB_USER']
-            user = self.app_state.student
-            story = self.story_state.name
-            response = requests.get(f"{API_URL}/story-state/{user['id']}/{story}")
+            response = requests.get(self.story_state_endpoint)
             data = response.json()
             state = data["state"]
             if state is not None:
@@ -112,12 +118,10 @@ class Application(VuetifyTemplate, HubListener):
         # environment variable
         # user = os.environ['JUPYTERHUB_USER']
 
-        user = self.app_state.student
-        story = self.story_state.name
-        data = json.loads(json.dumps(self.story_state.as_dict()))
+        data = json.loads(json.dumps(self.story_state.as_dict(), cls=CDSJSONEncoder))
         print(data)
         if data:
-            requests.put(f"{API_URL}/story-state/{user['id']}/{story}", json=data)
+            requests.put(self.story_state_endpoint, json=data)
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark

@@ -13,9 +13,6 @@
           State
         </v-btn>
       </v-col>
-      <v-col>
-        $$ \input[test-input][][story-tag]{} $$
-      </v-col>
     </v-row>
 
     <v-row>
