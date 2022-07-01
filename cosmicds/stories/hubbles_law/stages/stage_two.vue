@@ -7,9 +7,6 @@
         >
           State
         </v-btn>
-        <v-chip>
-          {{ stage_state.make_measurement }}
-        </v-chip>
       </v-col>
     </v-row>
     <v-row class="d-flex align-stretch">
