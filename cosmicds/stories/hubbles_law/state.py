@@ -190,6 +190,7 @@ class HubblesLaw(Story):
         return { sdss['id'][index]: { comp.label: sdss[comp][index] for comp in components } for index in indices }
 
     # TODO: Revisit the name of this function
+    # ******
     # Even if we don't use all of the arguments here,
     # other stories might, and it's nice to keep
     # a consistent signature
@@ -197,26 +198,21 @@ class HubblesLaw(Story):
         response = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{student['id']}")
         res_json = response.json()
         measurements = res_json["measurements"]
-        galaxy_ids = [m['galaxy_id'] for m in measurements]
-        galaxy_info = self.galaxy_info(galaxy_ids)
-
         measurement_keys = [
             "obs_wave_value",
             "rest_wave_value",
             "velocity_value",
             "est_dist_value",
-            "ang_size_value"
-        ]
-        galaxy_keys = [
+            "ang_size_value",
             "ra",
             "decl",
             "name",
             "z",
             "type"
         ]
+        for measurement in measurements:
+            measurement.update(measurement.get("galaxy", {}))
         components = { STATE_TO_MEAS.get(k, k) : [measurement.get(k, None) for measurement in measurements] for k in measurement_keys }
-        components.update({ k: [x[k] for x in galaxy_info.values()] for k in galaxy_keys})
-        print(components)
         data = Data(label="student_measurements", **components)
         student_measurements = self.data_collection['student_measurements']
         student_measurements.update_values_from_data(data)
