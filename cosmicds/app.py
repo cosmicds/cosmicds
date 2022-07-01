@@ -65,8 +65,6 @@ class Application(VuetifyTemplate, HubListener):
 
         add_callback(self.app_state, 'dark_mode', self._theme_toggle)
 
-        print("app init end")
-
     def reload(self):
         """
         Reload only the UI elements of the application.
