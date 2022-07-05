@@ -60,27 +60,27 @@ class StageThree(HubbleStage):
         )
         self.add_widget(fit_table, label="fit_table")
 
-        student_data = self.get_data("student_data")
-        all_data = self.get_data("HubbleData_All")
-
-
         # Set up links between various data sets
         student_dc_name = "student_data"
         class_dc_name = "HubbleData_ClassSample"
         all_dc_name = "HubbleData_All"
-        hubble_name = "Hubble 1929-Table 1"
-        hstkp_name = "HSTkey2001"
+        hubble_dc_name = "Hubble 1929-Table 1"
+        hstkp_dc_name = "HSTkey2001"
+        galaxy_dc_name = "galaxy_data"
 
-        class_data = self.get_data(class_dc_name)
-        for component in class_data.components:
+        student_data = self.get_data(student_dc_name)
+        all_data = self.get_data(all_dc_name)
+        class_meas_data = self.get_data(class_dc_name)
+
+        for component in class_meas_data.components:
             field = component.label
             self.add_link(class_dc_name, field, all_dc_name, field)
             if component.label in student_data.component_ids():
                 self.add_link(student_dc_name, field, class_dc_name, field)
-        self.add_link(hubble_name, 'Distance (Mpc)', hstkp_name, 'Distance (Mpc)')
-        self.add_link(hubble_name, 'Tweaked Velocity (km/s)', hstkp_name, 'Velocity (km/s)')
-        self.add_link(hstkp_name, 'Distance (Mpc)', student_dc_name, 'distance')
-        self.add_link(hstkp_name, 'Velocity (km/s)', student_dc_name, 'velocity')
+        self.add_link(hubble_dc_name, 'Distance (Mpc)', hstkp_dc_name, 'Distance (Mpc)')
+        self.add_link(hubble_dc_name, 'Tweaked Velocity (km/s)', hstkp_dc_name, 'Velocity (km/s)')
+        self.add_link(hstkp_dc_name, 'Distance (Mpc)', student_dc_name, 'distance')
+        self.add_link(hstkp_dc_name, 'Velocity (km/s)', student_dc_name, 'velocity')
 
 
         # Create viewers
@@ -96,12 +96,11 @@ class StageThree(HubbleStage):
         class_sample_data = self.get_data("HubbleSummary_ClassSample")
         students_summary_data = self.get_data("HubbleSummary_Students")
         classes_summary_data = self.get_data("HubbleSummary_Classes")
-        hubble1929 = self.get_data("Hubble 1929-Table 1")
-        hstkp = self.get_data("HSTkey2001")
-        galaxy_data = self.get_data('galaxy_data')
+        hubble1929 = self.get_data(hubble_dc_name)
+        hstkp = self.get_data(hstkp_dc_name)
+        galaxy_data = self.get_data(galaxy_dc_name)
 
         # Set up the listener to sync the histogram <--> scatter viewers
-        meas_data = self.get_data("HubbleData_ClassSample")
 
         # Set up the functionality for the histogram <---> scatter sync
         # We add a listener for when a subset is modified/created on 
@@ -113,7 +112,7 @@ class StageThree(HubbleStage):
                                                     None,
                                                     class_sample_data,
                                                     None, 
-                                                    meas_data,
+                                                    class_meas_data,
                                                     source_subset_label=histogram_source_label,
                                                     modify_subset_label=histogram_modify_label)
 
@@ -135,14 +134,16 @@ class StageThree(HubbleStage):
         comparison_viewer.ignore(comparison_ignorer)
 
 
+        dist_attr = "distance"
+        vel_attr = "velocity"
         for viewer in [fit_viewer, comparison_viewer, prodata_viewer]:
             viewer.add_data(student_data)
             #viewer.layers[-1].state.visible = False
-            viewer.state.x_att = student_data.id['distance']
-            viewer.state.y_att = student_data.id['velocity']
+            viewer.state.x_att = student_data.id[dist_attr]
+            viewer.state.y_att = student_data.id[vel_attr]
         
         comparison_viewer.layers[-1].state.zorder = 3
-        comparison_viewer.add_data(class_data)
+        comparison_viewer.add_data(class_meas_data)
         class_layer = comparison_viewer.layers[-1]
         class_layer.state.zorder = 2
         class_layer.state.visible = False
@@ -150,13 +151,13 @@ class StageThree(HubbleStage):
         all_layer = comparison_viewer.layers[-1]
         all_layer.state.zorder = 1
         all_layer.state.visible = False
-        comparison_viewer.state.x_att = all_data.id['distance']
-        comparison_viewer.state.y_att = all_data.id['velocity']
+        comparison_viewer.state.x_att = all_data.id[dist_attr]
+        comparison_viewer.state.y_att = all_data.id[vel_attr]
         comparison_viewer.state.reset_limits()
         
         prodata_viewer.add_data(student_data)
-        prodata_viewer.state.x_att = student_data.id['distance']
-        prodata_viewer.state.y_att = student_data.id['velocity']
+        prodata_viewer.state.x_att = student_data.id[dist_attr]
+        prodata_viewer.state.y_att = student_data.id[vel_attr]
         prodata_viewer.add_data(hstkp)
         prodata_viewer.add_data(hubble1929)
 
