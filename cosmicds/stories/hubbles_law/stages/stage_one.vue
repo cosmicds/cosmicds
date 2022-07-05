@@ -20,46 +20,18 @@
         cols="12"
         lg="4"
       >
-        <c-guideline-stage-one-start
+        <c-guideline-intro-guidelines
           v-if="stage_state.marker == 'mee_gui1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-select-galaxies-1
           v-if="stage_state.marker == 'sel_gal1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-select-galaxies-2
           v-if="stage_state.marker == 'sel_gal2' & stage_state.gals_total == 0"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-select-galaxies-3
           v-if="stage_state.marker == 'sel_gal3'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <v-btn
           v-if="stage_state.marker == 'sel_gal2' || 'sel_gal3' && stage_state.gals_total < stage_state.gals_max && show_team_interface"
           color="error"
@@ -92,64 +64,22 @@
       >
         <c-guideline-notice-galaxy-table 
           v-if="stage_state.marker == 'sel_gal2' & stage_state.gals_total == 1 & !stage_state.gal_selected"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-choose-row
           v-if="stage_state.marker == 'cho_row1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-doppler-calc-3
           v-if="stage_state.marker == 'dop_cal3'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" /> 
+          v-intersect.once="scrollIntoView" />
         <c-guideline-doppler-calc-4
           v-if="stage_state.marker == 'dop_cal4' || stage_state.marker == 'dop_cal5'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-slideshow-doppler-calc-5
           v-if="stage_state.marker == 'dop_cal5'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-doppler-calc-6
           v-if="stage_state.marker == 'dop_cal6'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
       </v-col>
       <v-col
         cols="12"
@@ -172,94 +102,31 @@
       >
         <c-guideline-spectrum
           v-if="stage_state.marker == 'mee_spe1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-restwave
           v-if="stage_state.marker == 'res_wav1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-obswave-1
           v-if="stage_state.marker == 'obs_wav1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-obswave-2
           v-if="stage_state.marker == 'obs_wav2'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-remaining-gals
           v-if="stage_state.marker == 'rep_rem1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-reflect-on-data
           v-if="stage_state.marker == 'ref_dat1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-doppler-calc-0
           v-if="stage_state.marker == 'dop_cal0'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-doppler-calc-1
           v-if="stage_state.marker == 'dop_cal1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-doppler-calc-2
           v-if="stage_state.marker == 'dop_cal2'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
       </v-col>
       <v-col
         v-if="stage_state.spec_viewer_reached"
@@ -341,3 +208,19 @@
     </v-row>
   </v-container>
 </template>
+
+<script>
+module.exports = {
+  methods: {
+    scrollIntoView: function(entries, observer, isIntersecting) {
+      if (isIntersecting) {
+        entries[0].target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }
+  }
+}
+
+</script>

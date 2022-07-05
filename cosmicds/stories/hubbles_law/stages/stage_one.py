@@ -204,10 +204,10 @@ class StageOne(HubbleStage):
 
         # Set up the generic state components
         state_components_dir = str(
-            Path(__file__).parent.parent / "components" / "generic_state_components")
+            Path(__file__).parent.parent / "components" / "generic_state_components" / "stage_one")
         path = join(state_components_dir, "")
         state_components = [
-            "guideline_stage_one_start",
+            "guideline_intro_guidelines",
             "guideline_select_galaxies_1",
             "guideline_select_galaxies_2",
             "guideline_select_galaxies_3",
@@ -282,12 +282,11 @@ class StageOne(HubbleStage):
             self.galaxy_table.selected = []
             self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
         if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
-            self.stage_state.marker = "mee_spe1"
             self.stage_state.spec_viewer_reached = True
+            self.stage_state.marker = "mee_spe1"
         if advancing and old == "dop_cal2":
             self.galaxy_table.selected = []
             self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
-            self.selection_tool
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
@@ -397,8 +396,8 @@ class StageOne(HubbleStage):
         self.update_spectrum_viewer(name, z)
 
         if self.stage_state.marker == 'cho_row1':
-            self.stage_state.marker = 'mee_spe1'
             self.stage_state.spec_viewer_reached = True
+            self.stage_state.marker = 'mee_spe1'
 
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]

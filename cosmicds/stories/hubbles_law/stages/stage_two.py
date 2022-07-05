@@ -1,36 +1,79 @@
-import logging
+from os.path import join
+from pathlib import Path
 
-import astropy.units as u
 from echo import CallbackProperty, add_callback, ignore_callback
 from glue.core.state_objects import State
 from numpy import pi
-from traitlets import default
+from traitlets import default, Bool
 
-from cosmicds.components.table import Table
+import astropy.units as u
+from astropy.coordinates import Angle, SkyCoord
+
 from cosmicds.registries import register_stage
-from cosmicds.stories.hubbles_law.components import Angsize_SlideShow, DistanceSidebar, DistanceTool
-from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
+from cosmicds.components.table import Table
+from cosmicds.stories.hubbles_law.components import Angsize_SlideShow, DistanceSidebar, DistanceTool
+from cosmicds.components.generic_state_component import GenericStateComponent
+from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 
+import logging
 log = logging.getLogger()
 
 
 class StageState(State):
     galaxy = CallbackProperty({})
+    galaxy_selected = CallbackProperty(False)
     galaxy_dist = CallbackProperty(None)
+    ruler_clicked = CallbackProperty(False)
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
     advance_marker = CallbackProperty(True)
     image_location = CallbackProperty()
+    distance_sidebar = CallbackProperty(False)
 
     markers = CallbackProperty([
-        "test"
+        'ang_siz1',
+        'cho_row1',
+        'ang_siz2',
+        'ang_siz3',
+        'ang_siz4',
+        'ang_siz5',
+        'ang_siz6',
+        'rep_rem1',
+        'est_dis1',
+        'est_dis2',
+        'cho_row2',
+        'est_dis3',
+        'est_dis4',
+        'fil_rem1',
+        'two_com1',
     ])
 
-    step_markers = CallbackProperty({
+    step_markers = CallbackProperty([
+        'ang_siz1',
+    ])
 
-    })
+    csv_highlights = CallbackProperty([
+        'ang_siz1',
+        'ang_siz2',
+        'ang_siz3',
+        'ang_siz4',
+        'ang_siz5',
+        'ang_siz6',
+        'rep_rem1',
+        'est_dis1',
+        'est_dis2',
+    ])
+
+    table_highlights = CallbackProperty([
+        'cho_row1',
+        'cho_row2',
+        'est_dis3',
+        'est_dis4',
+        'fil_rem1',
+        'two_com1',
+    ])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -50,6 +93,8 @@ class StageState(State):
     "Measure angular size"
 ])
 class StageTwo(HubbleStage):
+    show_team_interface = Bool(False).tag(sync=True)
+    START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
 
     @default('template')
     def _default_template(self):
@@ -67,6 +112,7 @@ class StageTwo(HubbleStage):
         super().__init__(*args, **kwargs)
 
         self.stage_state = StageState()
+        self.show_team_interface = self.app_state.show_team_interface
 
         angsize_slideshow = Angsize_SlideShow(self.stage_state)
         self.add_component(angsize_slideshow, label='c-angsize-slideshow')
@@ -87,10 +133,11 @@ class StageTwo(HubbleStage):
                                       'GZ Class',
                                       'θ (arcsec)',
                                       'Distance (Mpc)'],
-                               title='My Galaxies | Distance Measurements',
+                               title='My Galaxies',
                                selected_color=self.table_selected_color(self.app_state.dark_mode),
                                use_subset_group=False,
                                single_select=True)
+
         self.add_widget(distance_table, label="distance_table")
         distance_table.observe(
             self.distance_table_selected_change, names=["selected"])
@@ -103,6 +150,62 @@ class StageTwo(HubbleStage):
         self.distance_tool.observe(self._distance_tool_flagged, names=["flagged"])
         add_callback(self.stage_state, 'make_measurement',
                      self._make_measurement)
+
+
+
+        # Set up the generic state components
+        state_components_dir = str(
+            Path(__file__).parent.parent / "components" / "generic_state_components" / "stage_two")
+        path = join(state_components_dir, "")
+        state_components = [
+            "guideline_angsize_meas1",
+            "guideline_choose_row1",
+            "guideline_angsize_meas2",
+            "guideline_angsize_meas3",
+            "guideline_angsize_meas4",
+            "guideline_angsize_meas5",
+            "guideline_angsize_meas6",
+            "guideline_repeat_remaining_galaxies",
+            "guideline_estimate_distance1",
+            "guideline_estimate_distance2",
+            "guideline_choose_row2",
+            "guideline_estimate_distance3",
+            "guideline_estimate_distance4",
+            "guideline_fill_remaining_galaxies",
+            "guideline_stage_two_complete"
+        ]
+        ext = ".vue"
+        for comp in state_components:
+            label = f"c-{comp}".replace("_", "-")
+
+            # comp + ext = filename; path = folder where they live.
+            component = GenericStateComponent(comp + ext, path, self.stage_state)
+            self.add_component(component, label=label)
+
+        # Callbacks
+        add_callback(self.stage_state, 'marker',
+                     self._on_marker_update, echo_old=True)
+        add_callback(self.story_state, 'step_index',
+                     self._on_step_index_update)
+        self.trigger_marker_update_cb = True
+
+
+    def _on_marker_update(self, old, new):
+        if not self.trigger_marker_update_cb:
+            return
+        markers = self.stage_state.markers
+        advancing = markers.index(new) > markers.index(old)
+        if advancing and new == "cho_row1":
+            self.distance_table.selected = []
+            self.distance_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
+
+    def _on_step_index_update(self, index):
+        # Change the marker without firing the associated stage callback
+        # We can't just use ignore_callback, since other stuff (i.e. the frontend)
+        # may depend on marker callbacks
+        self.trigger_marker_update_cb = False
+        self.stage_state.marker = self.stage_state.step_markers[index]
+        self.trigger_marker_update_cb = True
 
     def distance_table_selected_change(self, change):
         selected = change["new"]
@@ -118,6 +221,10 @@ class StageTwo(HubbleStage):
         self.stage_state.galaxy = galaxy
         self.stage_state.galaxy_dist = None
         self.distance_tool.measuring_allowed = bool(galaxy)
+
+        if self.stage_state.marker == 'cho_row1':
+            self.stage_state.marker = 'ang_siz2'
+            self.stage_state.galaxy_selected = True
 
     def _angular_size_update(self, change):
         self.distance_sidebar.angular_size = format_measured_angle(change["new"])

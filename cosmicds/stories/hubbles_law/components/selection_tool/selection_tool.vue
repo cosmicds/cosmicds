@@ -142,12 +142,12 @@
 
     </v-toolbar>
     <div class="selection-content">
-        <v-lazy>
-          <jupyter-widget
-            :widget="widget"
-            class="wwt-widget"
-          />
-        </v-lazy>
+      <v-lazy>
+        <jupyter-widget
+          :widget="widget"
+          class="wwt-widget"
+        />
+      </v-lazy>
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
         <v-fab-transition>
