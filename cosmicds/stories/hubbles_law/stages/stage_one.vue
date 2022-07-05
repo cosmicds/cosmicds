@@ -20,7 +20,7 @@
         cols="12"
         lg="4"
       >
-        <c-guideline-stage-one-start
+        <c-guideline-intro-guidelines
           v-if="stage_state.marker == 'mee_gui1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {

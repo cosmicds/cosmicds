@@ -160,13 +160,13 @@ class StageTwo(HubbleStage):
             Path(__file__).parent.parent / "components" / "generic_state_components" / "stage_two")
         path = join(state_components_dir, "")
         state_components = [
-            "guideline_stage_two_start",
+            "guideline_angsize_meas1",
             "guideline_choose_row1",
-            "guideline_angular_scale",
-            "guideline_measuring_tool1",
-            "guideline_measuring_tool2",
-            "guideline_measuring_tool3",
-            "guideline_measuring_tool4",
+            "guideline_angsize_meas2",
+            "guideline_angsize_meas3",
+            "guideline_angsize_meas4",
+            "guideline_angsize_meas5",
+            "guideline_angsize_meas6",
             "guideline_repeat_remaining_galaxies",
             "guideline_estimate_distance1",
             "guideline_estimate_distance2",

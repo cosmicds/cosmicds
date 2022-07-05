@@ -14,7 +14,7 @@
         cols="12"
         lg="4"
       >
-        <c-guideline-stage-two-start
+        <c-guideline-angsize-meas1
           v-if="stage_state.marker == 'ang_siz1'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -24,7 +24,7 @@
               })
             }
           }" />
-        <c-guideline-angular-scale
+        <c-guideline-angsize-meas2
           v-if="stage_state.marker == 'ang_siz2'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -34,7 +34,7 @@
               })
             }
           }" />
-        <c-guideline-measuring-tool1
+        <c-guideline-angsize-meas3
           v-if="stage_state.marker == 'ang_siz3'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -44,7 +44,7 @@
               })
             }
           }" />
-        <c-guideline-measuring-tool2
+        <c-guideline-angsize-meas4
           v-if="stage_state.marker == 'ang_siz4'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -54,7 +54,7 @@
               })
             }
           }" />
-        <c-guideline-measuring-tool3
+        <c-guideline-angsize-meas5
           v-if="stage_state.marker == 'ang_siz5'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
@@ -64,7 +64,7 @@
               })
             }
           }" />
-        <c-guideline-measuring-tool4
+        <c-guideline-angsize-meas6
           v-if="stage_state.marker == 'ang_siz6'"
           v-intersect.once="(entries, observer, isIntersecting) => {
             if (isIntersecting) {
