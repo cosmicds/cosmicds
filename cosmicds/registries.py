@@ -61,9 +61,8 @@ class StoryRegistry(UniqueDictRegistry):
         story_entry = self.members[name]
         story_state = story_entry['cls'](session)
         story_state.name = name
-        student = app_state.student
 
-        response = requests.get(f"{API_URL}/story-state/{student['id']}/{name}")
+        response = requests.get(f"{API_URL}/story-state/{app_state.student['id']}/{name}")
         data = response.json()
         state = data["state"]
 
@@ -71,7 +70,7 @@ class StoryRegistry(UniqueDictRegistry):
             state["stages"] = { int(k) : v for k,v in state["stages"].items() }
             story_state.update_from_dict(state)
 
-        story_state.setup_for_student(student, app_state.classroom, story_state)
+        story_state.setup_for_student(app_state)
 
         for k, v in story_entry['stages'].items():
             stage = v['cls'](session, story_state, app_state)
