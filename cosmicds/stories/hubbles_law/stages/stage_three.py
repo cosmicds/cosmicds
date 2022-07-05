@@ -72,7 +72,6 @@ class StageThree(HubbleStage):
         student_data = self.get_data(student_dc_name)
         all_data = self.get_data(all_dc_name)
         class_meas_data = self.get_data(class_dc_name)
-        print(all_data)
 
         dist_attr = "distance"
         vel_attr = "velocity"
@@ -143,6 +142,7 @@ class StageThree(HubbleStage):
         student_layer = comparison_viewer.layers[-1]
         student_layer.state.color = 'green'
         student_layer.state.zorder = 3
+        student_layer.state.size = 8
         comparison_viewer.add_data(class_meas_data)
         class_layer = comparison_viewer.layers[-1]
         class_layer.state.zorder = 2
