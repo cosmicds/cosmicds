@@ -20,7 +20,7 @@ class Story(State, HubMixin):
     stages = DictCallbackProperty()
     teacher_user = CallbackProperty()
     student_user = CallbackProperty()
-    class_id = CallbackProperty()
+    classroom = CallbackProperty()
 
     def __init__(self, session, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,6 +56,10 @@ class Story(State, HubMixin):
             for layer in viewer.layers:
                 if layer.state.layer.label == data.label:
                     layer.state.visible = viewer in viewers
+
+    def setup_for_student(self, app_state):
+        self.student_user = app_state.student
+        self.classroom = app_state.classroom
 
 class Stage(TemplateMixin):
     template = Unicode().tag(sync=True)

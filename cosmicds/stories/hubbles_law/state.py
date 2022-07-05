@@ -21,6 +21,21 @@ class HubblesLaw(Story):
     validation_failure_counts = DictCallbackProperty({})
     responses = DictCallbackProperty({})
 
+    measurement_keys = [
+        "obs_wave_value",
+        "rest_wave_value",
+        "velocity_value",
+        "est_dist_value",
+        "ang_size_value",
+        "ra",
+        "decl",
+        "name",
+        "z",
+        "type",
+        "element"
+    ]
+    name_ext = ".fits"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -49,12 +64,13 @@ class HubblesLaw(Story):
         # Load in the galaxy data
         galaxies = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/galaxies").json()
         galaxies_dict = { k : [x[k] for x in galaxies] for k in galaxies[0] }
-        name_ext = ".fits"
-        galaxies_dict["name"] = [x[:-len(name_ext)] for x in galaxies_dict["name"]]
+        galaxies_dict["name"] = [x[:-len(self.name_ext)] for x in galaxies_dict["name"]]
         self.data_collection.append(Data(
             label="SDSS_all_sample_filtered",
             **galaxies_dict
         ))
+
+        print(self.data_collection["HubbleData_ClassSample"])
 
         # Compose empty data containers to be populated by user
         self.student_cols = ["id", "name", "ra", "decl", "z", "type", "measwave",
@@ -119,12 +135,11 @@ class HubblesLaw(Story):
             "Ir" : "irregulars_spectra"
         }
 
-        ext = ".fits"
-        if not name.endswith(ext):
-            filename = name + ext
+        if not name.endswith(self.name_ext):
+            filename = name + self.name_ext
         else:
             filename = name
-            name = name[:-len(ext)]
+            name = name[:-len(self.name_ext)]
         spectra_path = Path(__file__).parent / "data" / "spectra"
         folder = spectra_path / type_folders[gal_type]
         path = str(folder / filename)
@@ -189,36 +204,18 @@ class HubblesLaw(Story):
         components = [x for x in sdss.main_components if x.label != 'id']
         return { sdss['id'][index]: { comp.label: sdss[comp][index] for comp in components } for index in indices }
 
-    # TODO: Revisit the name of this function
-    # ******
-    # Even if we don't use all of the arguments here,
-    # other stories might, and it's nice to keep
-    # a consistent signature
-    def setup_for_student(self, student, classroom, story_state):
-        response = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{student['id']}")
+    def setup_for_student(self, app_state):
+        super().setup_for_student(self, app_state)
+        response = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{app_state.student['id']}")
         res_json = response.json()
         measurements = res_json["measurements"]
-        measurement_keys = [
-            "obs_wave_value",
-            "rest_wave_value",
-            "velocity_value",
-            "est_dist_value",
-            "ang_size_value",
-            "ra",
-            "decl",
-            "name",
-            "z",
-            "type",
-            "element"
-        ]
         for measurement in measurements:
             measurement.update(measurement.get("galaxy", {}))
-        components = { STATE_TO_MEAS.get(k, k) : [measurement.get(k, None) for measurement in measurements] for k in measurement_keys }
+        components = { STATE_TO_MEAS.get(k, k) : [measurement.get(k, None) for measurement in measurements] for k in self.measurement_keys }
         
-        name_ext = ".fits"
         for i, name in enumerate(components["name"]):
-            if name.endswith(name_ext):
-                components["name"][i] = name[:-len(name_ext)]
+            if name.endswith(self.name_ext):
+                components["name"][i] = name[:-len(self.name_ext)]
         data = Data(label="student_measurements", **components)
         student_measurements = self.data_collection['student_measurements']
         student_measurements.update_values_from_data(data)
