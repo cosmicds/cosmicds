@@ -32,7 +32,8 @@ class HubblesLaw(Story):
         "name",
         "z",
         "type",
-        "element"
+        "element",
+        "student_id"
     ]
     name_ext = ".fits"
 
@@ -70,8 +71,6 @@ class HubblesLaw(Story):
             **galaxies_dict
         ))
 
-        print(self.data_collection["HubbleData_ClassSample"])
-
         # Compose empty data containers to be populated by user
         self.student_cols = ["name", "ra", "decl", "z", "type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
@@ -85,10 +84,11 @@ class HubblesLaw(Story):
             ctype = CategoricalComponent if categorical else Component
             meas_comp = ctype(np.array([]))
             data = ['X'] if categorical else [0]
-            data_comp = ctype(np.array(data))
+            student_data_comp = ctype(np.array(data))
+            class_data_comp = ctype(np.array(data))
             student_measurements.add_component(meas_comp, col)
-            student_data.add_component(data_comp, col)
-            class_data.add_component(data_comp, col)
+            student_data.add_component(student_data_comp, col)
+            class_data.add_component(class_data_comp, col)
 
         self.data_collection.append(student_measurements)
         self.data_collection.append(student_data)
@@ -186,6 +186,18 @@ class HubblesLaw(Story):
         HubblesLaw.make_data_writeable(student_data)
 
     @staticmethod
+    def prune_none(data):
+        indices = set()
+        for i in range(data.size):
+            if any(data[comp][i] is None for comp in data.main_components):
+                indices.add(i)
+
+        keep = [x for x in range(data.size) if x not in indices]
+        pruned_components = { comp.label: [data[comp][x] for x in keep] for comp in data.main_components }
+        pruned = Data(label=data.label, **pruned_components)
+        data.update_values_from_data(pruned)
+
+    @staticmethod
     def make_data_writeable(data):
         for comp in data.main_components:
             data[comp.label].setflags(write=True)
@@ -196,20 +208,35 @@ class HubblesLaw(Story):
         components = [x for x in sdss.main_components if x.label != 'id']
         return { sdss['id'][index]: { comp.label: sdss[comp][index] for comp in components } for index in indices }
 
-    def setup_for_student(self, app_state):
-        super().setup_for_student(app_state)
-        response = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{app_state.student['id']}")
+    def fetch_measurement_data(self, url):
+        response = requests.get(url)
         res_json = response.json()
         measurements = res_json["measurements"]
         for measurement in measurements:
             measurement.update(measurement.get("galaxy", {}))
         components = { STATE_TO_MEAS.get(k, k) : [measurement.get(k, None) for measurement in measurements] for k in self.measurement_keys }
-        
+
         for i, name in enumerate(components["name"]):
             if name.endswith(self.name_ext):
                 components["name"][i] = name[:-len(self.name_ext)]
-        data = Data(label="student_measurements", **components)
-        student_measurements = self.data_collection['student_measurements']
+        data = Data(**components)
+        return data
+
+    def setup_for_student(self, app_state):
+        super().setup_for_student(app_state)
+        student_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{app_state.student['id']}"
+        student_meas_label = "student_measurements"
+        data = self.fetch_measurement_data(student_meas_url)
+        data.label = student_meas_label
+        student_measurements = self.data_collection[student_meas_label]
         student_measurements.update_values_from_data(data)
         HubblesLaw.make_data_writeable(student_measurements)
         self.update_student_data()
+
+        class_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/stage-3-data/{app_state.student['id']}/{app_state.classroom['id']}"
+        class_meas_label = "class_data"
+        data = self.fetch_measurement_data(class_meas_url)
+        data.label = class_meas_label
+        HubblesLaw.prune_none(data)
+        class_data = self.data_collection[class_meas_label]
+        class_data.update_values_from_data(data)
