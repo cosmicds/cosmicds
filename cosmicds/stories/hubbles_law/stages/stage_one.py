@@ -141,8 +141,6 @@ class StageOne(HubbleStage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        print("Stage one initialization")
-
         self.stage_state = StageState()
         self.show_team_interface = self.app_state.show_team_interface
         
@@ -151,12 +149,6 @@ class StageOne(HubbleStage):
 
         # Set up any Data-based values
         self.stage_state.gals_total = int(self.get_data("student_measurements").size)
-        print(self.get_data("student_measurements"))
-        print(f"Gals total: {self.stage_state.gals_total}")
-
-        def count_updated(count):
-            print(f"Updated count: {count}")
-        add_callback(self.stage_state, 'gals_total', count_updated)
 
         # Set up viewers
         spectrum_viewer = self.add_viewer(
@@ -264,7 +256,6 @@ class StageOne(HubbleStage):
 
         # Callbacks
         def update_count(change):
-            print("In update_count")
             self.stage_state.gals_total = change["new"]
         selection_tool.observe(update_count, names=['selected_count'])
         add_callback(self.stage_state, 'marker',
