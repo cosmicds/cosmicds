@@ -226,6 +226,17 @@ export default {
           this.input = document.createElement('input');
           this.input.onchange = this.handleChangeEvent.bind(this);
           this.shadowRoot.append(this.input);
+
+          // For inputs that aren't created when the story is initialized
+          // (i.e. in a MathJax intersection observer)
+          // we need this to correctly initialize the value
+          const tag = this.getAttribute("tag");
+          if (tag) {
+            const application = CustomInput.app;
+            if (tag in application.story_state.inputs) {
+              this.input.value = application.story_state.inputs[tag];
+            }
+          }
         }
 
         handleChangeEvent(event) {
@@ -240,7 +251,6 @@ export default {
 
         onUpdateText(text) {
           const tag = this.getAttribute("tag");
-          console.log(tag);
           if (!tag) { return; }
           const application = CustomInput.app;
           application.story_state.inputs[tag] = text;
@@ -340,8 +350,6 @@ export default {
             }
           });
           if (needTypesetting.length > 0) {
-            console.log(needTypesetting);
-            console.log(MathJax);
             MathJax.typesetPromise(needTypesetting);
           }
 
@@ -422,7 +430,6 @@ export default {
     });
     resizeObserver.observe(document.body);
     this.onLoadStoryState(this.story_state);
-
   },
   methods: {
     getCurrentStage: function () {
