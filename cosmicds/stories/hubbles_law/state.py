@@ -78,6 +78,7 @@ class HubblesLaw(Story):
                          "element", "angular_size"]
         self.categorical_cols = ['name', 'element', 'type']
         student_measurements = Data(label="student_measurements")
+        class_measurements = Data(label="class_measurements")
         student_data = Data(label="student_data")
         for col in self.student_cols:
             categorical = col in self.categorical_cols
@@ -87,6 +88,7 @@ class HubblesLaw(Story):
             data_comp = ctype(np.array(data))
             student_measurements.add_component(meas_comp, col)
             student_data.add_component(data_comp, col)
+            class_measurements.add_component(data_comp, col)
 
         # student_measurements = Data(
         #     label='student_measurements',
@@ -98,12 +100,11 @@ class HubblesLaw(Story):
         #         for x in student_cols})
         self.data_collection.append(student_measurements)
         self.data_collection.append(student_data)
+        self.data_collection.append(class_measurements)
 
-        self.app.add_link(student_measurements, 'id', student_data, 'id')
-        self.app.add_link(student_measurements, 'name', student_data, 'name')
-        self.app.add_link(student_measurements, 'distance', student_data, 'distance')
-        self.app.add_link(student_measurements, 'velocity', student_data, 'velocity')
-        self.app.add_link(student_measurements, 'student_id', student_data, 'student_id')
+        for comp in ['id', 'name', 'distance', 'velocity', 'student_id']:
+            self.app.add_link(student_measurements, comp, student_data, comp)
+            self.app.add_link(student_measurements, comp, class_measurements, comp)
 
         # Make all data writeable
         for data in self.data_collection:
@@ -205,7 +206,7 @@ class HubblesLaw(Story):
         return { sdss['id'][index]: { comp.label: sdss[comp][index] for comp in components } for index in indices }
 
     def setup_for_student(self, app_state):
-        super().setup_for_student(self, app_state)
+        super().setup_for_student(app_state)
         response = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{app_state.student['id']}")
         res_json = response.json()
         measurements = res_json["measurements"]
