@@ -213,7 +213,6 @@ export default {
     window.cdsApp = this;
 
     const app = this;
-    console.log(this);
     if (!window.customElements.get("cds-input")) {
 
       class CustomInput extends HTMLElement {
@@ -429,7 +428,7 @@ export default {
       });
     });
     resizeObserver.observe(document.body);
-    this.onLoadStoryState(this.story_state);
+    //this.onLoadStoryState(this.story_state);
   },
   methods: {
     getCurrentStage: function () {
