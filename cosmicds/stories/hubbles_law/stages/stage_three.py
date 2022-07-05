@@ -62,21 +62,22 @@ class StageThree(HubbleStage):
 
         # Set up links between various data sets
         student_dc_name = "student_data"
-        class_dc_name = "HubbleData_ClassSample"
+        class_dc_name = "class_data"
         all_dc_name = "HubbleData_All"
         hubble_dc_name = "Hubble 1929-Table 1"
         hstkp_dc_name = "HSTkey2001"
         galaxy_dc_name = "galaxy_data"
+        
 
         student_data = self.get_data(student_dc_name)
         all_data = self.get_data(all_dc_name)
         class_meas_data = self.get_data(class_dc_name)
+        print(all_data)
 
-        for component in class_meas_data.components:
-            field = component.label
+        dist_attr = "distance"
+        vel_attr = "velocity"
+        for field in [dist_attr, vel_attr]:
             self.add_link(class_dc_name, field, all_dc_name, field)
-            if component.label in student_data.component_ids():
-                self.add_link(student_dc_name, field, class_dc_name, field)
         self.add_link(hubble_dc_name, 'Distance (Mpc)', hstkp_dc_name, 'Distance (Mpc)')
         self.add_link(hubble_dc_name, 'Tweaked Velocity (km/s)', hstkp_dc_name, 'Velocity (km/s)')
         self.add_link(hstkp_dc_name, 'Distance (Mpc)', student_dc_name, 'distance')
@@ -133,20 +134,19 @@ class StageThree(HubbleStage):
             return x.label == histogram_modify_label and x.data != self.histogram_listener.modify_data
         comparison_viewer.ignore(comparison_ignorer)
 
-
-        dist_attr = "distance"
-        vel_attr = "velocity"
         for viewer in [fit_viewer, comparison_viewer, prodata_viewer]:
             viewer.add_data(student_data)
             #viewer.layers[-1].state.visible = False
             viewer.state.x_att = student_data.id[dist_attr]
             viewer.state.y_att = student_data.id[vel_attr]
         
-        comparison_viewer.layers[-1].state.zorder = 3
+        student_layer = comparison_viewer.layers[-1]
+        student_layer.state.color = 'green'
+        student_layer.state.zorder = 3
         comparison_viewer.add_data(class_meas_data)
         class_layer = comparison_viewer.layers[-1]
         class_layer.state.zorder = 2
-        class_layer.state.visible = False
+        class_layer.state.color = 'red'
         comparison_viewer.add_data(all_data)
         all_layer = comparison_viewer.layers[-1]
         all_layer.state.zorder = 1
