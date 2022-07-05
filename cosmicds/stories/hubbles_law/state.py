@@ -73,12 +73,12 @@ class HubblesLaw(Story):
         print(self.data_collection["HubbleData_ClassSample"])
 
         # Compose empty data containers to be populated by user
-        self.student_cols = ["id", "name", "ra", "decl", "z", "type", "measwave",
+        self.student_cols = ["name", "ra", "decl", "z", "type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
                          "element", "angular_size"]
         self.categorical_cols = ['name', 'element', 'type']
         student_measurements = Data(label="student_measurements")
-        class_measurements = Data(label="class_measurements")
+        class_data = Data(label="class_data")
         student_data = Data(label="student_data")
         for col in self.student_cols:
             categorical = col in self.categorical_cols
@@ -88,23 +88,14 @@ class HubblesLaw(Story):
             data_comp = ctype(np.array(data))
             student_measurements.add_component(meas_comp, col)
             student_data.add_component(data_comp, col)
-            class_measurements.add_component(data_comp, col)
+            class_data.add_component(data_comp, col)
 
-        # student_measurements = Data(
-        #     label='student_measurements',
-        #     **{x: np.array([], dtype='float64')
-        #        for x in student_cols})
-        # student_data = Data(
-        #     label="student_data",
-        #     **{x : ['X'] if x in ['id', 'element', 'type'] else [0] 
-        #         for x in student_cols})
         self.data_collection.append(student_measurements)
         self.data_collection.append(student_data)
-        self.data_collection.append(class_measurements)
-
-        for comp in ['id', 'name', 'distance', 'velocity', 'student_id']:
+        self.data_collection.append(class_data)
+        for comp in ['distance', 'velocity', 'student_id']:
             self.app.add_link(student_measurements, comp, student_data, comp)
-            self.app.add_link(student_measurements, comp, class_measurements, comp)
+            self.app.add_link(student_measurements, comp, class_data, comp)
 
         # Make all data writeable
         for data in self.data_collection:
@@ -222,4 +213,3 @@ class HubblesLaw(Story):
         student_measurements.update_values_from_data(data)
         HubblesLaw.make_data_writeable(student_measurements)
         self.update_student_data()
-        
