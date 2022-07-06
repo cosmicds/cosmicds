@@ -10,7 +10,7 @@ from glue.core import Data
 import ipyvuetify as v
 
 import requests
-from cosmicds.utils import API_URL
+from cosmicds.utils import API_URL, RepeatedTimer
 from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
 from cosmicds.stories.hubbles_law.data_management import STATE_TO_MEAS
 
@@ -100,6 +100,9 @@ class HubblesLaw(Story):
         # Make all data writeable
         for data in self.data_collection:
             HubblesLaw.make_data_writeable(data)
+
+        self.class_data_timer = RepeatedTimer(30, self.fetch_class_data)
+        self.class_data_timer.start()
 
     def _set_theme(self):
         v.theme.dark = True
@@ -222,21 +225,30 @@ class HubblesLaw(Story):
         data = Data(**components)
         return data
 
-    def setup_for_student(self, app_state):
-        super().setup_for_student(app_state)
-        student_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{app_state.student['id']}"
+    def fetch_data_and_update(self, url, label, prune_none=False, make_writeable=False):
+        new_data = self.fetch_measurement_data(url)
+        new_data.label = label
+        if prune_none:
+            HubblesLaw.prune_none(new_data)
+        data = self.data_collection[label]
+        data.update_values_from_data(new_data)
+        if make_writeable:
+            HubblesLaw.make_data_writeable(data)
+
+    def fetch_student_data(self):
+        student_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{self.student['id']}"
         student_meas_label = "student_measurements"
-        data = self.fetch_measurement_data(student_meas_url)
-        data.label = student_meas_label
-        student_measurements = self.data_collection[student_meas_label]
-        student_measurements.update_values_from_data(data)
-        HubblesLaw.make_data_writeable(student_measurements)
+        self.fetch_data_and_update(student_meas_url, student_meas_label, make_writeable=True)
         self.update_student_data()
 
-        class_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/stage-3-data/{app_state.student['id']}/{app_state.classroom['id']}"
+    def fetch_class_data(self):
+        class_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/stage-3-data/{self.student['id']}/{self.classroom['id']}"
         class_meas_label = "class_data"
-        data = self.fetch_measurement_data(class_meas_url)
-        data.label = class_meas_label
-        HubblesLaw.prune_none(data)
-        class_data = self.data_collection[class_meas_label]
-        class_data.update_values_from_data(data)
+        self.fetch_data_and_update(class_meas_url, class_meas_label, prune_none=True)
+
+    def setup_for_student(self, app_state):
+        super().setup_for_student(app_state)
+        self.fetch_student_data()
+        self.fetch_class_data()
+
+
