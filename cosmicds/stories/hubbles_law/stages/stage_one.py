@@ -207,7 +207,7 @@ class StageOne(HubbleStage):
             Path(__file__).parent.parent / "components" / "generic_state_components" / "stage_one")
         path = join(state_components_dir, "")
         state_components = [
-            "guideline_stage_one_start",
+            "guideline_intro_guidelines",
             "guideline_select_galaxies_1",
             "guideline_select_galaxies_2",
             "guideline_select_galaxies_3",

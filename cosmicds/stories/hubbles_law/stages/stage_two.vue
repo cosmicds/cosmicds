@@ -14,96 +14,33 @@
         cols="12"
         lg="4"
       >
-        <c-guideline-stage-two-start
+        <c-guideline-angsize-meas1
           v-if="stage_state.marker == 'ang_siz1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
-        <c-guideline-angular-scale
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-angsize-meas2
           v-if="stage_state.marker == 'ang_siz2'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
-        <c-guideline-measuring-tool1
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-angsize-meas3
           v-if="stage_state.marker == 'ang_siz3'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
-        <c-guideline-measuring-tool2
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-angsize-meas4
           v-if="stage_state.marker == 'ang_siz4'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
-        <c-guideline-measuring-tool3
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-angsize-meas5
           v-if="stage_state.marker == 'ang_siz5'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
-        <c-guideline-measuring-tool4
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-angsize-meas6
           v-if="stage_state.marker == 'ang_siz6'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-repeat-remaining-galaxies
           v-if="stage_state.marker == 'rep_rem1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-estimate-distance1
           v-if="stage_state.marker == 'est_dis1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-estimate-distance2
           v-if="stage_state.marker == 'est_dis2'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
       </v-col>
       <v-col
         cols="12"
@@ -133,64 +70,22 @@
       >
         <c-guideline-choose-row1
           v-if="stage_state.marker == 'cho_row1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-choose-row2
           v-if="stage_state.marker == 'cho_row2'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-estimate-distance3
           v-if="stage_state.marker == 'est_dis3'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-estimate-distance4
           v-if="stage_state.marker == 'est_dis4'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-fill-remaining-galaxies
           v-if="stage_state.marker == 'fil_rem1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
         <c-guideline-stage-two-complete
           v-if="stage_state.marker == 'two_com1'"
-          v-intersect.once="(entries, observer, isIntersecting) => {
-            if (isIntersecting) {
-              entries[0].target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-              })
-            }
-          }" />
+          v-intersect.once="scrollIntoView" />
       </v-col>
       <v-col
         cols="12"
@@ -241,3 +136,19 @@
     </v-row>
   </v-container>
 </template>
+
+<script>
+module.exports = {
+  methods: {
+    scrollIntoView: function(entries, observer, isIntersecting) {
+      if (isIntersecting) {
+        entries[0].target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }
+  }
+}
+
+</script>
