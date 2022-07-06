@@ -505,6 +505,10 @@ export default {
   z-index: 25 !important;
 }
 
+.measuring-fab:hover:before, .measuring-fab:focus:before {
+  display: none;
+}
+
 .fab-tooltip {
   z-index: 25 !important;
 }
