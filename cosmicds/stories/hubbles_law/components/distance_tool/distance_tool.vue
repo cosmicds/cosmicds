@@ -475,6 +475,7 @@ export default {
 .distance-canvas {
   background: transparent;
   z-index: 20;
+  cursor: crosshair;
 }
 
 .fov-canvas {
