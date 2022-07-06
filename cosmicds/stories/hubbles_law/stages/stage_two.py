@@ -228,22 +228,22 @@ class StageTwo(HubbleStage):
             self.stage_state.galaxy_selected = True
 
     def _angular_size_update(self, change):
-        self.distance_sidebar.angular_size = format_measured_angle(change["new"])
+        new_ang_size = change["new"]
+        if new_ang_size !=0 and new_ang_size is not None:
+            self._make_measurement()
 
     def _angular_height_update(self, change):
         self.distance_sidebar.angular_height = format_fov(change["new"])
 
-    def _make_measurement(self, value):
-        if not value:
-            return
+    def _make_measurement(self):
         galaxy = self.stage_state.galaxy
         index = self.get_data_indices('student_measurements', 'name', lambda x: x == galaxy["name"], single=True)
         angular_size = self.distance_tool.angular_size
-        ang_size_deg = angular_size.value
-        distance = round(MILKY_WAY_SIZE_MPC * 180 / (ang_size_deg * pi))
+        # ang_size_deg = angular_size.value
+        # distance = round(MILKY_WAY_SIZE_MPC * 180 / (ang_size_deg * pi))
         angular_size_as = round(angular_size.to(u.arcsec).value)
-        self.stage_state.galaxy_dist = distance
-        self.update_data_value("student_measurements", "distance", distance, index)
+        # self.stage_state.galaxy_dist = distance
+        # self.update_data_value("student_measurements", "distance", distance, index)
         self.update_data_value("student_measurements", "angular_size", angular_size_as, index)
         self.story_state.update_student_data()
         with ignore_callback(self.stage_state, 'make_measurement'):
