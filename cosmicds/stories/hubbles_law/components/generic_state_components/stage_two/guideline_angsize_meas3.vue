@@ -14,6 +14,9 @@
       class="mb-4"
     >
       <p>
+        Zoom in or out so your entire galaxy is framed within the viewer.
+      </p>    
+      <p>
         Click the <v-icon>mdi-ruler</v-icon> icon to activate the angular size measuring tool.
       </p>
     </div>

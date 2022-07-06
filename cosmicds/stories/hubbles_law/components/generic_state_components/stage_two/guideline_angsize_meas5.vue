@@ -24,7 +24,7 @@
         Notice your galaxy’s angular size is now displayed in the table.
       </p>
       <p>
-        You may adjust your measurement by clicking on the ends of the green line and moving it to a new location.
+        You may adjust your measurement by clicking on the ends of the green line and moving them to a new location.
       </p>
       <p>
         Click <strong>DO'S AND DONT'S</strong> for tips on how to ensure the most accurate results.
