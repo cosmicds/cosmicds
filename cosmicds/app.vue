@@ -27,28 +27,30 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        icon
-        @click="
-          app_state.dark_mode = !app_state.dark_mode
-        "
+      <v-tooltip
+        bottom
       >
-        <v-icon
-        >mdi-brightness-6</v-icon>
-      </v-btn>
+        <template
+          v-slot:activator="{ on, attrs }"
+        >
+          <v-btn
+            icon
+            v-bind="attrs"
+            v-on="on"
+            @click="
+              app_state.dark_mode = !app_state.dark_mode
+            "
+          >
+            <v-icon>mdi-brightness-4</v-icon>
+          </v-btn>
+        </template>
+        {{ app_state.dark_mode ? 'switch to light mode' : 'switch to dark mode' }}
+      </v-tooltip>
 
-      <v-btn
-        icon
-        @click="
-          reset_app()
-        "
+      <v-responsive
+        max-width="156"
+        class="mx-4"
       >
-        <v-icon>
-          mdi-replay
-        </v-icon>
-      </v-btn>
-
-      <v-responsive max-width="156">
         <v-text-field
             dense
             flat
@@ -418,7 +420,6 @@ body {
 
 input {
   width: 4em !important;
-  border: 1px solid black !important;
   border-radius: 3px !important;
 }
 
