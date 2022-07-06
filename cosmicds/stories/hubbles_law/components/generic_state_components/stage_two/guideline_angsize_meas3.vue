@@ -41,7 +41,7 @@
       <v-col
         cols="6"
         class="shrink"
-        v-if="!state.ruler_clicked"
+        v-if="state.ruler_clicked_total==0"
       >
         <div
           style="font-size: 16px;"
@@ -51,7 +51,7 @@
       </v-col>
       <v-col
         class="shrink"
-        v-if="state.ruler_clicked"
+        v-if="state.ruler_clicked_total>0"
       >
         <v-btn
           class="black--text"

@@ -71,7 +71,9 @@ class DistanceTool(v.VueTemplate):
 
     def vue_toggle_measuring(self, _args=None):
         self.measuring = not self.measuring
-        self.state.ruler_clicked = True
+        self.state.ruler_clicked_total += 1
+        if self.state.ruler_clicked_total == 1:
+            self.state.marker = 'ang_siz4'
 
     @observe('measuredDistance')
     def _on_measured_distance_changed(self, change):
