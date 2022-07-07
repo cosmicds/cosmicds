@@ -46,6 +46,7 @@ class StageState(State):
     lambda_obs = CallbackProperty(0)
     element = CallbackProperty("")
     reflection_complete = CallbackProperty(False)
+    doppler_calc_reached = CallbackProperty(False)
     doppler_calc_dialog = CallbackProperty(True) # Should the doppler calculation be displayed when marker == dop_cal5?
     student_vel = CallbackProperty(0) # Value of student's calculated velocity
     doppler_calc_complete = CallbackProperty(False) # Did student finish the doppler calculation?
@@ -283,6 +284,9 @@ class StageOne(HubbleStage):
         if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
             self.stage_state.spec_viewer_reached = True
             self.stage_state.marker = "mee_spe1"
+        if advancing and old == "dop_cal3" and self.galaxy_table.index is not None:
+            self.stage_state.doppler_calc_reached = True
+            self.stage_state.marker = "dop_cal4"
         if advancing and old == "dop_cal2":
             self.galaxy_table.selected = []
             self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
@@ -397,6 +401,10 @@ class StageOne(HubbleStage):
         if self.stage_state.marker == 'cho_row1':
             self.stage_state.spec_viewer_reached = True
             self.stage_state.marker = 'mee_spe1'
+
+        if self.stage_state.marker == 'dop_cal3':
+            self.stage_state.doppler_calc_reached = True
+            self.stage_state.marker = 'dop_cal4'
 
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]
