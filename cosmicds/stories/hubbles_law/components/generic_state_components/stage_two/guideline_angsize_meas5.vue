@@ -4,13 +4,6 @@
     class="mb-4 mx-auto"
     max-width="800"
     elevation="6"
-
-    @back="
-      state.marker = 'ang_siz4';
-    "
-    @next="
-      state.marker = 'ang_siz6';
-    "
   >
     <h3
       class="mb-4"
