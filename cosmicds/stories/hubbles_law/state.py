@@ -131,12 +131,12 @@ class HubblesLaw(Story):
         v.theme.themes.light.secondary = 'colors.cyan.darken2'
         v.theme.themes.dark.accent = 'colors.amber.accent2'   # Next/Back buttons
         v.theme.themes.light.accent = 'colors.amber.accent3'
-        v.theme.themes.dark.error = 'colors.green.accent3'  # Team insider buttons that will not appear for user
-        v.theme.themes.light.error = 'colors.green.accent3'
+        v.theme.themes.dark.error = 'colors.pink.lighten1'  # Team insider buttons that will not appear for user
+        v.theme.themes.light.error = 'colors.indigo.lighten2'
         v.theme.themes.dark.info = 'colors.deepOrange.darken3'  # Instruction scaffolds & viewer highlights
         v.theme.themes.light.info = 'colors.deepOrange.darken1'
-        v.theme.themes.dark.success = 'colors.indigo.darken2'   # Unallocated
-        v.theme.themes.light.success = 'colors.indigo.darken1'
+        v.theme.themes.dark.success = 'colors.green.accent3'   # Unallocated
+        v.theme.themes.light.success = 'colors.green.accent3'
         v.theme.themes.dark.warning = '' # Unallocated
         v.theme.themes.light.warning = ''
         v.theme.themes.dark.anchor = '' # Unallocated

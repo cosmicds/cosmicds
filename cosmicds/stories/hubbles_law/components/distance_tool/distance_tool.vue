@@ -71,7 +71,7 @@
             bottom
             right
             absolute
-            :color="measuring ? 'orange' : 'accent'"
+            :color="measuring ? 'red' : 'success'"
             class="measuring-fab black--text"
             :ripple="false"
             v-bind="attrs"
@@ -218,7 +218,7 @@ export default {
     setupMeasuringCanvasContext: function() {
       this.context = this.canvas.getContext('2d');
       this.context.lineWidth = 3;
-      this.context.strokeStyle = 'lime';
+      this.context.strokeStyle = '#00e676';
     },
 
     addInitialPoint: function(event) {

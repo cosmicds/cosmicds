@@ -37,7 +37,6 @@ class StageState(State):
     lambda_on = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     obswaves_total = CallbackProperty(0)
-    velocity_button = CallbackProperty(False)
     velocities_total = CallbackProperty(0)
 
     marker = CallbackProperty("")

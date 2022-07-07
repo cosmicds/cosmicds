@@ -186,23 +186,6 @@
               </v-icon>
             </v-btn>
           </v-col>
-          <v-col
-            cols="12"
-          >
-            <!-- This alert is temporary -->
-            <v-btn
-              v-if="show_team_interface && stage_state.velocity_button"
-              :disabled="!stage_state.waveline_set"
-              class="white-text px-a"
-              width="100%"
-              color="success"
-              @click="
-                add_current_velocity();
-              "
-            >
-              find velocity
-            </v-btn>
-          </v-col>
         </v-row>
       </v-col>
     </v-row>
