@@ -29,7 +29,6 @@ class DistanceTool(v.VueTemplate):
     state = GlueState().tag(sync=True)
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
-    n_meas = 0    
 
     UPDATE_TIME = 1 #seconds
 
@@ -81,8 +80,8 @@ class DistanceTool(v.VueTemplate):
         fov = self.widget.get_fov()
         widget_height = self._height_from_pixel_str(self.widget.layout.height)
         self.angular_size = Angle(((change["new"] / widget_height) * fov))
-        self.n_meas += 1
-        if self.n_meas == 1:
+        self.state.n_meas += 1
+        if self.state.n_meas == 1:
             self.state.marker = 'ang_siz5' # auto-advance guideline if it's the first measurement made
 
     @observe('measuring')

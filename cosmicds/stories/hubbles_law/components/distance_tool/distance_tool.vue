@@ -76,7 +76,7 @@
             :ripple="false"
             v-bind="attrs"
             v-on="on"
-            v-show="measuring_allowed && !view_changing"
+            v-show="measuring_allowed && !view_changing && state.show_ruler"
             @click="toggle_measuring()">
             <v-icon>{{ measuring ? 'mdi-stop' : 'mdi-ruler' }}</v-icon>
           </v-btn>

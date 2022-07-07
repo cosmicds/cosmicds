@@ -4,9 +4,7 @@
     @back="
       state.marker = 'cho_row1';
     "
-    @next="
-      state.marker = 'ang_siz3';
-    "
+    @next="() => { state.show_ruler = true; state.marker = 'ang_siz3'; console.log(state.show_ruler) }"
   >
     <div
       class="mb-4"

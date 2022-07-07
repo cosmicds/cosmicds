@@ -32,6 +32,8 @@ class StageState(State):
     advance_marker = CallbackProperty(True)
     image_location = CallbackProperty()
     distance_sidebar = CallbackProperty(False)
+    n_meas = CallbackProperty(0)
+    show_ruler = CallbackProperty(False)
 
     markers = CallbackProperty([
         'ang_siz1',
