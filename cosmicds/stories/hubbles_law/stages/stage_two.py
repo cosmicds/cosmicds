@@ -28,6 +28,8 @@ class StageState(State):
     ruler_clicked = CallbackProperty(False)
     dos_donts_opened = CallbackProperty(False)
     make_measurement = CallbackProperty(False)
+    angsizes_total = CallbackProperty(0)
+
     marker = CallbackProperty("")
     advance_marker = CallbackProperty(True)
     image_location = CallbackProperty()
@@ -242,6 +244,14 @@ class StageTwo(HubbleStage):
         ang_size_deg = angular_size.value
         distance = round(MILKY_WAY_SIZE_MPC * 180 / (ang_size_deg * pi))
         angular_size_as = round(angular_size.to(u.arcsec).value)
+
+        index = self.distance_table.index
+        data = self.distance_table.glue_data
+        curr_value = data["angular_size"][index]
+
+        if curr_value is None:
+            self.stage_state.angsizes_total = self.stage_state.angsizes_total + 1
+
         self.stage_state.galaxy_dist = distance
         self.update_data_value("student_measurements", "distance", distance, index)
         self.update_data_value("student_measurements", "angular_size", angular_size_as, index)
