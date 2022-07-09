@@ -147,9 +147,7 @@
           @click="() => {
             const expectedAnswers = [state.lambda_obs, state.lambda_rest];
             state.marker = validateAnswersJS(['lam_obs', 'lam_rest'], expectedAnswers) ? 'dop_cal5' : 'dop_cal4';
-            state.doppler_calc_dialog = validateAnswersJS(['lam_obs', 'lam_rest'], expectedAnswers) ? true: false;
-            console.log('dialog');
-            console.log(state.doppler_calc_dialog, state.marker);          
+            state.doppler_calc_dialog = validateAnswersJS(['lam_obs', 'lam_rest'], expectedAnswers) ? true: false;   
           }"
         >
           next
