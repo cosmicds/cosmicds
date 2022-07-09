@@ -172,6 +172,7 @@ class StageTwo(HubbleStage):
             "guideline_repeat_remaining_galaxies",
             "guideline_estimate_distance1",
             "guideline_estimate_distance2",
+            "guideline_estimate_distance4",    
             "guideline_choose_row2",
             "guideline_fill_remaining_galaxies",
             "guideline_stage_two_complete"
@@ -184,12 +185,11 @@ class StageTwo(HubbleStage):
             component = GenericStateComponent(comp + ext, path, self.stage_state)
             self.add_component(component, label=label)
 
-        # Set up distance calc components
+        # Set up distance calc component
         distance_calc_components_dir = str(Path(__file__).parent.parent / "components" / "distance_calc_components")
         path = join(distance_calc_components_dir,"")
         distance_components = [
-            "guideline_estimate_distance3",
-            "guideline_estimate_distance4"            
+            "guideline_estimate_distance3"        
         ]
         for comp in distance_components:
             label = f"c-{comp}".replace("_", "-")

@@ -15,18 +15,19 @@
       class="mb-4"
       v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
     >
-      <v-card
-        class="JaxEquation past_block pa-3"
-      >
-        $$ D = \frac{6200}{\textcolor{black}{\colorbox{#FFAB91}{ {{ (state.meas_theta).toFixed(0) }} } }} $$
-      </v-card>    
       <p>
-        Dividing through gives you the estimated distance.
+        Enter the <strong>angular size</strong> of your galaxy in <strong>arcseconds</strong> in the box.
       </p>
       <div
         class="JaxEquation my-8"
       >
-        $$ D = {{ (6200/state.meas_theta).toFixed(0) }} \text{ Mpc} $$
+        $$ D = \frac{6200}{\bbox[#FBE9E7]{\input[gal_ang_size][]{}}} $$
+      </div>
+      <v-divider role="presentation"></v-divider>
+      <div
+        class="font-weight-medium mt-3"
+      >
+        Click <strong>CALCULATE</strong> to divide and find the estimated distance to your galaxy.
       </div>
       <v-divider role="presentation" class="mt-3"></v-divider>
       <v-card
@@ -80,6 +81,18 @@
     </div>
     <v-divider
       class="my-4"
+      v-if="failedValidation3"
+    >
+    </v-divider>
+    <v-alert
+      v-if="failedValidation3"
+      dense
+      color="info darken-1"
+    >
+      Not quite. Make sure you are entering the value for the highlighted galaxy. The angular size column is labeled &theta;, in arcseconds.
+    </v-alert>
+    <v-divider
+      class="my-4"
     >
     </v-divider>
     <v-row
@@ -92,7 +105,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'est_dis3';
+            state.marker = 'cho_row2';
           "
         >
           back
@@ -106,11 +119,14 @@
           class="black--text"
           color="accent"
           elevation="2"
-          @click="
-            state.marker = 'fil_rem1';
-          "
+          @click="() => {
+            const expectedAnswers = [state.meas_theta];
+            state.marker = validateAnswersJS(['gal_ang_size'], expectedAnswers) ? 'est_dis4' : 'est_dis3';
+            console.log('dialog');
+            console.log(state.marker);          
+          }"
         >
-          next
+          calculate
         </v-btn>
       </v-col>
     </v-row>

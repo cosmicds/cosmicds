@@ -12,7 +12,10 @@
       class="mb-4"
     >
       <p>
-        Click the <v-icon>mdi-spider-thread</v-icon> icon in the table toolbar to calculate the distances for the remaining galaxies.
+        The distance estimate for your galaxy has been entered into the table.
+      </p>
+      <p>
+        Click the <v-icon>mdi-tape-measure</v-icon> icon in the table toolbar to calculate distances for the remaining galaxies.
       </p>
     </div>
   </scaffold-alert>
