@@ -14,7 +14,7 @@ from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
-from cosmicds.stories.hubbles_law.components import Angsize_SlideShow, DistanceSidebar, DistanceTool
+from cosmicds.stories.hubbles_law.components import Angsize_SlideShow, DistanceSidebar, DistanceTool, DistanceCalc
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 
 import logging
@@ -34,6 +34,7 @@ class StageState(State):
     distance_sidebar = CallbackProperty(False)
     n_meas = CallbackProperty(0)
     show_ruler = CallbackProperty(False)
+    meas_theta = CallbackProperty(0)
 
     markers = CallbackProperty([
         'ang_siz1',
@@ -97,7 +98,7 @@ class StageState(State):
 ])
 class StageTwo(HubbleStage):
     show_team_interface = Bool(False).tag(sync=True)
-    START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')
+    START_COORDINATES = SkyCoord(213 * u.deg, 61 * u.deg, frame='icrs')
 
     @default('template')
     def _default_template(self):
@@ -172,8 +173,6 @@ class StageTwo(HubbleStage):
             "guideline_estimate_distance1",
             "guideline_estimate_distance2",
             "guideline_choose_row2",
-            "guideline_estimate_distance3",
-            "guideline_estimate_distance4",
             "guideline_fill_remaining_galaxies",
             "guideline_stage_two_complete"
         ]
@@ -183,6 +182,18 @@ class StageTwo(HubbleStage):
 
             # comp + ext = filename; path = folder where they live.
             component = GenericStateComponent(comp + ext, path, self.stage_state)
+            self.add_component(component, label=label)
+
+        # Set up distance calc components
+        distance_calc_components_dir = str(Path(__file__).parent.parent / "components" / "distance_calc_components")
+        path = join(distance_calc_components_dir,"")
+        distance_components = [
+            "guideline_estimate_distance3",
+            "guideline_estimate_distance4"            
+        ]
+        for comp in distance_components:
+            label = f"c-{comp}".replace("_", "-")
+            component = DistanceCalc(comp + ext, path, self.stage_state)
             self.add_component(component, label=label)
 
         # Callbacks
@@ -198,9 +209,12 @@ class StageTwo(HubbleStage):
             return
         markers = self.stage_state.markers
         advancing = markers.index(new) > markers.index(old)
-        if advancing and new == "cho_row1":
+        if advancing and (new == "cho_row1" or new =="cho_row2"):
             self.distance_table.selected = []
-            self.distance_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
+            self.distance_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True) 
+            self.distance_tool.reset_canvas()
+            # need to turn off ruler marker also.
+            # and start stage 2 at the start coordinates
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
@@ -224,6 +238,7 @@ class StageTwo(HubbleStage):
         self.stage_state.galaxy = galaxy
         self.stage_state.galaxy_dist = None
         self.distance_tool.measuring_allowed = bool(galaxy)
+        self.stage_state.meas_theta = data["angular_size"][index]
 
         if self.stage_state.marker == 'cho_row1':
             self.stage_state.marker = 'ang_siz2'
@@ -243,10 +258,10 @@ class StageTwo(HubbleStage):
         angular_size = self.distance_tool.angular_size
         # ang_size_deg = angular_size.value
         # distance = round(MILKY_WAY_SIZE_MPC * 180 / (ang_size_deg * pi))
-        angular_size_as = round(angular_size.to(u.arcsec).value)
+        self.stage_state.meas_theta = round(angular_size.to(u.arcsec).value)
         # self.stage_state.galaxy_dist = distance
         # self.update_data_value("student_measurements", "distance", distance, index)
-        self.update_data_value("student_measurements", "angular_size", angular_size_as, index)
+        self.update_data_value("student_measurements", "angular_size",  self.stage_state.meas_theta, index)
         self.story_state.update_student_data()
         with ignore_callback(self.stage_state, 'make_measurement'):
             self.stage_state.make_measurement = False
