@@ -144,17 +144,6 @@
             cols="4"
           >
             <v-btn
-            block
-              color="info"
-              @click="add_distance_data_point();"
-            >
-              log data
-            </v-btn>
-          </v-col>
-          <v-col
-            cols="4"
-          >
-            <v-btn
               block
               color="info"
               @click="stage_state.dos_donts_opened = true"

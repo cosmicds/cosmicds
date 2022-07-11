@@ -14,13 +14,10 @@
       class="mb-4"
     >
       <p>
-        This is the same sky viewer you used earlier to view and choose your galaxies.
+        This is the same sky viewer you used in Stage 1, now with added functionality to measure angular sizes.
       <p>
       </p>
-        The vertical line on the left tells you the angular size of the patch of sky being displayed.
-      </p>
-      <p>
-        We have added a new tool that you can use to measure the angular sizes of your galaxies.
+        The green vertical line on the left tells you the <strong>angular size</strong> of the patch of sky being displayed.
       </p>
     </div>
     

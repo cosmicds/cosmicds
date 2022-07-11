@@ -4,13 +4,6 @@
     class="mb-4 mx-auto"
     max-width="800"
     elevation="6"
-
-    @back="
-      state.marker = 'ang_siz4';
-    "
-    @next="
-      state.marker = 'ang_siz6';
-    "
   >
     <h3
       class="mb-4"
@@ -24,7 +17,7 @@
         Notice your galaxy’s angular size is now displayed in the table.
       </p>
       <p>
-        You may adjust your measurement by clicking on the ends of the green line and moving it to a new location.
+        You may adjust your measurement by clicking on the ends of the green line and moving them to a new location.
       </p>
       <p>
         Click <strong>DO'S AND DONT'S</strong> for tips on how to ensure the most accurate results.

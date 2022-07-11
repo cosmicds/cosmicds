@@ -14,6 +14,9 @@
       class="mb-4"
     >
       <p>
+        Zoom in or out so your entire galaxy is framed within the viewer.
+      </p>    
+      <p>
         Click the <v-icon>mdi-ruler</v-icon> icon to activate the angular size measuring tool.
       </p>
     </div>
@@ -41,7 +44,7 @@
       <v-col
         cols="6"
         class="shrink"
-        v-if="!state.ruler_clicked"
+        v-if="state.ruler_clicked_total==0"
       >
         <div
           style="font-size: 16px;"
@@ -51,7 +54,7 @@
       </v-col>
       <v-col
         class="shrink"
-        v-if="state.ruler_clicked"
+        v-if="state.ruler_clicked_total>0"
       >
         <v-btn
           class="black--text"
