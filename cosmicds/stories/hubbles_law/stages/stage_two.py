@@ -9,12 +9,12 @@ from traitlets import default, Bool
 import astropy.units as u
 from astropy.coordinates import Angle, SkyCoord
 
-from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
-from cosmicds.components.table import Table
-from cosmicds.stories.hubbles_law.components import Angsize_SlideShow, DistanceSidebar, DistanceTool
 from cosmicds.components.generic_state_component import GenericStateComponent
+from cosmicds.components.table import Table
+from cosmicds.registries import register_stage
+from cosmicds.stories.hubbles_law.components import Angsize_SlideShow, DistanceSidebar, DistanceTool
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 
 import logging
@@ -26,6 +26,7 @@ class StageState(State):
     galaxy_selected = CallbackProperty(False)
     galaxy_dist = CallbackProperty(None)
     ruler_clicked = CallbackProperty(False)
+    dos_donts_opened = CallbackProperty(False)
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
     advance_marker = CallbackProperty(True)
@@ -258,6 +259,9 @@ class StageTwo(HubbleStage):
         galaxy_name = item["name"]
         self.remove_measurement(galaxy_name)
         self.distance_tool.flagged = False
+
+    def vue_add_distance_data_point(self, _args=None):
+        self.stage_state.make_measurement = True
 
     @property
     def distance_sidebar(self):

@@ -81,7 +81,7 @@
             <v-icon>{{ measuring ? 'mdi-stop' : 'mdi-ruler' }}</v-icon>
           </v-btn>
         </template>
-        {{ measuring ? 'Stop measuring' : 'Start measuring'}}
+        {{ measuring ? 'Stop measuring' : 'Start measuring' }}
       </v-tooltip>
     </div>
   </v-card>
@@ -475,6 +475,7 @@ export default {
 .distance-canvas {
   background: transparent;
   z-index: 20;
+  cursor: crosshair;
 }
 
 .fov-canvas {

@@ -68,7 +68,7 @@
         <div
           style="font-size: 16px;"
         >
-          Click <v-icon>mdi-run-fast</v-icon>
+          Click the <v-icon>mdi-run-fast</v-icon> icon.
         </div>
       </v-col>
       <v-col

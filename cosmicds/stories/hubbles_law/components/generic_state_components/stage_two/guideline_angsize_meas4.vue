@@ -12,10 +12,7 @@
       class="mb-4"
     >
       <p>
-        Click on one edge of your galaxy to mark the ruler’s starting point.
-      </p>
-      <p>
-        Drag to the other edge of your galaxy and click again.
+        Click on one edge of your galaxy and drag to the other edge to set the bounds of your measurement.
       </p>
     </div>
   </scaffold-alert>
