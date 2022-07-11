@@ -7,7 +7,7 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 
 # theme_colors()
 
-class Angsize_SlideShow(v.VuetifyTemplate):
+class Angsize_Distance_SlideShow(v.VuetifyTemplate):
     template = load_template(
         "angsize_distance_slideshow.vue", __file__, traitlet=True).tag(sync=True)
     step = Int(0).tag(sync=True)

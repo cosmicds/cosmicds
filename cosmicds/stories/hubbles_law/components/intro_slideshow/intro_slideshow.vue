@@ -563,6 +563,7 @@
       <!-- :disabled="step === 6 || (step === 2 && !exploration_complete)" -->
       <v-btn
         :disabled="step >= 6"
+        v-if="step < 6"
         class="black--text"
         color="accent"
         depressed

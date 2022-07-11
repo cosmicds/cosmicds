@@ -1,1 +1,1 @@
-from .angsize_distance_slideshow import Angsize_SlideShow
+from .angsize_distance_slideshow import Angsize_Distance_SlideShow
