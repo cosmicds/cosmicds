@@ -4,18 +4,16 @@
     @back="
       state.marker = 'cho_row1';
     "
-    @next="
-      state.marker = 'ang_siz3';
-    "
+    @next="() => { state.show_ruler = true; state.marker = 'ang_siz3'; console.log(state.show_ruler) }"
   >
     <div
       class="mb-4"
     >
       <p>
-        Your galaxy now appears in the sky viewer. 
+        Your galaxy will appear in the sky viewer. (You may need to wait a few moments for the full-resolution image to load.)
       </p>
       <p>
-        Notice that the angular scale of the sky viewer window changes as you zoom towards or away from  your galaxy.
+        If you zoom towards or away from your galaxy, notice that the angular scale (marked by the green line) changes.
       </p>
     </div>
   </scaffold-alert>
