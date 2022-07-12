@@ -38,6 +38,7 @@ class Story(State, HubMixin):
 
     def _on_step_index_changed(self, value):
         self.stages[self.stage_index]['step_index'] = value
+        self.step_index = min(value, len(self.stages[self.stage_index]['steps'])-1)
         self.step_complete = self.stages[self.stage_index]['steps'][
             self.step_index]['completed']
         self.hub.broadcast(WriteToDatabaseMessage(self))
