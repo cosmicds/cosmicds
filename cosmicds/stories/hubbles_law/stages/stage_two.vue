@@ -1,16 +1,6 @@
 <template>
   <v-container>
-    <v-row
-      v-if="stage_state.intro"
-    >
-      <v-col>
-        <!-- FORM DIALOG as template for reflections/MC -->
-        <c-angsize-distance-slideshow
-          @intro_complete="stage_state.intro = false"
-        />
-      </v-col>
-    </v-row>
-    <v-row v-if="!stage_state.intro && show_team_interface">
+    <v-row v-if="show_team_interface">
       <v-col>
         <v-btn
           @click="console.log(stage_state)"
@@ -20,7 +10,6 @@
       </v-col>
     </v-row>
     <v-row
-      v-if="!stage_state.intro"
       class="d-flex align-stretch"
     >
       <v-col
@@ -76,9 +65,7 @@
         <c-distance-sidebar />
       </v-col>
     </v-row>
-    <v-row
-      v-if="!stage_state.intro"
-    >
+    <v-row>
       <v-col
         cols="12"
         lg="4"

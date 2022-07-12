@@ -14,7 +14,7 @@ from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
-from cosmicds.stories.hubbles_law.components import Angsize_Distance_SlideShow, DistanceSidebar, DistanceTool
+from cosmicds.stories.hubbles_law.components import DistanceSidebar, DistanceTool
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 
 import logging
@@ -95,7 +95,7 @@ class StageState(State):
         return self.markers.index(marker)
 
 
-@register_stage(story="hubbles_law", index=2, steps=[
+@register_stage(story="hubbles_law", index=3, steps=[
     "Measure angular size"
 ])
 class StageTwo(HubbleStage):
@@ -119,9 +119,6 @@ class StageTwo(HubbleStage):
 
         self.stage_state = StageState()
         self.show_team_interface = self.app_state.show_team_interface
-
-        angsize_distance_slideshow = Angsize_Distance_SlideShow(self.stage_state)
-        self.add_component(angsize_distance_slideshow, label='c-angsize-distance-slideshow')
 
         self.add_component(DistanceTool(self.stage_state), label="c-distance-tool")
         self.stage_state.image_location = "data/images/stage_two_distance"

@@ -651,24 +651,25 @@
 
       <!-- first button below just being used for testing, delete when using live with students -->
       <v-btn
-        v-if="step < 6"
+        v-if="step < 12 && show_team_interface"
         color="error"
         class="black--text"
         depressed
         @click="() => {
-          $emit('intro_complete');
+          two_intro_complete = true;
           step = 0;
         }"
       >
         get started
       </v-btn>
       <v-btn
-        v-if="step >= 6"
-        :disabled="step > 6"
+        v-if="step >= 12"
+        :disabled="step > 12"
         color="accent"
         class="black--text"
         depressed
         @click="() => {
+          two_intro_complete = true;
           step = 0;
         }"
       >

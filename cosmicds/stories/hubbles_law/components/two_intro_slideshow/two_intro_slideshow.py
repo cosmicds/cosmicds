@@ -7,9 +7,9 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 
 # theme_colors()
 
-class Angsize_Distance_SlideShow(v.VuetifyTemplate):
+class TwoIntroSlideShow(v.VuetifyTemplate):
     template = load_template(
-        "angsize_distance_slideshow.vue", __file__, traitlet=True).tag(sync=True)
+        "two_intro_slideshow.vue", __file__, traitlet=True).tag(sync=True)
     step = Int(0).tag(sync=True)
     length = Int(13).tag(sync=True)
     dialog = Bool(False).tag(sync=True)
@@ -17,8 +17,8 @@ class Angsize_Distance_SlideShow(v.VuetifyTemplate):
     state = GlueState().tag(sync=True)
     max_step_completed = Int(0).tag(sync=True)
     interact_steps = List([7, 9]).tag(sync=True)
-    #exploration_complete = Bool(False).tag(sync=True)
-    #intro_complete = Bool(False).tag(sync=True)
+    two_intro_complete = Bool(False).tag(sync=True)
+    show_team_interface = Bool(False).tag(sync=True)
 
     _titles = [
         "1920's Astronomy",
@@ -37,8 +37,9 @@ class Angsize_Distance_SlideShow(v.VuetifyTemplate):
     ]
     _default_title = "1920's Astronomy"
 
-    def __init__(self, story_state, *args, **kwargs):
+    def __init__(self, story_state, app_state, *args, **kwargs):
         self.state = story_state
+        self.show_team_interface = app_state.show_team_interface
         self.currentTitle = self._default_title
 
         def update_title(change):

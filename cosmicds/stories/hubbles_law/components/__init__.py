@@ -1,4 +1,3 @@
-from .angsize_distance_slideshow import Angsize_Distance_SlideShow
 from .distance_sidebar import DistanceSidebar
 from .distance_tool import DistanceTool
 from .doppler_calc_components import DopplerCalc

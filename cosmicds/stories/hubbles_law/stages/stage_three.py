@@ -17,7 +17,7 @@ from cosmicds.stories.hubbles_law.viewers import HubbleFitView, HubbleScatterVie
 class StageState(State):
     pass
 
-@register_stage(story="hubbles_law", index=3, steps=[
+@register_stage(story="hubbles_law", index=4, steps=[
     "My data",
     "Class data",
     "Galaxy Type",

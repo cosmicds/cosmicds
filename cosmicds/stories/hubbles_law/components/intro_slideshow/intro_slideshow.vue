@@ -577,7 +577,7 @@
         color="error"
         class="black--text"
         depressed
-        @click="() => { 
+        @click="() => {
           intro_complete = true;
           step = 0;
         }"
