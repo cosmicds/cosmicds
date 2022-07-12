@@ -1,4 +1,6 @@
+from collections import defaultdict
 from pathlib import Path
+from datetime import datetime
 
 from echo import DictCallbackProperty
 
@@ -11,8 +13,8 @@ import ipyvuetify as v
 
 import requests
 from cosmicds.utils import API_URL, RepeatedTimer
-from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
-from cosmicds.stories.hubbles_law.data_management import STATE_TO_MEAS
+from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH, age_in_gyr_simple, fit_line
+from cosmicds.stories.hubbles_law.data_management import STATE_TO_MEAS, STATE_TO_SUMM
 
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
@@ -33,7 +35,12 @@ class HubblesLaw(Story):
         "z",
         "type",
         "element",
-        "student_id"
+        "student_id",
+        "last_modified"
+    ]
+    summary_keys = [
+        "hubble_fit_value",
+        "age_value"
     ]
     name_ext = ".fits"
 
@@ -53,7 +60,6 @@ class HubblesLaw(Story):
                 data_dir / "Hubble 1929-Table 1",
                 data_dir / "HSTkey2001",
                 data_dir / "dummy_student_data",
-                #data_dir / "SDSS_all_sample_filtered",
                 output_dir / "HubbleData_ClassSample",
                 output_dir / "HubbleData_All",
                 output_dir / "HubbleSummary_ClassSample",
@@ -70,6 +76,33 @@ class HubblesLaw(Story):
             label="SDSS_all_sample_filtered",
             **galaxies_dict
         ))
+
+        # Load in the overall data
+        all_json = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/all-data").json()
+        all_measurements = all_json["measurements"]
+        for measurement in all_measurements:
+            measurement.update(measurement["galaxy"])
+        all_student_summaries = all_json["studentData"]
+        all_class_summaries = all_json["classData"]
+        all_data = Data(
+            label="all_measurements",
+            **{ STATE_TO_MEAS.get(k, k) : [x[k] for x in all_measurements] for k in all_measurements[0] }
+        )
+        HubblesLaw.prune_none(all_data)
+        self.data_collection.append(all_data)
+
+        all_student_summ_data = Data(
+            label="all_student_summaries",
+            **{ STATE_TO_SUMM.get(k, k) : [x[k] for x in all_student_summaries] for k in all_student_summaries[0] }
+        )
+        all_class_summ_data = Data(
+            label="all_class_summaries",
+            **{ STATE_TO_SUMM.get(k, k) : [x[k] for x in all_class_summaries] for k in all_class_summaries[0] }
+        )
+        self.data_collection.append(all_student_summ_data)
+        self.data_collection.append(all_class_summ_data)
+        for comp in ['age', 'H0']:
+            self.app.add_link(all_student_summ_data, comp, all_class_summ_data, comp)
 
         # Compose empty data containers to be populated by user
         self.student_cols = ["name", "ra", "decl", "z", "type", "measwave",
@@ -96,6 +129,13 @@ class HubblesLaw(Story):
         for comp in ['distance', 'velocity', 'student_id']:
             self.app.add_link(student_measurements, comp, student_data, comp)
             self.app.add_link(student_measurements, comp, class_data, comp)
+
+        class_summary_cols = ["student_id", "H0", "age"]
+        class_summary_data = Data(label="class_summary_data")
+        for col in class_summary_cols:
+            component = Component(np.array([0]))
+            class_summary_data.add_component(component, col)
+        self.data_collection.append(class_summary_data)
 
         # Make all data writeable
         for data in self.data_collection:
@@ -190,12 +230,11 @@ class HubblesLaw(Story):
 
     @staticmethod
     def prune_none(data):
-        indices = set()
+        keep = set()
         for i in range(data.size):
-            if any(data[comp][i] is None for comp in data.main_components):
-                indices.add(i)
+            if all(data[comp][i] is not None for comp in data.main_components):
+                keep.add(i)
 
-        keep = [x for x in range(data.size) if x not in indices]
         pruned_components = { comp.label: [data[comp][x] for x in keep] for comp in data.main_components }
         pruned = Data(label=data.label, **pruned_components)
         data.update_values_from_data(pruned)
@@ -211,10 +250,7 @@ class HubblesLaw(Story):
         components = [x for x in sdss.main_components if x.label != 'id']
         return { sdss['id'][index]: { comp.label: sdss[comp][index] for comp in components } for index in indices }
 
-    def fetch_measurement_data(self, url):
-        response = requests.get(url)
-        res_json = response.json()
-        measurements = res_json["measurements"]
+    def data_from_measurements(self, measurements):
         for measurement in measurements:
             measurement.update(measurement.get("galaxy", {}))
         components = { STATE_TO_MEAS.get(k, k) : [measurement.get(k, None) for measurement in measurements] for k in self.measurement_keys }
@@ -222,29 +258,80 @@ class HubblesLaw(Story):
         for i, name in enumerate(components["name"]):
             if name.endswith(self.name_ext):
                 components["name"][i] = name[:-len(self.name_ext)]
-        data = Data(**components)
+        return Data(**components)
+
+    def data_from_summaries(self, summaries):
+        components = { STATE_TO_SUMM.get(k, k) : [summary.get(k, None) for summary in summaries] for k in self.summary_keys }
+        return Data(**components)
+
+    def fetch_data(self, url):
+        response = requests.get(url)
+        res_json = response.json()
+        data = {}
+        data["measurements"] = self.data_from_measurements(res_json["measurements"])
+        for key in ["studentData", "classData"]:
+            if key in res_json.keys():
+                data[key] = self.data_from_summaries(res_json[key])
         return data
 
-    def fetch_data_and_update(self, url, label, prune_none=False, make_writeable=False):
-        new_data = self.fetch_measurement_data(url)
-        new_data.label = label
-        if prune_none:
-            HubblesLaw.prune_none(new_data)
-        data = self.data_collection[label]
+    def fetch_data_and_update(self, url, labels, prune_none=False, make_writeable=False):
+        results = self.fetch_data(url)
+        for key, new_data in results.items():
+            if key not in labels:
+                continue
+            label = labels[key]
+            new_data.label = label
+            if prune_none:
+                HubblesLaw.prune_none(new_data)
+            data = self.data_collection[label]
+            data.update_values_from_data(new_data)
+            if make_writeable:
+                HubblesLaw.make_data_writeable(data)
+
+    def update_summary_data(self, meas_label, summ_label, id_field):
+        measurements = self.data_collection[meas_label]
+        dists = defaultdict(list)
+        vels = defaultdict(list)
+        d = measurements["distance"]
+        v = measurements["velocity"]
+        components = {}
+        ids = []
+        for i in range(measurements.size):
+            id_num = measurements[id_field][i]
+            ids.append(id_num)
+            dists[id_num].append(d[i])
+            vels[id_num].append(v[i])
+        
+        hubbles = []
+        ages = []
+        for id_num in ids:
+            d = dists[id_num]
+            v = vels[id_num]
+            line = fit_line(d, v)
+            h0 = line.slope.value
+            hubbles.append(h0)
+            ages.append(age_in_gyr_simple(h0))
+
+        components = dict(hubble=hubbles, age=ages)
+        components[id_field] = ids
+        new_data = Data(label=summ_label, **components)
+
+        data = self.data_collection[summ_label]
         data.update_values_from_data(new_data)
-        if make_writeable:
-            HubblesLaw.make_data_writeable(data)
 
     def fetch_student_data(self):
-        student_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{self.student['id']}"
-        student_meas_label = "student_measurements"
-        self.fetch_data_and_update(student_meas_url, student_meas_label, make_writeable=True)
+        student_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{self.student_user['id']}"
+        student_meas_labels = { "measurements" : "student_measurements" }
+        self.fetch_data_and_update(student_meas_url, student_meas_labels, make_writeable=True)
         self.update_student_data()
 
     def fetch_class_data(self):
-        class_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/stage-3-data/{self.student['id']}/{self.classroom['id']}"
-        class_meas_label = "class_data"
-        self.fetch_data_and_update(class_meas_url, class_meas_label, prune_none=True)
+        class_data_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/stage-3-data/{self.student_user['id']}/{self.classroom['id']}"
+        class_data_labels = {
+            "measurements": "class_data",
+        }
+        self.fetch_data_and_update(class_data_url, class_data_labels, prune_none=True)
+        self.update_summary_data("class_data", "class_summary_data", "student_id")
 
     def setup_for_student(self, app_state):
         super().setup_for_student(app_state)

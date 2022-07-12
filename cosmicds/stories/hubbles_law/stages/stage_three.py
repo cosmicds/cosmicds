@@ -63,7 +63,7 @@ class StageThree(HubbleStage):
         # Set up links between various data sets
         student_dc_name = "student_data"
         class_dc_name = "class_data"
-        all_dc_name = "HubbleData_All"
+        all_dc_name = "all_measurements"
         hubble_dc_name = "Hubble 1929-Table 1"
         hstkp_dc_name = "HSTkey2001"
         galaxy_dc_name = "galaxy_data"
@@ -93,9 +93,9 @@ class StageThree(HubbleStage):
         sandbox_distr_viewer = self.add_viewer(HubbleHistogramView, 'sandbox_distr_viewer', "Sandbox")
 
         # Grab data
-        class_sample_data = self.get_data("HubbleSummary_ClassSample")
-        students_summary_data = self.get_data("HubbleSummary_Students")
-        classes_summary_data = self.get_data("HubbleSummary_Classes")
+        class_sample_data = self.get_data("class_summary_data")
+        students_summary_data = self.get_data("all_student_summaries")
+        classes_summary_data = self.get_data("all_class_summaries")
         hubble1929 = self.get_data(hubble_dc_name)
         hstkp = self.get_data(hstkp_dc_name)
         galaxy_data = self.get_data(galaxy_dc_name)
@@ -147,12 +147,12 @@ class StageThree(HubbleStage):
         class_layer = comparison_viewer.layers[-1]
         class_layer.state.zorder = 2
         class_layer.state.color = 'red'
-        comparison_viewer.add_data(all_data)
-        all_layer = comparison_viewer.layers[-1]
-        all_layer.state.zorder = 1
-        all_layer.state.visible = False
-        comparison_viewer.state.x_att = all_data.id[dist_attr]
-        comparison_viewer.state.y_att = all_data.id[vel_attr]
+        # comparison_viewer.add_data(all_data)
+        # all_layer = comparison_viewer.layers[-1]
+        # all_layer.state.zorder = 1
+        # all_layer.state.visible = False
+        comparison_viewer.state.x_att = student_data.id[dist_attr]
+        comparison_viewer.state.y_att = student_data.id[vel_attr]
         comparison_viewer.state.reset_limits()
         
         prodata_viewer.add_data(student_data)
@@ -189,15 +189,15 @@ class StageThree(HubbleStage):
         sandbox_distr_viewer.state.x_att = students_summary_data.id['age']
 
         # Do some stuff with the galaxy data
-        type_field = 'MorphType'
-        elliptical_subset = galaxy_data.new_subset(galaxy_data.id[type_field] == 'E', label='Elliptical', color='orange')
-        spiral_subset = galaxy_data.new_subset(galaxy_data.id[type_field] == 'Sp', label='Spiral', color='green')
-        irregular_subset = galaxy_data.new_subset(galaxy_data.id[type_field] == 'Ir', label='Irregular', color='red')
+        type_field = 'type'
+        elliptical_subset = all_data.new_subset(all_data.id[type_field] == 'E', label='Elliptical', color='orange')
+        spiral_subset = all_data.new_subset(all_data.id[type_field] == 'Sp', label='Spiral', color='green')
+        irregular_subset = all_data.new_subset(all_data.id[type_field] == 'Ir', label='Irregular', color='red')
         morphology_subsets = [elliptical_subset, spiral_subset, irregular_subset]
         for subset in morphology_subsets:
             morphology_viewer.add_subset(subset)
-        morphology_viewer.state.x_att = galaxy_data.id['EstDist_Mpc']
-        morphology_viewer.state.y_att = galaxy_data.id['velocity_km_s']
+        morphology_viewer.state.x_att = all_data.id['distance']
+        morphology_viewer.state.y_att = all_data.id['velocity']
 
         # Just for accessibility while testing
         self.data_collection.histogram_listener = self.histogram_listener
