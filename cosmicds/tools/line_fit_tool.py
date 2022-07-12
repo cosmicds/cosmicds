@@ -1,4 +1,4 @@
-from astropy.modeling import models, fitting
+from astropy.modeling import models
 from glue.config import viewer_tool
 from glue.core import HubListener
 from glue.core.message import (DataCollectionDeleteMessage, DataUpdateMessage,
@@ -9,7 +9,7 @@ from numpy import isnan
 from numpy.linalg import LinAlgError
 from traitlets import Unicode, HasTraits
 
-from cosmicds.stories.hubbles_law.utils import line_mark, age_in_gyr_simple
+from cosmicds.stories.hubbles_law.utils import fit_line, line_mark, age_in_gyr_simple
 
 @viewer_tool
 class LineFitTool(Tool, HubListener, HasTraits):
@@ -97,10 +97,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
         data = layer.state.layer
         x = data[self.viewer.state.x_att]
         y = data[self.viewer.state.y_att]
-        fit = fitting.LinearLSQFitter()
-        line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
-        fitted_line = fit(line_init, x, y)
-        return fitted_line
+        return fit_line(x, y)
 
     def _create_fit_line(self, layer):
 
