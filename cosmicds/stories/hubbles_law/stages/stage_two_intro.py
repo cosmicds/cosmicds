@@ -34,7 +34,7 @@ class StageTwoIntro(Stage):
         two_intro_slideshow = TwoIntroSlideShow(self.stage_state, self.app_state)
         self.add_component(two_intro_slideshow, label='c-two-intro-slideshow')
         two_intro_slideshow.observe(self._on_slideshow_complete, names=['two_intro_complete'])
-        self.stage_state.image_location = "data/images"
+        self.stage_state.image_location = "data/images/stage_two_intro"
 
     @property
     def slideshow(self):
