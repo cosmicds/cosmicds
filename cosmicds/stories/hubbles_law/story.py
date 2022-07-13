@@ -15,7 +15,7 @@ import ipyvuetify as v
 import requests
 from cosmicds.utils import API_URL, RepeatedTimer
 from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH, age_in_gyr_simple, fit_line
-from cosmicds.stories.hubbles_law.data_management import SDSS_DATA_LABEL, STATE_TO_MEAS, STATE_TO_SUMM, STUDENT_DATA_LABEL, STUDENT_MEASUREMENTS_LABEL
+from cosmicds.stories.hubbles_law.data_management import CLASS_DATA_LABEL, CLASS_SUMMARY_LABEL, SDSS_DATA_LABEL, STATE_TO_MEAS, STATE_TO_SUMM, STUDENT_DATA_LABEL, STUDENT_MEASUREMENTS_LABEL
 
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
@@ -74,7 +74,7 @@ class HubblesLaw(Story):
         galaxies_dict = { k : [x[k] for x in galaxies] for k in galaxies[0] }
         galaxies_dict["name"] = [x[:-len(self.name_ext)] for x in galaxies_dict["name"]]
         self.data_collection.append(Data(
-            label="SDSS_all_sample_filtered",
+            label=SDSS_DATA_LABEL,
             **galaxies_dict
         ))
 
@@ -104,9 +104,9 @@ class HubblesLaw(Story):
                          "restwave", "student_id", "velocity", "distance",
                          "element", "angular_size"]
         self.categorical_cols = ['name', 'element', 'type']
-        student_measurements = Data(label="student_measurements")
-        class_data = Data(label="class_data")
-        student_data = Data(label="student_data")
+        student_measurements = Data(label=STUDENT_MEASUREMENTS_LABEL)
+        class_data = Data(label=CLASS_DATA_LABEL)
+        student_data = Data(label=STUDENT_DATA_LABEL)
         for col in self.student_cols:
             categorical = col in self.categorical_cols
             ctype = CategoricalComponent if categorical else Component
@@ -126,7 +126,7 @@ class HubblesLaw(Story):
             self.app.add_link(student_measurements, comp, class_data, comp)
 
         class_summary_cols = ["student_id", "H0", "age"]
-        class_summary_data = Data(label="class_summary_data")
+        class_summary_data = Data(label=CLASS_SUMMARY_LABEL)
         for col in class_summary_cols:
             component = Component(np.array([0]))
             class_summary_data.add_component(component, col)
@@ -136,7 +136,8 @@ class HubblesLaw(Story):
         for data in self.data_collection:
             HubblesLaw.make_data_writeable(data)
 
-        self.class_data_timer = RepeatedTimer(30, self.fetch_class_data)
+        self.class_last_modified = None
+        self.class_data_timer = RepeatedTimer(5, self.fetch_class_data)
         self.class_data_timer.start()
 
     def _set_theme(self):
@@ -262,13 +263,17 @@ class HubblesLaw(Story):
             data.label = label
         return data
 
-    def fetch_measurement_data(self, url):
+    def fetch_measurements(self, url):
         response = requests.get(url)
         res_json = response.json()
-        return self.data_from_measurements(res_json["measurements"])
+        return res_json["measurements"]
 
-    def fetch_measurement_data_and_update(self, url, label, prune_none=False, make_writeable=False):
-        new_data = self.fetch_measurement_data(url)
+    def fetch_measurement_data_and_update(self, url, label, prune_none=False, make_writeable=False, check_update=None):
+        measurements = self.fetch_measurements(url)
+        need_update = check_update is None or check_update(measurements)
+        if not need_update:
+            return
+        new_data = self.data_from_measurements(measurements)
         new_data.label = label
         if prune_none:
             HubblesLaw.prune_none(new_data)
@@ -310,15 +315,19 @@ class HubblesLaw(Story):
 
     def fetch_student_data(self):
         student_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{self.student_user['id']}"
-        student_meas_label = "student_measurements"
-        self.fetch_measurement_data_and_update(student_meas_url, student_meas_label, make_writeable=True)
+        self.fetch_measurement_data_and_update(student_meas_url, STUDENT_MEASUREMENTS_LABEL, make_writeable=True)
         self.update_student_data()
 
     def fetch_class_data(self):
+        def check_update(measurements):
+            last_modified = max([datetime.fromisoformat(x["last_modified"][:-1]) for x in measurements])
+            need_update = self.class_last_modified is None or last_modified > self.class_last_modified
+            if need_update:
+                self.class_last_modified = last_modified
+            return need_update
         class_data_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/stage-3-data/{self.student_user['id']}/{self.classroom['id']}"
-        class_data_label = "class_data"
-        self.fetch_measurement_data_and_update(class_data_url, class_data_label, prune_none=True)
-        self.update_summary_data(class_data_label, "class_summary_data", "student_id")
+        self.fetch_measurement_data_and_update(class_data_url, CLASS_DATA_LABEL, prune_none=True, check_update=check_update)
+        self.update_summary_data(CLASS_DATA_LABEL, CLASS_SUMMARY_LABEL, "student_id")
 
     def setup_for_student(self, app_state):
         super().setup_for_student(app_state)
