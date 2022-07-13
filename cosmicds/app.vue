@@ -75,6 +75,7 @@
               <v-list-item-title>
                 Guest Student {{ student_id }}
               </v-list-item-title>
+              Total score: {{ totalScore }}
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -181,6 +182,7 @@
           </v-tabs-items>
         </v-container>
         <div id="test-element"> $$x = \input[test][][test]{} $$</div>
+        <div id="test-element2"> $$x = \input[test2][][test2]{} $$</div>
       </v-content>
     </v-main>
 
@@ -253,6 +255,8 @@ export default {
           if (!tag) { return; }
           const application = CustomInput.app;
           application.story_state.inputs[tag] = text;
+          // AFAICT, we need to call this here to update the state Python-side
+          app.update_state();
         }
       }
 
@@ -428,7 +432,13 @@ export default {
       });
     });
     resizeObserver.observe(document.body);
-    //this.onLoadStoryState(this.story_state);
+    this.onLoadStoryState(this.story_state);
+
+    document.addEventListener("mc-score", (e) => {
+      const { tag, score } = e.detail;
+      app.$data.story_state.mc_scoring[tag] = score;
+      app.update_state();
+    });
   },
   methods: {
     getCurrentStage: function () {
@@ -442,6 +452,11 @@ export default {
       }
     }
   },
+  computed: {
+    totalScore() {
+      return Object.values(this.$data.story_state.mc_scoring).reduce((a, b) => a + b, 0);
+    }
+  }
 };
 </script>
 

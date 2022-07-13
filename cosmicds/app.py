@@ -108,7 +108,7 @@ class Application(VuetifyTemplate, HubListener):
         except Exception as e:
             print(e)
 
-    def _on_write_to_database(self, _msg):
+    def _on_write_to_database(self, _msg=None):
         if not self.app_state.update_db:
             return
 
@@ -117,9 +117,15 @@ class Application(VuetifyTemplate, HubListener):
         # user = os.environ['JUPYTERHUB_USER']
 
         data = json.loads(json.dumps(self.story_state.as_dict(), cls=CDSJSONEncoder))
-        print(data)
         if data:
             requests.put(self.story_state_endpoint, json=data)
+
+    def vue_write_to_database(self, _args=None):
+        self._on_write_to_database(None)
+
+    def vue_update_state(self, _args=None):
+        trait = self.traits()["story_state"]
+        trait.on_state_change(obj=self)
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
