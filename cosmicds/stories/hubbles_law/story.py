@@ -137,7 +137,7 @@ class HubblesLaw(Story):
             HubblesLaw.make_data_writeable(data)
 
         self.class_last_modified = None
-        self.class_data_timer = RepeatedTimer(5, self.fetch_class_data)
+        self.class_data_timer = RepeatedTimer(30, self.fetch_class_data)
         self.class_data_timer.start()
 
     def _set_theme(self):

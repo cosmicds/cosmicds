@@ -432,7 +432,7 @@ export default {
       });
     });
     resizeObserver.observe(document.body);
-    this.onLoadStoryState(this.story_state);
+    //this.onLoadStoryState(this.story_state);
 
     document.addEventListener("mc-score", (e) => {
       const { tag, score } = e.detail;

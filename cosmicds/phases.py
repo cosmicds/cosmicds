@@ -12,7 +12,7 @@ from numpy import delete
 
 
 class Story(State, HubMixin):
-    inputs = CallbackProperty({})
+    inputs = DictCallbackProperty()
     name = CallbackProperty()
     stage_index = CallbackProperty(0)
     step_index = CallbackProperty(0)
@@ -21,6 +21,7 @@ class Story(State, HubMixin):
     teacher_user = CallbackProperty()
     student_user = CallbackProperty()
     classroom = CallbackProperty()
+    mc_scoring = CallbackProperty({})
 
     def __init__(self, session, *args, **kwargs):
         super().__init__(*args, **kwargs)
