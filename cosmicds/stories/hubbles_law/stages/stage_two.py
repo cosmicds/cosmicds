@@ -9,6 +9,7 @@ from traitlets import default
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.components import Angsize_SlideShow, DistanceSidebar, DistanceTool
+from cosmicds.stories.hubbles_law.data_management import STUDENT_MEASUREMENTS_LABEL
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
@@ -129,14 +130,14 @@ class StageTwo(HubbleStage):
         if not value:
             return
         galaxy = self.stage_state.galaxy
-        index = self.get_data_indices('student_measurements', 'name', lambda x: x == galaxy["name"], single=True)
+        index = self.get_data_indices(STUDENT_MEASUREMENTS_LABEL, 'name', lambda x: x == galaxy["name"], single=True)
         angular_size = self.distance_tool.angular_size
         ang_size_deg = angular_size.value
         distance = round(MILKY_WAY_SIZE_MPC * 180 / (ang_size_deg * pi))
         angular_size_as = round(angular_size.to(u.arcsec).value)
         self.stage_state.galaxy_dist = distance
-        self.update_data_value("student_measurements", "distance", distance, index)
-        self.update_data_value("student_measurements", "angular_size", angular_size_as, index)
+        self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "distance", distance, index)
+        self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "angular_size", angular_size_as, index)
         self.story_state.update_student_data()
         with ignore_callback(self.stage_state, 'make_measurement'):
             self.stage_state.make_measurement = False

@@ -15,7 +15,7 @@ import ipyvuetify as v
 import requests
 from cosmicds.utils import API_URL, RepeatedTimer
 from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH, age_in_gyr_simple, fit_line
-from cosmicds.stories.hubbles_law.data_management import STATE_TO_MEAS, STATE_TO_SUMM
+from cosmicds.stories.hubbles_law.data_management import SDSS_DATA_LABEL, STATE_TO_MEAS, STATE_TO_SUMM, STUDENT_DATA_LABEL, STUDENT_MEASUREMENTS_LABEL
 
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
@@ -201,7 +201,7 @@ class HubblesLaw(Story):
 
     def update_student_data(self):
         dc = self.data_collection
-        meas_data = dc['student_measurements']
+        meas_data = dc[STUDENT_MEASUREMENTS_LABEL]
         df = meas_data.to_dataframe()
         df = df[df['distance'].notna() & \
                 df['velocity'].notna() & \
@@ -212,14 +212,14 @@ class HubblesLaw(Story):
         if not all(len(v) > 0 for v in components.values()):
             return
 
-        new_data = Data(label='student_data')
+        new_data = Data(label=STUDENT_DATA_LABEL)
         for col, data in components.items():
             categorical = col in self.categorical_cols
             ctype = CategoricalComponent if categorical else Component
             comp = ctype(np.array(data))
             new_data.add_component(comp, col)
         
-        student_data = dc['student_data']
+        student_data = dc[STUDENT_DATA_LABEL]
         student_data.update_values_from_data(new_data)
         HubblesLaw.make_data_writeable(student_data)
 
@@ -240,7 +240,7 @@ class HubblesLaw(Story):
             data[comp.label].setflags(write=True)
 
     def galaxy_info(self, galaxy_ids):
-        sdss = self.data_collection["SDSS_all_sample_filtered"]
+        sdss = self.data_collection[SDSS_DATA_LABEL]
         indices = [i for i in range(sdss.size) if sdss['id'][i] in galaxy_ids]
         components = [x for x in sdss.main_components if x.label != 'id']
         return { sdss['id'][index]: { comp.label: sdss[comp][index] for comp in components } for index in indices }

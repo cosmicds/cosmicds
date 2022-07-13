@@ -6,6 +6,7 @@ from traitlets import default
 
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
+from cosmicds.stories.hubbles_law.data_management import ALL_CLASS_SUMMARIES_LABEL, ALL_DATA_LABEL, ALL_STUDENT_SUMMARIES_LABEL, CLASS_DATA_LABEL, CLASS_SUMMARY_LABEL, STUDENT_DATA_LABEL
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.stories.hubbles_law.viewers.viewers import HubbleClassHistogramView, HubbleHistogramView
 from cosmicds.utils import extend_tool, load_template
@@ -61,25 +62,22 @@ class StageThree(HubbleStage):
         self.add_widget(fit_table, label="fit_table")
 
         # Set up links between various data sets
-        student_dc_name = "student_data"
-        class_dc_name = "class_data"
-        all_dc_name = "all_measurements"
         hubble_dc_name = "Hubble 1929-Table 1"
         hstkp_dc_name = "HSTkey2001"
         galaxy_dc_name = "galaxy_data"
 
-        student_data = self.get_data(student_dc_name)
-        all_data = self.get_data(all_dc_name)
-        class_meas_data = self.get_data(class_dc_name)
+        student_data = self.get_data(STUDENT_DATA_LABEL)
+        all_data = self.get_data(ALL_DATA_LABEL)
+        class_meas_data = self.get_data(CLASS_DATA_LABEL)
 
         dist_attr = "distance"
         vel_attr = "velocity"
         for field in [dist_attr, vel_attr]:
-            self.add_link(class_dc_name, field, all_dc_name, field)
+            self.add_link(CLASS_DATA_LABEL, field, ALL_DATA_LABEL, field)
         self.add_link(hubble_dc_name, 'Distance (Mpc)', hstkp_dc_name, 'Distance (Mpc)')
         self.add_link(hubble_dc_name, 'Tweaked Velocity (km/s)', hstkp_dc_name, 'Velocity (km/s)')
-        self.add_link(hstkp_dc_name, 'Distance (Mpc)', student_dc_name, 'distance')
-        self.add_link(hstkp_dc_name, 'Velocity (km/s)', student_dc_name, 'velocity')
+        self.add_link(hstkp_dc_name, 'Distance (Mpc)', STUDENT_DATA_LABEL, 'distance')
+        self.add_link(hstkp_dc_name, 'Velocity (km/s)', STUDENT_DATA_LABEL, 'velocity')
 
 
         # Create viewers
@@ -92,9 +90,9 @@ class StageThree(HubbleStage):
         sandbox_distr_viewer = self.add_viewer(HubbleHistogramView, 'sandbox_distr_viewer', "Sandbox")
 
         # Grab data
-        class_sample_data = self.get_data("class_summary_data")
-        students_summary_data = self.get_data("all_student_summaries")
-        classes_summary_data = self.get_data("all_class_summaries")
+        class_sample_data = self.get_data(CLASS_SUMMARY_LABEL)
+        students_summary_data = self.get_data(ALL_STUDENT_SUMMARIES_LABEL)
+        classes_summary_data = self.get_data(ALL_CLASS_SUMMARIES_LABEL)
         hubble1929 = self.get_data(hubble_dc_name)
         hstkp = self.get_data(hstkp_dc_name)
         galaxy_data = self.get_data(galaxy_dc_name)
