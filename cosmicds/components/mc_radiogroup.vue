@@ -70,6 +70,7 @@ module.exports = {
       }
     },
     radioOptions: Array,
+    scoreTag: String,
     selectedCallback: Function
   },
   data: function () {
@@ -93,9 +94,20 @@ module.exports = {
         this.complete = true;
         if (this.scoring) {
           this.score = this.getScore(this.tries);
+          if (this.scoreTag !== undefined) {
+
+            this.$el.dispatchEvent(
+              new CustomEvent("mc-score", {
+                detail: {
+                  tag: this.scoreTag,
+                  score: this.score
+                }
+              })
+            );
+          }
         }
       }
-      if (this.selectedCallback != null) {
+      if (this.selectedCallback !== undefined) {
         this.selectedCallback({
           index: index,
           correct: correct,
