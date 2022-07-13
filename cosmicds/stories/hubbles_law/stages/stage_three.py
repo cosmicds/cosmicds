@@ -67,7 +67,6 @@ class StageThree(HubbleStage):
         hubble_dc_name = "Hubble 1929-Table 1"
         hstkp_dc_name = "HSTkey2001"
         galaxy_dc_name = "galaxy_data"
-        
 
         student_data = self.get_data(student_dc_name)
         all_data = self.get_data(all_dc_name)

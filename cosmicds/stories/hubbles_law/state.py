@@ -1,3 +1,4 @@
+from cProfile import label
 from collections import defaultdict
 from pathlib import Path
 from datetime import datetime
@@ -91,14 +92,8 @@ class HubblesLaw(Story):
         HubblesLaw.prune_none(all_data)
         self.data_collection.append(all_data)
 
-        all_student_summ_data = Data(
-            label="all_student_summaries",
-            **{ STATE_TO_SUMM.get(k, k) : [x[k] for x in all_student_summaries] for k in all_student_summaries[0] }
-        )
-        all_class_summ_data = Data(
-            label="all_class_summaries",
-            **{ STATE_TO_SUMM.get(k, k) : [x[k] for x in all_class_summaries] for k in all_class_summaries[0] }
-        )
+        all_student_summ_data = self.data_from_summaries(all_student_summaries, "all_student_summaries")
+        all_class_summ_data = self.data_from_summaries(all_class_summaries, "all_class_summaries")
         self.data_collection.append(all_student_summ_data)
         self.data_collection.append(all_class_summ_data)
         for comp in ['age', 'H0']:
@@ -260,33 +255,27 @@ class HubblesLaw(Story):
                 components["name"][i] = name[:-len(self.name_ext)]
         return Data(**components)
 
-    def data_from_summaries(self, summaries):
+    def data_from_summaries(self, summaries, label=None):
         components = { STATE_TO_SUMM.get(k, k) : [summary.get(k, None) for summary in summaries] for k in self.summary_keys }
-        return Data(**components)
-
-    def fetch_data(self, url):
-        response = requests.get(url)
-        res_json = response.json()
-        data = {}
-        data["measurements"] = self.data_from_measurements(res_json["measurements"])
-        for key in ["studentData", "classData"]:
-            if key in res_json.keys():
-                data[key] = self.data_from_summaries(res_json[key])
+        data = Data(**components)
+        if label is not None:
+            data.label = label
         return data
 
-    def fetch_data_and_update(self, url, labels, prune_none=False, make_writeable=False):
-        results = self.fetch_data(url)
-        for key, new_data in results.items():
-            if key not in labels:
-                continue
-            label = labels[key]
-            new_data.label = label
-            if prune_none:
-                HubblesLaw.prune_none(new_data)
-            data = self.data_collection[label]
-            data.update_values_from_data(new_data)
-            if make_writeable:
-                HubblesLaw.make_data_writeable(data)
+    def fetch_measurement_data(self, url):
+        response = requests.get(url)
+        res_json = response.json()
+        return self.data_from_measurements(res_json["measurements"])
+
+    def fetch_measurement_data_and_update(self, url, label, prune_none=False, make_writeable=False):
+        new_data = self.fetch_measurement_data(url)
+        new_data.label = label
+        if prune_none:
+            HubblesLaw.prune_none(new_data)
+        data = self.data_collection[label]
+        data.update_values_from_data(new_data)
+        if make_writeable:
+            HubblesLaw.make_data_writeable(data)
 
     def update_summary_data(self, meas_label, summ_label, id_field):
         measurements = self.data_collection[meas_label]
@@ -321,17 +310,15 @@ class HubblesLaw(Story):
 
     def fetch_student_data(self):
         student_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurements/{self.student_user['id']}"
-        student_meas_labels = { "measurements" : "student_measurements" }
-        self.fetch_data_and_update(student_meas_url, student_meas_labels, make_writeable=True)
+        student_meas_label = "student_measurements"
+        self.fetch_measurement_data_and_update(student_meas_url, student_meas_label, make_writeable=True)
         self.update_student_data()
 
     def fetch_class_data(self):
         class_data_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/stage-3-data/{self.student_user['id']}/{self.classroom['id']}"
-        class_data_labels = {
-            "measurements": "class_data",
-        }
-        self.fetch_data_and_update(class_data_url, class_data_labels, prune_none=True)
-        self.update_summary_data("class_data", "class_summary_data", "student_id")
+        class_data_label = "class_data"
+        self.fetch_measurement_data_and_update(class_data_url, class_data_label, prune_none=True)
+        self.update_summary_data(class_data_label, "class_summary_data", "student_id")
 
     def setup_for_student(self, app_state):
         super().setup_for_student(app_state)
