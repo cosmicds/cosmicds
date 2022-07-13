@@ -122,8 +122,6 @@
           @click="() => {
             const expectedAnswers = [state.meas_theta];
             state.marker = validateAnswersJS(['gal_ang_size'], expectedAnswers) ? 'est_dis4' : 'est_dis3';
-            console.log('dialog');
-            console.log(state.marker);          
           }"
         >
           calculate
