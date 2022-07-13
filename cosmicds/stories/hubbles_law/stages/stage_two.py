@@ -35,6 +35,7 @@ class StageState(State):
     n_meas = CallbackProperty(0)
     show_ruler = CallbackProperty(False)
     meas_theta = CallbackProperty(0)
+    distance_calc_count = CallbackProperty(0)
 
     markers = CallbackProperty([
         'ang_siz1',
@@ -83,19 +84,15 @@ class StageState(State):
         super().__init__(*args, **kwargs)
         self.marker_index = 0
         self.marker = self.markers[0]
-        add_callback(self, 'advance_marker', self.move_marker_forward)
+        self.indices = {marker: idx for idx, marker in enumerate(self.markers)}
 
-    def move_marker_forward(self, _value=None):
-        self.marker_index = min(self.marker_index + 1, len(self.markers) - 1)
-        self.marker = self.markers[self.marker_index]
-
-    def index(self, marker):
-        return self.markers.index(marker)
-
+    def marker_before(self, marker):
+        return self.indices[self.marker] < self.indices[marker]
 
 @register_stage(story="hubbles_law", index=2, steps=[
     "Measure angular size"
 ])
+
 class StageTwo(HubbleStage):
     show_team_interface = Bool(False).tag(sync=True)
     START_COORDINATES = SkyCoord(213 * u.deg, 61 * u.deg, frame='icrs')
@@ -125,6 +122,13 @@ class StageTwo(HubbleStage):
         self.stage_state.image_location = "data/images/stage_two_distance"
 
         type_names = { "E" : "Elliptical", "Ir": "Irregular", "Sp": "Spiral" }
+
+        add_distances_tool = \
+            dict(id="update-distances",
+                 icon="mdi-tape-measure",
+                 tooltip="Fill in distances",
+                 disabled=True,
+                 activate=self.update_distances)
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
                                glue_components=['name',
@@ -140,7 +144,8 @@ class StageTwo(HubbleStage):
                                title='My Galaxies',
                                selected_color=self.table_selected_color(self.app_state.dark_mode),
                                use_subset_group=False,
-                               single_select=True)
+                               single_select=True,
+                               tools=[add_distances_tool])
 
         self.add_widget(distance_table, label="distance_table")
         distance_table.observe(
@@ -152,10 +157,6 @@ class StageTwo(HubbleStage):
         self.distance_sidebar.angular_height = format_fov(self.distance_tool.angular_height)
 
         self.distance_tool.observe(self._distance_tool_flagged, names=["flagged"])
-        add_callback(self.stage_state, 'make_measurement',
-                     self._make_measurement)
-
-
 
         # Set up the generic state components
         state_components_dir = str(
@@ -202,7 +203,9 @@ class StageTwo(HubbleStage):
         add_callback(self.story_state, 'step_index',
                      self._on_step_index_update)
         self.trigger_marker_update_cb = True
-
+        
+        add_callback(self.stage_state, 'make_measurement', self._make_measurement)
+        add_callback(self.stage_state, 'distance_calc_count', self.add_student_distance)
 
     def _on_marker_update(self, old, new):
         if not self.trigger_marker_update_cb:
@@ -256,11 +259,7 @@ class StageTwo(HubbleStage):
         galaxy = self.stage_state.galaxy
         index = self.get_data_indices('student_measurements', 'name', lambda x: x == galaxy["name"], single=True)
         angular_size = self.distance_tool.angular_size
-        # ang_size_deg = angular_size.value
-        # distance = round(MILKY_WAY_SIZE_MPC * 180 / (ang_size_deg * pi))
         self.stage_state.meas_theta = round(angular_size.to(u.arcsec).value)
-        # self.stage_state.galaxy_dist = distance
-        # self.update_data_value("student_measurements", "distance", distance, index)
         self.update_data_value("student_measurements", "angular_size",  self.stage_state.meas_theta, index)
         self.story_state.update_student_data()
         with ignore_callback(self.stage_state, 'make_measurement'):
@@ -277,8 +276,34 @@ class StageTwo(HubbleStage):
         self.remove_measurement(galaxy_name)
         self.distance_tool.flagged = False
 
+    def add_student_distance(self, _args=None):
+        index = self.distance_table.index
+        distance = round(6200/self.stage_state.meas_theta)
+        self.update_data_value("student_measurements", "distance", distance, index)
+        if self.stage_state.distance_calc_count == 1: # as long as at least one thing has been measured, tool is enabled. But if students want to loop through calculation by hand they can.
+            self.enable_distance_tool(True)
+
+    def update_distances(self, table, tool):
+        data = table.glue_data
+        for item in table.items:
+            index = table.indices_from_items([item])[0]
+            if index is not None and data["distance"][index] is None:
+                theta = data["angular_size"][index]
+                if theta is None:
+                    continue
+                distance = round(6200/theta,0)
+                self.update_data_value("student_measurements", "distance", distance, index)
+        self.story_state.update_student_data()
+        table.update_tool(tool)
+
     def vue_add_distance_data_point(self, _args=None):
         self.stage_state.make_measurement = True
+
+    def enable_distance_tool(self, enable):
+        if enable:
+            tool = self.distance_table.get_tool("update-distances")
+            tool["disabled"] = False
+            self.distance_table.update_tool(tool)        
 
     @property
     def distance_sidebar(self):

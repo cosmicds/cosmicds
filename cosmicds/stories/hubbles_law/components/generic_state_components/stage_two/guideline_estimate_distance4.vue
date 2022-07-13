@@ -106,9 +106,10 @@
           class="black--text"
           color="accent"
           elevation="2"
-          @click="
+          @click=" () => {
             state.marker = 'fil_rem1';
-          "
+            state.distance_calc_count += 1;
+          }"
         >
           next
         </v-btn>
@@ -151,31 +152,4 @@ mjx-mstyle {
 
 
 </style>
-
-<script>
-export default = {
-
-  methods: {
-    getValue(inputID) {
-      const input = document.getElementById(inputID);
-      if (!input) { return null; }
-      return input.value;
-    },
-
-    parseAnswer(inputID) {
-      return parseFloat(this.getValue(inputID).replace(/,/g,''));
-    },
-
-    validateAnswersJS(inputIDs, expectedAnswers) {
-      return inputIDs.every((id, index) => {
-        const value = this.parseAnswer(id);
-        this.failedValidation3 = (value && value === expectedAnswers[index]) ? false : true;
-        console.log("expectedAnswer", expectedAnswers);
-        console.log("entered value", value);
-        return value && value === expectedAnswers[index];
-      });
-    }
-  }
-};
-</script>
 
