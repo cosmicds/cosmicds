@@ -28,7 +28,7 @@
               <div
                 class="JaxEquation"
               >
-                $$ D = \frac{6200}{\theta} $$
+                $$ D = \frac{ {{ Math.round(distance_const) }} }{\theta} $$
               </div>
             </v-col>
           </v-row>

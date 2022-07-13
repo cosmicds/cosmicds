@@ -21,7 +21,7 @@
       <div
         class="JaxEquation my-8"
       >
-        $$ D = \frac{6200}{\bbox[#FBE9E7]{\input[gal_ang_size][]{}}} $$
+        $$ D = \frac{ {{ Math.round(distance_const) }} }{\bbox[#FBE9E7]{\input[gal_ang_size][]{}}} $$
       </div>
       <v-divider role="presentation"></v-divider>
       <div
@@ -43,7 +43,7 @@
               <div
                 class="JaxEquation"
               >
-                $$ D = \frac{6200}{\theta} $$
+                $$ D = \frac{ {{ Math.round(distance_const) }} }{\theta} $$
               </div>
             </v-col>
           </v-row>

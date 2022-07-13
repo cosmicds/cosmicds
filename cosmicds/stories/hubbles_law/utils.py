@@ -1,4 +1,5 @@
 from astropy import units as u
+from numpy import pi
 from bqplot.marks import Lines
 from bqplot.scales import LinearScale
 from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
@@ -20,7 +21,9 @@ __all__ = [
 
 HUBBLE_ROUTE_PATH = "hubbles_law"
 
-MILKY_WAY_SIZE_MPC = 0.03
+MILKY_WAY_SIZE_LTYR = 100000 * u.lightyear
+MILKY_WAY_SIZE_MPC = MILKY_WAY_SIZE_LTYR.to(u.Mpc).value
+DISTANCE_CONSTANT = round(MILKY_WAY_SIZE_MPC * 3600 * 180 / pi / 100) * 100 # theta = L/D:  Distance in Mpc = DISTANCE_CONSTANT / theta in arcsec; Round to hundreds to match slideshow notes. 
 
 # Both in angstroms
 H_ALPHA_REST_LAMBDA = 6565 # SDSS calibrates to wavelengths in a vacuum

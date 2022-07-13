@@ -15,11 +15,10 @@ from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.components import Angsize_SlideShow, DistanceSidebar, DistanceTool, DistanceCalc
-from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC, format_fov, format_measured_angle
+from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, format_fov, DISTANCE_CONSTANT
 
 import logging
 log = logging.getLogger()
-
 
 class StageState(State):
     galaxy = CallbackProperty({})
@@ -171,9 +170,7 @@ class StageTwo(HubbleStage):
             "guideline_angsize_meas5",
             "guideline_angsize_meas6",
             "guideline_repeat_remaining_galaxies",
-            "guideline_estimate_distance1",
-            "guideline_estimate_distance2",
-            "guideline_estimate_distance4",    
+            "guideline_estimate_distance1",   
             "guideline_choose_row2",
             "guideline_fill_remaining_galaxies",
             "guideline_stage_two_complete"
@@ -186,11 +183,13 @@ class StageTwo(HubbleStage):
             component = GenericStateComponent(comp + ext, path, self.stage_state)
             self.add_component(component, label=label)
 
-        # Set up distance calc component
+        # Set up distance calc components
         distance_calc_components_dir = str(Path(__file__).parent.parent / "components" / "distance_calc_components")
         path = join(distance_calc_components_dir,"")
         distance_components = [
-            "guideline_estimate_distance3"        
+            "guideline_estimate_distance2", 
+            "guideline_estimate_distance3",
+            "guideline_estimate_distance4"        
         ]
         for comp in distance_components:
             label = f"c-{comp}".replace("_", "-")
@@ -278,7 +277,7 @@ class StageTwo(HubbleStage):
 
     def add_student_distance(self, _args=None):
         index = self.distance_table.index
-        distance = round(6200/self.stage_state.meas_theta)
+        distance = round(DISTANCE_CONSTANT/self.stage_state.meas_theta)
         self.update_data_value("student_measurements", "distance", distance, index)
         if self.stage_state.distance_calc_count == 1: # as long as at least one thing has been measured, tool is enabled. But if students want to loop through calculation by hand they can.
             self.enable_distance_tool(True)
@@ -291,7 +290,7 @@ class StageTwo(HubbleStage):
                 theta = data["angular_size"][index]
                 if theta is None:
                     continue
-                distance = round(6200/theta,0)
+                distance = round(DISTANCE_CONSTANT/theta,0)
                 self.update_data_value("student_measurements", "distance", distance, index)
         self.story_state.update_student_data()
         table.update_tool(tool)

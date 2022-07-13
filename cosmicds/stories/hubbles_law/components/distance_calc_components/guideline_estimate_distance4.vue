@@ -18,7 +18,7 @@
       <v-card
         class="JaxEquation past_block pa-3"
       >
-        $$ D = \frac{6200}{\textcolor{black}{\colorbox{#FFAB91}{ {{ (state.meas_theta).toFixed(0) }} } }} $$
+        $$ D = \frac{ {{ Math.round(distance_const) }} }{\textcolor{black}{\colorbox{#FFAB91}{ {{ (state.meas_theta).toFixed(0) }} } }} $$
       </v-card>    
       <p>
         Dividing through gives you the estimated distance.
@@ -26,7 +26,7 @@
       <div
         class="JaxEquation my-8"
       >
-        $$ D = {{ (6200/state.meas_theta).toFixed(0) }} \text{ Mpc} $$
+        $$ D = {{ (Math.round(distance_const)/state.meas_theta).toFixed(0) }} \text{ Mpc} $$
       </div>
       <v-divider role="presentation" class="mt-3"></v-divider>
       <v-card
@@ -42,7 +42,7 @@
               <div
                 class="JaxEquation"
               >
-                $$ D = \frac{6200}{\theta} $$
+                $$ D = \frac{ {{ Math.round(distance_const) }} }{\theta} $$
               </div>
             </v-col>
           </v-row>

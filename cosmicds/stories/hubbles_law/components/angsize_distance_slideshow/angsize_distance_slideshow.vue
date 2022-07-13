@@ -603,7 +603,7 @@
                     >
                       <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
                         <p>
-                          $$ \mathbf{\text{ Distance in Mpc} = \frac{6200}{ \text{galaxy angular size (}\theta \text{ in arcseconds)}}}$$
+                          $$ \mathbf{\text{ Distance in Mpc} = \frac{ {{ Math.round(distance_const) }} }{ \text{galaxy angular size (}\theta \text{ in arcseconds)}}}$$
                         </p>
                       </v-card-text>
                     </v-card>
