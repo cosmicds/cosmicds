@@ -4,9 +4,10 @@
     @back="
       state.marker = 'est_dis1';
     "
-    @next="
+    @next="() => { 
       state.marker = 'cho_row2';
-    "
+      state.galaxy_selected = false;
+    }"
   >
     <div
       class="mb-4"

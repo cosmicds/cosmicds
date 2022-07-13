@@ -3,7 +3,6 @@ from pathlib import Path
 
 from echo import CallbackProperty, add_callback, ignore_callback
 from glue.core.state_objects import State
-from numpy import pi
 from traitlets import default, Bool
 
 import astropy.units as u
@@ -28,6 +27,7 @@ class StageState(State):
     dos_donts_opened = CallbackProperty(False)
     make_measurement = CallbackProperty(False)
     marker = CallbackProperty("")
+    indices = CallbackProperty({})
     advance_marker = CallbackProperty(True)
     image_location = CallbackProperty()
     distance_sidebar = CallbackProperty(False)
@@ -87,6 +87,10 @@ class StageState(State):
 
     def marker_before(self, marker):
         return self.indices[self.marker] < self.indices[marker]
+
+    def move_marker_forward(self, marker_text, _value=None):
+        index = min(self.markers.index(marker_text) + 1, len(self.markers) - 1)
+        self.marker = self.markers[index]
 
 @register_stage(story="hubbles_law", index=2, steps=[
     "Measure angular size"
@@ -242,8 +246,8 @@ class StageTwo(HubbleStage):
         self.distance_tool.measuring_allowed = bool(galaxy)
         self.stage_state.meas_theta = data["angular_size"][index]
 
-        if self.stage_state.marker == 'cho_row1':
-            self.stage_state.marker = 'ang_siz2'
+        if self.stage_state.marker == 'cho_row1' or self.stage_state.marker == 'cho_row2':
+            self.stage_state.move_marker_forward(self.stage_state.marker)
             self.stage_state.galaxy_selected = True
 
     def _angular_size_update(self, change):
