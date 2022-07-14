@@ -121,6 +121,7 @@ class StageState(State):
     "Reflect",
     "Calculate velocities"
 ])
+
 class StageOne(HubbleStage):
     show_team_interface = Bool(False).tag(sync=True)
     START_COORDINATES = SkyCoord(180 * u.deg, 25 * u.deg, frame='icrs')

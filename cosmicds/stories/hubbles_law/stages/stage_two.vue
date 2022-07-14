@@ -73,7 +73,7 @@
           v-intersect.once="scrollIntoView" />
         <c-guideline-choose-row2
           v-if="stage_state.marker == 'cho_row2'"
-          v-intersect.once="scrollIntoView" />
+          v-intersect.once="scrollIntoView" />    
         <c-guideline-estimate-distance3
           v-if="stage_state.marker == 'est_dis3'"
           v-intersect.once="scrollIntoView" />

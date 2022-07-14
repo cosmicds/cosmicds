@@ -6,3 +6,4 @@ from .exploration_tool import ExplorationTool
 from .intro_slideshow import IntroSlideshow
 from .selection_tool import SelectionTool
 from .spectrum_slideshow import SpectrumSlideshow
+from .distance_calc_components import DistanceCalc
