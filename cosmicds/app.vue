@@ -8,6 +8,7 @@
         clipped-right
         flat
         height="72"
+        style="z-index: 50;"
     >
       <template v-slot:img="{ props }">
         <v-img
@@ -188,7 +189,7 @@
       app
       padless
       inset
-      style="z-index: 5;"
+      style="z-index: 50;"
       dark
       color="primary darken-1"
     >
@@ -533,4 +534,9 @@ input {
 .v-dialog > .v-card, #slideshow-root {
   border: solid hsla(0,0%,100%,.12) 1px !important;
 }
+
+.v-tooltip {
+  z-index: 40;
+}
+
 </style>

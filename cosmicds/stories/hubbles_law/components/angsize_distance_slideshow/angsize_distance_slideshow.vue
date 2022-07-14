@@ -362,7 +362,7 @@
                               'We do not have enough information to answer this question']"
                             :feedbacks="['Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?',  'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?', 'That\'s right! The <strong> closer </strong> galaxy has a <strong>larger </strong> angular size in the sky.', 'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?']"
                             :correct-answers="[2]"
-                            :selected-callback="(index) => { if([2].includes(index)) { max_step_completed = Math.max(this.max_step_completed, 7); } }"
+                            :selected-callback="(state) => { if(state.correct || state.neutral) { max_step_completed = Math.max(max_step_completed, 7); } }"
                           >
                           </mc-radiogroup>
                         </v-row>
@@ -457,7 +457,7 @@
                         'There is not enough information to estimate the relative distances to the galaxies.']"
                       :feedbacks="['Try again. \n Try to imagine how many times you could lay Galaxy B across Galaxy A.', 'That\'s right!', 'Try again. \n Try to imagine how many times you could lay Galaxy B across Galaxy A.', 'Try again. \ You could probably fit 10 Galaxy B’s across Galaxy A.']"
                       :correct-answers="[1]"
-                      :selected-callback="(index) => { if([1].includes(index)) { max_step_completed = Math.max(this.max_step_completed, 9); } }"
+                      :selected-callback="(state) => { if(state.correct || state.neutral) { max_step_completed = Math.max(max_step_completed, 9); } }"
                     >
                       </mc-radiogroup>
                       </v-row>
@@ -507,7 +507,7 @@
                       >
                         <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
                           <p>
-                            $$ \small{\text{Galaxy Distance} =  200,000 \cdot \frac{\text{physical length of galaxy}}{\text{Galaxy’s angular size ($\theta$, in arcseconds)}}}$$
+                            $$ \small{\text{Galaxy Distance} =  210,000 \cdot \frac{\text{physical length of galaxy}}{\text{Galaxy’s angular size ($\theta$, in arcseconds)}}}$$
                           </p>
                         </v-card-text>
                       </v-card>
@@ -536,7 +536,7 @@
                     >
                       <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
                         <p>
-                          $$ \small{\text{Galaxy Distance} =  200,000 \cdot \frac{\text{physical length of galaxy}}{\text{Galaxy’s angular size ($\theta$, in arcseconds)}}}$$
+                          $$ \small{\text{Galaxy Distance} =  210,000 \cdot \frac{\text{physical length of galaxy}}{\text{Galaxy’s angular size ($\theta$, in arcseconds)}}}$$
                         </p>
                       </v-card-text>
                     </v-card>
@@ -603,7 +603,7 @@
                     >
                       <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
                         <p>
-                          $$ \mathbf{\text{ Distance in Mpc} = \frac{6200}{ \text{galaxy angular size (}\theta \text{ in arcseconds)}}}$$
+                          $$ \mathbf{\text{ Distance in Mpc} = \frac{ {{ Math.round(distance_const) }} }{ \text{galaxy angular size (}\theta \text{ in arcseconds)}}}$$
                         </p>
                       </v-card-text>
                     </v-card>
