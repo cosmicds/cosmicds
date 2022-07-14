@@ -81,7 +81,7 @@
                 <v-row>
                   <v-col>
                     <p>
-                      Recall that you are looking at the same kind of observations Vesto Slipher made in 1920. We’ll ask you some questions about your data that astronomers in 1920 might have asked about Slipher’s data.
+                      Recall that you are looking at the same kind of observations Vesto Slipher made from 1913 (Andromeda) 1914 - he had 15 galaxies - Hubble saw him present on these galaxies at a meeting in 1914 and saw astronomers give him a standing ovation (3 approaching. the rest were moving away. Kept adding to it over the years.). 1917 - he had 25 galaxies; by 1925 he had 45 galaxies - . We’ll ask you some questions about your data that astronomers in 1920 might have asked about Slipher’s data.
                     </p>
                   </v-col>
                 </v-row>

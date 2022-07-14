@@ -80,7 +80,7 @@
             <v-row>
               <v-col>
                 <p>
-                  Imagine that you are an astronomer living a century ago in the early 1920's. Pretty much all astronomers and scientists of this era (including Albert Einstein) believed that the universe was static, unchanging, and eternal. In other words, the universe has always been, and always will be. These ideas date back to ancient Greek times and were embraced by philosophers such as Aristotle.
+                  Imagine that you are an astronomer living a century ago in the early 1920's. Nearly all astronomers and scientists of this era (including Albert Einstein) believed that the universe was static, unchanging, and eternal. In other words, the universe has always been, and always will be. These ideas date back to ancient Greek times and were embraced by philosophers such as Aristotle.
                 </p>
                 <p
                   class="text-center grey--text"
@@ -105,6 +105,8 @@
                 >
                   <p>
                     The frame below provides an interactive view of the cosmic sky, built from authentic telescopic data. You can explore this view by panning around and zooming in/out to familiarize yourself with the tool, and connect it to the work astronomers have been doing for centuries.
+
+                    (Note that the view starts at our Milky Way)
                   </p>
                 </div>
                 <div
@@ -338,6 +340,9 @@
                     M31 and M51 are examples of a particular type of nebula that interested astronomers in the early 1900’s. They were known as “spiral nebulae" because of their distinctive spiral shape. In 1920, there was a “Great Debate” between astronomers Harlow Shapley and Heber Curtis questioning whether the spiral nebulae were part of our own Milky Way galaxy or were “island universes” beyond our Milky Way.
                   </p>
                   <p>
+                    Spiral nebulae as baby solar systems. 1885 - bright flare up in Andromeda - so bright they thought it must be nearby. Far brighter than a nova. (They didn't know about SN back then.) They had no concept that stars could blow up shining with energy of 50 million suns.
+                  </p>
+                  <p>
                     Do you think the nebulae you’ve observed are within the Milky Way or beyond it?
                   </p>
                 </div>
@@ -505,7 +510,7 @@
             <v-row>
               <v-col>
                 <p>
-                  Around this same time, astronomer Vesto Slipher observed galaxies using a spectrograph. Spectrographs can reveal a lot about an object in space, like what the object is made of or how fast it is moving toward or away from the observer. 
+                  Around this same time, astronomer Vesto Slipher observed spiral nebulae (not yet known to be galaxies)  using a spectrograph. Spectrographs can reveal a lot about an object in space, like what the object is made of or how fast it is moving toward or away from the observer. 
                 </p>
                 <p>
                   Recall that the prevailing view in the early 1900’s was that that the universe is unchanging and eternal. As a result, the dominant expectation was that distant galaxies are either not moving at all, or if they are moving then they are moving randomly. 
