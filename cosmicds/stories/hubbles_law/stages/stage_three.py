@@ -41,6 +41,12 @@ class StageThree(HubbleStage):
     def _default_subtitle(self):
         return "Perhaps a small blurb about this stage"
 
+    viewer_ids_for_data = {
+        STUDENT_DATA_LABEL : ["fit_viewer", "comparison_viewer"],
+        CLASS_DATA_LABEL: ["comparison_viewer"],
+        CLASS_SUMMARY_LABEL: ["class_distr_viewer"]
+    }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -199,9 +205,9 @@ class StageThree(HubbleStage):
         # Just for accessibility while testing
         self.data_collection.histogram_listener = self.histogram_listener
 
-        # Whenever the student data is updated, the student scatter viewer should update its bounds
+        # Whenever data is updated, the appropriate viewers should update their bounds
         self.hub.subscribe(self, NumericalDataChangedMessage,
-                           handler=self._on_student_data_change, filter=self._student_data_filter)
+                           handler=self._on_data_change)
 
         def hist_selection_activate():
             if self.histogram_listener.source_subset is None:
@@ -224,12 +230,10 @@ class StageThree(HubbleStage):
     def all_viewers(self):
         return [layout.viewer for layout in self.viewers.values()]
 
-    def _student_data_filter(self, msg):
-        return msg.data == self.get_data("student_data")
-
-    def _on_student_data_change(self, msg):
-        viewer = self.get_viewer("fit_viewer")
-        viewer.state.reset_limits()
+    def _on_data_change(self, msg):
+        viewer_id = self.viewer_ids_for_data.get(msg.data.label, [])
+        for vid in viewer_id:
+            self.get_viewer(vid).state.reset_limits()
 
     def table_selected_color(self, dark):
         return "colors.lightBlue.darken4"
