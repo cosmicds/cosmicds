@@ -1,6 +1,5 @@
 <template>
   <v-card
-    id="slideshow-root"
     elevation="6"
   >
     <v-toolbar
@@ -60,7 +59,10 @@
         </v-card-text>
       </v-window-item>
 
-      <v-window-item :value="2" class="no-transition">
+
+      <v-window-item :value="2"
+        class="no-transition"
+      >
         <v-card-text>
           <v-container>
             <v-row>
@@ -71,19 +73,26 @@
                 flat
                 tile
               >
-                <h3 class="mb-4">Distance and Apparent Size</h3>
+                <h3
+                  class="mb-4"
+                >
+                  Distance and Apparent Size
+                </h3>
                 <div>
                   <p>
                     Consider the people in this image. Do you think that there really is a giant sized person holding a smaller person in their hand?
                   </p>
-                  <br>
                   <p>
                     No! The people are not at the same distance from the photographer. 
                   </p>
                 </div>
               </v-col>
-              <v-col cols="6">
-                <h4 class="mb-2">
+              <v-col
+                cols="6"
+              >
+                <h4
+                  class="mb-2"
+                >
                   Large and Small People?
                 </h4>
                 <v-img
@@ -105,7 +114,9 @@
           <v-container>
             <v-row>
               <v-col>
-                <h3 class="mb-4">
+                <h3
+                  class="mb-4"
+                >
                   Distance and Apparent Size
                 </h3>
                 <div>
@@ -116,8 +127,12 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="6" > 
-                <h4 class="mb-2">
+              <v-col
+                cols="6"
+              >
+                <h4
+                  class="mb-2"
+                >
                   People on the beach 
                 </h4>
                 <v-img
@@ -126,8 +141,12 @@
                   :src="`${state.image_location}/People near and far - will replace with uncopyrighted.png`"
                 ></v-img>
               </v-col>
-              <v-col cols="6">
-                <h4 class="mb-2">
+              <v-col
+                cols="6"
+              >
+                <h4
+                  class="mb-2"
+                >
                   Galaxies in the night sky 
                 </h4>
                 <v-img
@@ -140,6 +159,7 @@
           </v-container>
         </v-card-text>
       </v-window-item>
+
 
       <v-window-item :value="4" 
         class="no-transition"
@@ -164,8 +184,12 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="6">
-                <h4 class="mb-2">
+              <v-col
+                cols="6"
+              >
+                <h4
+                  class="mb-2"
+                >
                   People on the beach 
                 </h4>
                 <v-img
@@ -203,18 +227,22 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="8">
+              <v-col
+                cols="8"
+              >
                 <p>
                   We need a way to measure “how big” an object seems. We call this “apparent” or “angular” size.
                 </p>
                 <p>
-                  The apparent (or <strong> angular </strong> ) size of objects in the sky is measured in degrees, or in fractions of a degree. 
+                  The apparent (or <strong>angular</strong>) size of objects in the sky is measured in degrees, or in fractions of a degree. 
                 </p>
                 <p>
                   To get a sense for how big 1 degree is, hold your pinky out at arm’s length. Your pinky fingernail at arm’s length covers about 1 degree of arc in the sky.
                 </p>
               </v-col>
-              <v-col cols="4">
+              <v-col
+                cols="4"
+              >
                 <v-card
                   class="mt-auto white--text"
                   flat
@@ -222,16 +250,20 @@
                 > 
                   <v-card-text>
                     <p>
-                      <strong> Bonus experiment </strong> : Do you think your pinky held at arm’s length would cover the moon? 
+                      <strong>Bonus experiment</strong>: Do you think your pinky held at arm’s length would cover the moon? 
                       Try it the next time you see the moon in the sky!
                     </p>
                   </v-card-text>
                 </v-card>
               </v-col>
             </v-row>
-            <v-row justify="center">
-              <h4 class="mb-2">
-                  One degree of angular size in the sky is a pinky's width at arm's length. 
+            <v-row 
+              justify="center"
+            >
+              <h4
+                class="mb-2"
+              >
+                One degree of angular size in the sky is a pinky's width at arm's length. 
               </h4>
               <v-img
                 class="mx-a"
@@ -244,9 +276,11 @@
         </v-card-text>
       </v-window-item>
 
+
       <v-window-item :value="6" 
+        class="no-transition" 
       >
-        <v-card-text >
+        <v-card-text>
           <v-container>
             <v-row>
               <v-col>
@@ -271,7 +305,7 @@
                     <v-card-text>
                       <p>
                         $$ \small{\text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}} $$  
-                    </p>
+                      </p>
                       <h6>
                         (ask your instructor for more information if you want to know how to use trigonometry to derive this formula).
                       </h6> 
@@ -293,22 +327,29 @@
                 ></v-img>
               </v-col>
             </v-row>
-            <p class="mt-4">
-              For galaxies that are the <strong> same physical length </strong>, the larger the distance, the smaller galaxy will appear in angular size.   
+            <p
+              class="mt-4"
+            >
+              For galaxies that are the <strong>same physical length</strong>, the larger the distance, the smaller galaxy will appear in angular size.   
             </p>
           </v-container>
         </v-card-text>
       </v-window-item>
     
+
       <v-window-item :value="7" 
         class="no-transition"
       >
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="7"> 
+              <v-col
+                cols="7"
+              >
                 <div>
-                  <h3 class="mb-4">
+                  <h3
+                    class="mb-4"
+                  >
                     Reflect
                   </h3>
                   <v-row>                     
@@ -317,7 +358,9 @@
                       flat
                       color="info"
                     >
-                      <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+                      <v-card-text 
+                        v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+                      >
                         <p>
                           $$ \small{\text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}} $$ 
                         </p>
@@ -326,8 +369,10 @@
                     </v-row>
                     <v-spacer></v-spacer>
                     <v-row>
-                      <p class="mt-4">
-                        Assume galaxies A and B in this image have the <strong>same physical length</strong>. What can you determine about their relative distances?:
+                      <p
+                        class="mt-4"
+                      >
+                        Assume galaxies A and B in this image have the <strong>same physical length</strong>. What can you determine about their relative distances?
                       </p>
                       <!-- Whoops, is there any way to pass on the formatting info in the feedback responses without treating them as strings? -->
                       <mc-radiogroup
@@ -335,17 +380,27 @@
                           'Galaxy A and Galaxy B are the same distance away from us.',
                           'Galaxy A is farther away from us than Galaxy B.',
                           'Galaxy A is closer to us than Galaxy B.',
-                          'We do not have enough information to answer this question']"
-                        :feedbacks="['Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?',  'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?', 'That\'s right! The <strong> closer </strong> galaxy has a <strong>larger </strong> angular size in the sky.', 'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?']"
+                          'We do not have enough information to answer this question'
+                        ]"
+                        :feedbacks="[
+                          'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?',
+                          'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?',
+                          'That\'s right! The <strong>closer</strong> galaxy has a <strong>larger</strong> angular size in the sky.',
+                          'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?'
+                        ]"
                         :correct-answers="[2]"
-                        :selected-callback="(index) => { if([2].includes(index)) { max_step_completed = Math.max(this.max_step_completed, 7); } }"
+                        :selected-callback="(option) => { if(option.correct || option.neutral) { max_step_completed = Math.max(this.max_step_completed, 7); } }"
                       >
                       </mc-radiogroup>
                     </v-row>
                   </div>
                 </v-col> 
-                <v-col cols="5">
-                  <h4 class="mb-2">
+                <v-col
+                  cols="5"
+                >
+                  <h4
+                    class="mb-2"
+                  >
                     Galaxies in the Sky
                   </h4>
                   <v-img
@@ -355,9 +410,10 @@
                   ></v-img>
                 </v-col>
             </v-row> 
-          <v-container>            
+          </v-container>            
         </v-card-text>
       </v-window-item>
+
 
       <v-window-item :value="8" 
           class="no-transition"
@@ -366,30 +422,39 @@
           <v-container>
             <v-row>
               <v-col>
-                <h3 class="mb-4"> Angular Size and Distance </h3>
+                <h3
+                  class="mb-4"
+                >
+                  Angular Size and Distance
+                </h3>
                 <div>                    
                   <p>
                     Now let’s think in terms of actual numbers.
                   </p>
-                  <v-col cols = "7">
+                  <v-col
+                    cols="7"
+                  >
                     <v-card
-                        class="white--text"
-                        flat
-                        color="info"
+                      class="white--text"
+                      flat
+                      color="info"
+                    >
+                      <v-card-text
+                        v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
                       >
-                        <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
-                          <p>
-                            $$ \small{\text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}} $$ 
-                          </p>
-                        </v-card-text>
-                      </v-card>
-                    </v-col>
-                    <v-spacer></v-spacer>
-                    <p>
-                      This relationship tells us: if two galaxies are the same size and one is <strong>2 times</strong> farther from us as the other, the far one will have 1/2 the angular size in our sky.
-                    </p>
-                    <p>
-                      If one galaxy is <strong> 50 times </strong> farther from us as the other, the far one will have <strong> 1/50 </strong> the angular size in our sky, and so on.
+                        <p>
+                          $$ \small{\text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}} $$ 
+                        </p>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-spacer></v-spacer>
+                  <p>
+                    This relationship tells us: if two galaxies are the same size and one is <strong>2 times</strong> farther from us as the other, the far one will have 1/2 the angular size in our sky.
+                  </p>
+                  <p>
+                    If one galaxy is <strong>50 times</strong> farther from us as the other, the far one will have <strong>1/50</strong> the angular size in our sky, and so on.
+                  </p>
                 </div>
               </v-col>
             </v-row>
@@ -397,27 +462,34 @@
         </v-card-text>
       </v-window-item>
 
-      <v-window-item :value="9" 
+
+      <v-window-item :value="9"
         class="no-transition"
       >
-        <v-card-text >
+        <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="7"> 
+              <v-col
+                cols="7"
+              >
                 <div>
                   <v-row>
-                    <h3 class="mb-4">
+                    <h3
+                      class="mb-4"
+                    >
                       Reflect
                     </h3>                           
                     <p>
-                      Use the image to estimate <b>how much</b> closer Galaxy A is than Galaxy B. Assume galaxies A and B have the <strong>same physical length</strong>.
+                      Use the image to estimate <strong>how much</strong> closer Galaxy A is than Galaxy B. Assume galaxies A and B have the <strong>same physical length</strong>.
                     </p>
                     <v-card
                       class="mt-auto white--text"
                       flat
                       color="info"
                     >
-                      <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+                      <v-card-text
+                        v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+                      >
                         <p>
                           $$ \small{\text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}} $$ 
                         </p>
@@ -425,42 +497,59 @@
                     </v-card>
                   </v-row>
                   <v-row>
-                <mc-radiogroup
-                  :radio-options="[
-                    'Galaxy A is about 2 times closer to us than Galaxy B.',
-                    'Galaxy A is about 10 times closer to us than Galaxy B.',
-                    'Galaxy A is about 1000 times closer to us than Galaxy B.',
-                    'There is not enough information to estimate the relative distances to the galaxies.']"
-                  :feedbacks="['Try again. \n Try to imagine how many times you could lay Galaxy B across Galaxy A.', 'That\'s right!', 'Try again. \n Try to imagine how many times you could lay Galaxy B across Galaxy A.', 'Try again. \ You could probably fit 10 Galaxy B’s across Galaxy A.']"
-                  :correct-answers="[1]"
-                  :selected-callback="(index) => { if([1].includes(index)) { max_step_completed = Math.max(this.max_step_completed, 9); } }"
-                >
-                  </mc-radiogroup>
+                    <mc-radiogroup
+                      :radio-options="[
+                        'Galaxy A is about 2 times closer to us than Galaxy B.',
+                        'Galaxy A is about 10 times closer to us than Galaxy B.',
+                        'Galaxy A is about 1000 times closer to us than Galaxy B.',
+                        'There is not enough information to estimate the relative distances to the galaxies.'
+                      ]"
+                      :feedbacks="[
+                        'Try again. \n Try to imagine how many times you could lay Galaxy B across Galaxy A.',
+                        'That\'s right!',
+                        'Try again. \n Try to imagine how many times you could lay Galaxy B across Galaxy A.',
+                        'Try again. \ You could probably fit 10 Galaxy B’s across Galaxy A.'
+                      ]"
+                      :correct-answers="[1]"
+                      :selected-callback="(option) => { if(option.correct || option.neutral) { max_step_completed = Math.max(this.max_step_completed, 9); } }"
+                    >
+                    </mc-radiogroup>
                   </v-row>
+                </div>
               </v-col> 
-              <v-col cols="5">
-                <h4 class="mb-2">
-                  Galaxies in the Sky
-                </h4>
-                <v-img
-                  class="mx-a"
-                  contain
-                  :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
-                ></v-img>
+              <v-col
+                cols="5"
+              >
+                <div>
+                  <h4
+                    class="mb-2"
+                  >
+                    Galaxies in the Sky
+                  </h4>
+                  <v-img
+                    class="mx-a"
+                    contain
+                    :src="`${state.image_location}/galaxies A B boxed - Harry may update with nicer boxes.png`"
+                  ></v-img>
                 </div>
               </v-col>
             </v-row> 
-          <v-container>            
+          </v-container>            
         </v-card-text>
       </v-window-item>
 
 
-      <v-window-item :value="10" 
+      <v-window-item :value="10"
+        class="no-transition"
       >
-        <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+        <v-card-text
+          v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+        >
           <v-container>
             <v-row>
-              <v-col cols="8">
+              <v-col
+                cols="8"
+              >
                 <h3
                   class="mb-4"
                 >
@@ -468,10 +557,10 @@
                 </h3>
                 <div>
                   <p>
-                    Nice work! To estimate distances to <strong> your </strong> galaxies, we start with this same formula:
+                    Nice work! To estimate distances to <strong>your</strong> galaxies, we start with this same formula:
                   </p>
                   <p>
-                    $$ \small{\text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)} }$$ 
+                    $$ \small{\text{Galaxy's Angular Size} (\theta) = \frac{\text{Galaxy's Physical Length} (L)}{\text{Galaxy's Distance} (D)}} $$ 
                   </p>
                   <p>
                     With some algebra and unit conversions, this becomes: 
@@ -481,9 +570,11 @@
                     flat
                     color="info"
                   >
-                    <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+                    <v-card-text
+                      v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+                    >
                       <p>
-                        $$ \small{\text{Galaxy Distance} =  200,000 \cdot \frac{\text{physical length of galaxy}}{\text{Galaxy’s angular size ($\theta$, in arcseconds)}}}$$
+                        $$ \small{\text{Galaxy Distance} =  200,000 \cdot \frac{\text{physical length of galaxy}}{\text{Galaxy’s angular size ($\theta$, in arcseconds)}}} $$
                       </p>
                     </v-card-text>
                   </v-card>
@@ -494,12 +585,18 @@
         </v-card-text>
       </v-window-item>
 
-      <v-window-item :value="11" 
+
+      <v-window-item :value="11"
+        class="no-transition"
       >
-        <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+        <v-card-text
+          v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+        >
           <v-container>
             <v-row>
-              <v-col cols="9">
+              <v-col
+                cols="9"
+              >
                 <h3
                   class="mb-4"
                 >
@@ -510,9 +607,11 @@
                   flat
                   color="info"
                 >
-                  <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+                  <v-card-text
+                    v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+                  >
                     <p>
-                      $$ \small{\text{Galaxy Distance} =  200,000 \cdot \frac{\text{physical length of galaxy}}{\text{Galaxy’s angular size ($\theta$, in arcseconds)}}}$$
+                      $$ \small{\text{Galaxy Distance} = 200,000 \cdot \frac{\text{physical length of galaxy}}{\text{Galaxy’s angular size ($\theta$, in arcseconds)}}} $$
                     </p>
                   </v-card-text>
                 </v-card>
@@ -522,15 +621,17 @@
               <v-col>         
                 <p>
                   This equation from the previous slide requires two pieces of information to determine the distance to a galaxy:
-                    <ol>
-                      <li>the <strong>physical length</strong> of the galaxy</li>
-                      <li>the <strong>angular size</strong> of the galaxy</li> 
-                    </ol>
-                </p>                      
+                  <ol>
+                    <li>the <strong>physical length</strong> of the galaxy</li>
+                    <li>the <strong>angular size</strong> of the galaxy</li> 
+                  </ol>
+                </p>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="9">
+              <v-col
+                cols="9"
+              >
                 <p>
                   In this data story, we are going to make an assumption that all galaxies are the <strong>same physical length as the Milky Way galaxy</strong>:
                 </p>
@@ -539,9 +640,11 @@
                   flat
                   color="info"
                 >
-                  <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+                  <v-card-text
+                    v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+                  >
                     <p>
-                      $$ \text{physical length of Milky Way galaxy, }  L = 100,000 \text{ light years}  = 0.03 \text{ Mpc}$$
+                      $$ \text{physical length of Milky Way galaxy, }  L = 100,000 \text{ light years}  = 0.03 \text{ Mpc} $$
                     </p>
                   </v-card-text>
                 </v-card>
@@ -554,12 +657,19 @@
         </v-card-text>
       </v-window-item>          
 
-      <v-window-item :value="12" >
-        <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+
+      <v-window-item :value="12"
+        class="no-transition"
+      >
+        <v-card-text
+          v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+        >
           <v-container>
             <v-row>
               <v-col>
-                <h3 class="mb-4">
+                <h3
+                  class="mb-4"
+                >
                   Milky Way Length in Mpc
                 </h3>
                 <p>
@@ -568,7 +678,9 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="8">
+              <v-col
+                cols="8"
+              >
                 <p>
                   If we substitute the physical length of the Milky Way in our equation, we get:
                 </p>
@@ -577,9 +689,11 @@
                   flat
                   color="info"
                 >
-                  <v-card-text v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}">
+                  <v-card-text
+                    v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
+                  >
                     <p>
-                      $$ \mathbf{\text{ Distance in Mpc} = \frac{6200}{ \text{galaxy angular size (}\theta \text{ in arcseconds)}}}$$
+                      $$ \mathbf{\text{ Distance in Mpc} = \frac{6200}{ \text{galaxy angular size (}\theta \text{ in arcseconds)}}} $$
                     </p>
                   </v-card-text>
                 </v-card>
@@ -597,7 +711,6 @@
       </v-window-item>
     </v-window>
 
-    
     <v-divider></v-divider>
 
     <v-card-actions
@@ -612,7 +725,9 @@
       >
         Back
       </v-btn>
+
       <v-spacer></v-spacer>
+      
       <v-item-group
         v-model="step"
         class="text-center"
@@ -637,8 +752,10 @@
           </v-btn>
         </v-item>
       </v-item-group>
+
       <v-spacer></v-spacer>
-        <v-btn
+
+      <v-btn
         :disabled="step > max_step_completed"
         v-if="step < length-1"
         class="black--text"
@@ -662,6 +779,7 @@
       >
         get started
       </v-btn>
+      
       <v-btn
         v-if="step >= 12"
         :disabled="step > 12"
@@ -686,7 +804,6 @@ module.exports = {
   watch: {
     step(newStep, oldStep) {
       const isInteractStep = this.interact_steps.includes(newStep);
-      console.log("Interact Step", this.interact_steps);
       const newCompleted = isInteractStep ? newStep - 1 : newStep;
       this.max_step_completed = Math.max(this.max_step_completed, newCompleted);
     },
