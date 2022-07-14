@@ -1,13 +1,6 @@
 <template>
   <v-card
     id="selection-root"
-    v-intersect.once="(entries, observer, isIntersecting) => {
-      const root = entries[0].target;
-      const element = root.querySelector('iframe');
-      if (element) {
-        element.src = element.src.replace('/api/kernels', '');
-      }
-    }"
   >
     <v-toolbar
       color="primary"
