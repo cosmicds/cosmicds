@@ -3,7 +3,7 @@
     <v-row v-if="show_team_interface">
       <v-col>
         <v-btn
-          color="error"
+          color="purple"
           class="black--text"
           @click="fill_data();"
         >fill data points</v-btn>
