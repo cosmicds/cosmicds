@@ -1,9 +1,9 @@
 import ipyvuetify as v
 from pathlib import Path
-from traitlets import Int, Bool, Unicode, List
+from traitlets import Int, Bool, Unicode, List, Float
 from cosmicds.utils import load_template
 from glue_jupyter.state_traitlets_helpers import GlueState
-
+from cosmicds.stories.hubbles_law.utils import DISTANCE_CONSTANT
 
 # theme_colors()
 
@@ -19,6 +19,9 @@ class TwoIntroSlideShow(v.VuetifyTemplate):
     interact_steps = List([7, 9]).tag(sync=True)
     two_intro_complete = Bool(False).tag(sync=True)
     show_team_interface = Bool(False).tag(sync=True)
+    #exploration_complete = Bool(False).tag(sync=True)
+    #intro_complete = Bool(False).tag(sync=True)
+    distance_const = Float().tag(sync=True)
 
     _titles = [
         "1920's Astronomy",
@@ -40,6 +43,7 @@ class TwoIntroSlideShow(v.VuetifyTemplate):
     def __init__(self, story_state, app_state, *args, **kwargs):
         self.state = story_state
         self.show_team_interface = app_state.show_team_interface
+        self.distance_const = DISTANCE_CONSTANT
         self.currentTitle = self._default_title
 
         def update_title(change):

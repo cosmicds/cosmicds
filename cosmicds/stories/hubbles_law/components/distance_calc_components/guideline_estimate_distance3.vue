@@ -1,14 +1,14 @@
 <template>
   <v-alert
     color="info"
-    class="mb-4 mx-auto doppler_alert"
+    class="mb-4 mx-auto angsize_alert"
     max-width="800"
     elevation="6"
   >
     <h3
       class="mb-4"
     >
-      Input Wavelengths
+      Estimate Distance
     </h3> 
 
     <div
@@ -16,13 +16,20 @@
       v-intersect="(entries, _observer, intersecting) => { if (intersecting) { MathJax.typesetPromise(entries.map(entry => entry.target)) }}"
     >
       <p>
-        Enter the observed wavelength and rest wavelength for your chosen galaxy into the cells in the equation below.
+        Enter the <strong>angular size</strong> of your galaxy in <strong>arcseconds</strong> in the box.
       </p>
       <div
         class="JaxEquation my-8"
       >
-        $$ v = c \times \left( \frac{\bbox[#FBE9E7]{\input[lam_obs][]{}} \text{ &#8491;}}{\bbox[#FBE9E7]{\input[lam_rest][]{}}\text{ &#8491;}} - 1 \right) $$
+        $$ D = \frac{ {{ Math.round(distance_const) }} }{\bbox[#FBE9E7]{\input[gal_ang_size][]{}}} $$
       </div>
+      <v-divider role="presentation"></v-divider>
+      <div
+        class="font-weight-medium mt-3"
+      >
+        Click <strong>CALCULATE</strong> to divide and find the estimated distance to your galaxy.
+      </div>
+      <v-divider role="presentation" class="mt-3"></v-divider>
       <v-card
         outlined
         class="legend mt-8"
@@ -36,7 +43,7 @@
               <div
                 class="JaxEquation"
               >
-                $$ v = c \times \left( \frac{\lambda_{\text{obs}}}{\lambda_{\text{rest}}} - 1 \right) $$
+                $$ D = \frac{ {{ Math.round(distance_const) }} }{\theta} $$
               </div>
             </v-col>
           </v-row>
@@ -45,15 +52,13 @@
             no-gutters
             class="my-1"
           >
-            <v-col
-              
-            >
-              \(v\)
+            <v-col>
+              \(D\)
             </v-col>
             <v-col
               cols="10"
             >
-              velocity of your galaxy, in km/s
+              distance to your galaxy, in Mpc
             </v-col>
           </v-row>
           <v-row
@@ -63,42 +68,12 @@
             <v-col
               cols="2"
             >
-              \(c\)
+              \(&theta;\)
             </v-col>
             <v-col
               cols="10"
             >
-              speed of light, 300,000 km/s
-            </v-col>
-          </v-row>
-          <v-row
-            no-gutters
-            class="my-1"
-          >
-            <v-col
-              cols="2"
-            >
-              \(\lambda_{\text{obs}}\)
-            </v-col>
-            <v-col
-              cols="10"
-            >
-              observed wavelength of spectral line in your galaxy
-            </v-col>
-          </v-row>
-          <v-row
-            no-gutters
-            class="my-1"
-          >
-            <v-col
-              cols="2"
-            >
-              \(\lambda_{\text{rest}}\)
-            </v-col>
-            <v-col
-              cols="10"
-            >
-              rest wavelength of spectral line
+              angular size of your galaxy, in arcseconds
             </v-col>
           </v-row>
         </v-container>
@@ -106,16 +81,16 @@
     </div>
     <v-divider
       class="my-4"
-      v-if="failedValidation4"
+      v-if="failedValidation3"
     >
     </v-divider>
-      <v-alert
-        v-if="failedValidation4"
-        dense
-        color="info darken-1"
-      >
-        Not quite. Make sure you haven't reversed the rest and observed wavelength values.
-      </v-alert>
+    <v-alert
+      v-if="failedValidation3"
+      dense
+      color="info darken-1"
+    >
+      Not quite. Make sure you are entering the value for the highlighted galaxy. The angular size column is labeled &theta;, in arcseconds.
+    </v-alert>
     <v-divider
       class="my-4"
     >
@@ -130,7 +105,7 @@
           color="accent"
           elevation="2"
           @click="
-            state.marker = 'dop_cal3';
+            state.marker = 'cho_row2';
           "
         >
           back
@@ -145,20 +120,16 @@
           color="accent"
           elevation="2"
           @click="() => {
-            const expectedAnswers = [state.lambda_obs, state.lambda_rest];
-            state.marker = validateAnswersJS(['lam_obs', 'lam_rest'], expectedAnswers) ? 'dop_cal5' : 'dop_cal4';
-            state.doppler_calc_dialog = validateAnswersJS(['lam_obs', 'lam_rest'], expectedAnswers) ? true: false;   
+            const expectedAnswers = [state.meas_theta];
+            state.marker = validateAnswersJS(['gal_ang_size'], expectedAnswers) ? 'est_dis4' : 'est_dis3';
           }"
         >
-          next
+          calculate
         </v-btn>
       </v-col>
-
     </v-row>
-
-  </v-alert>
+  </v-alert> 
 </template>
-
 
 <style>
 
@@ -174,7 +145,7 @@ mjx-mstyle {
   border-radius: 5px;
 }
 
-.doppler_alert .v-alert {
+.angsize_alert .v-alert {
   font-size: 16px !important;
 }
 
@@ -185,20 +156,20 @@ mjx-mstyle {
   font-size: 15px !important;
 }
 
-#lam_obs, #lam_rest {
+#gal_ang_size {
   color:  black;
   font-size: 18px;
   font-family: "Roboto", Arial, Helvetica, sans-serif;
   padding: 3px;
 }
 
-</style>
 
+</style>
 
 <script>
 export default = {
 
-    methods: {
+  methods: {
     getValue(inputID) {
       const input = document.getElementById(inputID);
       if (!input) { return null; }
@@ -212,11 +183,13 @@ export default = {
     validateAnswersJS(inputIDs, expectedAnswers) {
       return inputIDs.every((id, index) => {
         const value = this.parseAnswer(id);
-        this.failedValidation4 = (value && value === expectedAnswers[index]) ? false : true;
+        this.failedValidation3 = (value && value === expectedAnswers[index]) ? false : true;
+        console.log("expectedAnswer", expectedAnswers);
+        console.log("entered value", value);
         return value && value === expectedAnswers[index];
       });
     }
-  },
+  }
 };
 </script>
 
