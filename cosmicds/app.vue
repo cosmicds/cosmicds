@@ -249,6 +249,10 @@ export default {
           this.input.value = text;
         }
 
+        get value() {
+          return this.input.value;
+        }
+
         onUpdateText(text) {
           const tag = this.getAttribute("tag");
           if (!tag) { return; }
