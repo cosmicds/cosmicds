@@ -220,6 +220,11 @@ class StageTwo(HubbleStage):
         if not self.trigger_marker_update_cb:
             return
         markers = self.stage_state.markers
+        if new not in markers:
+            new = markers[0]
+            self.stage_state.marker = new
+        if old not in markers:
+            old = markers[0]
         advancing = markers.index(new) > markers.index(old)
         if advancing and (new == "cho_row1" or new =="cho_row2"):
             self.distance_table.selected = []
@@ -233,6 +238,7 @@ class StageTwo(HubbleStage):
         # We can't just use ignore_callback, since other stuff (i.e. the frontend)
         # may depend on marker callbacks
         self.trigger_marker_update_cb = False
+        index = min(index, len(self.stage_state.step_markers)-1)
         self.stage_state.marker = self.stage_state.step_markers[index]
         self.trigger_marker_update_cb = True
 

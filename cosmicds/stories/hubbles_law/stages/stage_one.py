@@ -108,7 +108,8 @@ class StageState(CDSState):
 
     _NONSERIALIZED_PROPERTIES = [
         'markers', 'step_markers', 'csv_highlights',
-        'table_highlights', 'spec_highlights'
+        'table_highlights', 'spec_highlights',
+        'gals_total', 'obswaves_total', 'velocities_total'
     ]
 
     def __init__(self, *args, **kwargs):
@@ -154,7 +155,12 @@ class StageOne(HubbleStage):
         add_callback(self.app_state, 'using_voila', self._update_image_location)
 
         # Set up any Data-based values
-        self.stage_state.gals_total = int(self.get_data("student_measurements").size)
+        student_measurements = self.get_data(STUDENT_MEASUREMENTS_LABEL)
+        self.stage_state.gals_total = int(student_measurements.size)
+        measwaves = student_measurements["measwave"]
+        self.stage_state.obswaves_total = measwaves[measwaves != None].size
+        velocities = student_measurements["velocity"]
+        self.stage_state.velocities_total = velocities[velocities != None].size
 
         # Set up viewers
         spectrum_viewer = self.add_viewer(
@@ -176,7 +182,7 @@ class StageOne(HubbleStage):
                  disabled=True,
                  activate=self.update_velocities)
         galaxy_table = Table(self.session,
-                             data=self.get_data('student_measurements'),
+                             data=self.get_data(STUDENT_MEASUREMENTS_LABEL),
                              glue_components=['name',
                                               'element',
                                               'restwave',
@@ -304,6 +310,7 @@ class StageOne(HubbleStage):
         # We can't just use ignore_callback, since other stuff (i.e. the frontend)
         # may depend on marker callbacks
         self.trigger_marker_update_cb = False
+        index = min(index, len(self.stage_state.step_markers)-1)
         self.stage_state.marker = self.stage_state.step_markers[index]
         self.trigger_marker_update_cb = True
 
