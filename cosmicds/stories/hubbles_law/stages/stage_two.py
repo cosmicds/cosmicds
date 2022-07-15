@@ -2,12 +2,12 @@ from os.path import join
 from pathlib import Path
 
 from echo import CallbackProperty, add_callback, ignore_callback
-from glue.core.state_objects import State
 from traitlets import default, Bool
 
 import astropy.units as u
-from astropy.coordinates import Angle, SkyCoord
+from astropy.coordinates import SkyCoord
 
+from cosmicds.phases import CDSState
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.components.generic_state_component import GenericStateComponent
@@ -20,7 +20,7 @@ from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, MILKY_WAY_SIZE_MPC,  
 import logging
 log = logging.getLogger()
 
-class StageState(State):
+class StageState(CDSState):
     galaxy = CallbackProperty({})
     galaxy_selected = CallbackProperty(False)
     galaxy_dist = CallbackProperty(None)
@@ -79,6 +79,11 @@ class StageState(State):
         'fil_rem1',
         'two_com1',
     ])
+
+    _NONSERIALIZED_PROPERTIES = [
+        'markers', 'step_markers',
+        'csv_highlights', 'table_highlights'
+    ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

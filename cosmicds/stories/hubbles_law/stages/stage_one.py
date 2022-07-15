@@ -1,20 +1,18 @@
-from curses.ascii import SP
 from os.path import join
 from pathlib import Path
 
 from echo import add_callback, ignore_callback, CallbackProperty
 from glue.core import Data
-from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 import ipyvuetify as v
 from numpy import isin
 from random import sample
-from soupsieve import select
 from traitlets import default, Bool
 
 import astropy.units as u
-from astropy.coordinates import Angle, SkyCoord
+from astropy.coordinates import SkyCoord
 
+from cosmicds.phases import CDSState
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.data_management import SDSS_DATA_LABEL, SPECTRUM_DATA_LABEL, STUDENT_MEASUREMENTS_LABEL
 from cosmicds.utils import load_template, update_figure_css
@@ -30,7 +28,7 @@ import logging
 log = logging.getLogger()
 
 
-class StageState(State):
+class StageState(CDSState):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
     gal_selected = CallbackProperty(False)
@@ -107,6 +105,11 @@ class StageState(State):
         'dop_cal1',
         'dop_cal2',
     ])
+
+    _NONSERIALIZED_PROPERTIES = [
+        'markers', 'step_markers', 'csv_highlights',
+        'table_highlights', 'spec_highlights'
+    ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

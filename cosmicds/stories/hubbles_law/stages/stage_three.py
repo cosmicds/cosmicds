@@ -1,21 +1,19 @@
 from functools import partial
 from glue.core.message import NumericalDataChangedMessage
-from glue.core.state_objects import State
-from glue.core.subset_group import SubsetGroup
 from traitlets import default
 
 from cosmicds.components.table import Table
+from cosmicds.phases import CDSState
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.data_management import ALL_CLASS_SUMMARIES_LABEL, ALL_DATA_LABEL, ALL_STUDENT_SUMMARIES_LABEL, CLASS_DATA_LABEL, CLASS_SUMMARY_LABEL, STUDENT_DATA_LABEL
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.stories.hubbles_law.viewers.viewers import HubbleClassHistogramView, HubbleHistogramView
 from cosmicds.utils import extend_tool, load_template
-from cosmicds.viewers import CDSHistogramView
 
 from cosmicds.stories.hubbles_law.histogram_listener import HistogramListener
 from cosmicds.stories.hubbles_law.viewers import HubbleFitView, HubbleScatterView
 
-class StageState(State):
+class StageState(CDSState):
     pass
 
 @register_stage(story="hubbles_law", index=3, steps=[

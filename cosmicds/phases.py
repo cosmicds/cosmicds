@@ -11,7 +11,19 @@ from echo import DictCallbackProperty, CallbackProperty, add_callback
 from numpy import delete
 
 
-class Story(State, HubMixin):
+class CDSState(State):
+    _NONSERIALIZED_PROPERTIES = []
+
+    def update_from_dict(self, state_dict):
+        state_dict = { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
+        super().update_from_dict(state_dict)
+
+    def as_dict(self):
+        state_dict = super().as_dict()
+        return { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
+
+
+class Story(CDSState, HubMixin):
     inputs = DictCallbackProperty()
     name = CallbackProperty()
     stage_index = CallbackProperty(0)
@@ -62,6 +74,14 @@ class Story(State, HubMixin):
     def setup_for_student(self, app_state):
         self.student_user = app_state.student
         self.classroom = app_state.classroom
+
+    def update_from_dict(self, state_dict):
+        state_dict = { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
+        super().update_from_dict(state_dict)
+
+    def as_dict(self):
+        state_dict = super().as_dict()
+        return { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
 
 class Stage(TemplateMixin):
     template = Unicode().tag(sync=True)
