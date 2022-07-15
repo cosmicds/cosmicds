@@ -82,7 +82,8 @@ class StageState(CDSState):
 
     _NONSERIALIZED_PROPERTIES = [
         'markers', 'step_markers',
-        'csv_highlights', 'table_highlights'
+        'csv_highlights', 'table_highlights',
+        'image_location'
     ]
 
     def __init__(self, *args, **kwargs):

@@ -109,7 +109,8 @@ class StageState(CDSState):
     _NONSERIALIZED_PROPERTIES = [
         'markers', 'step_markers', 'csv_highlights',
         'table_highlights', 'spec_highlights',
-        'gals_total', 'obswaves_total', 'velocities_total'
+        'gals_total', 'obswaves_total',
+        'velocities_total', 'image_location'
     ]
 
     def __init__(self, *args, **kwargs):
@@ -475,6 +476,8 @@ class StageOne(HubbleStage):
         return self.get_component('c-spectrum-slideshow')
 
     def _update_image_location(self, using_voila):
+        print("In _update_image_location")
+        print(using_voila)
         prepend = "voila/files/" if using_voila else ""
         self.stage_state.image_location = prepend + "data/images/stage_one_spectrum"
 
