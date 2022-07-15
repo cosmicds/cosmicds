@@ -94,8 +94,6 @@ module.exports = {
         this.complete = true;
         if (this.scoring) {
           this.score = this.getScore(this.tries);
-          console.log(this.scoreTag);
-          console.log(this.$el);
           if (this.scoreTag !== undefined) {
             document.dispatchEvent(
               new CustomEvent("mc-score", {
