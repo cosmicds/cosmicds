@@ -88,6 +88,9 @@ class Toolbar(VuetifyTemplate):
         tool = self.tools[tool_id]
         self.update_tools_data(tool, { "disabled": not enabled })
 
+    def is_tool_enabled(self, tool_id):
+        return not self.tools_data[tool_id]["disabled"]
+
     def add_tool(self, tool, data={}):
         self.tools[tool.tool_id] = tool
         self.update_tools_data(tool, data)
