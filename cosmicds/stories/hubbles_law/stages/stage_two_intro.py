@@ -12,7 +12,7 @@ class StageState(State):
     image_location = CallbackProperty()
 
 @register_stage(story="hubbles_law", index=2, steps=[
-    "Angular Distances"
+    "ANGULAR SIZES"
 ])
 class StageTwoIntro(Stage):
 
@@ -26,7 +26,7 @@ class StageTwoIntro(Stage):
 
     @default('title')
     def _default_title(self):
-        return "Distance Intro"
+        return "Galaxy Distances Intro"
 
     @default('subtitle')
     def _default_subtitle(self):

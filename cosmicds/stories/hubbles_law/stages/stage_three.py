@@ -18,10 +18,10 @@ class StageState(State):
     pass
 
 @register_stage(story="hubbles_law", index=4, steps=[
-    "My data",
-    "Class data",
-    "Galaxy Type",
-    "Professional Science Data"
+    "MY DATA",
+    "CLASS DATA",
+    "BY GALAXY TYPE",
+    "PROFESSIONAL DATA"
 ])
 class StageThree(HubbleStage):
     @default('stage_state')

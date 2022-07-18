@@ -116,10 +116,10 @@ class StageState(State):
 
 @register_stage(story="hubbles_law", index=1, steps=[
     #"Explore celestial sky",
-    "Collect galaxy data",
-    "Measure spectra",
-    "Reflect",
-    "Calculate velocities"
+    "COLLECT DATA",
+    "MEASURE SPECTRA",
+    "REFLECT",
+    "CALCULATE VELOCITIES"
 ])
 
 class StageOne(HubbleStage):
@@ -136,7 +136,7 @@ class StageOne(HubbleStage):
 
     @default('title')
     def _default_title(self):
-        return "Spectra and Velocities"
+        return "Spectra & Velocities"
 
     @default('subtitle')
     def _default_subtitle(self):

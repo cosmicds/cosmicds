@@ -24,7 +24,7 @@
       dark
       class="text-uppercase"
     >
-      <v-toolbar-title>Estimate Distance</v-toolbar-title>
+      <v-toolbar-title>Cosmic Sky Viewer</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">

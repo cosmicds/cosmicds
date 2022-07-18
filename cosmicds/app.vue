@@ -83,7 +83,9 @@
       <v-sheet height="72" width="100%" style="border-radius: 0px">
         <v-list class="ma-0 pa-0">
           <v-list-item>
-            <v-list-item-action>
+            <v-list-item-action
+              class="mr-3"
+            >
               <v-avatar
                 color="info lighten-1"
               >
@@ -407,6 +409,10 @@ body {
 
 .v-alert {
   font-size: 18px !important;
+}
+
+.v-navigation-drawer .v-list-item__action {
+  margin: 12px 12px 12px 0px !important;
 }
 
 .jp-Notebook,

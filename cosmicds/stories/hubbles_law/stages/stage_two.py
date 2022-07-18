@@ -59,6 +59,8 @@ class StageState(State):
 
     step_markers = CallbackProperty([
         'ang_siz1',
+        'ang_siz3',
+        'est_dis1'
     ])
 
     csv_highlights = CallbackProperty([
@@ -96,7 +98,9 @@ class StageState(State):
         self.marker = self.markers[index]
 
 @register_stage(story="hubbles_law", index=3, steps=[
-    "Measure angular size"
+    "ANGULAR SIZES",
+    "MEASURE SIZE",
+    "ESTIMATE DISTANCE"
 ])
 
 class StageTwo(HubbleStage):
@@ -219,6 +223,9 @@ class StageTwo(HubbleStage):
             return
         markers = self.stage_state.markers
         advancing = markers.index(new) > markers.index(old)
+        if new in self.stage_state.step_markers and advancing:
+            self.story_state.step_complete = True
+            self.story_state.step_index = self.stage_state.step_markers.index(new)
         if advancing and (new == "cho_row1" or new =="cho_row2"):
             self.distance_table.selected = []
             self.distance_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True) 
