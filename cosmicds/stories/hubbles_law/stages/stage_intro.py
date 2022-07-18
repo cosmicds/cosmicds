@@ -19,9 +19,13 @@ class StageIntro(Stage):
     def _default_template(self):
         return load_template("stage_intro.vue", __file__)
 
+    @default('stage_icon')
+    def _default_stage_icon(self):
+        return "1i"
+
     @default('title')
     def _default_title(self):
-        return "Introduction"
+        return "Velocity Intro"
 
     @default('subtitle')
     def _default_subtitle(self):

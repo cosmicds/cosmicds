@@ -1,19 +1,19 @@
 <template>
   <v-app id="inspire">
     <v-app-bar
-        app
-        color="primary"
-        dark
-        src="https://cdn.eso.org/images/screen/eso1738b.jpg"
-        clipped-right
-        flat
-        height="72"
-        style="z-index: 50;"
+      app
+      color="primary"
+      dark
+      src="https://cdn.eso.org/images/screen/eso1738b.jpg"
+      clipped-right
+      flat
+      height="72"
+      style="z-index: 50;"
     >
       <template v-slot:img="{ props }">
         <v-img
-            v-bind="props"
-            gradient="to top right, rgba(1, 87, 155, .7), rgba(0, 0, 0, .5)"
+          v-bind="props"
+          gradient="to top right, rgba(1, 87, 155, .7), rgba(0, 0, 0, .5)"
         ></v-img>
       </template>
 
@@ -26,7 +26,6 @@
       <v-toolbar-title>Cosmic Data Stories</v-toolbar-title>
 
       <v-spacer></v-spacer>
-
       <v-tooltip
         bottom
       >
@@ -46,17 +45,35 @@
         </template>
         {{ app_state.dark_mode ? 'switch to light mode' : 'switch to dark mode' }}
       </v-tooltip>
+      <v-chip
+        color="green"
+        outlined
+        class="mx-2"
+      >
+        <span
+          class="white--text mr-2"
+        >
+          <strong>## points</strong>
+        </span>
+        <v-icon
+          color="green"
+        >
+          mdi-piggy-bank
+        </v-icon>
+
+      </v-chip>
 
       <v-responsive
+        v-if="false"
         max-width="156"
         class="mx-4"
       >
         <v-text-field
-            dense
-            flat
-            hide-details
-            rounded
-            solo-inverted
+          dense
+          flat
+          hide-details
+          rounded
+          solo-inverted
         ></v-text-field>
       </v-responsive>
     </v-app-bar>
@@ -85,19 +102,19 @@
 
       <!-- List of stages for this story -->
       <v-stepper
-          v-model="story_state.stage_index"
-          vertical
-          flat
-          non-linear
-          class="elevation-0"
-          @change="story_state.step_index = story_state.stages[story_state.stage_index].step_index"
+        v-model="story_state.stage_index"
+        vertical
+        flat
+        non-linear
+        class="elevation-0"
+        @change="story_state.step_index = story_state.stages[story_state.stage_index].step_index"
       >
         <template v-for="(stage, key, index) in story_state.stages">
           <v-stepper-step
-              :key="index"
-              :complete="story_state.stage_index > index"
-              :step="index"
-              editable
+            :key="index"
+            :complete="story_state.stage_index > index"
+            :step="index"
+            editable
           >
             {{ stage.title }}
           </v-stepper-step>
@@ -106,13 +123,13 @@
             <!-- Section containing each stage's individual steps -->
             <v-list dense nav>
               <v-list-item-group
-                  v-model="story_state.step_index"
-                  color="info"
+                v-model="story_state.step_index"
+                color="info"
               >
                 <v-list-item
-                    v-for="(step, i) in story_state.stages[key].steps"
-                    :key="i"
-                    :disabled="i > 0 && !story_state.stages[key].steps[i-1].completed"
+                  v-for="(step, i) in story_state.stages[key].steps"
+                  :key="i"
+                  :disabled="i > 0 && !story_state.stages[key].steps[i-1].completed"
                 >
                   <v-list-item-action>
                     <template v-if="step.completed">

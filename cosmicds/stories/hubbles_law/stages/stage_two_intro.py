@@ -4,6 +4,7 @@ from traitlets import default
 
 from cosmicds.stories.hubbles_law.components.two_intro_slideshow import TwoIntroSlideShow
 from cosmicds.phases import Stage
+from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
 
@@ -19,9 +20,13 @@ class StageTwoIntro(Stage):
     def _default_template(self):
         return load_template("stage_two_intro.vue", __file__)
 
+    @default('stage_icon')
+    def _default_stage_icon(self):
+        return "2i"
+
     @default('title')
     def _default_title(self):
-        return "Stage 2 Introduction"
+        return "Distance Intro"
 
     @default('subtitle')
     def _default_subtitle(self):

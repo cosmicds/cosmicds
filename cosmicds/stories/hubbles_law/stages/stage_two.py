@@ -107,6 +107,10 @@ class StageTwo(HubbleStage):
     def _default_template(self):
         return load_template("stage_two.vue", __file__)
 
+    @default('stage_icon')
+    def _default_stage_icon(self):
+        return "2"
+
     @default('title')
     def _default_title(self):
         return "Galaxy Distances"
