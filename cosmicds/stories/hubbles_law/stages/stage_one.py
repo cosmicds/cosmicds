@@ -256,6 +256,8 @@ class StageOne(HubbleStage):
 
         # Callbacks
         def update_count(change):
+            if self.stage_state.gals_total > 0 and self.stage_state.marker == "sel_gal2":
+                self.stage_state.marker = "sel_gal3"
             self.stage_state.gals_total = change["new"]
         selection_tool.observe(update_count, names=['selected_count'])
         add_callback(self.stage_state, 'marker',

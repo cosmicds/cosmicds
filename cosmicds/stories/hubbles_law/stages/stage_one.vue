@@ -63,7 +63,7 @@
         lg="4"
       >
         <c-guideline-notice-galaxy-table 
-          v-if="stage_state.marker == 'sel_gal2' & stage_state.gals_total == 1 & !stage_state.gal_selected"
+          v-if="stage_state.marker == 'sel_gal2' & stage_state.gals_total == 1"
           v-intersect.once="scrollIntoView" />
         <c-guideline-choose-row
           v-if="stage_state.marker == 'cho_row1'"

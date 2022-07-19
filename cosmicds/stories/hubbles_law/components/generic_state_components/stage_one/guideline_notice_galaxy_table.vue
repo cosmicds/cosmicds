@@ -11,7 +11,6 @@
       Table Data
     </h3>
     <div
-      v-if="state.gals_total == 1 & !state.gal_selected"
       class="mb-4"
     >
       <p>
