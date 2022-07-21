@@ -12,7 +12,7 @@ from glue.core import HubListener
 
 from .events import StepChangeMessage, WriteToDatabaseMessage
 from .registries import story_registry
-from .utils import load_template
+from .utils import CDSJSONEncoder, load_template
 
 from cosmicds.utils import API_URL
 
@@ -22,6 +22,7 @@ class ApplicationState(State):
     using_voila = CallbackProperty(False)
     dark_mode = CallbackProperty(True)
     student = CallbackProperty({})
+    classroom = CallbackProperty({})
     update_db = CallbackProperty(False)
     show_team_interface = CallbackProperty(True)
 
@@ -39,21 +40,24 @@ class Application(VuetifyTemplate, HubListener):
 
         self.app_state = ApplicationState()
 
-        self.app_state.update_db = kwargs.get("update_db", False)
+        self.app_state.update_db = kwargs.get("update_db", True)
         self.app_state.show_team_interface = kwargs.get("show_team_interface", True)
         
-        # For testing purposes, we create a new dummy student on each startup
-        if self.app_state.update_db:
-            response = requests.get(f"{API_URL}/new-dummy-student").json()
-            self.app_state.student = response["student"]
-            self.student_id = self.app_state.student['id']
+        # # For testing purposes, we create a new dummy student on each startup
+        # if self.app_state.update_db:
+        #     response = requests.get(f"{API_URL}/new-dummy-student").json()
+        #     self.app_state.student = response["student"]
+
+        self.app_state.classroom["id"] = kwargs.get("class_id", 0)
+        self.app_state.student["id"] = kwargs.get("student_id", 0)
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
 
         # Initialize from database
         if self.app_state.update_db:
-            self._initialize_from_database()
+            #self._initialize_from_database()
+            pass
 
         # Subscribe to events
         self.hub.subscribe(self, WriteToDatabaseMessage,
@@ -85,34 +89,43 @@ class Application(VuetifyTemplate, HubListener):
     def hub(self):
         return self._application_handler.session.hub
 
+    @property
+    def story_state_endpoint(self):
+        user = self.app_state.student
+        story = self.story_state.name
+        return f"{API_URL}/story-state/{user['id']}/{story}"
+
     def _initialize_from_database(self):
         try:
             # User information for a JupyterHub notebook session is stored in an
             # environment variable
             # user = os.environ['JUPYTERHUB_USER']
-            user = self.app_state.student
-            story = self.story_state.name
-            response = requests.get(f"{API_URL}/story-state/{user['id']}/{story}")
+            response = requests.get(self.story_state_endpoint)
             data = response.json()
             state = data["state"]
             if state is not None:
-                self.story_state = state
+                self.story_state.update_from_dict(state)
         except Exception as e:
             print(e)
 
-    def _on_write_to_database(self, _msg):
+    def _on_write_to_database(self, _msg=None):
         if not self.app_state.update_db:
             return
 
         # User information for a JupyterHub notebook session is stored in an
-        # environment  variable
+        # environment variable
         # user = os.environ['JUPYTERHUB_USER']
 
-        user = self.app_state.student
-        story = self.story_state.name
-        data = json.loads(json.dumps(self.story_state.as_dict()))
+        data = json.loads(json.dumps(self.story_state.as_dict(), cls=CDSJSONEncoder))
         if data:
-            requests.put(f"{API_URL}/story-state/{user['id']}/{story}", json=data)
+            requests.put(self.story_state_endpoint, json=data)
+
+    def vue_write_to_database(self, _args=None):
+        self._on_write_to_database(None)
+
+    def vue_update_state(self, _args=None):
+        trait = self.traits()["story_state"]
+        trait.on_state_change(obj=self)
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark

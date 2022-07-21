@@ -196,7 +196,7 @@ mjx-mstyle {
 
 
 <script>
-export default = {
+export default {
 
     methods: {
     getValue(inputID) {

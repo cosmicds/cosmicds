@@ -1,22 +1,6 @@
 <template>
   <v-card
     id="distance-root"
-    v-intersect="(entries, observer, isIntersecting) => {
-
-      /**
-        We can't just use .once
-        since that seems to run before the viewer actually comes into view
-        so we'll just manually keep track of whether the iframe
-        has been updated or not
-      */
-      if (this.ranIntersectObserver) { return; }
-      const root = entries[0].target;
-      const element = root.querySelector('iframe');
-      if (element) {
-        element.src = element.src.replace('/api/kernels', '');
-        this.ranIntersectObserver = true;
-      }
-    }"
   >
     <v-toolbar
       color="primary"
