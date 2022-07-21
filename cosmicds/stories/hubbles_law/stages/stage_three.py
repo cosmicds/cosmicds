@@ -48,9 +48,12 @@ class StageThree(HubbleStage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        measurements = self.get_data("student_measurements")
+        student_data = self.get_data(STUDENT_DATA_LABEL)
+        all_data = self.get_data(ALL_DATA_LABEL)
+        class_meas_data = self.get_data(CLASS_DATA_LABEL)
+
         fit_table = Table(self.session,
-                    data=measurements,
+                    data=student_data,
                     glue_components=['name',
                                     'type',
                                     'velocity',
@@ -69,10 +72,6 @@ class StageThree(HubbleStage):
         hubble_dc_name = "Hubble 1929-Table 1"
         hstkp_dc_name = "HSTkey2001"
         galaxy_dc_name = "galaxy_data"
-
-        student_data = self.get_data(STUDENT_DATA_LABEL)
-        all_data = self.get_data(ALL_DATA_LABEL)
-        class_meas_data = self.get_data(CLASS_DATA_LABEL)
 
         dist_attr = "distance"
         vel_attr = "velocity"
