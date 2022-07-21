@@ -15,10 +15,16 @@ __all__ = ['SpectrumView', 'SpectrumViewLayerArtist', 'SpectrumViewerState']
 
 class SpectrumViewerState(ScatterViewerState):
 
+    _YMAX_FACTOR = 1.5
+
+    @property
+    def ymax_factor(self):
+        return self._YMAX_FACTOR
+
     def reset_limits(self):
         with delay_callback(self, 'x_min', 'x_max', 'y_min', 'y_max'):
             super().reset_limits()
-            self.y_max = 1.40 * self.y_max
+            self.y_max = self._YMAX_FACTOR * self.y_max
 
 
 class SpectrumViewLayerArtist(BqplotScatterLayerArtist):
@@ -146,9 +152,9 @@ class SpectrumView(BqplotScatterView):
         if ymin is None or ymax is None:
             return
         
-        line_bounds = [ymin, ymax / 1.4]
-        tick_bounds = [ymax * 0.78, ymax * 0.83]
-        bottom_label_position = ymax * 0.88
+        line_bounds = [ymin, ymax / self.state.ymax_factor]
+        tick_bounds = [ymax * 0.78, ymax * 0.9]
+        bottom_label_position = ymax * 0.94
         self.user_line.y = line_bounds
         self.previous_line.y = line_bounds
         self.user_line_label.x = [self.user_line.x[0]]
