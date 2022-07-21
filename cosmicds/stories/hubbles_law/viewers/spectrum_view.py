@@ -68,6 +68,31 @@ class SpectrumView(BqplotScatterView):
                 'y': self.scales['y'],
             })
 
+        self.previous_line = Lines(
+            x=[0, 0],
+            y=[0, 0],
+            scales={
+                'x': self.scales['x'],
+                'y': self.scales['y'],
+            },
+            colors=['gray'],
+            visible=False
+        )
+
+        self.previous_line_label = Label(
+            text=[""], 
+            x=[], 
+            y=[],
+            x_offset=10,
+            y_offset=10,
+            scales={
+                'x': self.scales['x'],
+                'y': self.scales['y'],
+            },
+            colors=['gray'],
+            visible=False
+        )
+
         self.element_tick = Lines(
             x=[],
             y=[0, 0],
@@ -92,15 +117,21 @@ class SpectrumView(BqplotScatterView):
                 'y': self.scales['y'],
             })
         
-        self.figure.marks += [self.user_line, self.user_line_label,
+        self.figure.marks += [self.previous_line, self.previous_line_label,
+                              self.user_line, self.user_line_label,
                               self.element_tick, self.element_label]
         
         self.add_event_callback(self._on_mouse_moved, events=['mousemove'])
+        self.add_event_callback(self._on_click, events=['click'])
         self.scale_y.observe(self._on_view_change, names=['min', 'max'])
 
         add_callback(self.state, 'y_min', self._on_view_change)
         add_callback(self.state, 'y_max', self._on_view_change)
         self.toolbar.observe(self._active_tool_change, names=['active_tool'])
+
+    @staticmethod
+    def _label_text(value):
+        return f"{value:.0f} Å"
 
     def _active_tool_change(self, change):
         is_tool = change.new is not None
@@ -119,8 +150,11 @@ class SpectrumView(BqplotScatterView):
         tick_bounds = [ymax * 0.78, ymax * 0.83]
         bottom_label_position = ymax * 0.88
         self.user_line.y = line_bounds
+        self.previous_line.y = line_bounds
         self.user_line_label.x = [self.user_line.x[0]]
         self.user_line_label.y = [self.user_line.y[1]]
+        self.previous_line_label.x = [self.previous_line.x[0]]
+        self.previous_line_label.y = [self.previous_line.y[1]]
         self.element_tick.y = tick_bounds
         self.element_label.y = [bottom_label_position]
   
@@ -132,12 +166,19 @@ class SpectrumView(BqplotScatterView):
         new_x = event['domain']['x']
         pixel_x = event['pixel']['x']
         self.resolution = (new_x - self.state.x_min) / pixel_x
-        self.user_line_label.text = [f"{new_x:.0f} Å"]
-
+        self.user_line_label.text = [self._label_text(new_x)]
         self.user_line.x = [new_x, new_x]
         self.user_line_label.x = [new_x, new_x]
 
-    def update(self, name, element, z):
+    def _on_click(self, event):
+        new_x = event['domain']['x']
+        self.previous_line.x = [new_x, new_x]
+        self.previous_line_label.text = [self._label_text(new_x)]
+        self.previous_line_label.x = [new_x, new_x]
+        self.previous_line.visible = True
+        self.previous_line_label.visible = True
+
+    def update(self, name, element, z, previous=None):
         self.spectrum_name = name
         self.element = element
         self.z = z
@@ -148,6 +189,13 @@ class SpectrumView(BqplotScatterView):
         self.element_tick.visible = items_visible
         self.user_line.visible = items_visible
         self.user_line_label.visible = items_visible
+        has_previous = previous is not None
+        self.previous_line.visible = has_previous
+        self.previous_line_label.visible = has_previous
+        if has_previous:
+            self.previous_line.x = [previous, previous]
+            self.previous_line_label.x = [previous, previous]
+            self.previous_line_label.text = [self._label_text(previous)]
         self.element_label.x = [self.shifted, self.shifted]
         self.element_label.text = [element]
         self.element_tick.x = [self.shifted, self.shifted]
