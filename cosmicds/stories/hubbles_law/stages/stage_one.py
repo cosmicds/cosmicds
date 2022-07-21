@@ -3,7 +3,6 @@ from pathlib import Path
 
 from echo import add_callback, ignore_callback, CallbackProperty
 from glue.core import Data
-from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 import ipyvuetify as v
 from numpy import isin
@@ -11,9 +10,11 @@ from random import sample
 from traitlets import default, Bool
 
 import astropy.units as u
-from astropy.coordinates import Angle, SkyCoord
+from astropy.coordinates import SkyCoord
 
+from cosmicds.phases import CDSState
 from cosmicds.registries import register_stage
+from cosmicds.stories.hubbles_law.data_management import SDSS_DATA_LABEL, SPECTRUM_DATA_LABEL, STUDENT_MEASUREMENTS_LABEL
 from cosmicds.utils import load_template, update_figure_css
 from cosmicds.stories.hubbles_law.viewers import SpectrumView, spectrum_view
 from cosmicds.stories.hubbles_law.stage import HubbleStage
@@ -27,7 +28,7 @@ import logging
 log = logging.getLogger()
 
 
-class StageState(State):
+class StageState(CDSState):
     gals_total = CallbackProperty(0)
     gals_max = CallbackProperty(5)
     gal_selected = CallbackProperty(False)
@@ -105,6 +106,13 @@ class StageState(State):
         'dop_cal2',
     ])
 
+    _NONSERIALIZED_PROPERTIES = [
+        'markers', 'step_markers', 'csv_highlights',
+        'table_highlights', 'spec_highlights',
+        'gals_total', 'obswaves_total',
+        'velocities_total', 'image_location'
+    ]
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.marker = self.markers[0]
@@ -147,6 +155,14 @@ class StageOne(HubbleStage):
         self.stage_state.image_location = join("data", "images", "stage_one_spectrum")
         add_callback(self.app_state, 'using_voila', self._update_image_location)
 
+        # Set up any Data-based values
+        student_measurements = self.get_data(STUDENT_MEASUREMENTS_LABEL)
+        self.stage_state.gals_total = int(student_measurements.size)
+        measwaves = student_measurements["measwave"]
+        self.stage_state.obswaves_total = measwaves[measwaves != None].size
+        velocities = student_measurements["velocity"]
+        self.stage_state.velocities_total = velocities[velocities != None].size
+
         # Set up viewers
         spectrum_viewer = self.add_viewer(
             SpectrumView, label="spectrum_viewer")
@@ -167,7 +183,7 @@ class StageOne(HubbleStage):
                  disabled=True,
                  activate=self.update_velocities)
         galaxy_table = Table(self.session,
-                             data=self.get_data('student_measurements'),
+                             data=self.get_data(STUDENT_MEASUREMENTS_LABEL),
                              glue_components=['name',
                                               'element',
                                               'restwave',
@@ -192,8 +208,9 @@ class StageOne(HubbleStage):
             self.galaxy_table_selected_change, names=["selected"])
 
         # Set up components
-        sdss_data = self.get_data("SDSS_all_sample_filtered")
-        selection_tool = SelectionTool(data=sdss_data, state=self.stage_state)
+        sdss_data = self.get_data(SDSS_DATA_LABEL)
+        selected = self.get_data(STUDENT_MEASUREMENTS_LABEL).to_dataframe()
+        selection_tool = SelectionTool(data=sdss_data, state=self.stage_state, selected_data=selected)
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
         selection_tool.observe(self._on_selection_tool_flagged, names=['flagged'])
@@ -294,11 +311,12 @@ class StageOne(HubbleStage):
         # We can't just use ignore_callback, since other stuff (i.e. the frontend)
         # may depend on marker callbacks
         self.trigger_marker_update_cb = False
+        index = min(index, len(self.stage_state.step_markers)-1)
         self.stage_state.marker = self.stage_state.step_markers[index]
         self.trigger_marker_update_cb = True
 
     def _on_galaxy_selected(self, galaxy):
-        data = self.get_data("student_measurements")
+        data = self.get_data(STUDENT_MEASUREMENTS_LABEL)
         is_in = isin(data['name'], galaxy['name']) # Avoid duplicates
         already_present = is_in.size > 0 and is_in[0]
         if already_present:
@@ -313,7 +331,7 @@ class StageOne(HubbleStage):
             gal_type = galaxy['type']
             galaxy.pop("element")
             self.story_state.load_spectrum_data(filename, gal_type)
-            self.add_data_values("student_measurements", galaxy)
+            self.add_data_values(STUDENT_MEASUREMENTS_LABEL, galaxy)
             self.galaxy_table.selected = [{'name': filename}]
 
     def _on_lambda_used(self, used):
@@ -325,7 +343,7 @@ class StageOne(HubbleStage):
     def _select_from_data(self, dc_name):
         data = self.get_data(dc_name)
         components = [x.label for x in data.main_components]
-        measurements = self.get_data("student_measurements")
+        measurements = self.get_data(STUDENT_MEASUREMENTS_LABEL)
         need = self.selection_tool.gals_max - measurements.size
         indices = sample(range(data.size), need)
         for index in indices:
@@ -339,7 +357,7 @@ class StageOne(HubbleStage):
         self.stage_state.marker = "sel_gal3"  
 
     def vue_select_galaxies(self, _args=None):
-        self._select_from_data("SDSS_all_sample_filtered")
+        self._select_from_data(SDSS_DATA_LABEL)
         self.galaxy_table.selected = []
         self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
         self.stage_state.marker = "sel_gal3"        
@@ -351,24 +369,24 @@ class StageOne(HubbleStage):
         spec_name = filename.split(".")[0]
         data_name = spec_name + '[COADD]'
         data = self.get_data(data_name)
-        self.story_state.update_data("spectrum_data", data)
+        self.story_state.update_data(SPECTRUM_DATA_LABEL, data)
         if len(specview.layers) == 0:
-            spec_data = self.get_data("spectrum_data")
+            spec_data = self.get_data(SPECTRUM_DATA_LABEL)
             specview.add_data(spec_data)
             specview.figure.axes[0].label = "Wavelength (Angstroms)"
             specview.figure.axes[1].label = "Brightness"
         specview.state.reset_limits()
         self.stage_state.waveline_set = False
 
-        sdss = self.get_data("SDSS_all_sample_filtered")
+        sdss = self.get_data(SDSS_DATA_LABEL)
         sdss_index = next((i for i in range(sdss.size) if sdss["name"][i] == name), None)
         if sdss_index is not None:
             element = sdss['element'][sdss_index]
             specview.update(name, element, z)
             restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
             index = self.get_widget("galaxy_table").index
-            self.update_data_value("student_measurements", "element", element, index)
-            self.update_data_value("student_measurements", "restwave", restwave, index)
+            self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "element", element, index)
+            self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "restwave", restwave, index)
             self.stage_state.element = element
 
     def galaxy_table_selected_change(self, change):
@@ -393,7 +411,7 @@ class StageOne(HubbleStage):
         spec_data = self.story_state.load_spectrum_data(filename, gal_type)
 
         z = galaxy["z"]
-        self.story_state.update_data("spectrum_data", spec_data)
+        self.story_state.update_data(SPECTRUM_DATA_LABEL, spec_data)
         self.update_spectrum_viewer(name, z)
 
         if self.stage_state.marker == 'cho_row1':
@@ -430,23 +448,23 @@ class StageOne(HubbleStage):
         self.stage_state.lambda_obs = new_value
 
         if index is not None:
-            self.update_data_value("student_measurements", "measwave", new_value, index)
+            self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "measwave", new_value, index)
             self.story_state.update_student_data()
 
     def vue_add_current_velocity(self, _args=None):
-        data = self.get_data("student_measurements")
+        data = self.get_data(STUDENT_MEASUREMENTS_LABEL)
         index = self.galaxy_table.index
         if index is not None:
             lamb_obs = data["restwave"][index]
             lamb_meas = data["measwave"][index]
             velocity = round((3 * (10 ** 5) * (lamb_meas/lamb_obs - 1)),0)
-            self.update_data_value("student_measurements", "velocity", velocity, index)
+            self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "velocity", velocity, index)
             self.story_state.update_student_data()
 
     def add_student_velocity(self, _args=None):
         index = self.galaxy_table.index
         velocity = round(self.stage_state.student_vel)
-        self.update_data_value("student_measurements", "velocity", velocity, index)
+        self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "velocity", velocity, index)
         self.stage_state.velocities_total = self.stage_state.velocities_total + 1
 
     @property
@@ -458,6 +476,8 @@ class StageOne(HubbleStage):
         return self.get_component('c-spectrum-slideshow')
 
     def _update_image_location(self, using_voila):
+        print("In _update_image_location")
+        print(using_voila)
         prepend = "voila/files/" if using_voila else ""
         self.stage_state.image_location = prepend + "data/images/stage_one_spectrum"
 
@@ -476,7 +496,7 @@ class StageOne(HubbleStage):
         self.update_spectrum_style(dark)
 
     def _empty_spectrum_viewer(self):
-        dc_name = "spectrum_data"
+        dc_name = SPECTRUM_DATA_LABEL
         spec_data = self.get_data(dc_name)
         data = Data(label=spec_data.label, **{
             c.label: [0] for c in spec_data.main_components
@@ -520,7 +540,7 @@ class StageOne(HubbleStage):
                 if lamb_obs is None or lamb_meas is None:
                     continue
                 velocity = round((3 * (10 ** 5) * (lamb_meas/lamb_obs - 1)),0)
-                self.update_data_value("student_measurements", "velocity", velocity, index)
+                self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "velocity", velocity, index)
                 self.stage_state.velocities_total = self.stage_state.velocities_total + 1
         self.story_state.update_student_data()
         table.update_tool(tool)

@@ -1,4 +1,5 @@
 from astropy import units as u
+from astropy.modeling import models, fitting
 from numpy import pi
 from bqplot.marks import Lines
 from bqplot.scales import LinearScale
@@ -65,6 +66,12 @@ def age_in_gyr_simple(H0):
     mpc_to_km = u.Mpc.to(u.km)
     s_to_gyr = u.s.to(u.Gyr)
     return round(inv * mpc_to_km * s_to_gyr, 1)
+
+def fit_line(x, y):
+    fit = fitting.LinearLSQFitter()
+    line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
+    fitted_line = fit(line_init, x, y)
+    return fitted_line
 
 def format_fov(fov, units=True):
     suffix = " (dd:mm:ss)" if units else ""

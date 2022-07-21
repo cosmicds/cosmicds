@@ -126,7 +126,8 @@ class SpectrumView(BqplotScatterView):
   
     def _on_mouse_moved(self, event):
 
-        if not self.user_line.visible:
+        if not self.user_line.visible \
+            or self.state.x_min is None:
             return
 
         new_x = event['domain']['x']

@@ -118,6 +118,7 @@
                       ]"
                       :correct-answers="[1]"
                       :selected-callback="(state) => { if(state.correct) { max_step_completed = Math.max(max_step_completed, 2); } }"
+                      score-tag="wavelength-comparison"
                     >
                     </mc-radiogroup>
                   </v-col>
@@ -155,6 +156,7 @@
                       ]"
                       :correct-answers="[1]"
                       :selected-callback="(state) => { if(state.correct) { max_step_completed = Math.max(max_step_completed, 3); } }"
+                      score-tag="galaxy-motion"
                     >
                     </mc-radiogroup>
                   </v-col>
@@ -191,6 +193,7 @@
                       :correct-answers="[1]"
                       :neutral-answers="[2]"
                       :selected-callback="(state) => { if(state.correct || state.neutral) { max_step_completed = Math.max(max_step_completed, 4); } }"  
+                      score-tag="steady-state-consistent"
                     >
                     </mc-radiogroup>
                   </v-col>
@@ -226,6 +229,7 @@
                       ]"
                       :neutral-answers='[0,1,2]'
                       :selected-callback="(state) => { if(state.neutral) { max_step_completed = Math.max(max_step_completed, 5); } }" 
+                      score-tag="moving-randomly-consistent"
                     >
                     </mc-radiogroup>
                   </v-col>
@@ -260,6 +264,7 @@
                         'No problem. Checking the Cosmic Data Stories database, everyone else who has completed this story also found that their galaxies are all moving away from us. Does that give you more confidence in your conclusions?']"
                       :neutral-answers="[0,2]"
                       :selected-callback="(state) => { if(state.correct || state.neutral) { max_step_completed = Math.max(max_step_completed, 6); } }" 
+                      score-tag="peers-data-agree"
                     >
                     </mc-radiogroup>
                   </v-col>
