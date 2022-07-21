@@ -265,6 +265,10 @@ export default {
       this.drawPoint(this.startPoint);
       this.canvas.classList.add(this.grabbingClass);
       this.shouldFollowMouse = true;
+
+      // To avoid the line 'vanishing' when we grab an endpoint
+      // we draw a line from the other point to where the mouse it
+      this.drawLine(this.startPoint, this.position(event));
     },
 
     handleMouseUp: function(event) {
