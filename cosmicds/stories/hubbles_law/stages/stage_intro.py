@@ -2,12 +2,13 @@ from echo import add_callback, CallbackProperty
 from glue.core.state_objects import State
 from traitlets import default
 
+from cosmicds.phases import CDSState
 from cosmicds.stories.hubbles_law.components.intro_slideshow import IntroSlideshow
 from cosmicds.phases import Stage
 from cosmicds.registries import register_stage
 from cosmicds.utils import load_template
 
-class StageState(State):
+class StageState(CDSState):
     image_location = CallbackProperty()
 
 @register_stage(story="hubbles_law", index=0, steps=[

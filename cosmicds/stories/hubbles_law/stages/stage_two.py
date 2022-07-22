@@ -2,24 +2,25 @@ from os.path import join
 from pathlib import Path
 
 from echo import CallbackProperty, add_callback, ignore_callback
-from glue.core.state_objects import State
 from traitlets import default, Bool
 
 import astropy.units as u
-from astropy.coordinates import Angle, SkyCoord
+from astropy.coordinates import SkyCoord
 
+from cosmicds.phases import CDSState
 from cosmicds.utils import load_template
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.components import DistanceSidebar, DistanceTool, DistanceCalc
-from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, format_fov, DISTANCE_CONSTANT
+from cosmicds.stories.hubbles_law.data_management import STUDENT_MEASUREMENTS_LABEL
+from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, DISTANCE_CONSTANT, format_fov
 
 import logging
 log = logging.getLogger()
 
-class StageState(State):
+class StageState(CDSState):
     intro = CallbackProperty(True)
     galaxy = CallbackProperty({})
     galaxy_selected = CallbackProperty(False)
@@ -83,6 +84,12 @@ class StageState(State):
         'fil_rem1',
         'two_com1',
     ])
+
+    _NONSERIALIZED_PROPERTIES = [
+        'markers', 'step_markers',
+        'csv_highlights', 'table_highlights',
+        'image_location'
+    ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -222,6 +229,11 @@ class StageTwo(HubbleStage):
         if not self.trigger_marker_update_cb:
             return
         markers = self.stage_state.markers
+        if new not in markers:
+            new = markers[0]
+            self.stage_state.marker = new
+        if old not in markers:
+            old = markers[0]
         advancing = markers.index(new) > markers.index(old)
         if new in self.stage_state.step_markers and advancing:
             self.story_state.step_complete = True
@@ -238,6 +250,7 @@ class StageTwo(HubbleStage):
         # We can't just use ignore_callback, since other stuff (i.e. the frontend)
         # may depend on marker callbacks
         self.trigger_marker_update_cb = False
+        index = min(index, len(self.stage_state.step_markers)-1)
         self.stage_state.marker = self.stage_state.step_markers[index]
         self.trigger_marker_update_cb = True
 
@@ -271,7 +284,7 @@ class StageTwo(HubbleStage):
 
     def _make_measurement(self):
         galaxy = self.stage_state.galaxy
-        index = self.get_data_indices('student_measurements', 'name', lambda x: x == galaxy["name"], single=True)
+        index = self.get_data_indices(STUDENT_MEASUREMENTS_LABEL, 'name', lambda x: x == galaxy["name"], single=True)
         angular_size = self.distance_tool.angular_size
         # ang_size_deg = angular_size.value
         # distance = round(MILKY_WAY_SIZE_MPC * 180 / (ang_size_deg * pi))
@@ -289,7 +302,7 @@ class StageTwo(HubbleStage):
         # self.update_data_value("student_measurements", "angular_size", angular_size_as, index)
 
         self.stage_state.meas_theta = round(angular_size.to(u.arcsec).value)
-        self.update_data_value("student_measurements", "angular_size",  self.stage_state.meas_theta, index)
+        self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "angular_size",  self.stage_state.meas_theta, index)
         self.story_state.update_student_data()
         with ignore_callback(self.stage_state, 'make_measurement'):
             self.stage_state.make_measurement = False
@@ -307,7 +320,7 @@ class StageTwo(HubbleStage):
 
     def add_student_distance(self, _args=None):
         index = self.distance_table.index
-        distance = round(DISTANCE_CONSTANT/self.stage_state.meas_theta)
+        distance = round(DISTANCE_CONSTANT / self.stage_state.meas_theta, 0)
         self.update_data_value("student_measurements", "distance", distance, index)
         if self.stage_state.distance_calc_count == 1: # as long as at least one thing has been measured, tool is enabled. But if students want to loop through calculation by hand they can.
             self.enable_distance_tool(True)
@@ -320,7 +333,7 @@ class StageTwo(HubbleStage):
                 theta = data["angular_size"][index]
                 if theta is None:
                     continue
-                distance = round(DISTANCE_CONSTANT/theta,0)
+                distance = round(DISTANCE_CONSTANT / theta, 0)
                 self.update_data_value("student_measurements", "distance", distance, index)
         self.story_state.update_student_data()
         table.update_tool(tool)

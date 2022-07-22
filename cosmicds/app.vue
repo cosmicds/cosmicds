@@ -97,6 +97,7 @@
               <v-list-item-title>
                 Guest Student {{ student_id }}
               </v-list-item-title>
+              Total score: {{ totalScore }}
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -226,9 +227,68 @@
 </template>
 
 <script>
-
 export default {
-  mounted() {
+  async mounted() {
+
+    // We ultimately don't want to expose this
+    // It's just for testing purposes
+    window.cdsApp = this;
+
+    const app = this;
+    if (!window.customElements.get("cds-input")) {
+
+      class CustomInput extends HTMLElement {
+
+        static app = app;
+
+        constructor() {
+          super();
+          this.attachShadow({mode: "open"});
+          this.input = document.createElement('input');
+          this.input.onchange = this.handleChangeEvent.bind(this);
+          this.shadowRoot.append(this.input);
+
+          // For inputs that aren't created when the story is initialized
+          // (i.e. in a MathJax intersection observer)
+          // we need this to correctly initialize the value
+          const tag = this.getAttribute("tag");
+          if (tag) {
+            const application = CustomInput.app;
+            if (tag in application.story_state.inputs) {
+              this.input.value = application.story_state.inputs[tag];
+            }
+          }
+        }
+
+        handleChangeEvent(event) {
+          const element = event.target;
+          const text = element.value;
+          this.onUpdateText(text);
+        }
+
+        set value(text) {
+          this.input.value = text;
+        }
+
+        get value() {
+          return this.input.value;
+        }
+
+        onUpdateText(text) {
+          const tag = this.getAttribute("tag");
+          if (!tag) { return; }
+          const application = CustomInput.app;
+          application.story_state.inputs[tag] = text;
+          // AFAICT, we need to call this here to update the state Python-side
+          app.update_state();
+        }
+      }
+
+      window.customElements.define("cds-input", CustomInput);
+    } else {
+      const inputClass = window.customElements.get("cds-input");
+      inputClass.app = app;
+    }
 
     // Check whether or not we're using voila
     // Based on the approach used here: https://github.com/widgetti/ipyvuetify/blob/master/js/src/jupyterEnvironment.js
@@ -259,12 +319,15 @@ export default {
               const xml = parser.create('node', 'XML');
               const id = parser.GetBrackets(name, '');
               const cls = parser.GetBrackets(name, '');
+              const tag = parser.GetBrackets(name, '');
               const value = parser.GetArgument(name);
-              xml.setXML(MathJax.startup.adaptor.node('input', {
-                id: id, class: cls, value: value, xmlns: 'http://www.w3.org/1999/xhtml'
-              }), MathJax.startup.adaptor);
+              const elementData = {
+                id: id, class: cls, tag: tag, value: value,
+                xmlns: 'http://www.w3.org/1999/xhtml'
+              };
+              xml.setXML(MathJax.startup.adaptor.node('cds-input', elementData), MathJax.startup.adaptor);
               xml.getSerializedXML = function () {
-                return this.adaptor.outerHTML(this.xml) + '</input>';
+                return this.adaptor.outerHTML(this.xml) + '</cds-input>';
               }
               parser.Push(
                 parser.create('node', 'TeXAtom', [
@@ -281,14 +344,21 @@ export default {
 
           MathJax.startup.defaultReady();
         }
-      }
+      }, 
     };
 
     // Grab MathJax itself
-    const mathJaxScript = document.createElement('script');
-    mathJaxScript.async = false;
-    mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
-    document.head.appendChild(mathJaxScript);
+    // We want to wait for it to finish loading, in case there are
+    // any elements that need to be typeset on the initial screen
+    await new Promise((resolve, reject) => {
+      const mathJaxScript = document.createElement('script');
+      mathJaxScript.async = false;
+      mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
+      document.head.appendChild(mathJaxScript);
+      mathJaxScript.onload = (_e) => resolve();
+      mathJaxScript.onerror = (_e) => reject();
+    });
+    await MathJax.startup.promise;
 
     // Not all of our elements are initially in the DOM,
     // so we need to account for that in order to get MathJax
@@ -386,13 +456,31 @@ export default {
       });
     });
     resizeObserver.observe(document.body);
+    //this.onLoadStoryState(this.story_state);
 
+    document.addEventListener("mc-score", (e) => {
+      const { tag, score } = e.detail;
+      app.$data.story_state.mc_scoring[tag] = score;
+      app.update_state();
+    });
   },
   methods: {
     getCurrentStage: function () {
       return this.$data.story_state.stages[this.$data.story_state.stage_index];
     },
+    onLoadStoryState: function(state) {
+      if (state.inputs === undefined) return;
+      for (const [key, value] of Object.entries(state.inputs)) {
+        const els = document.querySelectorAll(`[tag=${key}]`);
+        els.forEach(el => { el.value = String(value); });
+      }
+    }
   },
+  computed: {
+    totalScore() {
+      return Object.values(this.$data.story_state.mc_scoring).reduce((a, b) => a + b, 0);
+    }
+  }
 };
 </script>
 
