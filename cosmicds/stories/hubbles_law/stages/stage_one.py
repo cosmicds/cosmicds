@@ -267,6 +267,9 @@ class StageOne(HubbleStage):
 
         spectrum_viewer = self.get_viewer("spectrum_viewer")
         restwave_tool = spectrum_viewer.toolbar.tools["hubble:restwave"]
+        spectrum_viewer.toolbar.set_tool_enabled("hubble:restwave", False)
+        spectrum_viewer.toolbar.set_tool_enabled("hubble:wavezoom", False)        
+        spectrum_viewer.toolbar.set_tool_enabled("bqplot:home", False)    
 
         add_callback(restwave_tool, 'lambda_used', self._on_lambda_used)
         add_callback(restwave_tool, 'lambda_on', self._on_lambda_on)
@@ -288,6 +291,16 @@ class StageOne(HubbleStage):
         if advancing and old == "dop_cal2":
             self.galaxy_table.selected = []
             self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
+        if advancing and new == "res_wav1":
+            spectrum_viewer = self.get_viewer("spectrum_viewer") 
+            if spectrum_viewer.toolbar.is_tool_enabled("hubble:restwave")==False:
+                spectrum_viewer.toolbar.set_tool_enabled("hubble:restwave", True)
+        if advancing and new == "obs_wav2":
+            spectrum_viewer = self.get_viewer("spectrum_viewer") 
+            if spectrum_viewer.toolbar.is_tool_enabled("hubble:wavezoom")==False:
+                spectrum_viewer.toolbar.set_tool_enabled("hubble:wavezoom", True)
+            if spectrum_viewer.toolbar.is_tool_enabled("bqplot:home")==False:
+                spectrum_viewer.toolbar.set_tool_enabled("bqplot:home", True)
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
