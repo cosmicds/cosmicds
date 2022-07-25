@@ -8,7 +8,10 @@
           @click="fill_data();"
         >fill data points</v-btn>
         <v-btn
-          @click="console.log(stage_state)"
+          @click="() => {
+            console.log('stage state:', stage_state);
+            console.log('story state:', story_state);
+            }"
         >
           State
         </v-btn>

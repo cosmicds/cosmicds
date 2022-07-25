@@ -3,7 +3,10 @@
     <v-row v-if="show_team_interface">
       <v-col>
         <v-btn
-          @click="console.log(stage_state)"
+          @click="() => {
+            console.log('stage state:', stage_state);
+            console.log('story state:', story_state);
+            }"
         >
           State
         </v-btn>
