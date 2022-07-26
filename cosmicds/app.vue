@@ -491,6 +491,14 @@ body {
   padding: 0;
 }
 
+td:first-child, th:first-child {
+  min-width: 180px!important;
+}
+
+td.text-start {
+  padding: 8px 16px!important;
+}
+
 .v-card__text {
   font-size: 1rem !important;
 }
