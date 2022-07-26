@@ -378,13 +378,16 @@ class StageOne(HubbleStage):
         specview.state.reset_limits()
         self.stage_state.waveline_set = False
 
+        index = self.get_widget("galaxy_table").index
+        student_measurements = self.get_data("student_measurements")
+        measwave = student_measurements["measwave"][index]
+
         sdss = self.get_data(SDSS_DATA_LABEL)
         sdss_index = next((i for i in range(sdss.size) if sdss["name"][i] == name), None)
         if sdss_index is not None:
             element = sdss['element'][sdss_index]
-            specview.update(name, element, z)
+            specview.update(name, element, z, previous=measwave)
             restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
-            index = self.get_widget("galaxy_table").index
             self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "element", element, index)
             self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "restwave", restwave, index)
             self.stage_state.element = element
