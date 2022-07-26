@@ -37,6 +37,7 @@
       >
         <strong>{{ `+ ${score} ${score == 1 ? 'point' : 'points'}` }}</strong>
         <v-icon
+          large
           class="ml-1"
           :color="`${color(feedbackIndex)}`"
         >
