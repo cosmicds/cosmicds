@@ -1,31 +1,137 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="6">
+    <v-row v-if="show_team_interface">
+      <v-col>
+        <v-btn
+          @click="console.log(stage_state)"
+        >
+          State
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row
+      class="d-flex align-stretch"
+    >
+      <v-col
+        cols="12"
+        lg="4"
+      >
+        <v-btn
+          block
+        >PLACEHOLDER 1</v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        lg="8"
+      >
         <jupyter-widget :widget="widgets.fit_table"/>
       </v-col>
-      <v-col cols="6">
+    </v-row>
+    <v-row
+      class="d-flex align-stretch"
+    >
+      <v-col
+        cols="12"
+        lg="4"
+      >
+        <v-btn
+          block
+        >PLACEHOLDER 2</v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        lg="8"
+      >
         <jupyter-widget :widget="viewers.morphology_viewer"/>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="6">
+    <v-row
+      class="d-flex align-stretch"
+    >
+      <v-col
+        cols="12"
+        lg="4"
+      >
+        <v-btn
+          block
+        >PLACEHOLDER 3</v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        lg="8"
+      >
         <jupyter-widget :widget="viewers.fit_viewer"/>
       </v-col>
-      <v-col cols="6">
+    </v-row>
+    <v-row
+      class="d-flex align-stretch"
+    >
+      <v-col
+        cols="12"
+        lg="4"
+      >
+        <v-btn
+          block
+        >PLACEHOLDER 4</v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        lg="8"
+      >
         <jupyter-widget :widget="viewers.comparison_viewer"/>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="6">
+    <v-row
+      class="d-flex align-stretch"
+    >
+      <v-col
+        cols="12"
+        lg="4"
+      >
+        <v-btn
+          block
+        >PLACEHOLDER 5</v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        lg="8"
+      >
         <jupyter-widget :widget="viewers.class_distr_viewer"/>
       </v-col>
-      <v-col cols="6">
+    </v-row>
+    <v-row
+      class="d-flex align-stretch"
+    >
+      <v-col
+        cols="12"
+        lg="4"
+      >
+        <v-btn
+          block
+        >PLACEHOLDER 6</v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        lg="8"
+      >
         <jupyter-widget :widget="viewers.all_distr_viewer"/>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="6">
+    <v-row
+      class="d-flex align-stretch"
+    >
+      <v-col
+        cols="12"
+        lg="4"
+      >
+        <v-btn
+          block
+        >PLACEHOLDER 7</v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        lg="8"
+      >
         <jupyter-widget :widget="viewers.sandbox_distr_viewer"/>
       </v-col>
     </v-row>

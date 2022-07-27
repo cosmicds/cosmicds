@@ -1,6 +1,7 @@
 from functools import partial
+
 from glue.core.message import NumericalDataChangedMessage
-from traitlets import default
+from traitlets import default, Bool
 
 from cosmicds.components.table import Table
 from cosmicds.phases import CDSState
@@ -23,6 +24,8 @@ class StageState(CDSState):
     "PROFESSIONAL DATA"
 ])
 class StageThree(HubbleStage):
+    show_team_interface = Bool(False).tag(sync=True)
+
     @default('stage_state')
     def _default_state(self):
         return StageState()
@@ -51,6 +54,8 @@ class StageThree(HubbleStage):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.show_team_interface = self.app_state.show_team_interface
 
         student_data = self.get_data(STUDENT_DATA_LABEL)
         all_data = self.get_data(ALL_DATA_LABEL)
