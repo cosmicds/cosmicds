@@ -66,7 +66,7 @@
         lg="4"
       >
         <c-guideline-notice-galaxy-table 
-          v-if="stage_state.marker == 'sel_gal2' & stage_state.gals_total == 1 & !stage_state.gal_selected"
+          v-if="stage_state.marker == 'sel_gal2' & stage_state.gals_total == 1"
           v-intersect.once="scrollIntoView" />
         <c-guideline-choose-row
           v-if="stage_state.marker == 'cho_row1'"
@@ -187,23 +187,6 @@
               >
                 mdi-circle-outline
               </v-icon>
-            </v-btn>
-          </v-col>
-          <v-col
-            cols="12"
-          >
-            <!-- This alert is temporary -->
-            <v-btn
-              v-if="show_team_interface && stage_state.velocity_button"
-              :disabled="!stage_state.waveline_set"
-              class="white-text px-a"
-              width="100%"
-              color="success"
-              @click="
-                add_current_velocity();
-              "
-            >
-              find velocity
             </v-btn>
           </v-col>
         </v-row>

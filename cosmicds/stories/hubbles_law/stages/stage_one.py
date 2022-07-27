@@ -38,7 +38,6 @@ class StageState(CDSState):
     lambda_on = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     obswaves_total = CallbackProperty(0)
-    velocity_button = CallbackProperty(False)
     velocities_total = CallbackProperty(0)
 
     marker = CallbackProperty("")
@@ -48,6 +47,7 @@ class StageState(CDSState):
     lambda_obs = CallbackProperty(0)
     element = CallbackProperty("")
     reflection_complete = CallbackProperty(False)
+    doppler_calc_reached = CallbackProperty(False)
     doppler_calc_dialog = CallbackProperty(True) # Should the doppler calculation be displayed when marker == dop_cal5?
     student_vel = CallbackProperty(0) # Value of student's calculated velocity
     doppler_calc_complete = CallbackProperty(False) # Did student finish the doppler calculation?
@@ -124,10 +124,10 @@ class StageState(CDSState):
 
 @register_stage(story="hubbles_law", index=1, steps=[
     #"Explore celestial sky",
-    "Collect galaxy data",
-    "Measure spectra",
-    "Reflect",
-    "Calculate velocities"
+    "COLLECT DATA",
+    "MEASURE SPECTRA",
+    "REFLECT",
+    "CALCULATE VELOCITIES"
 ])
 
 class StageOne(HubbleStage):
@@ -138,9 +138,13 @@ class StageOne(HubbleStage):
     def _default_template(self):
         return load_template("stage_one.vue", __file__)
 
+    @default('stage_icon')
+    def _default_stage_icon(self):
+        return "1"
+
     @default('title')
     def _default_title(self):
-        return "Spectra and Velocities"
+        return "Spectra & Velocities"
 
     @default('subtitle')
     def _default_subtitle(self):
@@ -269,6 +273,8 @@ class StageOne(HubbleStage):
 
         # Callbacks
         def update_count(change):
+            if self.stage_state.gals_total > 0 and self.stage_state.marker == "sel_gal2":
+                self.stage_state.marker = "sel_gal3"
             self.stage_state.gals_total = change["new"]
         selection_tool.observe(update_count, names=['selected_count'])
         add_callback(self.stage_state, 'marker',
@@ -303,6 +309,9 @@ class StageOne(HubbleStage):
         if advancing and new == "cho_row1" and self.galaxy_table.index is not None:
             self.stage_state.spec_viewer_reached = True
             self.stage_state.marker = "mee_spe1"
+        if advancing and old == "dop_cal3" and self.galaxy_table.index is not None:
+            self.stage_state.doppler_calc_reached = True
+            self.stage_state.marker = "dop_cal4"
         if advancing and old == "dop_cal2":
             self.galaxy_table.selected = []
             self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
@@ -428,6 +437,10 @@ class StageOne(HubbleStage):
         if self.stage_state.marker == 'cho_row1':
             self.stage_state.spec_viewer_reached = True
             self.stage_state.marker = 'mee_spe1'
+
+        if self.stage_state.marker == 'dop_cal3':
+            self.stage_state.doppler_calc_reached = True
+            self.stage_state.marker = 'dop_cal4'
 
     def on_galaxy_row_click(self, item, _data=None):
         index = self.galaxy_table.indices_from_items([item])[0]

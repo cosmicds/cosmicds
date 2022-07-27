@@ -16,11 +16,11 @@ from cosmicds.stories.hubbles_law.viewers import HubbleFitView, HubbleScatterVie
 class StageState(CDSState):
     pass
 
-@register_stage(story="hubbles_law", index=3, steps=[
-    "My data",
-    "Class data",
-    "Galaxy Type",
-    "Professional Science Data"
+@register_stage(story="hubbles_law", index=4, steps=[
+    "MY DATA",
+    "CLASS DATA",
+    "BY GALAXY TYPE",
+    "PROFESSIONAL DATA"
 ])
 class StageThree(HubbleStage):
     @default('stage_state')
@@ -30,6 +30,10 @@ class StageThree(HubbleStage):
     @default('template')
     def _default_template(self):
         return load_template("stage_three.vue", __file__)
+
+    @default('stage_icon')
+    def _default_stage_icon(self):
+        return "3"
     
     @default('title')
     def _default_title(self):

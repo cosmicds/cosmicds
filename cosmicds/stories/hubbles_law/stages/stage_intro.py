@@ -12,7 +12,7 @@ class StageState(CDSState):
     image_location = CallbackProperty()
 
 @register_stage(story="hubbles_law", index=0, steps=[
-    "Introduction"
+    "WELCOME"
 ])
 class StageIntro(Stage):
 
@@ -20,9 +20,13 @@ class StageIntro(Stage):
     def _default_template(self):
         return load_template("stage_intro.vue", __file__)
 
+    @default('stage_icon')
+    def _default_stage_icon(self):
+        return "1i"
+
     @default('title')
     def _default_title(self):
-        return "Introduction"
+        return "Hubble's Law Intro"
 
     @default('subtitle')
     def _default_subtitle(self):

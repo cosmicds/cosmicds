@@ -12,7 +12,9 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-row class="d-flex align-stretch">
+    <v-row
+      class="d-flex align-stretch"
+    >
       <v-col
         cols="12"
         lg="4"
@@ -113,6 +115,20 @@
           >
             <!-- FORM DIALOG as template for reflections/MC -->
             <c-angsize-slideshow />
+
+            <v-btn
+              block
+              color="primary"
+              elevation="2"
+              @click.stop="dialog = true"
+            >
+              <v-icon
+                class="mr-4"
+              >
+                mdi-pen
+              </v-icon>
+              Info
+            </v-btn>
           </v-col>
           <v-col
             cols="4"

@@ -22,28 +22,28 @@
       </v-radio>
     </v-radio-group>
     <v-alert
-      dense
-      :color="`${color(feedbackIndex)} lighten-4`"
-      :class="feedbackIndex !== null ? 'd-block' : 'd-none'"
+      v-show="feedbackIndex !== null"
+      outlined
+      :color="`${color(feedbackIndex)}`"
+      :type="complete ? 'success' : 'warning'"
     >
-      <span
-        :class="`${color(feedbackIndex)}--text text--darken-4`"
+      <div
         v-html="feedbacks[feedbackIndex]"
       >
-      </span>
-    </v-alert>
-    <div
-      v-if="scoring && complete"
-      class="text-right"
-    >
-      <v-chip
-        color="info"
-        dark
-        pill
+      </div>
+      <div
+        v-if="scoring && complete"
+        class="text-right"
       >
-        {{ `Score: ${score} ${score == 1 ? 'point' : 'points'}` }}
-      </v-chip>
-    </div>
+        <strong>{{ `+ ${score} ${score == 1 ? 'point' : 'points'}` }}</strong>
+        <v-icon
+          class="ml-1"
+          :color="`${color(feedbackIndex)}`"
+        >
+          mdi-piggy-bank
+        </v-icon>
+      </div>
+    </v-alert>
   </v-container>
 </template>
 

@@ -83,7 +83,8 @@ class StoryRegistry(UniqueDictRegistry):
                                      "step_index": 0,
                                      "steps": [{'title': x, 'completed': False} 
                                                for x in v['steps']],
-                                     "model_id": f"IPY_MODEL_{stage.model_id}"}                    
+                                     "model_id": f"IPY_MODEL_{stage.model_id}",
+                                     "stage_icon": stage.stage_icon}
 
         return story_state
 

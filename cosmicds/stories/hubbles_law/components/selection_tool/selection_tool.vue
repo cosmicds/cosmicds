@@ -148,7 +148,7 @@
             bottom
             left
             absolute
-            color="accent"
+            color="success"
             class="selection-fab black--text"
             v-bind="attrs"
             v-on="on"
@@ -168,7 +168,7 @@
           bottom
           right
           absolute
-          color="accent"
+          color="success"
           class="selection-fab black--text"
           v-bind="attrs"
           v-on="on"

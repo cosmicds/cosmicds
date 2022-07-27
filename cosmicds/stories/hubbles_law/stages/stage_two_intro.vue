@@ -6,7 +6,7 @@
       justify="center"
     >
       <v-col cols="12">
-        <c-intro-slideshow />
+        <c-two-intro-slideshow />
       </v-col>
     </v-row>
   </v-container>

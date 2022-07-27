@@ -88,6 +88,7 @@ class Stage(TemplateMixin):
     story_state = GlueState().tag(sync=True)
     stage_state = GlueState().tag(sync=True)
     app_state = GlueState().tag(sync=True)
+    stage_icon = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
     subtitle = Unicode().tag(sync=True)
     viewers = Dict().tag(sync=True, **widget_serialization)

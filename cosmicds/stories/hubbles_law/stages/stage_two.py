@@ -13,7 +13,7 @@ from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
-from cosmicds.stories.hubbles_law.components import Angsize_SlideShow, DistanceSidebar, DistanceTool, DistanceCalc
+from cosmicds.stories.hubbles_law.components import DistanceSidebar, DistanceTool, DistanceCalc
 from cosmicds.stories.hubbles_law.data_management import STUDENT_MEASUREMENTS_LABEL
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, DISTANCE_CONSTANT, format_fov
 
@@ -21,12 +21,15 @@ import logging
 log = logging.getLogger()
 
 class StageState(CDSState):
+    intro = CallbackProperty(True)
     galaxy = CallbackProperty({})
     galaxy_selected = CallbackProperty(False)
     galaxy_dist = CallbackProperty(None)
     ruler_clicked_total = CallbackProperty(0)
     dos_donts_opened = CallbackProperty(False)
     make_measurement = CallbackProperty(False)
+    angsizes_total = CallbackProperty(0)
+
     marker = CallbackProperty("")
     indices = CallbackProperty({})
     advance_marker = CallbackProperty(True)
@@ -57,6 +60,8 @@ class StageState(CDSState):
 
     step_markers = CallbackProperty([
         'ang_siz1',
+        'ang_siz3',
+        'est_dis1'
     ])
 
     csv_highlights = CallbackProperty([
@@ -99,8 +104,10 @@ class StageState(CDSState):
         index = min(self.markers.index(marker_text) + 1, len(self.markers) - 1)
         self.marker = self.markers[index]
 
-@register_stage(story="hubbles_law", index=2, steps=[
-    "Measure angular size"
+@register_stage(story="hubbles_law", index=3, steps=[
+    "ANGULAR SIZES",
+    "MEASURE SIZE",
+    "ESTIMATE DISTANCE"
 ])
 
 class StageTwo(HubbleStage):
@@ -110,6 +117,10 @@ class StageTwo(HubbleStage):
     @default('template')
     def _default_template(self):
         return load_template("stage_two.vue", __file__)
+
+    @default('stage_icon')
+    def _default_stage_icon(self):
+        return "2"
 
     @default('title')
     def _default_title(self):
@@ -124,9 +135,6 @@ class StageTwo(HubbleStage):
 
         self.stage_state = StageState()
         self.show_team_interface = self.app_state.show_team_interface
-
-        angsize_slideshow = Angsize_SlideShow(self.stage_state)
-        self.add_component(angsize_slideshow, label='c-angsize-slideshow')
 
         self.add_component(DistanceTool(self.stage_state), label="c-distance-tool")
         self.stage_state.image_location = "data/images/stage_two_distance"
@@ -227,6 +235,9 @@ class StageTwo(HubbleStage):
         if old not in markers:
             old = markers[0]
         advancing = markers.index(new) > markers.index(old)
+        if new in self.stage_state.step_markers and advancing:
+            self.story_state.step_complete = True
+            self.story_state.step_index = self.stage_state.step_markers.index(new)
         if advancing and (new == "cho_row1" or new =="cho_row2"):
             self.distance_table.selected = []
             self.distance_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True) 
@@ -275,6 +286,21 @@ class StageTwo(HubbleStage):
         galaxy = self.stage_state.galaxy
         index = self.get_data_indices(STUDENT_MEASUREMENTS_LABEL, 'name', lambda x: x == galaxy["name"], single=True)
         angular_size = self.distance_tool.angular_size
+        # ang_size_deg = angular_size.value
+        # distance = round(MILKY_WAY_SIZE_MPC * 180 / (ang_size_deg * pi))
+        # angular_size_as = round(angular_size.to(u.arcsec).value)
+
+        index = self.distance_table.index
+        data = self.distance_table.glue_data
+        curr_value = data["angular_size"][index]
+
+        if curr_value is None:
+            self.stage_state.angsizes_total = self.stage_state.angsizes_total + 1
+
+        # self.stage_state.galaxy_dist = distance
+        # self.update_data_value("student_measurements", "distance", distance, index)
+        # self.update_data_value("student_measurements", "angular_size", angular_size_as, index)
+
         self.stage_state.meas_theta = round(angular_size.to(u.arcsec).value)
         self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "angular_size",  self.stage_state.meas_theta, index)
         self.story_state.update_student_data()

@@ -8,7 +8,7 @@
       dark
       class="text-uppercase"
     >
-      <v-toolbar-title>Estimate Distance</v-toolbar-title>
+      <v-toolbar-title>Cosmic Sky Viewer</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
@@ -55,7 +55,7 @@
             bottom
             right
             absolute
-            :color="measuring ? 'orange' : 'accent'"
+            :color="measuring ? 'red' : 'success'"
             class="measuring-fab black--text"
             :ripple="false"
             v-bind="attrs"
@@ -202,7 +202,7 @@ export default {
     setupMeasuringCanvasContext: function() {
       this.context = this.canvas.getContext('2d');
       this.context.lineWidth = 3;
-      this.context.strokeStyle = 'lime';
+      this.context.strokeStyle = '#00e676';
     },
 
     addInitialPoint: function(event) {
@@ -487,6 +487,10 @@ export default {
   margin-bottom: var(--margin);
   margin-right: calc(var(--margin) - var(--card-padding));
   z-index: 25 !important;
+}
+
+.measuring-fab:hover:before, .measuring-fab:focus:before {
+  display: none;
 }
 
 .fab-tooltip {
