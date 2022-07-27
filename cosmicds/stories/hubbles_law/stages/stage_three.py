@@ -1,5 +1,7 @@
 from functools import partial
 
+from echo import CallbackProperty
+
 from glue.core.message import NumericalDataChangedMessage
 from traitlets import default, Bool
 
@@ -15,7 +17,30 @@ from cosmicds.stories.hubbles_law.histogram_listener import HistogramListener
 from cosmicds.stories.hubbles_law.viewers import HubbleFitView, HubbleScatterView
 
 class StageState(CDSState):
-    pass
+    marker = CallbackProperty("")
+    indices = CallbackProperty({})
+    advance_marker = CallbackProperty(True)
+
+    markers = CallbackProperty([
+        'ran_mar1',
+        'ran_mar2',
+        'ran_mar3',
+        'ran_mar4',
+    ])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.marker_index = 0
+        self.marker = self.markers[0]
+        self.indices = {marker: idx for idx, marker in enumerate(self.markers)}
+
+    def marker_before(self, marker):
+        return self.indices[self.marker] < self.indices[marker]
+
+    def move_marker_forward(self, marker_text, _value=None):
+        index = min(self.markers.index(marker_text) + 1, len(self.markers) - 1)
+        self.marker = self.markers[index]
+
 
 @register_stage(story="hubbles_law", index=4, steps=[
     "MY DATA",
@@ -55,6 +80,7 @@ class StageThree(HubbleStage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.stage_state = StageState()
         self.show_team_interface = self.app_state.show_team_interface
 
         student_data = self.get_data(STUDENT_DATA_LABEL)
