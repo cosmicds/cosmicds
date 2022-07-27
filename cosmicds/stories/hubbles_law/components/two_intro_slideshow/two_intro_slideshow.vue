@@ -389,7 +389,7 @@
                           'Try again. \n Think about the people on the beach. Did the closer person appear bigger or smaller than the farther person?'
                         ]"
                         :correct-answers="[2]"
-                        :selected-callback="(option) => { if(option.correct || option.neutral) { max_step_completed = Math.max(max_step_completed, 7); } }"
+                        :selected-callback="(option) => { if(option.correct || option.neutral) { max_step_completed = Math.max(this.max_step_completed, 7); } }"
                       >
                       </mc-radiogroup>
                     </v-row>
@@ -511,7 +511,7 @@
                         'Try again. \ You could probably fit 10 Galaxy B’s across Galaxy A.'
                       ]"
                       :correct-answers="[1]"
-                      :selected-callback="(option) => { if(option.correct || option.neutral) { max_step_completed = Math.max(max_step_completed, 9); } }"
+                      :selected-callback="(option) => { if(option.correct || option.neutral) { max_step_completed = Math.max(this.max_step_completed, 9); } }"
                     >
                     </mc-radiogroup>
                   </v-row>
@@ -805,7 +805,7 @@ module.exports = {
     step(newStep, oldStep) {
       const isInteractStep = this.interact_steps.includes(newStep);
       const newCompleted = isInteractStep ? newStep - 1 : newStep;
-      max_step_completed = Math.max(max_step_completed, newCompleted);
+      this.max_step_completed = Math.max(this.max_step_completed, newCompleted);
     },
   },
 };
