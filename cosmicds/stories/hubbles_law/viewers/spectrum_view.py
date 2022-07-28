@@ -72,7 +72,8 @@ class SpectrumView(BqplotScatterView):
                 'x': self.scales['x'],
                 'y': self.scales['y'],
             },
-            colors=['white']
+            colors=['white'],
+            opacities=[0.7]
         )
         
         self.user_line_label = Label(
@@ -111,6 +112,18 @@ class SpectrumView(BqplotScatterView):
             visible=False
         )
 
+        self.previous_label_background = Lines(
+            x=[0, 0],
+            y=[0, 0],
+            stroke_width=25,
+            scales={
+                'x': self.scales['x'],
+                'y': self.scales['y'],
+            },
+            colors=['white'],
+            opacities=[0.7]
+        )
+
         self.element_tick = Lines(
             x=[],
             y=[0, 0],
@@ -135,7 +148,7 @@ class SpectrumView(BqplotScatterView):
                 'y': self.scales['y'],
             })
         
-        self.figure.marks += [self.previous_line, self.previous_line_label,
+        self.figure.marks += [self.previous_label_background, self.previous_line, self.previous_line_label,
                               self.label_background, self.user_line, self.user_line_label,
                               self.element_tick, self.element_label]
         
@@ -151,6 +164,12 @@ class SpectrumView(BqplotScatterView):
     def _label_text(value):
         return f"{value:.0f} Å"
 
+    def _x_background_coordinates(self, x):
+        return [x + 10 * self.resolution_x, x + 65 * self.resolution_x]
+
+    def _y_background_coordinates(self, y):
+        return [y - 10 * self.resolution_y, y - 10 * self.resolution_y]
+
     def _active_tool_change(self, change):
         is_tool = change.new is not None
         line_visible = not is_tool or change.new.tool_id != 'hubble:wavezoom'
@@ -165,16 +184,18 @@ class SpectrumView(BqplotScatterView):
             return
         
         line_bounds = [ymin, ymax / self.state.ymax_factor]
-        tick_bounds = [ymax * 0.78, ymax * 0.9]
-        bottom_label_position = ymax * 0.94
+        tick_bounds = [ymax * 0.74, ymax * 0.87]
+        bottom_label_position = ymax * 0.91
         self.user_line.y = line_bounds
         self.previous_line.y = line_bounds
         self.user_line_label.x = [self.user_line.x[0]]
         self.user_line_label.y = [self.user_line.y[1]]
-        self.label_background.x = [self.user_line_label.x[0] + 10 * self.resolution_x, self.user_line_label.x[0] + 65 * self.resolution_x]
-        self.label_background.y = [self.user_line_label.y[0] - 10 * self.resolution_y, self.user_line_label.y[0] - 10 * self.resolution_y]
+        self.label_background.x = self._x_background_coordinates(self.user_line_label.x[0])
+        self.label_background.y = self._y_background_coordinates(self.user_line_label.y[0])
         self.previous_line_label.x = [self.previous_line.x[0]]
         self.previous_line_label.y = [self.previous_line.y[1]]
+        self.previous_label_background.x = self._x_background_coordinates(self.previous_line_label.x[0])
+        self.previous_label_background.y = self._y_background_coordinates(self.previous_line_label.y[0])
         self.element_tick.y = tick_bounds
         self.element_label.y = [bottom_label_position]
   
@@ -193,14 +214,16 @@ class SpectrumView(BqplotScatterView):
         self.user_line_label.text = [self._label_text(new_x)]
         self.user_line.x = [new_x, new_x]
         self.user_line_label.x = [new_x, new_x]
-        self.label_background.x = [new_x + 10 * self.resolution_x, new_x + 65 * self.resolution_x]
-        self.label_background.y = [self.user_line_label.y[0] - 10 * self.resolution_y, self.user_line_label.y[0] - 10 * self.resolution_y]
+        self.label_background.x = self._x_background_coordinates(self.user_line_label.x[0])
+        self.label_background.y = self._y_background_coordinates(self.user_line_label.y[0])
 
     def _on_click(self, event):
         new_x = event['domain']['x']
         self.previous_line.x = [new_x, new_x]
         self.previous_line_label.text = [self._label_text(new_x)]
         self.previous_line_label.x = [new_x, new_x]
+        self.previous_label_background.x = self._x_background_coordinates(new_x)
+        self.previous_label_background.y = self._y_background_coordinates(self.previous_line_label.y[0])
         self.previous_line.visible = True
         self.previous_line_label.visible = True
 
@@ -223,6 +246,7 @@ class SpectrumView(BqplotScatterView):
             self.previous_line.x = [previous, previous]
             self.previous_line_label.x = [previous, previous]
             self.previous_line_label.text = [self._label_text(previous)]
+            self.previous_label_background.x = self._x_background_coordinates(previous)
         self.element_label.x = [self.shifted, self.shifted]
         self.element_label.text = [element]
         self.element_tick.x = [self.shifted, self.shifted]
@@ -237,7 +261,10 @@ class SpectrumView(BqplotScatterView):
             if layer.state.layer.label != data.label:
                 layer.state.visible = False
 
-        bring_to_front = [self.label_background, self.user_line, self.user_line_label]
+        bring_to_front = [
+            self.previous_label_background, self.previous_line, self.previous_line_label,
+            self.label_background, self.user_line, self.user_line_label
+        ]
         marks = [x for x in self.figure.marks if x not in bring_to_front]
         self.figure.marks = marks + bring_to_front
 
