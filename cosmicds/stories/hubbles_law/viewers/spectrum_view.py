@@ -34,6 +34,7 @@ class SpectrumViewLayerArtist(BqplotScatterLayerArtist):
         old_scatter = self.scatter
         self.scatter = Lines(scales=self.scales, x=[0,1], y=[0,1], marker=None)
         self.view.figure.marks = list(filter(lambda x: x is not old_scatter, self.view.figure.marks)) + [self.scatter]
+        self.scatter.colors = ['#507FB6']
         
 class SpectrumView(BqplotScatterView):
 
@@ -62,7 +63,22 @@ class SpectrumView(BqplotScatterView):
             scales={
                 'x': self.scales['x'],
                 'y': self.scales['y'],
-            })
+            },
+            colors=['#1b3e6a'],
+        )
+
+        self.user_line_label = Label(
+            text=[""], 
+            x=[], 
+            y=[],
+            x_offset=10,
+            y_offset=10,
+            scales={
+                'x': self.scales['x'],
+                'y': self.scales['y'],
+            },
+            colors=['#1b3e6a'],
+        )
 
         self.label_background = Lines(
             x=[0, 0],
@@ -73,19 +89,8 @@ class SpectrumView(BqplotScatterView):
                 'y': self.scales['y'],
             },
             colors=['white'],
-            opacities=[0.7]
+            opacities=[0.8]
         )
-        
-        self.user_line_label = Label(
-            text=[""], 
-            x=[], 
-            y=[],
-            x_offset=10,
-            y_offset=10,
-            scales={
-                'x': self.scales['x'],
-                'y': self.scales['y'],
-            })
 
         self.previous_line = Lines(
             x=[0, 0],
@@ -108,7 +113,7 @@ class SpectrumView(BqplotScatterView):
                 'x': self.scales['x'],
                 'y': self.scales['y'],
             },
-            colors=['gray'],
+            colors=['#4c4a4a'],
             visible=False
         )
 
@@ -121,7 +126,7 @@ class SpectrumView(BqplotScatterView):
                 'y': self.scales['y'],
             },
             colors=['white'],
-            opacities=[0.7]
+            opacities=[0.8]
         )
 
         self.element_tick = Lines(
