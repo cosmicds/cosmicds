@@ -123,7 +123,9 @@
   </v-container>
 </template>
 
+
 <script>
+
 module.exports = {
   methods: {
     scrollIntoView: function(entries, observer, isIntersecting) {
