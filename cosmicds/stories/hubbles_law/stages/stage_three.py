@@ -39,6 +39,57 @@ class StageState(CDSState):
         'ran_mar12',
     ])
 
+    step_markers = CallbackProperty([
+    ])
+
+    table_show = CallbackProperty([
+        'ran_mar1',
+        'ran_mar2',
+        'ran_mar3',
+    ])
+
+    table_highlights = CallbackProperty([
+    ])
+
+    all_galaxies_morph_plot_show = CallbackProperty([
+    ])
+
+    all_galaxies_morph_plot_highlights = CallbackProperty([
+    ])
+
+    my_galaxies_plot_show = CallbackProperty([
+        'ran_mar2',
+        'ran_mar3',
+    ])
+
+    my_galaxies_plot_highlights = CallbackProperty([
+    ])
+
+    all_galaxies_plot_show = CallbackProperty([
+    ])
+
+    all_galaxies_plot_highlights = CallbackProperty([
+    ])
+
+    my_class_hist_show = CallbackProperty([
+    ])
+
+    my_class_hist_highlights = CallbackProperty([
+    ])
+
+    all_classes_hist_show = CallbackProperty([
+    ])
+
+    all_classes_hist_highlights = CallbackProperty([
+    ])
+
+    sandbox_hist_show = CallbackProperty([
+    ])
+
+    sandbox_hist_highlights = CallbackProperty([
+    ])
+
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.marker_index = 0

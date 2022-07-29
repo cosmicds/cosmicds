@@ -11,6 +11,7 @@
     </v-row>
     <v-row
       class="d-flex align-stretch"
+      v-if="stage_state.table_show.includes(stage_state.marker)"
     >
       <v-col
         cols="12"
@@ -38,6 +39,7 @@
     </v-row>
     <v-row
       class="d-flex align-stretch"
+      v-if="stage_state.all_galaxies_morph_plot_show.includes(stage_state.marker)"
     >
       <v-col
         cols="12"
@@ -56,6 +58,7 @@
     </v-row>
     <v-row
       class="d-flex align-stretch"
+      v-if="stage_state.my_galaxies_plot_show.includes(stage_state.marker)"
     >
       <v-col
         cols="12"
@@ -74,6 +77,7 @@
     </v-row>
     <v-row
       class="d-flex align-stretch"
+      v-if="stage_state.all_galaxies_plot_show.includes(stage_state.marker)"
     >
       <v-col
         cols="12"
@@ -92,6 +96,7 @@
     </v-row>
     <v-row
       class="d-flex align-stretch"
+      v-if="stage_state.my_class_hist_show.includes(stage_state.marker)"
     >
       <v-col
         cols="12"
@@ -110,6 +115,7 @@
     </v-row>
     <v-row
       class="d-flex align-stretch"
+      v-if="stage_state.all_classes_hist_show.includes(stage_state.marker)"
     >
       <v-col
         cols="12"
@@ -128,6 +134,7 @@
     </v-row>
     <v-row
       class="d-flex align-stretch"
+      v-if="stage_state.sandbox_hist_show.includes(stage_state.marker)"
     >
       <v-col
         cols="12"
