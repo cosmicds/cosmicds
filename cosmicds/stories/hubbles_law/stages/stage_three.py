@@ -52,6 +52,7 @@ class StageState(CDSState):
     ])
 
     table_highlights = CallbackProperty([
+        'ran_mar1',
     ])
 
     all_galaxies_morph_plot_show = CallbackProperty([
@@ -69,6 +70,11 @@ class StageState(CDSState):
     ])
 
     my_galaxies_plot_highlights = CallbackProperty([
+        'ran_mar2',
+        'ran_mar3',
+        'ran_mar4',
+        'ran_mar5',
+        'ran_mar6',
     ])
 
     all_galaxies_plot_show = CallbackProperty([
