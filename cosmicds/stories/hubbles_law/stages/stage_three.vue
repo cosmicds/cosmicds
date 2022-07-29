@@ -85,6 +85,15 @@
         <c-guideline-expanding-universe
           v-if="stage_state.marker == 'ran_mar6'"
           v-intersect.once="scrollIntoView" />
+        <c-guideline-running-race-mc
+          v-if="stage_state.marker == 'ran_mar7'"
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-vel-dist-runners
+          v-if="stage_state.marker == 'ran_mar8'"
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-best-fit-galaxy
+          v-if="stage_state.marker == 'ran_mar9'"
+          v-intersect.once="scrollIntoView" />
         <v-btn
           block
         >PLACEHOLDER 3 {{ stage_state.marker }}</v-btn>

@@ -49,6 +49,9 @@ class StageState(CDSState):
         'ran_mar4',
         'ran_mar5',
         'ran_mar6',
+        'ran_mar7',
+        'ran_mar8',
+        'ran_mar9',
     ])
 
     table_highlights = CallbackProperty([
@@ -67,6 +70,9 @@ class StageState(CDSState):
         'ran_mar4',
         'ran_mar5',
         'ran_mar6',
+        'ran_mar7',
+        'ran_mar8',
+        'ran_mar9',
     ])
 
     my_galaxies_plot_highlights = CallbackProperty([
@@ -75,6 +81,7 @@ class StageState(CDSState):
         'ran_mar4',
         'ran_mar5',
         'ran_mar6',
+        'ran_mar9',
     ])
 
     all_galaxies_plot_show = CallbackProperty([
@@ -213,6 +220,9 @@ class StageThree(HubbleStage):
             "guideline_best_fit_line",
             "guideline_vel_dist_relationship_mc",
             "guideline_expanding_universe",
+            "guideline_running_race_mc",
+            "guideline_vel_dist_runners",
+            "guideline_best_fit_galaxy",
         ]
         ext = ".vue"
         for comp in state_components:
