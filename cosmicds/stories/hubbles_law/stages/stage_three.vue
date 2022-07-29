@@ -20,12 +20,6 @@
         <c-guideline-intro-explore
           v-if="stage_state.marker == 'ran_mar1'"
           v-intersect.once="scrollIntoView" />
-        <c-guideline-observe-trends-mc
-          v-if="stage_state.marker == 'ran_mar2'"
-          v-intersect.once="scrollIntoView" />
-        <c-guideline-trend-lines-draw
-          v-if="stage_state.marker == 'ran_mar3'"
-          v-intersect.once="scrollIntoView" />
         <v-btn
           block
         >PLACEHOLDER 1 {{ stage_state.marker }}</v-btn>
@@ -64,6 +58,21 @@
         cols="12"
         lg="6"
       >
+        <c-guideline-observe-trends-mc
+          v-if="stage_state.marker == 'ran_mar2'"
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-trend-lines-draw
+          v-if="stage_state.marker == 'ran_mar3'"
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-best-fit-line
+          v-if="stage_state.marker == 'ran_mar4'"
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-vel-dist-relationship-mc
+          v-if="stage_state.marker == 'ran_mar5'"
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-expanding-universe
+          v-if="stage_state.marker == 'ran_mar6'"
+          v-intersect.once="scrollIntoView" />
         <v-btn
           block
         >PLACEHOLDER 3 {{ stage_state.marker }}</v-btn>
