@@ -78,5 +78,5 @@ class RestWavelengthTool(CheckableTool):
         ymin, ymax = scale.min, scale.max
         if ymin is None or ymax is None:
             return
-        self.line.y = [ymin, ymax * 0.93]
-        self.label.y = [ymax * 0.96]
+        self.line.y = [ymin, ymax * 0.95]
+        self.label.y = [ymax * 0.99]
