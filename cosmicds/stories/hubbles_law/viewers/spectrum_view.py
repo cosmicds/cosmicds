@@ -39,7 +39,7 @@ class SpectrumViewLayerArtist(BqplotScatterLayerArtist):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         old_scatter = self.scatter
-        self.scatter = Lines(scales=self.scales, x=[0,1], y=[0,1], marker=None, colors=['#507FB6'])
+        self.scatter = Lines(scales=self.scales, x=[0,1], y=[0,1], marker=None, colors=['#507FB6'], stroke_width=1.8)
         self.view.figure.marks = list(filter(lambda x: x is not old_scatter, self.view.figure.marks)) + [self.scatter]
         
 class SpectrumView(BqplotScatterView):
@@ -105,7 +105,7 @@ class SpectrumView(BqplotScatterView):
                 'x': self.scales['x'],
                 'y': self.scales['y'],
             },
-            colors=['gray'],
+            colors=['#a7a5a5'],
             visible=False
         )
 
@@ -119,7 +119,7 @@ class SpectrumView(BqplotScatterView):
                 'x': self.scales['x'],
                 'y': self.scales['y'],
             },
-            colors=['#4c4a4a'],
+            colors=['#747272'],
             visible=False
         )
 
