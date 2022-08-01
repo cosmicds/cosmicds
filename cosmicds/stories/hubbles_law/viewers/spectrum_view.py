@@ -186,8 +186,7 @@ class SpectrumView(BqplotScatterView):
     def _active_tool_change(self, change):
         is_tool = change.new is not None
         line_visible = not is_tool or change.new.tool_id != 'hubble:wavezoom'
-        for mark in [self.user_line, self.user_line_label, self.label_background,
-                     self.previous_line, self.previous_line_label, self.previous_label_background]:
+        for mark in [self.user_line, self.user_line_label, self.label_background]:
             mark.visible = line_visible
 
     def _on_ymin_change(self, old, new):
