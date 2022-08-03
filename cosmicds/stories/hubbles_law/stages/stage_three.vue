@@ -15,7 +15,7 @@
     >
       <v-col
         cols="12"
-        lg="6"
+        lg="5"
       >
         <c-guideline-intro-explore
           v-if="stage_state.marker == 'ran_mar1'"
@@ -26,7 +26,7 @@
       </v-col>
       <v-col
         cols="12"
-        lg="6"
+        lg="7"
       >
         <v-card
           :color="stage_state.table_highlights.includes(stage_state.marker) ? 'info' : 'black'"
@@ -43,7 +43,7 @@
     >
       <v-col
         cols="12"
-        lg="6"
+        lg="5"
       >
         <v-btn
           block
@@ -51,7 +51,7 @@
       </v-col>
       <v-col
         cols="12"
-        lg="6"
+        lg="7"
       >
         <v-card
           :color="stage_state.all_galaxies_morph_plot_highlights.includes(stage_state.marker) ? 'info' : 'black'"
@@ -68,7 +68,7 @@
     >
       <v-col
         cols="12"
-        lg="6"
+        lg="5"
       >
         <c-guideline-observe-trends-mc
           v-if="stage_state.marker == 'ran_mar2'"
@@ -94,13 +94,22 @@
         <c-guideline-best-fit-galaxy
           v-if="stage_state.marker == 'ran_mar9'"
           v-intersect.once="scrollIntoView" />
+        <c-guideline-age-equation
+          v-if="stage_state.marker == 'ran_mar10'"
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-my-age-measurement
+          v-if="stage_state.marker == 'ran_mar11'"
+          v-intersect.once="scrollIntoView" />
+        <c-guideline-shortcomings-reflect
+          v-if="stage_state.marker == 'ran_mar12'"
+          v-intersect.once="scrollIntoView" />
         <v-btn
           block
         >PLACEHOLDER 3 {{ stage_state.marker }}</v-btn>
       </v-col>
       <v-col
         cols="12"
-        lg="6"
+        lg="7"
       >
         <v-card
           :color="stage_state.my_galaxies_plot_highlights.includes(stage_state.marker) ? 'info' : 'black'"
@@ -117,7 +126,7 @@
     >
       <v-col
         cols="12"
-        lg="6"
+        lg="5"
       >
         <v-btn
           block
@@ -125,7 +134,7 @@
       </v-col>
       <v-col
         cols="12"
-        lg="6"
+        lg="7"
       >
         <v-card
           :color="stage_state.all_galaxies_plot_highlights.includes(stage_state.marker) ? 'info' : 'black'"
@@ -142,7 +151,7 @@
     >
       <v-col
         cols="12"
-        lg="6"
+        lg="5"
       >
         <v-btn
           block
@@ -150,7 +159,7 @@
       </v-col>
       <v-col
         cols="12"
-        lg="6"
+        lg="7"
       >
         <v-card
           :color="stage_state.my_class_hist_highlights.includes(stage_state.marker) ? 'info' : 'black'"
@@ -167,7 +176,7 @@
     >
       <v-col
         cols="12"
-        lg="6"
+        lg="5"
       >
         <v-btn
           block
@@ -175,7 +184,7 @@
       </v-col>
       <v-col
         cols="12"
-        lg="6"
+        lg="7"
       >
         <v-card
           :color="stage_state.all_classes_hist_highlights.includes(stage_state.marker) ? 'info' : 'black'"
@@ -192,7 +201,7 @@
     >
       <v-col
         cols="12"
-        lg="6"
+        lg="5"
       >
         <v-btn
           block
@@ -200,7 +209,7 @@
       </v-col>
       <v-col
         cols="12"
-        lg="6"
+        lg="7"
       >
         <v-card
           :color="stage_state.sandbox_hist_highlights.includes(stage_state.marker) ? 'info' : 'black'"
