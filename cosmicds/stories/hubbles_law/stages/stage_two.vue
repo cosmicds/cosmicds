@@ -69,11 +69,7 @@
             cols="6"
             offset="3"
           >
-            <v-btn
-              block
-              color="secondary"
-              @click="stage_state.dos_donts_opened = true"
-            >do's and dont's</v-btn>
+            <c-dosdonts-slideshow />
           </v-col>
         </v-row>
       </v-col>
@@ -121,13 +117,8 @@
         >
           <jupyter-widget :widget="widgets.distance_table" />
         </v-card>
-     <v-row>
-       <v-col
-         cols="4"
-       >
-         <c-dosdonts-slideshow />
-       </v-col>
-     </v-row>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
