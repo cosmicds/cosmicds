@@ -22,6 +22,7 @@
       <v-col
         cols="12"
         lg="4"
+        :style="$vuetify.breakpoint.lg ? 'max-height: 100px' : 'max-height: 2500px'"
       >
         <c-guideline-intro-guidelines
           v-if="stage_state.marker == 'mee_gui1'"
@@ -64,6 +65,7 @@
       <v-col
         cols="12"
         lg="4"
+        :style="$vuetify.breakpoint.lg ? 'max-height: 100px' : 'max-height: 2500px'"
       >
         <c-guideline-notice-galaxy-table 
           v-if="stage_state.marker == 'sel_gal2' & stage_state.gals_total == 1"

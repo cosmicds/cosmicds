@@ -51,13 +51,27 @@
         cols="12"
         lg="8"
       >
-        <v-card
-          :color="stage_state.csv_highlights.includes(stage_state.marker) ? 'info' : 'black'"
-          :class="stage_state.csv_highlights.includes(stage_state.marker) ? 'pa-1 my-n1' : 'pa-0'"
-          outlined
-        >
-          <c-distance-tool />
-        </v-card>
+        <v-row>
+          <v-col
+            class="py-0"
+          >
+            <v-card
+              :color="stage_state.csv_highlights.includes(stage_state.marker) ? 'info' : 'black'"
+              :class="stage_state.csv_highlights.includes(stage_state.marker) ? 'pa-1 my-n1' : 'pa-0'"
+              outlined
+            >
+              <c-distance-tool />
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col
+            cols="6"
+            offset="3"
+          >
+            <c-dosdonts-slideshow />
+          </v-col>
+        </v-row>
       </v-col>
       <v-col
         cols="12"
@@ -96,32 +110,21 @@
         cols="12"
         lg="8"
       >
-        <v-row>
-          <v-col
-            class="py-0"
-          >
-            <v-card
-              :color="stage_state.table_highlights.includes(stage_state.marker) ? 'info' : 'black'"
-              :class="stage_state.table_highlights.includes(stage_state.marker) ? 'pa-1 my-n1' : 'pa-0'"
-              outlined
-            >
-              <jupyter-widget :widget="widgets.distance_table" />
-            </v-card>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col
-            cols="4"
-          >
-            <c-dosdonts-slideshow />
-          </v-col>
-        </v-row>
+        <v-card
+          :color="stage_state.table_highlights.includes(stage_state.marker) ? 'info' : 'black'"
+          :class="stage_state.table_highlights.includes(stage_state.marker) ? 'pa-1 my-n1' : 'pa-0'"
+          outlined
+        >
+          <jupyter-widget :widget="widgets.distance_table" />
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
+
 <script>
+
 module.exports = {
   methods: {
     scrollIntoView: function(entries, observer, isIntersecting) {

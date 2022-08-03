@@ -1,12 +1,18 @@
+from os.path import join
+from pathlib import Path
 from functools import partial
+
+from echo import CallbackProperty
+
 from glue.core.message import NumericalDataChangedMessage
-from traitlets import default
+from traitlets import default, Bool
 
 from cosmicds.components.table import Table
 from cosmicds.phases import CDSState
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.data_management import ALL_CLASS_SUMMARIES_LABEL, ALL_DATA_LABEL, ALL_STUDENT_SUMMARIES_LABEL, CLASS_DATA_LABEL, CLASS_SUMMARY_LABEL, STUDENT_DATA_LABEL
 from cosmicds.stories.hubbles_law.stage import HubbleStage
+from cosmicds.components.generic_state_component import GenericStateComponent
 from cosmicds.stories.hubbles_law.viewers.viewers import HubbleClassHistogramView, HubbleHistogramView
 from cosmicds.utils import extend_tool, load_template
 
@@ -14,7 +20,118 @@ from cosmicds.stories.hubbles_law.histogram_listener import HistogramListener
 from cosmicds.stories.hubbles_law.viewers import HubbleFitView, HubbleScatterView
 
 class StageState(CDSState):
-    pass
+    marker = CallbackProperty("")
+    indices = CallbackProperty({})
+    advance_marker = CallbackProperty(True)
+
+    markers = CallbackProperty([
+        'ran_mar1',
+        'ran_mar2',
+        'ran_mar3',
+        'ran_mar4',
+        'ran_mar5',
+        'ran_mar6',
+        'ran_mar7',
+        'ran_mar8',
+        'ran_mar9',
+        'ran_mar10',
+        'ran_mar11',
+        'ran_mar12',
+        'ran_mar13',
+    ])
+
+    step_markers = CallbackProperty([
+    ])
+
+    table_show = CallbackProperty([
+        'ran_mar1',
+        'ran_mar2',
+        'ran_mar3',
+        'ran_mar4',
+        'ran_mar5',
+        'ran_mar6',
+        'ran_mar7',
+        'ran_mar8',
+        'ran_mar9',
+        'ran_mar10',
+        'ran_mar11',
+        'ran_mar12',
+    ])
+
+    table_highlights = CallbackProperty([
+        'ran_mar1',
+    ])
+
+    all_galaxies_morph_plot_show = CallbackProperty([
+    ])
+
+    all_galaxies_morph_plot_highlights = CallbackProperty([
+    ])
+
+    my_galaxies_plot_show = CallbackProperty([
+        'ran_mar2',
+        'ran_mar3',
+        'ran_mar4',
+        'ran_mar5',
+        'ran_mar6',
+        'ran_mar7',
+        'ran_mar8',
+        'ran_mar9',
+        'ran_mar10',
+        'ran_mar11',
+        'ran_mar12',
+    ])
+
+    my_galaxies_plot_highlights = CallbackProperty([
+        'ran_mar2',
+        'ran_mar3',
+        'ran_mar4',
+        'ran_mar5',
+        'ran_mar6',
+        'ran_mar9',
+        'ran_mar10',
+        'ran_mar11',
+        'ran_mar12',
+    ])
+
+    all_galaxies_plot_show = CallbackProperty([
+    ])
+
+    all_galaxies_plot_highlights = CallbackProperty([
+    ])
+
+    my_class_hist_show = CallbackProperty([
+    ])
+
+    my_class_hist_highlights = CallbackProperty([
+    ])
+
+    all_classes_hist_show = CallbackProperty([
+    ])
+
+    all_classes_hist_highlights = CallbackProperty([
+    ])
+
+    sandbox_hist_show = CallbackProperty([
+    ])
+
+    sandbox_hist_highlights = CallbackProperty([
+    ])
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.marker_index = 0
+        self.marker = self.markers[0]
+        self.indices = {marker: idx for idx, marker in enumerate(self.markers)}
+
+    def marker_before(self, marker):
+        return self.indices[self.marker] < self.indices[marker]
+
+    def move_marker_forward(self, marker_text, _value=None):
+        index = min(self.markers.index(marker_text) + 1, len(self.markers) - 1)
+        self.marker = self.markers[index]
+
 
 @register_stage(story="hubbles_law", index=4, steps=[
     "MY DATA",
@@ -23,6 +140,8 @@ class StageState(CDSState):
     "PROFESSIONAL DATA"
 ])
 class StageThree(HubbleStage):
+    show_team_interface = Bool(False).tag(sync=True)
+
     @default('stage_state')
     def _default_state(self):
         return StageState()
@@ -51,6 +170,9 @@ class StageThree(HubbleStage):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.stage_state = StageState()
+        self.show_team_interface = self.app_state.show_team_interface
 
         student_data = self.get_data(STUDENT_DATA_LABEL)
         all_data = self.get_data(ALL_DATA_LABEL)
@@ -95,6 +217,34 @@ class StageThree(HubbleStage):
         class_distr_viewer = self.add_viewer(HubbleClassHistogramView, 'class_distr_viewer', "My Class")
         all_distr_viewer = self.add_viewer(HubbleHistogramView, 'all_distr_viewer', "All Classes")
         sandbox_distr_viewer = self.add_viewer(HubbleHistogramView, 'sandbox_distr_viewer', "Sandbox")
+
+
+        # Set up the generic state components
+        state_components_dir = str(
+            Path(__file__).parent.parent / "components" / "generic_state_components" / "stage_three")
+        path = join(state_components_dir, "")
+        state_components = [
+            "guideline_intro_explore",
+            "guideline_observe_trends_mc",
+            "guideline_trend_lines_draw",
+            "guideline_best_fit_line",
+            "guideline_vel_dist_relationship_mc",
+            "guideline_expanding_universe",
+            "guideline_running_race_mc",
+            "guideline_vel_dist_runners",
+            "guideline_best_fit_galaxy",
+            "guideline_age_equation",
+            "guideline_my_age_measurement",
+            "guideline_shortcomings_reflect",
+        ]
+        ext = ".vue"
+        for comp in state_components:
+            label = f"c-{comp}".replace("_", "-")
+
+            # comp + ext = filename; path = folder where they live.
+            component = GenericStateComponent(comp + ext, path, self.stage_state)
+            self.add_component(component, label=label)
+
 
         # Grab data
         class_sample_data = self.get_data(CLASS_SUMMARY_LABEL)
