@@ -290,9 +290,10 @@ class StageOne(HubbleStage):
 
         spectrum_viewer = self.get_viewer("spectrum_viewer")
         restwave_tool = spectrum_viewer.toolbar.tools["hubble:restwave"]
-
         add_callback(restwave_tool, 'lambda_used', self._on_lambda_used)
         add_callback(restwave_tool, 'lambda_on', self._on_lambda_on)
+        for tool_id in ["hubble:restwave", "hubble:wavezoom", "bqplot:home"]:
+            spectrum_viewer.toolbar.set_tool_enabled(tool_id, False)
 
     def _on_marker_update(self, old, new):
         if not self.trigger_marker_update_cb:
@@ -314,6 +315,13 @@ class StageOne(HubbleStage):
         if advancing and old == "dop_cal2":
             self.galaxy_table.selected = []
             self.selection_tool.widget.center_on_coordinates(self.START_COORDINATES, instant=True)
+        if advancing and new == "res_wav1":
+            spectrum_viewer = self.get_viewer("spectrum_viewer")
+            spectrum_viewer.toolbar.set_tool_enabled("hubble:restwave", True)
+        if advancing and new == "obs_wav2":
+            spectrum_viewer = self.get_viewer("spectrum_viewer")
+            spectrum_viewer.toolbar.set_tool_enabled("hubble:wavezoom", True)
+            spectrum_viewer.toolbar.set_tool_enabled("bqplot:home", True)
 
     def _on_step_index_update(self, index):
         # Change the marker without firing the associated stage callback
@@ -387,13 +395,16 @@ class StageOne(HubbleStage):
         specview.state.reset_limits()
         self.stage_state.waveline_set = False
 
+        index = self.get_widget("galaxy_table").index
+        student_measurements = self.get_data("student_measurements")
+        measwave = student_measurements["measwave"][index]
+
         sdss = self.get_data(SDSS_DATA_LABEL)
         sdss_index = next((i for i in range(sdss.size) if sdss["name"][i] == name), None)
         if sdss_index is not None:
             element = sdss['element'][sdss_index]
-            specview.update(name, element, z)
+            specview.update(name, element, z, previous=measwave)
             restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
-            index = self.get_widget("galaxy_table").index
             self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "element", element, index)
             self.update_data_value(STUDENT_MEASUREMENTS_LABEL, "restwave", restwave, index)
             self.stage_state.element = element

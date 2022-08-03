@@ -3,7 +3,10 @@
     <v-row v-if="show_team_interface">
       <v-col>
         <v-btn
-          @click="console.log(stage_state)"
+          @click="() => {
+            console.log('stage state:', stage_state);
+            console.log('story state:', story_state);
+            }"
         >
           State
         </v-btn>
@@ -118,8 +121,13 @@
         >
           <jupyter-widget :widget="widgets.distance_table" />
         </v-card>
-      </v-col>
-    </v-row>
+     <v-row>
+       <v-col
+         cols="4"
+       >
+         <c-dosdonts-slideshow />
+       </v-col>
+     </v-row>
   </v-container>
 </template>
 
