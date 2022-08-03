@@ -68,5 +68,3 @@ pip-wheel-metadata
 
 # Environments
 /env*
-cosmicds/stories/hubbles_law/data/hubble_simulation/output/HubbleSummary_Class_*
-cosmicds/stories/hubbles_law/data/hubble_simulation/output/HubbleData_Class_*
