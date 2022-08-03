@@ -26,6 +26,7 @@ class ApplicationState(State):
     update_db = CallbackProperty(False)
     show_team_interface = CallbackProperty(True)
 
+
 class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
     story_state = GlueState().tag(sync=True)
