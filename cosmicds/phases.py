@@ -11,7 +11,20 @@ from echo import DictCallbackProperty, CallbackProperty, add_callback
 from numpy import delete
 
 
-class Story(State, HubMixin):
+class CDSState(State):
+    _NONSERIALIZED_PROPERTIES = []
+
+    def update_from_dict(self, state_dict):
+        state_dict = { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
+        super().update_from_dict(state_dict)
+
+    def as_dict(self):
+        state_dict = super().as_dict()
+        return { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
+
+
+class Story(CDSState, HubMixin):
+    inputs = DictCallbackProperty()
     name = CallbackProperty()
     stage_index = CallbackProperty(0)
     step_index = CallbackProperty(0)
@@ -19,7 +32,8 @@ class Story(State, HubMixin):
     stages = DictCallbackProperty()
     teacher_user = CallbackProperty()
     student_user = CallbackProperty()
-    class_id = CallbackProperty()
+    classroom = CallbackProperty()
+    mc_scoring = CallbackProperty({})
 
     def __init__(self, session, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -37,6 +51,7 @@ class Story(State, HubMixin):
 
     def _on_step_index_changed(self, value):
         self.stages[self.stage_index]['step_index'] = value
+        self.step_index = min(value, len(self.stages[self.stage_index]['steps'])-1)
         self.step_complete = self.stages[self.stage_index]['steps'][
             self.step_index]['completed']
         self.hub.broadcast(WriteToDatabaseMessage(self))
@@ -56,11 +71,24 @@ class Story(State, HubMixin):
                 if layer.state.layer.label == data.label:
                     layer.state.visible = viewer in viewers
 
+    def setup_for_student(self, app_state):
+        self.student_user = app_state.student
+        self.classroom = app_state.classroom
+
+    def update_from_dict(self, state_dict):
+        state_dict = { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
+        super().update_from_dict(state_dict)
+
+    def as_dict(self):
+        state_dict = super().as_dict()
+        return { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
+
 class Stage(TemplateMixin):
     template = Unicode().tag(sync=True)
     story_state = GlueState().tag(sync=True)
     stage_state = GlueState().tag(sync=True)
     app_state = GlueState().tag(sync=True)
+    stage_icon = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
     subtitle = Unicode().tag(sync=True)
     viewers = Dict().tag(sync=True, **widget_serialization)

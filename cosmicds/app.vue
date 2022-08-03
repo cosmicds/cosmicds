@@ -1,18 +1,19 @@
 <template>
   <v-app id="inspire">
     <v-app-bar
-        app
-        color="primary"
-        dark
-        src="https://cdn.eso.org/images/screen/eso1738b.jpg"
-        clipped-right
-        flat
-        height="72"
+      app
+      color="primary"
+      dark
+      src="https://cdn.eso.org/images/screen/eso1738b.jpg"
+      clipped-right
+      flat
+      height="72"
+      style="z-index: 50;"
     >
       <template v-slot:img="{ props }">
         <v-img
-            v-bind="props"
-            gradient="to top right, rgba(1, 87, 155, .7), rgba(0, 0, 0, .5)"
+          v-bind="props"
+          gradient="to top right, rgba(1, 87, 155, .7), rgba(0, 0, 0, .5)"
         ></v-img>
       </template>
 
@@ -25,35 +26,54 @@
       <v-toolbar-title>Cosmic Data Stories</v-toolbar-title>
 
       <v-spacer></v-spacer>
-
-      <v-btn
-        icon
-        @click="
-          app_state.dark_mode = !app_state.dark_mode
-        "
+      <v-tooltip
+        bottom
       >
+        <template
+          v-slot:activator="{ on, attrs }"
+        >
+          <v-btn
+            icon
+            v-bind="attrs"
+            v-on="on"
+            @click="
+              app_state.dark_mode = !app_state.dark_mode
+            "
+          >
+            <v-icon>mdi-brightness-4</v-icon>
+          </v-btn>
+        </template>
+        {{ app_state.dark_mode ? 'switch to light mode' : 'switch to dark mode' }}
+      </v-tooltip>
+      <v-chip
+        color="green"
+        outlined
+        class="mx-2"
+      >
+        <span
+          class="white--text mr-2"
+        >
+          <strong>## points</strong>
+        </span>
         <v-icon
-        >mdi-brightness-6</v-icon>
-      </v-btn>
-
-      <v-btn
-        icon
-        @click="
-          reset_app()
-        "
-      >
-        <v-icon>
-          mdi-replay
+          color="green"
+        >
+          mdi-piggy-bank
         </v-icon>
-      </v-btn>
 
-      <v-responsive max-width="156">
+      </v-chip>
+
+      <v-responsive
+        v-if="false"
+        max-width="156"
+        class="mx-4"
+      >
         <v-text-field
-            dense
-            flat
-            hide-details
-            rounded
-            solo-inverted
+          dense
+          flat
+          hide-details
+          rounded
+          solo-inverted
         ></v-text-field>
       </v-responsive>
     </v-app-bar>
@@ -63,7 +83,9 @@
       <v-sheet height="72" width="100%" style="border-radius: 0px">
         <v-list class="ma-0 pa-0">
           <v-list-item>
-            <v-list-item-action>
+            <v-list-item-action
+              class="mr-3"
+            >
               <v-avatar
                 color="info lighten-1"
               >
@@ -73,12 +95,9 @@
 
             <v-list-item-content>
               <v-list-item-title>
-                Nicholas Earl
+                Guest Student {{ student_id }}
               </v-list-item-title>
-              <v-list-item-subtitle>
-                nearl@gluesolutions.io
-              </v-list-item-subtitle
-              >
+              Total score: {{ totalScore }}
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -86,19 +105,19 @@
 
       <!-- List of stages for this story -->
       <v-stepper
-          v-model="story_state.stage_index"
-          vertical
-          flat
-          non-linear
-          class="elevation-0"
-          @change="story_state.step_index = story_state.stages[story_state.stage_index].step_index"
+        v-model="story_state.stage_index"
+        vertical
+        flat
+        non-linear
+        class="elevation-0"
+        @change="story_state.step_index = story_state.stages[story_state.stage_index].step_index"
       >
         <template v-for="(stage, key, index) in story_state.stages">
           <v-stepper-step
-              :key="index"
-              :complete="story_state.stage_index > index"
-              :step="index"
-              editable
+            :key="index"
+            :complete="story_state.stage_index > index"
+            :step="index"
+            editable
           >
             {{ stage.title }}
           </v-stepper-step>
@@ -107,13 +126,13 @@
             <!-- Section containing each stage's individual steps -->
             <v-list dense nav>
               <v-list-item-group
-                  v-model="story_state.step_index"
-                  color="info"
+                v-model="story_state.step_index"
+                color="info"
               >
                 <v-list-item
-                    v-for="(step, i) in story_state.stages[key].steps"
-                    :key="i"
-                    :disabled="i > 0 && !story_state.stages[key].steps[i-1].completed"
+                  v-for="(step, i) in story_state.stages[key].steps"
+                  :key="i"
+                  :disabled="i > 0 && !story_state.stages[key].steps[i-1].completed"
                 >
                   <v-list-item-action>
                     <template v-if="step.completed">
@@ -187,12 +206,18 @@
       </v-content>
     </v-main>
 
-    <v-footer app padless inset style="z-index: 5;">
+    <v-footer
+      app
+      padless
+      inset
+      style="z-index: 50;"
+      dark
+      color="primary darken-1"
+    >
       <v-row justify="center" no-gutters>
         <v-col
-          class="py-2 text-center white--text"
+          class="py-2 text-center"
           cols="12"
-          color="primary darken-2"
         >
           {{ new Date().getFullYear() }} — <strong>CosmicDS</strong>
         </v-col>
@@ -202,9 +227,68 @@
 </template>
 
 <script>
-
 export default {
-  mounted() {
+  async mounted() {
+
+    // We ultimately don't want to expose this
+    // It's just for testing purposes
+    window.cdsApp = this;
+
+    const app = this;
+    if (!window.customElements.get("cds-input")) {
+
+      class CustomInput extends HTMLElement {
+
+        static app = app;
+
+        constructor() {
+          super();
+          this.attachShadow({mode: "open"});
+          this.input = document.createElement('input');
+          this.input.onchange = this.handleChangeEvent.bind(this);
+          this.shadowRoot.append(this.input);
+
+          // For inputs that aren't created when the story is initialized
+          // (i.e. in a MathJax intersection observer)
+          // we need this to correctly initialize the value
+          const tag = this.getAttribute("tag");
+          if (tag) {
+            const application = CustomInput.app;
+            if (tag in application.story_state.inputs) {
+              this.input.value = application.story_state.inputs[tag];
+            }
+          }
+        }
+
+        handleChangeEvent(event) {
+          const element = event.target;
+          const text = element.value;
+          this.onUpdateText(text);
+        }
+
+        set value(text) {
+          this.input.value = text;
+        }
+
+        get value() {
+          return this.input.value;
+        }
+
+        onUpdateText(text) {
+          const tag = this.getAttribute("tag");
+          if (!tag) { return; }
+          const application = CustomInput.app;
+          application.story_state.inputs[tag] = text;
+          // AFAICT, we need to call this here to update the state Python-side
+          app.update_state();
+        }
+      }
+
+      window.customElements.define("cds-input", CustomInput);
+    } else {
+      const inputClass = window.customElements.get("cds-input");
+      inputClass.app = app;
+    }
 
     // Check whether or not we're using voila
     // Based on the approach used here: https://github.com/widgetti/ipyvuetify/blob/master/js/src/jupyterEnvironment.js
@@ -235,12 +319,15 @@ export default {
               const xml = parser.create('node', 'XML');
               const id = parser.GetBrackets(name, '');
               const cls = parser.GetBrackets(name, '');
+              const tag = parser.GetBrackets(name, '');
               const value = parser.GetArgument(name);
-              xml.setXML(MathJax.startup.adaptor.node('input', {
-                id: id, class: cls, value: value, xmlns: 'http://www.w3.org/1999/xhtml'
-              }), MathJax.startup.adaptor);
+              const elementData = {
+                id: id, class: cls, tag: tag, value: value,
+                xmlns: 'http://www.w3.org/1999/xhtml'
+              };
+              xml.setXML(MathJax.startup.adaptor.node('cds-input', elementData), MathJax.startup.adaptor);
               xml.getSerializedXML = function () {
-                return this.adaptor.outerHTML(this.xml) + '</input>';
+                return this.adaptor.outerHTML(this.xml) + '</cds-input>';
               }
               parser.Push(
                 parser.create('node', 'TeXAtom', [
@@ -257,14 +344,21 @@ export default {
 
           MathJax.startup.defaultReady();
         }
-      }
+      }, 
     };
 
     // Grab MathJax itself
-    const mathJaxScript = document.createElement('script');
-    mathJaxScript.async = false;
-    mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
-    document.head.appendChild(mathJaxScript);
+    // We want to wait for it to finish loading, in case there are
+    // any elements that need to be typeset on the initial screen
+    await new Promise((resolve, reject) => {
+      const mathJaxScript = document.createElement('script');
+      mathJaxScript.async = false;
+      mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
+      document.head.appendChild(mathJaxScript);
+      mathJaxScript.onload = (_e) => resolve();
+      mathJaxScript.onerror = (_e) => reject();
+    });
+    await MathJax.startup.promise;
 
     // Not all of our elements are initially in the DOM,
     // so we need to account for that in order to get MathJax
@@ -362,13 +456,31 @@ export default {
       });
     });
     resizeObserver.observe(document.body);
+    //this.onLoadStoryState(this.story_state);
 
+    document.addEventListener("mc-score", (e) => {
+      const { tag, score } = e.detail;
+      app.$data.story_state.mc_scoring[tag] = score;
+      app.update_state();
+    });
   },
   methods: {
     getCurrentStage: function () {
       return this.$data.story_state.stages[this.$data.story_state.stage_index];
     },
+    onLoadStoryState: function(state) {
+      if (state.inputs === undefined) return;
+      for (const [key, value] of Object.entries(state.inputs)) {
+        const els = document.querySelectorAll(`[tag=${key}]`);
+        els.forEach(el => { el.value = String(value); });
+      }
+    }
   },
+  computed: {
+    totalScore() {
+      return Object.values(this.$data.story_state.mc_scoring).reduce((a, b) => a + b, 0);
+    }
+  }
 };
 </script>
 
@@ -385,6 +497,10 @@ body {
 
 .v-alert {
   font-size: 18px !important;
+}
+
+.v-navigation-drawer .v-list-item__action {
+  margin: 12px 12px 12px 0px !important;
 }
 
 .jp-Notebook,
@@ -415,7 +531,6 @@ body {
 
 input {
   width: 4em !important;
-  border: 1px solid black !important;
   border-radius: 3px !important;
 }
 
@@ -443,4 +558,13 @@ input {
 .v-dialog.v-dialog--active .v-toolbar__content.dragging {
   cursor: grabbing;
 }
+
+.v-dialog > .v-card, #slideshow-root {
+  border: solid hsla(0,0%,100%,.12) 1px !important;
+}
+
+.v-tooltip {
+  z-index: 40;
+}
+
 </style>

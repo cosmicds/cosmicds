@@ -17,6 +17,8 @@ class Toolbar(VuetifyTemplate):
         'bqplot:rectangle': 'mdi-select-drag',
     }
 
+    _TOOL_TRAITS = ["tool_tip"]
+
     template = load_template("toolbar.vue", __file__, traitlet=True).tag(sync=True)
     active_tool = Instance(Tool, allow_none=True,
                                      default_value=None)
@@ -68,22 +70,33 @@ class Toolbar(VuetifyTemplate):
             icon = cls.TOOL_ICONS.get(tool.tool_id, "")
         return icon
 
-    def update_tools_data(self, tool):
+    def update_tools_data(self, tool, data={}):
         self.tools_data = {
             **self.tools_data, 
             tool.tool_id: {
                 "tooltip" : tool.tool_tip,
-                "icon": Toolbar.get_icon(tool)
+                "icon": Toolbar.get_icon(tool),
+                "disabled": False,
+                **data
             }
         }
 
     def refresh_tools_data(self, change):
         self.update_tools_data(change["owner"])
 
-    def add_tool(self, tool):
-        self.tools[tool.tool_id] = tool
-        self.update_tools_data(tool)
+    def set_tool_enabled(self, tool_id, enabled):
+        tool = self.tools[tool_id]
+        self.update_tools_data(tool, { "disabled": not enabled })
 
-        if isinstance(tool, HasTraits) and "tool_tip" in tool.traits():
-            tool.observe(self.refresh_tools_data, names=["tool_tip"])
+    def is_tool_enabled(self, tool_id):
+        return not self.tools_data[tool_id]["disabled"]
+
+    def add_tool(self, tool, data={}):
+        self.tools[tool.tool_id] = tool
+        self.update_tools_data(tool, data)
+
+        if isinstance(tool, HasTraits):
+            for trait in self._TOOL_TRAITS:
+                if trait in tool.traits():
+                    tool.observe(self.refresh_tools_data, names=[trait])
 

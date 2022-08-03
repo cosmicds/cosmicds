@@ -1,27 +1,26 @@
 from functools import partial
 from glue.core.message import NumericalDataChangedMessage
-from glue.core.state_objects import State
-from glue.core.subset_group import SubsetGroup
 from traitlets import default
 
 from cosmicds.components.table import Table
+from cosmicds.phases import CDSState
 from cosmicds.registries import register_stage
+from cosmicds.stories.hubbles_law.data_management import ALL_CLASS_SUMMARIES_LABEL, ALL_DATA_LABEL, ALL_STUDENT_SUMMARIES_LABEL, CLASS_DATA_LABEL, CLASS_SUMMARY_LABEL, STUDENT_DATA_LABEL
 from cosmicds.stories.hubbles_law.stage import HubbleStage
 from cosmicds.stories.hubbles_law.viewers.viewers import HubbleClassHistogramView, HubbleHistogramView
 from cosmicds.utils import extend_tool, load_template
-from cosmicds.viewers import CDSHistogramView
 
 from cosmicds.stories.hubbles_law.histogram_listener import HistogramListener
 from cosmicds.stories.hubbles_law.viewers import HubbleFitView, HubbleScatterView
 
-class StageState(State):
+class StageState(CDSState):
     pass
 
-@register_stage(story="hubbles_law", index=3, steps=[
-    "My data",
-    "Class data",
-    "Galaxy Type",
-    "Professional Science Data"
+@register_stage(story="hubbles_law", index=4, steps=[
+    "MY DATA",
+    "CLASS DATA",
+    "BY GALAXY TYPE",
+    "PROFESSIONAL DATA"
 ])
 class StageThree(HubbleStage):
     @default('stage_state')
@@ -31,6 +30,10 @@ class StageThree(HubbleStage):
     @default('template')
     def _default_template(self):
         return load_template("stage_three.vue", __file__)
+
+    @default('stage_icon')
+    def _default_stage_icon(self):
+        return "3"
     
     @default('title')
     def _default_title(self):
@@ -40,12 +43,21 @@ class StageThree(HubbleStage):
     def _default_subtitle(self):
         return "Perhaps a small blurb about this stage"
 
+    viewer_ids_for_data = {
+        STUDENT_DATA_LABEL : ["fit_viewer", "comparison_viewer"],
+        CLASS_DATA_LABEL: ["comparison_viewer"],
+        CLASS_SUMMARY_LABEL: ["class_distr_viewer"]
+    }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        measurements = self.get_data("student_measurements")
+        student_data = self.get_data(STUDENT_DATA_LABEL)
+        all_data = self.get_data(ALL_DATA_LABEL)
+        class_meas_data = self.get_data(CLASS_DATA_LABEL)
+
         fit_table = Table(self.session,
-                    data=measurements,
+                    data=student_data,
                     glue_components=['name',
                                     'type',
                                     'velocity',
@@ -60,27 +72,19 @@ class StageThree(HubbleStage):
         )
         self.add_widget(fit_table, label="fit_table")
 
-        student_data = self.get_data("student_data")
-        all_data = self.get_data("HubbleData_All")
-
-
         # Set up links between various data sets
-        student_dc_name = "student_data"
-        class_dc_name = "HubbleData_ClassSample"
-        all_dc_name = "HubbleData_All"
-        hubble_name = "Hubble 1929-Table 1"
-        hstkp_name = "HSTkey2001"
+        hubble_dc_name = "Hubble 1929-Table 1"
+        hstkp_dc_name = "HSTkey2001"
+        galaxy_dc_name = "galaxy_data"
 
-        class_data = self.get_data(class_dc_name)
-        for component in class_data.components:
-            field = component.label
-            self.add_link(class_dc_name, field, all_dc_name, field)
-            if component.label in student_data.component_ids():
-                self.add_link(student_dc_name, field, class_dc_name, field)
-        self.add_link(hubble_name, 'Distance (Mpc)', hstkp_name, 'Distance (Mpc)')
-        self.add_link(hubble_name, 'Tweaked Velocity (km/s)', hstkp_name, 'Velocity (km/s)')
-        self.add_link(hstkp_name, 'Distance (Mpc)', student_dc_name, 'distance')
-        self.add_link(hstkp_name, 'Velocity (km/s)', student_dc_name, 'velocity')
+        dist_attr = "distance"
+        vel_attr = "velocity"
+        for field in [dist_attr, vel_attr]:
+            self.add_link(CLASS_DATA_LABEL, field, ALL_DATA_LABEL, field)
+        self.add_link(hubble_dc_name, 'Distance (Mpc)', hstkp_dc_name, 'Distance (Mpc)')
+        self.add_link(hubble_dc_name, 'Tweaked Velocity (km/s)', hstkp_dc_name, 'Velocity (km/s)')
+        self.add_link(hstkp_dc_name, 'Distance (Mpc)', STUDENT_DATA_LABEL, 'distance')
+        self.add_link(hstkp_dc_name, 'Velocity (km/s)', STUDENT_DATA_LABEL, 'velocity')
 
 
         # Create viewers
@@ -93,15 +97,14 @@ class StageThree(HubbleStage):
         sandbox_distr_viewer = self.add_viewer(HubbleHistogramView, 'sandbox_distr_viewer', "Sandbox")
 
         # Grab data
-        class_sample_data = self.get_data("HubbleSummary_ClassSample")
-        students_summary_data = self.get_data("HubbleSummary_Students")
-        classes_summary_data = self.get_data("HubbleSummary_Classes")
-        hubble1929 = self.get_data("Hubble 1929-Table 1")
-        hstkp = self.get_data("HSTkey2001")
-        galaxy_data = self.get_data('galaxy_data')
+        class_sample_data = self.get_data(CLASS_SUMMARY_LABEL)
+        students_summary_data = self.get_data(ALL_STUDENT_SUMMARIES_LABEL)
+        classes_summary_data = self.get_data(ALL_CLASS_SUMMARIES_LABEL)
+        hubble1929 = self.get_data(hubble_dc_name)
+        hstkp = self.get_data(hstkp_dc_name)
+        galaxy_data = self.get_data(galaxy_dc_name)
 
         # Set up the listener to sync the histogram <--> scatter viewers
-        meas_data = self.get_data("HubbleData_ClassSample")
 
         # Set up the functionality for the histogram <---> scatter sync
         # We add a listener for when a subset is modified/created on 
@@ -113,7 +116,7 @@ class StageThree(HubbleStage):
                                                     None,
                                                     class_sample_data,
                                                     None, 
-                                                    meas_data,
+                                                    class_meas_data,
                                                     source_subset_label=histogram_source_label,
                                                     modify_subset_label=histogram_modify_label)
 
@@ -134,29 +137,31 @@ class StageThree(HubbleStage):
             return x.label == histogram_modify_label and x.data != self.histogram_listener.modify_data
         comparison_viewer.ignore(comparison_ignorer)
 
-
         for viewer in [fit_viewer, comparison_viewer, prodata_viewer]:
             viewer.add_data(student_data)
             #viewer.layers[-1].state.visible = False
-            viewer.state.x_att = student_data.id['distance']
-            viewer.state.y_att = student_data.id['velocity']
+            viewer.state.x_att = student_data.id[dist_attr]
+            viewer.state.y_att = student_data.id[vel_attr]
         
-        comparison_viewer.layers[-1].state.zorder = 3
-        comparison_viewer.add_data(class_data)
+        student_layer = comparison_viewer.layers[-1]
+        student_layer.state.color = 'green'
+        student_layer.state.zorder = 3
+        student_layer.state.size = 8
+        comparison_viewer.add_data(class_meas_data)
         class_layer = comparison_viewer.layers[-1]
         class_layer.state.zorder = 2
-        class_layer.state.visible = False
-        comparison_viewer.add_data(all_data)
-        all_layer = comparison_viewer.layers[-1]
-        all_layer.state.zorder = 1
-        all_layer.state.visible = False
-        comparison_viewer.state.x_att = all_data.id['distance']
-        comparison_viewer.state.y_att = all_data.id['velocity']
+        class_layer.state.color = 'red'
+        # comparison_viewer.add_data(all_data)
+        # all_layer = comparison_viewer.layers[-1]
+        # all_layer.state.zorder = 1
+        # all_layer.state.visible = False
+        comparison_viewer.state.x_att = student_data.id[dist_attr]
+        comparison_viewer.state.y_att = student_data.id[vel_attr]
         comparison_viewer.state.reset_limits()
         
         prodata_viewer.add_data(student_data)
-        prodata_viewer.state.x_att = student_data.id['distance']
-        prodata_viewer.state.y_att = student_data.id['velocity']
+        prodata_viewer.state.x_att = student_data.id[dist_attr]
+        prodata_viewer.state.y_att = student_data.id[vel_attr]
         prodata_viewer.add_data(hstkp)
         prodata_viewer.add_data(hubble1929)
 
@@ -188,22 +193,22 @@ class StageThree(HubbleStage):
         sandbox_distr_viewer.state.x_att = students_summary_data.id['age']
 
         # Do some stuff with the galaxy data
-        type_field = 'MorphType'
-        elliptical_subset = galaxy_data.new_subset(galaxy_data.id[type_field] == 'E', label='Elliptical', color='orange')
-        spiral_subset = galaxy_data.new_subset(galaxy_data.id[type_field] == 'Sp', label='Spiral', color='green')
-        irregular_subset = galaxy_data.new_subset(galaxy_data.id[type_field] == 'Ir', label='Irregular', color='red')
+        type_field = 'type'
+        elliptical_subset = all_data.new_subset(all_data.id[type_field] == 'E', label='Elliptical', color='orange')
+        spiral_subset = all_data.new_subset(all_data.id[type_field] == 'Sp', label='Spiral', color='green')
+        irregular_subset = all_data.new_subset(all_data.id[type_field] == 'Ir', label='Irregular', color='red')
         morphology_subsets = [elliptical_subset, spiral_subset, irregular_subset]
         for subset in morphology_subsets:
             morphology_viewer.add_subset(subset)
-        morphology_viewer.state.x_att = galaxy_data.id['EstDist_Mpc']
-        morphology_viewer.state.y_att = galaxy_data.id['velocity_km_s']
+        morphology_viewer.state.x_att = all_data.id['distance']
+        morphology_viewer.state.y_att = all_data.id['velocity']
 
         # Just for accessibility while testing
         self.data_collection.histogram_listener = self.histogram_listener
 
-        # Whenever the student data is updated, the student scatter viewer should update its bounds
+        # Whenever data is updated, the appropriate viewers should update their bounds
         self.hub.subscribe(self, NumericalDataChangedMessage,
-                           handler=self._on_student_data_change, filter=self._student_data_filter)
+                           handler=self._on_data_change)
 
         def hist_selection_activate():
             if self.histogram_listener.source_subset is None:
@@ -226,12 +231,10 @@ class StageThree(HubbleStage):
     def all_viewers(self):
         return [layout.viewer for layout in self.viewers.values()]
 
-    def _student_data_filter(self, msg):
-        return msg.data == self.get_data("student_data")
-
-    def _on_student_data_change(self, msg):
-        viewer = self.get_viewer("fit_viewer")
-        viewer.state.reset_limits()
+    def _on_data_change(self, msg):
+        viewer_id = self.viewer_ids_for_data.get(msg.data.label, [])
+        for vid in viewer_id:
+            self.get_viewer(vid).state.reset_limits()
 
     def table_selected_color(self, dark):
         return "colors.lightBlue.darken4"

@@ -1,13 +1,6 @@
 <template>
   <v-card
     id="selection-root"
-    v-intersect.once="(entries, observer, isIntersecting) => {
-      const root = entries[0].target;
-      const element = root.querySelector('iframe');
-      if (element) {
-        element.src = element.src.replace('/api/kernels', '');
-      }
-    }"
   >
     <v-toolbar
       color="primary"
@@ -83,15 +76,13 @@
               </v-btn>
             </span>
           </v-toolbar>
-          <v-card-text
-            class="white black--text"
-          >
+          <v-card-text>
             <v-container>
               <v-row
               >
                 <v-col>
                   <p>
-                    The Comsic Sky Viewer shows a modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. The green dots mark the locations of galaxies you can collect data for.
+                    The Cosmic Sky Viewer shows a modern data set from the Sloan Digital Sky Survey (SDSS), which has collected imaging and spectral data for millions of galaxies. The green dots mark the locations of galaxies you can collect data for.
                   </p>
                   <v-row>
                     <v-col
@@ -101,7 +92,6 @@
                       <v-chip
                         label
                         outlined
-                        color="black"
                       >
                         Pan
                       </v-chip>
@@ -123,7 +113,6 @@
                       <v-chip
                         label
                         outlined
-                        color="black"
                       >
                         Zoom
                       </v-chip>
@@ -146,12 +135,10 @@
 
     </v-toolbar>
     <div class="selection-content">
-        <v-lazy>
-          <jupyter-widget
-            :widget="widget"
-            class="wwt-widget"
-          />
-        </v-lazy>
+      <jupyter-widget
+        :widget="widget"
+        class="wwt-widget"
+      />
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
         <v-fab-transition>
@@ -161,7 +148,7 @@
             bottom
             left
             absolute
-            color="accent"
+            color="success"
             class="selection-fab black--text"
             v-bind="attrs"
             v-on="on"
@@ -181,7 +168,7 @@
           bottom
           right
           absolute
-          color="accent"
+          color="success"
           class="selection-fab black--text"
           v-bind="attrs"
           v-on="on"

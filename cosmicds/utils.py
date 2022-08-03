@@ -1,6 +1,7 @@
 import json
 import os
 
+from glue.core.state_objects import State
 import numpy as np
 from threading import Timer
 from traitlets import Unicode
@@ -13,7 +14,7 @@ __all__ = [
 # The URL for the CosmicDS API
 API_URL = "https://api.cosmicds.cfa.harvard.edu"
 
-# JC: I got this from https://stackoverflow.com/a/57915246
+# JC: I got parts of this from https://stackoverflow.com/a/57915246
 class CDSJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
@@ -22,6 +23,8 @@ class CDSJSONEncoder(json.JSONEncoder):
             return float(obj)
         if isinstance(obj, np.ndarray):
             return obj.tolist()
+        if isinstance(obj, State):
+            return obj.as_dict()
         return super(CDSJSONEncoder, self).default(obj)
 
 # JC: I got this from https://stackoverflow.com/a/13151299

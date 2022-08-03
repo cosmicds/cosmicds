@@ -71,12 +71,18 @@ class DistanceTool(v.VueTemplate):
 
     def vue_toggle_measuring(self, _args=None):
         self.measuring = not self.measuring
+        self.state.ruler_clicked_total += 1
+        if self.state.ruler_clicked_total == 1:
+            self.state.marker = 'ang_siz4' # auto-advance guideline if it's the first ruler click
 
     @observe('measuredDistance')
     def _on_measured_distance_changed(self, change):
         fov = self.widget.get_fov()
         widget_height = self._height_from_pixel_str(self.widget.layout.height)
         self.angular_size = Angle(((change["new"] / widget_height) * fov))
+        self.state.n_meas += 1
+        if self.state.n_meas == 1:
+            self.state.marker = 'ang_siz5' # auto-advance guideline if it's the first measurement made
 
     @observe('measuring')
     def _on_measuring_changed(self, measuring):
