@@ -4,7 +4,7 @@
     block
     color="secondary"
     elevation="2"
-    @click.stop="dialog = true"
+    @click.stop="() => { dialog = true; state.dos_donts_opened = true }"
   >
     dos and donts
 

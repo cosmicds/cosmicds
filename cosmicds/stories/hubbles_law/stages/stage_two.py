@@ -15,6 +15,7 @@ from cosmicds.components.table import Table
 from cosmicds.registries import register_stage
 from cosmicds.stories.hubbles_law.components import DistanceSidebar, DistanceTool, DistanceCalc
 from cosmicds.stories.hubbles_law.data_management import STUDENT_MEASUREMENTS_LABEL
+from cosmicds.stories.hubbles_law.components.angsize_dosdonts_slideshow import DosDonts_SlideShow
 from cosmicds.stories.hubbles_law.utils import GALAXY_FOV, DISTANCE_CONSTANT, format_fov
 
 import logging
