@@ -4,7 +4,7 @@
     block
     color="secondary"
     elevation="2"
-    @click.stop="() => { dialog = true; state.dos_donts_opened = true }"
+    @click.stop="dialog = true"
   >
     dos and donts
 
@@ -90,26 +90,26 @@
                     flat
                     tile
                   >
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location_dosdonts}/IL-DO.png`"
+                    ></v-img>
                     <h4> DO: </h4> 
                     <p>
                       Wait for the image to fully load before measuring the angular size
                     </p>
+                  </v-col>
+                  <v-col cols="6">
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location_dosdonts}/Image-Load-DO.png`"
+                      :src="`${state.image_location_dosdonts}/IL-DONT.png`"
                     ></v-img>
-                  </v-col>
-                  <v-col cols="6">
                     <h4>DON'T : </h4> 
                     <p>
                       Try to measure the angular size while the image load is still in progress
                     </p>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location_dosdonts}/Image-Load-DONT.png`"
-                    ></v-img>
                   </v-col>
                 </v-row>
               </v-container>
@@ -135,26 +135,26 @@
                     flat
                     tile
                   >
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location_dosdonts}/LS-DO.png`"
+                    ></v-img>
                     <h4>DO:</h4> 
                     <p>
                       Measure across the longest part of the galaxy 
                     </p>
+                  </v-col>
+                  <v-col cols="6">
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location_dosdonts}/Elongated-Spiral-DO.png`"
+                      :src="`${state.image_location_dosdonts}/LS-DONT.png`"
                     ></v-img>
-                  </v-col>
-                  <v-col cols="6">
                     <h4>DON’T: </h4> 
                     <p>
                       Measure across a short dimension
                     </p>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location_dosdonts}/Elongated-Spiral-DONT.png`"
-                    ></v-img>
                   </v-col>
                 </v-row>
               </v-container>
@@ -180,26 +180,26 @@
                     flat
                     tile
                   >
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location_dosdonts}/EH-DO.png`"
+                    ></v-img>
                     <h4>DO: </h4> 
                     <p>
                       Include as much fuzzy haze as you can see
                     </p>  
+                  </v-col>
+                  <v-col cols="6">
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location_dosdonts}/Elliptical-Full-Haze-DO.png`"
+                      :src="`${state.image_location_dosdonts}/EH-DONT.png`"
                     ></v-img>
-                  </v-col>
-                  <v-col cols="6">
                     <h4>DON’T: </h4> 
                     <p>
                       Ignore the fuzzy haze around the galaxy edge
                     </p>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location_dosdonts}/Elliptical-Full-Haze-DONT.png`"
-                    ></v-img>
                   </v-col>
                 </v-row>
               </v-container>
@@ -225,27 +225,26 @@
                     flat
                     tile
                   >
-                    <h4>OK: </h4>  
-                    <p>
-                      Do your best to pick out the galaxy edge.
-                    </p>
-                    <br>
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location_dosdonts}/Irregular-Faint-Maybe1.png`"
+                      :src="`${state.image_location_dosdonts}/IF-Maybe2.png`"
                     ></v-img>
-                  </v-col>
-                  <v-col cols="6">
                     <h4>OK: </h4> 
                     <p>
                       Maybe there is a faint haze around the brighter center. If you see it, you can include it.
                     </p>
+                  </v-col>
+                  <v-col cols="6">
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location_dosdonts}/Irregular-Faint-Maybe2.png`"
+                      :src="`${state.image_location_dosdonts}/IF-Maybe1.png`"
                     ></v-img>
+                    <h4>OK: </h4>  
+                    <p>
+                      Do your best to pick out the galaxy edge.
+                    </p>
                   </v-col>
                 </v-row>
               </v-container>
@@ -257,7 +256,7 @@
               <v-container>
                 <v-row>
                   <v-col>
-                    <h3 class="mb-4"> Faint Irregular Galaxies </h3>
+                    <h3 class="mb-4"> Measure the Entire Galaxy </h3>
                     <p>
                      Sometimes it is tempting to focus on only the brightest part of the galaxy and ignore fainter parts beyond the center. Be sure to measure the entire galaxy.
                     </p>
@@ -271,26 +270,26 @@
                     flat
                     tile
                   >
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location_dosdonts}/BS-DO.png`"
+                    ></v-img>
                     <h4>DO: </h4>  
                     <p>
                      Measure across the entire galaxy
                     </p>
+                  </v-col>
+                  <v-col cols="6">
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location_dosdonts}/Bright-Spiral-DO.png`"
+                      :src="`${state.image_location_dosdonts}/BS-DONT.png`"
                     ></v-img>
-                  </v-col>
-                  <v-col cols="6">
                     <h4>DON'T: </h4> 
                     <p>
                       Ignore the fainter region beyond the bright center
                     </p>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location_dosdonts}/Bright-Spiral-DONT.png`"
-                    ></v-img>
                   </v-col>
                 </v-row>
               </v-container>
@@ -318,38 +317,37 @@
                     flat
                     tile
                   >
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location_dosdonts}/Multi-DO.png`"
+                    ></v-img>
                     <h4>DO: </h4> 
                     <p>
                       Measure the SINGLE object in the center of the field of view
                     </p>
+                  </v-col>
+                  <v-col cols="4">
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location_dosdonts}/Multiple-DO.png`"
+                      :src="`${state.image_location_dosdonts}/Multi-DONT1.png`"
                     ></v-img>
-                  </v-col>
-                  <v-col cols="4">
                     <h4>DON'T: </h4> 
                     <p>
                       Measure across multiple objects
                     </p>
-                    <br>
+                  </v-col>
+                  <v-col cols="4">
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location_dosdonts}/Multiple-DONT1.png`"
+                      :src="`${state.image_location_dosdonts}/Multi-DONT2.png`"
                     ></v-img>
-                  </v-col>
-                  <v-col cols="4">
                     <h4>DON'T: </h4> 
                     <p>
                       Measure an object that is not in the center of the field of view. 
                     </p>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location_dosdonts}/Multiple-DONT2.png`"
-                    ></v-img>
                   </v-col>
                 </v-row>
               </v-container>
@@ -375,27 +373,26 @@
                     flat
                     tile
                   >
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location_dosdonts}/TC-DO.png`"
+                    ></v-img>
                     <h4>DO: </h4>  
                     <p>
                       Zoom out far enough to see your entire galaxy before measuring
                     </p>
+                  </v-col>
+                  <v-col cols="6">
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location_dosdonts}/Too-Close-DO.png`"
+                      :src="`${state.image_location_dosdonts}/TC-DONT.png`"
                     ></v-img>
-                  </v-col>
-                  <v-col cols="6">
                     <h4>DON’T: </h4> 
                     <p>
                       Try to measure the angular size while too zoomed in
                     </p>
-                    <br>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location_dosdonts}/Too-Close-DONT.png`"
-                    ></v-img>
                   </v-col>
                 </v-row>
               </v-container>
@@ -421,26 +418,26 @@
                     flat
                     tile
                   >
+                    <v-img
+                      class="mb-4 mx-a"
+                      contain
+                      :src="`${state.image_location_dosdonts}/Col-DO.png`"
+                    ></v-img>
                     <h4>DO: </h4>  
                     <p>
                       Measure the galaxy in the center of the field
                     </p>
+                  </v-col>
+                  <v-col cols="6">
                     <v-img
                       class="mb-4 mx-a"
                       contain
-                      :src="`${state.image_location_dosdonts}/Colliding-DO.png`"
+                      :src="`${state.image_location_dosdonts}/Col-DONT.png`"
                     ></v-img>
-                  </v-col>
-                  <v-col cols="6">
                     <h4>DON’T: </h4> 
                     <p>
                       Measure across both galaxies
                     </p>
-                    <v-img
-                      class="mb-4 mx-a"
-                      contain
-                      :src="`${state.image_location_dosdonts}/Colliding-DONT.png`"
-                    ></v-img>
                   </v-col>
                 </v-row>
               </v-container>
@@ -468,38 +465,37 @@
                     flat
                     tile
                   >
-                    <h4>DO: </h4> 
-                    <p>
-                      Measure the SINGLE object in the center of the field of view
-                    </p>
                     <v-img
                       class="mb-4 mx-a"
                       contain
                       :src="`${state.image_location_dosdonts}/Cluster-DO.png`"
                     ></v-img>
+                    <h4>DO: </h4> 
+                    <p>
+                      Measure the SINGLE object in the center of the field of view
+                    </p>
                   </v-col>
                   <v-col cols="4">
-                    <h4>DON'T: </h4> 
-                    <p>
-                      Measure across multiple objects
-                    </p>
-                    <br>
                     <v-img
                       class="mb-4 mx-a"
                       contain
                       :src="`${state.image_location_dosdonts}/Cluster-DONT1.png`"
                     ></v-img>
-                  </v-col>
-                  <v-col cols="4">
                     <h4>DON'T: </h4> 
                     <p>
-                      Measure an object that is not in the center of the field of view.
+                      Measure across multiple objects
                     </p>
+                  </v-col>
+                  <v-col cols="4">
                     <v-img
                       class="mb-4 mx-a"
                       contain
                       :src="`${state.image_location_dosdonts}/Cluster-DONT2.png`"
                     ></v-img>
+                    <h4>DON'T: </h4> 
+                    <p>
+                      Measure an object that is not in the center of the field of view.
+                    </p>
                   </v-col>
                 </v-row>
               </v-container>

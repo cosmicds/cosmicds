@@ -93,12 +93,12 @@
                 <h4
                   class="mb-2"
                 >
-                  Large and Small People?
+                  People on the Beach
                 </h4>
                 <v-img
                   class="mb-4 mx-a"
                   contain
-                  :src="`${state.image_location}/People near and far - will replace with uncopyrighted.png`"
+                  :src="`${state.image_location}/PeopleLargeSmallAngularSize.png`"
                 ></v-img>
               </v-col>
             </v-row>
@@ -138,7 +138,7 @@
                 <v-img
                   class="mb-4 mx-a"
                   contain
-                  :src="`${state.image_location}/People near and far - will replace with uncopyrighted.png`"
+                  :src="`${state.image_location}/PeopleLargeSmallAngularSize.png`"
                 ></v-img>
               </v-col>
               <v-col
@@ -195,7 +195,7 @@
                 <v-img
                   class="mb-4 mx-a"
                   contain
-                  :src="`${state.image_location}/People near and far labeled.png`"
+                  :src="`${state.image_location}/PeopleLargeSmallAngularSize labeled.png`"
                 ></v-img>
               </v-col>
               <v-col cols="6">
@@ -269,7 +269,7 @@
                 class="mx-a"
                 contain
                 max-height="300"
-                :src="`${state.image_location}/ErinPinkyAnnaArt.png`"
+                :src="`${state.image_location}/erinmoon.png`"
               ></v-img>
             </v-row>
           </v-container>
@@ -317,13 +317,10 @@
             <v-spacer></v-spacer>
             <v-row>
               <v-col>
-                <p>
-                  (Anna is making a better version of this figure!)
-                </p>
                 <v-img
                   class="mx-a"
                   contain
-                  :src="`${state.image_location}/theta_L_over_D_janky_schematic.jpg`"
+                  :src="`${state.image_location}/cosmicgraphic.jpg`"
                 ></v-img>
               </v-col>
             </v-row>
