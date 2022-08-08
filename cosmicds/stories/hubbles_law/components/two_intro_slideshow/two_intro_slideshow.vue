@@ -152,7 +152,7 @@
                 <v-img
                   class="mb-4 mx-a"
                   contain
-                  :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.jpg`"
+                  :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.png`"
                 ></v-img>
               </v-col>
             </v-row>
@@ -205,7 +205,7 @@
                 <v-img
                   class="mb-4 mx-a"
                   contain
-                  :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.jpg`"
+                  :src="`${state.image_location}/esahubble_potw2031a_1600_cleaned.png`"
                 ></v-img>
               </v-col> 
             </v-row> 
@@ -320,7 +320,7 @@
                 <v-img
                   class="mx-a"
                   contain
-                  :src="`${state.image_location}/cosmicgraphic.jpg`"
+                  :src="`${state.image_location}/cosmicgraphic.png`"
                 ></v-img>
               </v-col>
             </v-row>
