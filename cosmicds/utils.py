@@ -7,12 +7,14 @@ from threading import Timer
 from traitlets import Unicode
 
 __all__ = [
-    'load_template', 'update_figure_css', 'extend_tool', 'convert_material_color',
+    'load_template', 'update_figure_css', 'extend_tool',
+    'convert_material_color',
     'API_URL', 'CDSJSONEncoder', 'RepeatedTimer'
 ]
 
 # The URL for the CosmicDS API
 API_URL = "https://api.cosmicds.cfa.harvard.edu"
+
 
 # JC: I got parts of this from https://stackoverflow.com/a/57915246
 class CDSJSONEncoder(json.JSONEncoder):
@@ -27,14 +29,15 @@ class CDSJSONEncoder(json.JSONEncoder):
             return obj.as_dict()
         return super(CDSJSONEncoder, self).default(obj)
 
+
 # JC: I got this from https://stackoverflow.com/a/13151299
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):
-        self._timer     = None
-        self.interval   = interval
-        self.function   = function
-        self.args       = args
-        self.kwargs     = kwargs
+        self._timer = None
+        self.interval = interval
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
         self.is_running = False
         self.start()
 
@@ -52,6 +55,7 @@ class RepeatedTimer(object):
     def stop(self):
         self._timer.cancel()
         self.is_running = False
+
 
 def load_template(file_name, path=None, traitlet=False):
     """
@@ -155,7 +159,7 @@ def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
     tool = viewer.toolbar.tools.get(tool_id, None)
     if not tool:
         return None
-    
+
     activate = tool.activate
     deactivate = tool.deactivate
 
@@ -168,16 +172,17 @@ def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
         deactivate()
         if deactivate_cb:
             deactivate_cb()
-    
+
     tool.activate = extended_activate
     tool.deactivate = extended_deactivate
+
 
 def convert_material_color(color_string):
     """
     This function converts the name of a material color, like those used in 
     ipyvuetify (e.g. colors.<base>.<lighten/darken#>) into a hex code.
     """
-    from cosmicds.material_colors import MATERIAL_COLORS 
+    from cosmicds.material_colors import MATERIAL_COLORS
     parts = color_string.split(".")[1:]
     result = MATERIAL_COLORS
     for part in parts:
