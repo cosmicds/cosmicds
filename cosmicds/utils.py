@@ -1,6 +1,11 @@
 import json
 import os
 
+from astropy.modeling import models, fitting
+from bqplot.marks import Lines
+from bqplot.scales import LinearScale
+from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
+from glue_jupyter.bqplot.scatter.layer_artist import BqplotScatterLayerArtist
 from glue.core.state_objects import State
 import numpy as np
 from threading import Timer
@@ -8,7 +13,8 @@ from traitlets import Unicode
 
 __all__ = [
     'load_template', 'update_figure_css', 'extend_tool',
-    'convert_material_color',
+    'convert_material_color', 'fit_line', 
+    'line_mark', 'vertical_line_mark',
     'API_URL', 'CDSJSONEncoder', 'RepeatedTimer'
 ]
 
@@ -188,3 +194,61 @@ def convert_material_color(color_string):
     for part in parts:
         result = result[part]
     return result
+
+def fit_line(x, y):
+    fit = fitting.LinearLSQFitter()
+    line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
+    fitted_line = fit(line_init, x, y)
+    return fitted_line
+
+def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
+    """
+    Creates a Lines mark between the given start and end points
+    using the scales of the given layer.
+    Parameters
+    ----------
+    layer : `glue.viewers.common.layer_artist.LayerArtist`
+        The layer used to determine the line's scales.
+    start_x : int or float
+        The x-coordinate of the line's starting point.
+    start_y : int or float
+        The y-coordinate of the line's starting point.
+    end_x : int or float
+        The x-coordinate of the line's endpoint.
+    end_y : int or float
+        The y-coordinate of the line's endpoint.
+    color : str
+        The desired color of the line, represented as a hex string.
+    """
+    if isinstance(layer, BqplotScatterLayerArtist):
+        scales = layer.image.scales
+    elif isinstance(layer, BqplotHistogramLayerArtist):
+        layer_scales = layer.view.scales
+        layer_x = layer_scales['x']
+        layer_y = layer_scales['y']
+        scales = {
+            'x': LinearScale(min=layer_x.min, max=layer_x.max, allow_padding=layer_x.allow_padding),
+            'y': LinearScale(min=layer_y.min, max=layer_y.max, allow_padding=layer_y.allow_padding),
+        }
+    return Lines(x=[start_x, end_x],
+                   y=[start_y, end_y],
+                   scales=scales,
+                   colors=[color],
+                   labels=[label] if label is not None else [],
+                   display_legend=label is not None,
+                   labels_visibility='label')
+
+def vertical_line_mark(layer, x, color, label=None):
+    """
+    A specialization of `line_mark` specifically for vertical lines.
+    Parameters
+    ----------
+    layer : `glue.viewers.common.layer_artist.LayerArtist`
+        The layer used to determine the line's scales.
+    x : int or float
+        The x-coordinate of the vertical line
+    color : str
+        The desired color of the line, represented as a hex string.
+    """
+    viewer_state = layer.state.viewer_state
+    return line_mark(layer, x, viewer_state.y_min, x, viewer_state.y_max, color, label)
