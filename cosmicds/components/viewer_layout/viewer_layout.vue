@@ -1,6 +1,7 @@
 <template>
   <v-card
     flat
+    :class="classes"
   >
     <v-toolbar
       color="primary"

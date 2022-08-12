@@ -106,7 +106,7 @@ class Stage(TemplateMixin):
         if viewer_label is not None:
             viewer.LABEL = viewer_label
         current_viewers = {k: v for k, v in self.viewers.items()}
-        viewer_layout = layout(viewer)
+        viewer_layout = layout(viewer, classes=[label])
         viewer_layout.show_toolbar = show_toolbar
         current_viewers.update({label: viewer_layout})
         self.viewers = current_viewers
