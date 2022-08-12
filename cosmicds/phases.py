@@ -212,3 +212,12 @@ class Stage(TemplateMixin):
 
     def vue_set_step_complete(self, value):
         self.story_state.step_complete = value
+
+    def vue_set_viewer_nticks(self, args):
+        viewer = self.get_viewer(args["viewer"])
+        nticks = args["nticks"]
+        axis = args["axis"]
+        if axis == "x":
+            viewer.update_nxticks(nticks)
+        elif axis == "y":
+            viewer.update_nyticks(nticks)
