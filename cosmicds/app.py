@@ -1,22 +1,23 @@
+import json
+
 import ipyvuetify as v
 import requests
-import json
+from cosmicds.utils import API_URL
 from echo import add_callback, CallbackProperty
+from glue.core import HubListener
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
 from glue_jupyter.state_traitlets_helpers import GlueState
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
 from traitlets import Dict, Bool, Int
-from glue.core import HubListener
 
-from .events import StepChangeMessage, WriteToDatabaseMessage
+from .events import WriteToDatabaseMessage
 from .registries import story_registry
 from .utils import CDSJSONEncoder, load_template
 
-from cosmicds.utils import API_URL
-
 v.theme.dark = True
+
 
 class ApplicationState(State):
     using_voila = CallbackProperty(False)
@@ -25,6 +26,7 @@ class ApplicationState(State):
     classroom = CallbackProperty({})
     update_db = CallbackProperty(False)
     show_team_interface = CallbackProperty(True)
+
 
 class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
@@ -41,8 +43,9 @@ class Application(VuetifyTemplate, HubListener):
         self.app_state = ApplicationState()
 
         self.app_state.update_db = kwargs.get("update_db", True)
-        self.app_state.show_team_interface = kwargs.get("show_team_interface", True)
-        
+        self.app_state.show_team_interface = kwargs.get("show_team_interface",
+                                                        True)
+
         # # For testing purposes, we create a new dummy student on each startup
         # if self.app_state.update_db:
         #     response = requests.get(f"{API_URL}/new-dummy-student").json()
@@ -52,11 +55,12 @@ class Application(VuetifyTemplate, HubListener):
         self.app_state.student["id"] = kwargs.get("student_id", 0)
 
         self._application_handler = JupyterApplication()
-        self.story_state = story_registry.setup_story(story, self.session, self.app_state)
+        self.story_state = story_registry.setup_story(story, self.session,
+                                                      self.app_state)
 
         # Initialize from database
         if self.app_state.update_db:
-            #self._initialize_from_database()
+            # self._initialize_from_database()
             pass
 
         # Subscribe to events
@@ -116,7 +120,8 @@ class Application(VuetifyTemplate, HubListener):
         # environment variable
         # user = os.environ['JUPYTERHUB_USER']
 
-        data = json.loads(json.dumps(self.story_state.as_dict(), cls=CDSJSONEncoder))
+        data = json.loads(
+            json.dumps(self.story_state.as_dict(), cls=CDSJSONEncoder))
         if data:
             requests.put(self.story_state_endpoint, json=data)
 

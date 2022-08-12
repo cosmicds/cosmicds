@@ -8,14 +8,11 @@ import click
 from voila.app import Voila
 from voila.configuration import VoilaConfiguration
 from voila.execute import VoilaExecutor
+from . import STORY_PATHS
 
 from cosmicds import __version__
 
 CONFIGS_DIR = os.path.join(os.path.dirname(__file__), 'configs')
-
-STORY_PATHS = {
-    'hubble': Path(__file__).parent.parent / "cosmicds" / "stories" / "hubbles_law" / "CosmicDS.ipynb"
-}
 
 
 @click.version_option(__version__)
