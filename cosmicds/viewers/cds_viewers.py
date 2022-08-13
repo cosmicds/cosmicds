@@ -21,12 +21,13 @@ def cds_viewer(viewer_class, name=None, viewer_tools=None, label=None, state_cls
         tools = viewer_tools or viewer_class.tools
         LABEL = label or viewer_class.LABEL
 
-        TICK_SPACINGS = tick_spacings = [2000, 1500, 1000, 500, 250, 100, 50, 25, 10, 5]
+        TICK_SPACINGS = tick_spacings = [2000, 1500, 1000, 500, 250, 200, 100, 75, 50, 25, 10, 5, 2, 1, 0.75, 0.5, 0.2, 0.1]
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.ignore_conditions = []
             self.nxticks = 7
+            self.nyticks = 7
             self.scale_x.observe(self._on_xaxis_change, names=['min', 'max'])
             self.scale_y.observe(self._on_yaxis_change, names=['min', 'max'])
 
@@ -60,18 +61,20 @@ def cds_viewer(viewer_class, name=None, viewer_tools=None, label=None, state_cls
         def update_nxticks(self, nticks):
             if nticks == self.nxticks:
                 return
-            self.nxticks = nticks
+            self.nxticks = max(nticks, 1)
             self.update_xticks()
 
         def update_nyticks(self, nticks):
             if nticks == self.nyticks:
                 return
-            self.nyticks = nticks
+            self.nyticks = max(nticks, 1)
             self.update_yticks()
 
         def update_xticks(self, min=None, max=None):
             min = min or self.state.x_min
             max = max or self.state.x_max
+            if min is None or max is None:
+                return
             x_range = max - min
             frac = int(x_range / self.nxticks)
             spacing = next((t for t in self.TICK_SPACINGS if frac > t), self.TICK_SPACINGS[-1])
@@ -80,6 +83,8 @@ def cds_viewer(viewer_class, name=None, viewer_tools=None, label=None, state_cls
         def update_yticks(self, min=None, max=None):
             min = min or self.state.y_min
             max = max or self.state.y_max
+            if min is None or max is None:
+                return
             y_range = max - min
             frac = int(y_range / self.nyticks)
             spacing = next((t for t in self.TICK_SPACINGS if frac > t), self.TICK_SPACINGS[-1])
