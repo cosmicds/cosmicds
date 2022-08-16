@@ -140,12 +140,6 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
                 return False
             return super().add_subset(subset)
 
-        def _on_xaxis_change(self, change):
-            self.state.update_xticks(**{ change["name"] : change["new"] })
-
-        def _on_yaxis_change(self, change):
-            self.state.update_yticks(**{ change["name"] : change["new"] })
-
         def _update_xtick_values(self, values):
             self.axis_x.tick_values = values
         
