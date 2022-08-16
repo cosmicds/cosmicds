@@ -463,8 +463,21 @@ export default {
       app.update_state();
     });
 
-    document.addEventListener("mc-initialize", (e) => {
-      const tag = e.detail.tag;
+    document.addEventListener("mc-initialize", this.handleMCInitialization);
+  },
+  methods: {
+    getCurrentStage: function () {
+      return this.$data.story_state.stages[this.$data.story_state.stage_index];
+    },
+    onLoadStoryState: function(state) {
+      if (state.inputs === undefined) return;
+      for (const [key, value] of Object.entries(state.inputs)) {
+        const els = document.querySelectorAll(`[tag=${key}]`);
+        els.forEach(el => { el.value = String(value); });
+      }
+    },
+    handleMCInitialization: function(event) {
+      const tag = event.detail.tag;
       for (const values of Object.values(this.story_state.mc_scoring)) {
         if (tag in values) {
           const data = values[tag];
@@ -489,18 +502,6 @@ export default {
             }
           })
       );
-    });
-  },
-  methods: {
-    getCurrentStage: function () {
-      return this.$data.story_state.stages[this.$data.story_state.stage_index];
-    },
-    onLoadStoryState: function(state) {
-      if (state.inputs === undefined) return;
-      for (const [key, value] of Object.entries(state.inputs)) {
-        const els = document.querySelectorAll(`[tag=${key}]`);
-        els.forEach(el => { el.value = String(value); });
-      }
     }
   }
 };
