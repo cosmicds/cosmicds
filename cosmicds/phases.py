@@ -218,6 +218,6 @@ class Stage(TemplateMixin):
         nticks = args["nticks"]
         axis = args["axis"]
         if axis == "x":
-            viewer.update_nxticks(nticks)
+            viewer.state.nxticks = nticks
         elif axis == "y":
-            viewer.update_nyticks(nticks)
+            viewer.state.nyticks = nticks
