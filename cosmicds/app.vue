@@ -20,7 +20,7 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-title class="mr-5">
-        <h2>Hubble's Law</h2>
+        <h2>{{ story_state.title }}</h2>
       </v-toolbar-title>
 
       <v-toolbar-title>Cosmic Data Stories</v-toolbar-title>
