@@ -46,6 +46,7 @@
         {{ app_state.dark_mode ? 'switch to light mode' : 'switch to dark mode' }}
       </v-tooltip>
       <v-chip
+        v-if="story_state.has_scoring"
         color="green"
         outlined
         class="mx-2"
@@ -97,7 +98,6 @@
               <v-list-item-title>
                 Guest Student {{ student_id }}
               </v-list-item-title>
-              Total score: {{ story_state.total_score }}
             </v-list-item-content>
           </v-list-item>
         </v-list>
