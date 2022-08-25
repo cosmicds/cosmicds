@@ -106,7 +106,7 @@ class Stage(TemplateMixin):
         if viewer_label is not None:
             viewer.LABEL = viewer_label
         current_viewers = {k: v for k, v in self.viewers.items()}
-        viewer_layout = layout(viewer)
+        viewer_layout = layout(viewer, classes=[label])
         viewer_layout.show_toolbar = show_toolbar
         current_viewers.update({label: viewer_layout})
         self.viewers = current_viewers
@@ -212,3 +212,12 @@ class Stage(TemplateMixin):
 
     def vue_set_step_complete(self, value):
         self.story_state.step_complete = value
+
+    def vue_set_viewer_nticks(self, args):
+        viewer = self.get_viewer(args["viewer"])
+        nticks = args["nticks"]
+        axis = args["axis"]
+        if axis == "x":
+            viewer.state.nxticks = nticks
+        elif axis == "y":
+            viewer.state.nyticks = nticks
