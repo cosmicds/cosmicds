@@ -575,4 +575,7 @@ input {
   z-index: 40;
 }
 
+.g_legend .line {
+  display: none;
+}
 </style>
