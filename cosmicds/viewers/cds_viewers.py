@@ -71,7 +71,7 @@ def cds_viewer_state(state_class):
                 return
             x_range = max - min
             frac = int(x_range / self.nxticks)
-            index, val_less = next(((i, t) for i, t in enumerate(self.TICK_SPACINGS) if frac > t), (-1, self.TICK_SPACINGS-1))
+            index, val_less = next(((i, t) for i, t in enumerate(self.TICK_SPACINGS) if frac > t), (-1, self.TICK_SPACINGS[-1]))
             val_more = self.TICK_SPACINGS[index - 1]
             dist_less = abs(frac - val_less)
             dist_more = abs(frac - val_more)
@@ -85,7 +85,11 @@ def cds_viewer_state(state_class):
                 return
             y_range = max - min
             frac = int(y_range / self.nyticks)
-            spacing = next((t for t in self.TICK_SPACINGS if frac > t), self.TICK_SPACINGS[-1])
+            index, val_less = next(((i, t) for i, t in enumerate(self.TICK_SPACINGS) if frac > t), (-1, self.TICK_SPACINGS[-1]))
+            val_more = self.TICK_SPACINGS[index - 1]
+            dist_less = abs(frac - val_less)
+            dist_more = abs(frac - val_more)
+            spacing = val_less if dist_less < dist_more else val_more
             self.set_ytick_spacing(spacing)
 
         def set_xtick_spacing(self, spacing):
