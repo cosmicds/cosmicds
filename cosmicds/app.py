@@ -137,16 +137,11 @@ class Application(VuetifyTemplate, HubListener):
         if index not in self.story_state.mc_scoring:
             self.story_state.mc_scoring[index] = {}
 
-        current_value = 0
-        current_data = self.story_state.mc_scoring[index].get(args["tag"], None)
-        if current_data is not None:
-            current_value = current_data["score"]
         self.story_state.mc_scoring[index][args["tag"]] = {
             "score": args["score"],
             "choice": args["choice"],
             "tries": args["tries"]
         }
-        self.story_state.total_score = self.story_state.total_score + args["score"] - current_value
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
