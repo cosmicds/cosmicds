@@ -575,4 +575,8 @@ input {
   z-index: 40;
 }
 
+/** Hide bqplot legend 'checkmark' symbols */
+.g_legend path.line {
+  display: none;
+}
 </style>
