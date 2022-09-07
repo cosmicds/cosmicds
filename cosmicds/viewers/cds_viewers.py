@@ -15,7 +15,7 @@ def cds_viewer_state(state_class):
 
     class CDSViewerState(state_class):
 
-        TICK_SPACINGS = tick_spacings = [2000, 1500, 1000, 500, 250, 200, 100, 75, 50, 25, 10, 5, 2, 1, 0.75, 0.5, 0.2, 0.1]
+        TICK_SPACINGS = tick_spacings = [2000, 1500, 1000, 750, 500, 400, 300, 250, 200, 100, 75, 50, 25, 10, 7.5, 5, 4, 3, 2.5, 2, 1, 0.75, 0.5, 0.4, 0.3, 0.25, 0.2, 0.1]
 
         xtick_values = CallbackProperty([])
         ytick_values = CallbackProperty([])
@@ -71,7 +71,11 @@ def cds_viewer_state(state_class):
                 return
             x_range = max - min
             frac = int(x_range / self.nxticks)
-            spacing = next((t for t in self.TICK_SPACINGS if frac > t), self.TICK_SPACINGS[-1])
+            index, val_less = next(((i, t) for i, t in enumerate(self.TICK_SPACINGS) if frac > t), (-1, self.TICK_SPACINGS[-1]))
+            val_more = self.TICK_SPACINGS[index - 1]
+            dist_less = abs(frac - val_less)
+            dist_more = abs(frac - val_more)
+            spacing = val_less if dist_less < dist_more else val_more
             self.set_xtick_spacing(spacing)
 
         def update_yticks(self, min=None, max=None):
@@ -81,7 +85,11 @@ def cds_viewer_state(state_class):
                 return
             y_range = max - min
             frac = int(y_range / self.nyticks)
-            spacing = next((t for t in self.TICK_SPACINGS if frac > t), self.TICK_SPACINGS[-1])
+            index, val_less = next(((i, t) for i, t in enumerate(self.TICK_SPACINGS) if frac > t), (-1, self.TICK_SPACINGS[-1]))
+            val_more = self.TICK_SPACINGS[index - 1]
+            dist_less = abs(frac - val_less)
+            dist_more = abs(frac - val_more)
+            spacing = val_less if dist_less < dist_more else val_more
             self.set_ytick_spacing(spacing)
 
         def set_xtick_spacing(self, spacing):
