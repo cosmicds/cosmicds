@@ -132,5 +132,16 @@ class Application(VuetifyTemplate, HubListener):
         trait = self.traits()["story_state"]
         trait.on_state_change(obj=self)
 
+    def vue_update_mc_score(self, args):
+        index = self.story_state.stage_index
+        if index not in self.story_state.mc_scoring:
+            self.story_state.mc_scoring[index] = {}
+
+        self.story_state.mc_scoring[index][args["tag"]] = {
+            "score": args["score"],
+            "choice": args["choice"],
+            "tries": args["tries"]
+        }
+
     def _theme_toggle(self, dark):
         v.theme.dark = dark

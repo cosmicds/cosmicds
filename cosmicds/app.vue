@@ -46,6 +46,7 @@
         {{ app_state.dark_mode ? 'switch to light mode' : 'switch to dark mode' }}
       </v-tooltip>
       <v-chip
+        v-if="story_state.has_scoring"
         color="green"
         outlined
         class="mx-2"
@@ -53,7 +54,7 @@
         <span
           class="white--text mr-2"
         >
-          <strong>## points</strong>
+          <strong>{{ `${story_state.total_score} ${story_state.total_score == 1 ? 'point' : 'points'}` }}</strong>
         </span>
         <v-icon
           color="green"
@@ -97,7 +98,6 @@
               <v-list-item-title>
                 Guest Student {{ student_id }}
               </v-list-item-title>
-              Total score: {{ totalScore }}
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -459,10 +459,11 @@ export default {
     //this.onLoadStoryState(this.story_state);
 
     document.addEventListener("mc-score", (e) => {
-      const { tag, score } = e.detail;
-      app.$data.story_state.mc_scoring[tag] = score;
+      app.update_mc_score(e.detail);
       app.update_state();
     });
+
+    document.addEventListener("mc-initialize", this.handleMCInitialization);
   },
   methods: {
     getCurrentStage: function () {
@@ -474,11 +475,33 @@ export default {
         const els = document.querySelectorAll(`[tag=${key}]`);
         els.forEach(el => { el.value = String(value); });
       }
-    }
-  },
-  computed: {
-    totalScore() {
-      return Object.values(this.$data.story_state.mc_scoring).reduce((a, b) => a + b, 0);
+    },
+    handleMCInitialization: function(event) {
+      const tag = event.detail.tag;
+      for (const values of Object.values(this.story_state.mc_scoring)) {
+        if (tag in values) {
+          const data = values[tag];
+          document.dispatchEvent(
+            new CustomEvent("mc-initialize-response", {
+              detail: {
+                ...data,
+                found: true,
+                tag: tag
+              }
+            })
+          );
+          return;
+        }
+      }
+      // If there isn't a score for this MC, let it know
+      document.dispatchEvent(
+          new CustomEvent("mc-initialize-response", {
+            detail: {
+              found: false,
+              tag: tag
+            }
+          })
+      );
     }
   }
 };

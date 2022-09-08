@@ -33,7 +33,9 @@ class Story(CDSState, HubMixin):
     teacher_user = CallbackProperty()
     student_user = CallbackProperty()
     classroom = CallbackProperty()
-    mc_scoring = CallbackProperty({})
+    mc_scoring = DictCallbackProperty()
+    total_score = CallbackProperty(0)
+    has_scoring = CallbackProperty(True)
 
     def __init__(self, session, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,6 +47,7 @@ class Story(CDSState, HubMixin):
         add_callback(self, 'step_index', self._on_step_index_changed)
         add_callback(self, 'step_complete', self._on_step_complete_changed)
         add_callback(self, 'stage_index', self._on_stage_index_changed)
+        add_callback(self, 'mc_scoring', self._update_total_score)
 
     def _on_stage_index_changed(self, value):
         self.hub.broadcast(WriteToDatabaseMessage(self))
@@ -63,6 +66,9 @@ class Story(CDSState, HubMixin):
 
     def viewers(self):
         return self.app.viewers
+
+    def _update_total_score(self, mc_scoring):
+        self.total_score = sum(mc["score"] for stage in mc_scoring.values() for mc in stage.values())
 
     # Data can be data, a subset, or a subset group
     def set_layer_visible(self, data, viewers):

@@ -22,13 +22,13 @@
       </v-radio>
     </v-radio-group>
     <v-alert
-      v-show="feedbackIndex !== null"
+      v-show="column !== null"
       outlined
-      :color="`${color(feedbackIndex)}`"
+      :color="`${color(column)}`"
       :type="complete ? 'success' : 'warning'"
     >
       <div
-        v-html="feedbacks[feedbackIndex]"
+        v-html="feedbacks[column]"
       >
       </div>
       <div
@@ -39,7 +39,7 @@
         <v-icon
           large
           class="ml-1"
-          :color="`${color(feedbackIndex)}`"
+          :color="`${color(column)}`"
         >
           mdi-piggy-bank
         </v-icon>
@@ -74,6 +74,17 @@ module.exports = {
     scoreTag: String,
     selectedCallback: Function
   },
+  created() {
+    if (!this.scoreTag) { return; }
+    document.addEventListener("mc-initialize-response", this.onInitResponse);
+    document.dispatchEvent(
+      new CustomEvent("mc-initialize", {
+        detail: {
+          tag: this.scoreTag
+        }
+      })
+    );
+  },
   data: function () {
     return {
       column: null,
@@ -81,30 +92,29 @@ module.exports = {
       colorNeutral: 'orange',
       colorWrong: 'red',
       complete: false,
-      feedbackIndex: null,
       tries: 0,
       score: 0
     };
   },
   methods: {
-    selectChoice: function(index) {
-      this.feedbackIndex = index;
+    selectChoice: function(index, send=true) {
+      this.column = index;
       this.tries += 1;
       const correct = this.correctAnswers.includes(index);
       if (correct) {
         this.complete = true;
-        if (this.scoring) {
-          this.score = this.getScore(this.tries);
-          if (this.scoreTag !== undefined) {
-            document.dispatchEvent(
-              new CustomEvent("mc-score", {
-                detail: {
-                  tag: this.scoreTag,
-                  score: this.score
-                }
-              })
-            );
-          }
+        this.score = this.scoring ? this.getScore(this.tries) : null;
+        if (this.scoreTag !== undefined && send) {
+          document.dispatchEvent(
+            new CustomEvent("mc-score", {
+              detail: {
+                tag: this.scoreTag,
+                score: this.score,
+                choice: this.column,
+                tries: this.tries
+              }
+            })
+          );
         }
       }
       if (this.selectedCallback !== undefined) {
@@ -131,6 +141,15 @@ module.exports = {
       } else {
         return this.points(ntries);
       }
+    },
+    onInitResponse(event) {
+      const data = event.detail;
+      if (data.tag !== this.scoreTag) { return; }
+      if (data.found) {
+        this.tries = data.tries - 1; // selectChoice adds a try
+        this.selectChoice(data.choice, false); // no need to tell the state what it just told us
+      }
+      document.removeEventListener("mc-initialize-response", this.onInitResponse);
     }
   }
 };
