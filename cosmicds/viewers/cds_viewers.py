@@ -10,6 +10,7 @@ from glue_jupyter.bqplot.histogram import BqplotHistogramView
 from numpy import linspace
 
 from cosmicds.components.toolbar import Toolbar
+from cosmicds.message import CDSLayersUpdatedMessage
 
 def cds_viewer_state(state_class):
 
@@ -118,6 +119,12 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
             self.ignore_conditions = []
             add_callback(self.state, "xtick_values", self._update_xtick_values)
             add_callback(self.state, "ytick_values", self._update_ytick_values)
+
+            self._layer_artist_container.on_changed(self._send_layers_updated_message)
+
+        def _send_layers_updated_message(self, *args):
+            message = CDSLayersUpdatedMessage(self)
+            self._hub.broadcast(message)
 
         def initialize_toolbar(self):
             self.toolbar = Toolbar(self)
