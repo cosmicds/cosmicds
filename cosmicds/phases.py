@@ -1,6 +1,6 @@
 from glue_jupyter.state_traitlets_helpers import GlueState
 from ipywidgets import widget_serialization
-from traitlets import Dict, Unicode, default
+from traitlets import Dict, Unicode
 from cosmicds.components.viewer_layout import ViewerLayout
 from cosmicds.events import WriteToDatabaseMessage
 
@@ -67,10 +67,9 @@ class Story(CDSState, HubMixin):
         # in the stage state
         add_callback(self, 'step_index', self._on_step_index_changed)
         add_callback(self, 'step_complete', self._on_step_complete_changed)
-        add_callback(self, 'stage_index', self._on_stage_index_changed)
         add_callback(self, 'mc_scoring', self._update_total_score)
 
-    def _on_stage_index_changed(self, value):
+    def write_to_db(self, *args, **kwargs):
         self.hub.broadcast(WriteToDatabaseMessage(self))
 
     def _on_step_index_changed(self, value):
@@ -78,18 +77,19 @@ class Story(CDSState, HubMixin):
         self.step_index = min(value, len(self.stages[self.stage_index]['steps'])-1)
         self.step_complete = self.stages[self.stage_index]['steps'][
             self.step_index]['completed']
-        self.hub.broadcast(WriteToDatabaseMessage(self))
+        self.write_to_db()
 
     def _on_step_complete_changed(self, value):
         self.stages[self.stage_index]['steps'][self.step_index][
             'completed'] = value
-        self.hub.broadcast(WriteToDatabaseMessage(self))
+        self.write_to_db()
 
     def viewers(self):
         return self.app.viewers
 
     def _update_total_score(self, mc_scoring):
         self.total_score = sum(mc["score"] for stage in mc_scoring.values() for mc in stage.values())
+        self.write_to_db()
 
     # Data can be data, a subset, or a subset group
     def set_layer_visible(self, data, viewers):
