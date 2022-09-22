@@ -14,13 +14,22 @@ from numpy import delete
 class CDSState(State):
     _NONSERIALIZED_PROPERTIES = []
 
+    def _modified_dict(self, state_dict):
+        return { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
+
+    def _modified_output_dict(self, state_dict):
+        return self._modified_dict(state_dict)
+
+    def _modified_import_dict(self, state_dict):
+        return self._modified_dict(state_dict)
+
     def update_from_dict(self, state_dict):
-        state_dict = { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
+        state_dict = self._modified_import_dict(state_dict)
         super().update_from_dict(state_dict)
 
     def as_dict(self):
         state_dict = super().as_dict()
-        return { k : v for k, v in state_dict.items() if k not in self._NONSERIALIZED_PROPERTIES }
+        return self._modified_output_dict(state_dict)
 
 
 class Story(CDSState, HubMixin):
@@ -36,6 +45,18 @@ class Story(CDSState, HubMixin):
     mc_scoring = DictCallbackProperty()
     total_score = CallbackProperty(0)
     has_scoring = CallbackProperty(True)
+
+    def _modified_import_dict(self, state_dict):
+        d = super()._modified_dict(state_dict)
+
+        # We want to make sure that we don't set the model_id ourselves
+        # since this will completely break the frontend's ability to
+        # find our widgets
+        if "stages" in d:
+            for v in d["stages"].values():
+                if "model_id" in v:
+                    del v["model_id"]
+        return d
 
     def __init__(self, session, *args, **kwargs):
         super().__init__(*args, **kwargs)
