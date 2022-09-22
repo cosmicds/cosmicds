@@ -58,11 +58,6 @@ class Application(VuetifyTemplate, HubListener):
         self.story_state = story_registry.setup_story(story, self.session,
                                                       self.app_state)
 
-        # Initialize from database
-        if self.app_state.update_db:
-            # self._initialize_from_database()
-            pass
-
         # Subscribe to events
         self.hub.subscribe(self, WriteToDatabaseMessage,
                            handler=self._on_write_to_database)
