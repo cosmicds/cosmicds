@@ -229,7 +229,8 @@ class StageOne(HubbleStage):
         components = [x.label for x in data.main_components]
         measurements = self.get_data("student_measurements")
         need = self.selection_tool.gals_max - measurements.size
-        indices = sample(range(data.size), need)
+        indices = range(self.story_state.galaxy_index, self.story_state.galaxy_index + need)
+        self.story_state.galaxy_index += need
         for index in indices:
             galaxy = { c: data[c][index] for c in components }
             self.selection_tool.select_galaxy(galaxy)

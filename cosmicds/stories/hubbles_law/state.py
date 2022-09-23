@@ -73,7 +73,7 @@ class HubblesLaw(Story):
         ])
 
         # Load in the galaxy data
-        galaxies = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/galaxies").json()
+        galaxies = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/data-generation-galaxies").json()
         self.data_collection.append(Data(
             label="SDSS_all_sample_filtered",
             **{ k : [x[k] for x in galaxies] for k in galaxies[0] }
@@ -102,6 +102,8 @@ class HubblesLaw(Story):
         # Make all data writeable
         for data in self.data_collection:
             self.make_data_writeable(data)
+
+        self.galaxy_index = 0
 
     def make_data_writeable(self, data):
         for comp in data.main_components:
