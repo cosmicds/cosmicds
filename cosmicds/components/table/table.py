@@ -171,8 +171,7 @@ class Table(VuetifyTemplate, HubListener):
     def _new_subset(self):
         state = self.subset_state_from_selected(self.selected)
         if self.use_subset_group:
-            subset = self.data_collection.new_subset_group(label=self._subset_label, subset_state=state)
-            subset.style.color = self.subset_color
+            subset = self.data_collection.new_subset_group(label=self._subset_label, subset_state=state, color=self.subset_color)
         else:
             subset = self._glue_data.new_subset(label=self._subset_label, subset=state, color=self.subset_color)
         if self._on_create_subset is not None:
