@@ -29,6 +29,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self.slopes = {}
         self.tool_tip = self.inactive_tool_tip
         self.active = False
+        self._ignore_conditions = []
         #self._data_filter = lambda message: message.data.label in self.layer_labels
         #self._subset_filter = lambda message: message.subset.label in self.layer_labels and message.data.label in self.layer_labels
         self.hub.subscribe(self, DataCollectionDeleteMessage,
@@ -61,9 +62,12 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def _layers_update_filter(self, msg):
         return self.active and msg.sender == self.viewer
 
-    def _on_subset_created(self, msg):
+    def _refresh_if_active(self):
         if self.active:
             self.refresh()
+
+    def _on_subset_created(self, msg):
+        self._refresh_if_active()
 
     def _on_data_collection_deleted(self, msg):
         remove = [layer for layer in self.lines.keys() if layer.state.layer == msg.data]
@@ -83,7 +87,15 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self._update_fit_line_for_data(data)
 
     def _on_layers_updated(self, msg):
-        self.refresh()
+        self._refresh_if_active()
+
+    def add_ignore_condition(self, condition):
+        self._ignore_conditions.append(condition)
+        self._refresh_if_active()
+
+    def remove_ignore_condition(self, condition):
+        self._ignore_conditions.remove(condition)
+        self._refresh_if_active()
 
     @property
     def figure(self):
@@ -177,7 +189,8 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self.lines = {}
         self.slopes = {}
         for layer in self.visible_layers:
-            self._fit_to_layer(layer, add_marks=False)
+            if not any(condition(layer) for condition in self._ignore_conditions):
+                self._fit_to_layer(layer, add_marks=False)
 
         self.figure.marks = marks_to_keep + list(self.line_marks)
 
