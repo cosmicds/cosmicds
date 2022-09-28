@@ -91,9 +91,11 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     def add_ignore_condition(self, condition):
         self._ignore_conditions.append(condition)
+        self._refresh_if_active()
 
     def remove_ignore_condition(self, condition):
         self._ignore_conditions.remove(condition)
+        self._refresh_if_active()
 
     @property
     def figure(self):
