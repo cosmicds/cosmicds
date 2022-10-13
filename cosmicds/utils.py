@@ -11,11 +11,17 @@ import numpy as np
 from threading import Timer
 from traitlets import Unicode
 
+from threading import Timer
+from inspect import signature
+import time
+
+
 __all__ = [
     'load_template', 'update_figure_css', 'extend_tool',
     'convert_material_color', 'fit_line', 
     'line_mark', 'vertical_line_mark',
-    'API_URL', 'CDSJSONEncoder', 'RepeatedTimer'
+    'API_URL', 'CDSJSONEncoder', 'RepeatedTimer',
+    'debounce'
 ]
 
 # The URL for the CosmicDS API
@@ -252,3 +258,27 @@ def vertical_line_mark(layer, x, color, label=None):
     """
     viewer_state = layer.state.viewer_state
     return line_mark(layer, x, viewer_state.y_min, x, viewer_state.y_max, color, label)
+
+def debounce(wait):
+    """Postpone a functions execution until after some time has elapsed
+ 
+    :type wait: int
+    :param wait: The amount of Seconds to wait before the next call can execute.
+    """
+ 
+    def decorator(fun):
+        def debounced(*args, **kwargs):
+            def call_it():
+                fun(*args, **kwargs)
+ 
+            try:
+                debounced.t.cancel()
+            except AttributeError:
+                pass
+ 
+            debounced.t = Timer(wait, call_it)
+            debounced.t.start()
+ 
+        return debounced
+ 
+    return decorator

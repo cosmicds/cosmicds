@@ -5,6 +5,7 @@ from cosmicds.components.viewer_layout import ViewerLayout
 from cosmicds.events import WriteToDatabaseMessage
 
 from cosmicds.mixins import TemplateMixin, HubMixin
+from cosmicds.utils import debounce
 from glue.core import Data
 from glue.core.state_objects import State
 from echo import DictCallbackProperty, CallbackProperty, add_callback
@@ -69,6 +70,7 @@ class Story(CDSState, HubMixin):
         add_callback(self, 'step_complete', self._on_step_complete_changed)
         add_callback(self, 'mc_scoring', self._update_total_score)
 
+    @debounce(wait=2)
     def write_to_db(self, *args, **kwargs):
         self.hub.broadcast(WriteToDatabaseMessage(self))
 

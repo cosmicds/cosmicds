@@ -76,6 +76,8 @@ class StoryRegistry(UniqueDictRegistry):
             stage = v['cls'](session, story_state, app_state)
             if state is not None and "state" in state["stages"][k]:
                 stage.stage_state.update_from_dict(state["stages"][k]["state"])
+
+            stage.stage_state.add_global_callback(story_state.write_to_db)
             
             story_state.stages[k] = {"title": stage.title,
                                      "subtitle": stage.subtitle,
