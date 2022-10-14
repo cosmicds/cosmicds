@@ -107,6 +107,8 @@ class Stage(TemplateMixin):
         self.story_state = story_state
         self.app_state = app_state
 
+        self.index = 0
+
     def add_viewer(self, cls, label, viewer_label=None, data=None, layout=ViewerLayout, show_toolbar=True):
         viewer = self.app.new_data_viewer(cls, data=data, show=False)
         if viewer_label is not None:
