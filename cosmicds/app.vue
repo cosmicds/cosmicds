@@ -571,6 +571,10 @@ input {
   height: fit-content;
 }
 
+mjx-container[jax="CHTML"][display="true"] {
+  display: block !important;
+}
+
 /* issues with empty headers pushing WWT widget south, anyone else having this problem? -HOH */
 .wwt_column {
   overflow-y: hidden;
