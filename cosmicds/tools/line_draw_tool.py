@@ -9,7 +9,7 @@ class LineDrawTool(InteractCheckableTool, HasTraits):
 
     tool_id = 'cds:linedraw'
     action_text = 'Draw line'
-    tool_tip = Unicode('Draw a best fit line').tag(sync=True)
+    tool_tip = Unicode('Draw a trend line').tag(sync=True)
     mdi_icon = "mdi-message-draw"
 
     def __init__(self, viewer, bx=0, by=0, **kwargs):
@@ -85,7 +85,7 @@ class LineDrawTool(InteractCheckableTool, HasTraits):
             endpoint.enable_move = True
             figure.marks = figure.marks + [endpoint]
             self.endpoint = endpoint
-            self.tool_tip = "Update best fit line"
+            self.tool_tip = "Update trend line"
 
             # End drawing
             self.deactivate()
