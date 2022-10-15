@@ -37,7 +37,7 @@
             <v-icon>{{tool.icon}}</v-icon>
           </v-btn>
         </template>
-        {{tool.tooltip}}
+        <p style="max-width: 40ch;" v-html="tool.tooltip">  </p>
       </v-tooltip>
     </v-toolbar>
     <v-data-table
