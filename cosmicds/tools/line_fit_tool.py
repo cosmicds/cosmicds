@@ -29,6 +29,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self.slopes = {}
         self.tool_tip = self.inactive_tool_tip
         self.active = False
+        self._show_labels = kwargs.get("show_labels", True)
         self._ignore_conditions = []
         self.hub.subscribe(self, DataCollectionDeleteMessage,
                            handler=self._on_data_collection_deleted, filter=self._data_collection_filter)
@@ -145,6 +146,15 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def x_range(self):
         return [0, 2 * self.viewer.state.x_max]
 
+    @property
+    def show_labels(self):
+        return self._show_labels
+
+    @show_labels.setter
+    def show_labels(self, show):
+        self._show_labels = show
+        self.refresh()
+
 
     # Add or remove ignore conditions
 
@@ -173,12 +183,13 @@ class LineFitTool(Tool, HubListener, HasTraits):
             return None, None
     
         # Create the fit line object
-        # Keep track of this line and its slope # For now, the line spans from 0 to twice the edge of the viewer
+        # Keep track of this line and its slope
+        # For now, the line spans from 0 to twice the edge of the viewer
         y = fit(self.x_range)
         start_x, end_x = self.x_range
         start_y, end_y = y
         slope = fit.slope.value
-        label = self.label(layer, fit)
+        label = self.label(layer, fit) if self.show_labels else None
         color = layer.state.color if layer.state.color != '0.35' else 'black'
         line = line_mark(layer, start_x, start_y, end_x, end_y, color, label)
         return line, slope
@@ -218,15 +229,12 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     def _fit_to_layers(self):
 
-        marks_to_keep = [mark for mark in self.figure.marks if mark not in self.line_marks]
-
-        self.lines = {}
-        self.slopes = {}
+        self._clear_lines()
         for layer in self.visible_layers:
             if not any(condition(layer) for condition in self._ignore_conditions):
                 self._fit_to_layer(layer, add_marks=False)
 
-        self.figure.marks = marks_to_keep + list(self.line_marks)
+        self.figure.marks = self.figure.marks + list(self.line_marks)
 
     def _update_fit_line_for_data(self, data):
         for layer in self.visible_layers:
