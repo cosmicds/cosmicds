@@ -5,6 +5,7 @@ from cosmicds.components.viewer_layout import ViewerLayout
 from cosmicds.events import WriteToDatabaseMessage
 
 from cosmicds.mixins import TemplateMixin, HubMixin
+from cosmicds.utils import debounce
 from glue.core import Data
 from glue.core.state_objects import State
 from echo import DictCallbackProperty, CallbackProperty, add_callback
@@ -58,7 +59,8 @@ class Story(CDSState, HubMixin):
         add_callback(self, 'stage_index', self._on_stage_index_changed)
         add_callback(self, 'mc_scoring', self._update_total_score)
 
-    def _write_to_db(self, *args, **kwargs):
+    @debounce(wait=2)
+    def write_to_db(self, *args, **kwargs):
         self.hub.broadcast(WriteToDatabaseMessage(self))
 
     def _modified_import_dict(self, state_dict):
@@ -74,26 +76,26 @@ class Story(CDSState, HubMixin):
         return d
 
     def _on_stage_index_changed(self, value):
-        self._write_to_db()
+        self.write_to_db()
 
     def _on_step_index_changed(self, value):
         self.stages[self.stage_index]['step_index'] = value
         self.step_index = min(value, len(self.stages[self.stage_index]['steps'])-1)
         self.step_complete = self.stages[self.stage_index]['steps'][
             self.step_index]['completed']
-        self._write_to_db()
+        self.write_to_db()
 
     def _on_step_complete_changed(self, value):
         self.stages[self.stage_index]['steps'][self.step_index][
             'completed'] = value
-        self._write_to_db()
+        self.write_to_db()
 
     def viewers(self):
         return self.app.viewers
 
     def _update_total_score(self, mc_scoring):
         self.total_score = sum(mc["score"] for stage in mc_scoring.values() for mc in stage.values())
-        self._write_to_db()
+        self.write_to_db()
 
     # Data can be data, a subset, or a subset group
     def set_layer_visible(self, data, viewers):
