@@ -24,7 +24,7 @@ class ApplicationState(State):
     dark_mode = CallbackProperty(True)
     student = CallbackProperty({})
     classroom = CallbackProperty({})
-    update_db = CallbackProperty(False)
+    update_db = CallbackProperty(True)
     show_team_interface = CallbackProperty(True)
 
 
@@ -111,8 +111,6 @@ class Application(VuetifyTemplate, HubListener):
             print(e)
 
     def _on_write_to_database(self, _msg=None):
-        if not self.app_state.update_db:
-            return
 
         # User information for a JupyterHub notebook session is stored in an
         # environment variable
