@@ -1,7 +1,7 @@
 from glue.config import viewer_tool
 from glue.core import HubListener
 from glue.core.message import (DataCollectionDeleteMessage, DataUpdateMessage,
-                               LayerArtistVisibilityMessage,
+                               LayerArtistUpdatedMessage, LayerArtistVisibilityMessage,
                                SubsetMessage, SubsetUpdateMessage)
 from glue.core.exceptions import IncompatibleAttribute
 from glue_jupyter.bqplot.common.tools import Tool
@@ -38,9 +38,11 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self.hub.subscribe(self, SubsetUpdateMessage,
                            handler=self._on_data_updated, filter=self._data_update_filter)
         self.hub.subscribe(self, LayerArtistVisibilityMessage,
-                           handler=self._on_layer_visibility_updated, filter=self._layer_visibility_filter)
+                           handler=self._on_layer_visibility_updated, filter=self._layer_filter)
         self.hub.subscribe(self, CDSLayersUpdatedMessage,
                            handler=self._on_layers_updated, filter=self._layers_update_filter)
+        self.hub.subscribe(self, LayerArtistUpdatedMessage, filter=self._layer_filter,
+                           handler=self._on_layer_artist_updated)
 
 
     # Activation method
@@ -80,7 +82,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def _layers_update_filter(self, msg):
         return self.active and msg.sender == self.viewer
 
-    def _layer_visibility_filter(self, msg):
+    def _layer_filter(self, msg):
         return self.active and msg.layer_artist in self.viewer.layers
 
 
@@ -114,6 +116,19 @@ class LineFitTool(Tool, HubListener, HasTraits):
             self._update_fit_line(layer)
         else:
             self._remove_line(layer)
+
+    def _on_layer_artist_updated(self, msg):
+        layer = msg.layer_artist
+        data = layer.state.layer
+        mark = self.lines.get(data, None)
+        if mark is None:
+            return
+
+        # Update the color
+        # If we have other properties to update in the future, we can do so here
+        color = layer.state.color if layer.state.color != '0.35' else 'black'
+        if mark.colors[0] != color:
+            mark.colors = [color]
 
 
     # Properties
@@ -207,6 +222,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
             self.slopes[data] = slope
             label = self.label(layer, fit)
             is_label = label is not None
+            mark.colors = [layer.state.color if layer.state.color != '0.35' else 'black']
             mark.display_legend = is_label
             mark.labels = [label] if is_label else []
         else:
