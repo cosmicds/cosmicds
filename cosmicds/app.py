@@ -1,4 +1,5 @@
 import json
+from os import getenv
 
 import ipyvuetify as v
 import requests
@@ -46,6 +47,7 @@ class Application(VuetifyTemplate, HubListener):
         self.app_state.update_db = kwargs.get("update_db", True)
         self.app_state.show_team_interface = kwargs.get("show_team_interface",
                                                         True)
+
         self.app_state.allow_advancing = kwargs.get("allow_advancing", False)
 
         db_init = False
@@ -54,12 +56,28 @@ class Application(VuetifyTemplate, HubListener):
             response = requests.get(f"{API_URL}/new-dummy-student").json()
             self.app_state.student = response["student"]
             self.app_state.classroom["id"] = 0
+            self.student_id = self.app_state.student["id"]
             db_init = True
         else:
-            self.app_state.classroom["id"] = kwargs.get("class_id", 0)
-            self.app_state.student["id"] = kwargs.get("student_id", 0)
-        self.student_id = self.app_state.student["id"]
+            username = getenv("JUPYTERHUB_USER")
+            if username is not None:
+                r = requests.get(f"{API_URL}/student/{username}")
+                student = r.json()["student"]
+                if student is not None:
+                    self.app_state.student = student
+                    self.student_id = student["id"]
+
+            if not self.app_state.student:
+                sid = kwargs.get("student_id", 0)
+                self.app_state.student["id"] = sid
+                self.student_id = sid
+            
+        r = requests.get(f"{API_URL}/class-for-student-story/{self.student_id}/{story}")
+        cls = r.json()["class"]
+        self.app_state.classroom = cls or { "id": 0 }
+
         print(f"Student ID: {self.student_id}")
+        print(f"Class ID: {self.app_state.classroom['id']}")
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session,
