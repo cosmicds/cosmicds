@@ -48,21 +48,26 @@ class Application(VuetifyTemplate, HubListener):
                                                         True)
         self.app_state.allow_advancing = kwargs.get("allow_advancing", False)
 
-        # # For testing purposes, we create a new dummy student on each startup
-        # if self.app_state.update_db:
-        #     response = requests.get(f"{API_URL}/new-dummy-student").json()
-        #     self.app_state.student = response["student"]
-
-        self.app_state.classroom["id"] = kwargs.get("class_id", 0)
-        self.app_state.student["id"] = kwargs.get("student_id", 0)
+        db_init = False
+        create_new = kwargs.get("create_new_student", False)
+        if create_new:
+            response = requests.get(f"{API_URL}/new-dummy-student").json()
+            self.app_state.student = response["student"]
+            self.app_state.classroom["id"] = 0
+            db_init = True
+        else:
+            self.app_state.classroom["id"] = kwargs.get("class_id", 0)
+            self.app_state.student["id"] = kwargs.get("student_id", 0)
+        self.student_id = self.app_state.student["id"]
+        print(f"Student ID: {self.student_id}")
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session,
                                                       self.app_state)
 
         # Initialize from database
-        if self.app_state.update_db:
-            # self._initialize_from_database()
+        if db_init:
+            self._initialize_from_database()
             pass
 
         # Subscribe to events
