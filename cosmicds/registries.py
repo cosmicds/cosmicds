@@ -71,8 +71,7 @@ class StoryRegistry(UniqueDictRegistry):
         story_state.setup_for_student(app_state)
 
         for k, v in story_entry['stages'].items():
-            stage = v['cls'](session, story_state, app_state)
-            stage.index = k
+            stage = v['cls'](session, story_state, app_state, k)
             if state is not None and "state" in state["stages"][k]:
                 stage.stage_state.update_from_dict(state["stages"][k]["state"])
 
