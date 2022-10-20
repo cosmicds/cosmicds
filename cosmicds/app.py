@@ -68,7 +68,6 @@ class Application(VuetifyTemplate, HubListener):
         # Initialize from database
         if db_init:
             self._initialize_from_database()
-            pass
 
         # Subscribe to events
         self.hub.subscribe(self, WriteToDatabaseMessage,
