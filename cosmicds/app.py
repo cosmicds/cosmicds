@@ -61,7 +61,7 @@ class Application(VuetifyTemplate, HubListener):
         else:
             username = getenv("JUPYTERHUB_USER")
             if username is not None:
-                r = requests.get(f"{API_URL}/student/")
+                r = requests.get(f"{API_URL}/student/{username}")
                 student = r.json()["student"]
                 if student is not None:
                     self.app_state.student = student
@@ -76,8 +76,8 @@ class Application(VuetifyTemplate, HubListener):
         cls = r.json()["class"]
         self.app_state.classroom = cls or { "id": 0 }
 
-        print(self.student_id)
-        print(self.app_state.classroom["id"])
+        print(f"Student ID: {self.student_id}")
+        print(f"Class ID: {self.app_state.classroom['id']}")
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session,
