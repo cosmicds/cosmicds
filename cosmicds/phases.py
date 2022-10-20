@@ -129,6 +129,8 @@ class Stage(TemplateMixin):
     viewers = Dict().tag(sync=True, **widget_serialization)
     widgets = Dict().tag(sync=True, **widget_serialization)
 
+    _state_cls = lambda: None
+
     def __init__(self, session, story_state, app_state, index, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -136,6 +138,8 @@ class Stage(TemplateMixin):
         self.story_state = story_state
         self.app_state = app_state
         self.index = index
+
+        self.stage_state = kwargs.get('stage_state', self._state_cls())
 
     def add_viewer(self, cls, label, viewer_label=None, data=None, layout=ViewerLayout, show_toolbar=True):
         viewer = self.app.new_data_viewer(cls, data=data, show=False)
