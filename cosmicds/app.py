@@ -53,11 +53,11 @@ class Application(VuetifyTemplate, HubListener):
             self.app_state.student = response["student"]
             self.app_state.classroom["id"] = 0
             db_init = True
-            print(f"Student ID: {self.student_id}")
         else:
             self.app_state.classroom["id"] = kwargs.get("class_id", 0)
             self.app_state.student["id"] = kwargs.get("student_id", 0)
         self.student_id = self.app_state.student["id"]
+        print(f"Student ID: {self.student_id}")
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session,
