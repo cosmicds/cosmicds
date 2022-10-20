@@ -96,7 +96,7 @@ class Story(CDSState, HubMixin):
         return self.app.viewers
 
     def _update_total_score(self, mc_scoring):
-        self.total_score = sum(mc["score"] for stage in mc_scoring.values() for mc in stage.values())
+        self.total_score = sum(mc["score"] or 0 for stage in mc_scoring.values() for mc in stage.values())
         self.write_to_db()
 
     # Data can be data, a subset, or a subset group

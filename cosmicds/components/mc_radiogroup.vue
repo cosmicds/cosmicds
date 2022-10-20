@@ -93,7 +93,7 @@ module.exports = {
       colorWrong: 'red',
       complete: false,
       tries: 0,
-      score: 0
+      score: null
     };
   },
   methods: {
@@ -101,21 +101,19 @@ module.exports = {
       this.column = index;
       this.tries += 1;
       const correct = this.correctAnswers.includes(index);
-      if (correct) {
-        this.complete = true;
-        this.score = this.scoring ? this.getScore(this.tries) : null;
-        if (this.scoreTag !== undefined && send) {
-          document.dispatchEvent(
-            new CustomEvent("mc-score", {
-              detail: {
-                tag: this.scoreTag,
-                score: this.score,
-                choice: this.column,
-                tries: this.tries
-              }
-            })
-          );
-        }
+      this.complete = correct;
+      this.score = this.scoring ? this.getScore(this.tries) : null;
+      if (this.scoreTag !== undefined && send) {
+        document.dispatchEvent(
+          new CustomEvent("mc-score", {
+            detail: {
+              tag: this.scoreTag,
+              score: this.score,
+              choice: this.column,
+              tries: this.tries
+            }
+          })
+        );
       }
       if (this.selectedCallback !== undefined) {
         this.selectedCallback({
