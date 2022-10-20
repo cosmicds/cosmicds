@@ -141,10 +141,11 @@ class Application(VuetifyTemplate, HubListener):
 
     def vue_update_mc_score(self, args):
         index = self.story_state.stage_index
-        if index not in self.story_state.mc_scoring:
-            self.story_state.mc_scoring[index] = {}
+        key = str(index)
+        if key not in self.story_state.mc_scoring:
+            self.story_state.mc_scoring[key] = {}
 
-        self.story_state.mc_scoring[index][args["tag"]] = {
+        self.story_state.mc_scoring[key][args["tag"]] = {
             "score": args["score"],
             "choice": args["choice"],
             "tries": args["tries"]
