@@ -115,9 +115,10 @@
         <template v-for="(stage, key, index) in story_state.stages">
           <v-stepper-step
             :key="index"
-            :complete="story_state.stage_index > index"
+            :editable="app_state.allow_advancing || index == 0 || story_state.max_stage_index >= index"
+            :complete="story_state.max_stage_index > index"
             :step="index"
-            editable
+            :edit-icon="'$complete'"
           >
             {{ stage.title }}
           </v-stepper-step>

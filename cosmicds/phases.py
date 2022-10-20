@@ -39,6 +39,7 @@ class Story(CDSState, HubMixin):
     stage_index = CallbackProperty(0)
     step_index = CallbackProperty(0)
     step_complete = CallbackProperty(False)
+    max_stage_index = CallbackProperty(0)
     stages = DictCallbackProperty()
     teacher_user = CallbackProperty()
     student_user = CallbackProperty()
@@ -76,6 +77,7 @@ class Story(CDSState, HubMixin):
         return d
 
     def _on_stage_index_changed(self, value):
+        self.max_stage_index = max(self.max_stage_index, value)
         self.write_to_db()
 
     def _on_step_index_changed(self, value):
