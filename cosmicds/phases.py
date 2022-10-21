@@ -96,7 +96,7 @@ class Story(CDSState, HubMixin):
         return self.app.viewers
 
     def _update_total_score(self, mc_scoring):
-        self.total_score = sum(mc["score"] for stage in mc_scoring.values() for mc in stage.values())
+        self.total_score = sum(mc["score"] or 0 for stage in mc_scoring.values() for mc in stage.values())
         self.write_to_db()
 
     # Data can be data, a subset, or a subset group
@@ -129,14 +129,17 @@ class Stage(TemplateMixin):
     viewers = Dict().tag(sync=True, **widget_serialization)
     widgets = Dict().tag(sync=True, **widget_serialization)
 
-    def __init__(self, session, story_state, app_state, *args, **kwargs):
+    _state_cls = lambda: None
+
+    def __init__(self, session, story_state, app_state, index, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._session = session
         self.story_state = story_state
         self.app_state = app_state
+        self.index = index
 
-        self.index = 0
+        self.stage_state = kwargs.get('stage_state', self._state_cls())
 
     def add_viewer(self, cls, label, viewer_label=None, data=None, layout=ViewerLayout, show_toolbar=True):
         viewer = self.app.new_data_viewer(cls, data=data, show=False)
