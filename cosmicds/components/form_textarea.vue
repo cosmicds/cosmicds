@@ -31,11 +31,11 @@ module.exports = {
       type: String,
       default: "Type your response here"
     },
-    responseTag: String,
     rows: {
       type: Number,
       default: 1
-    }
+    },
+    tag: String
   },
   data: function () {
     return {
@@ -44,7 +44,7 @@ module.exports = {
   },
 
   created() {
-    if (!this.responseTag) { return; }
+    if (!this.tag) { return; }
     document.addEventListener("fr-initialize-response", this.onInitResponse)
   },
 
@@ -53,7 +53,7 @@ module.exports = {
       document.dispatchEvent(
         new CustomEvent("fr-update", {
           detail: {
-            tag: this.responseTag,
+            tag: this.tag,
             response: this.response
           }
         })
@@ -61,14 +61,14 @@ module.exports = {
     },
 
     onBlur(_event) {
-      if (this.responseTag !== undefined) {
+      if (this.tag !== undefined) {
         this.dispatchEvent();
       }
     },
 
     onInitResponse(event) {
       const data = event.detail;
-      if (data.gat !== this.responseTag) { return; }
+      if (data.tag !== this.tag) { return; }
       if (data.found) {
         this.response = data.response;
       }

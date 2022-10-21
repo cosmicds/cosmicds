@@ -465,6 +465,7 @@ export default {
     });
 
     document.addEventListener("fr-update", (_e) => {
+      app.update_free_response(e.detail);
       app.update_state();
     });
 

@@ -168,7 +168,12 @@ class Application(VuetifyTemplate, HubListener):
             "tries": args["tries"]
         }
 
-    def vue_update_fr()
+    def vue_update_free_response(self, args):
+        index = self.story_state.stage_index
+        key = str(index)
+        if key not in self.story_state.responses:
+            self.story_state.responses[key] = {}
+        self.story_state.responses[key][args["tag"]] = args["response"]
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
