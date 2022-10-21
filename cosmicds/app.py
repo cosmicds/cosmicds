@@ -168,5 +168,7 @@ class Application(VuetifyTemplate, HubListener):
             "tries": args["tries"]
         }
 
+    def vue_update_fr()
+
     def _theme_toggle(self, dark):
         v.theme.dark = dark
