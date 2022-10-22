@@ -2,15 +2,16 @@
   <v-textarea
     v-model="response"
     :outlined="outlined"
-    auto-grow
-    filled
+    :auto-grow="autoGrow"
+    :filled="filled"
     :color="color"
     :rows="rows"
     :hint="hint"
     @blur="onBlur"
+    v-intersect="dispatchInitializeEvent"
   >
     <template v-slot:label>
-      <div>{{ questionLabel }}</div>
+      <div>{{ label }}</div>
     </template>
   </v-textarea>
 </template>
@@ -18,7 +19,9 @@
 <script>
 module.exports = {
   props: {
-    questionLabel: String,
+    autoGrow: Boolean,
+    filled: Boolean,
+    label: String,
     outlined: {
       type: Boolean,
       default: false
@@ -40,19 +43,14 @@ module.exports = {
   data: function () {
     return {
       response: "",
+      initialized: false,
     };
   },
 
   created() {
     if (!this.tag) { return; }
     document.addEventListener("fr-initialize-response", this.onInitResponse)
-    document.dispatchEvent(
-      new CustomEvent("fr-initialize", {
-        detail: {
-          tag: this.tag
-        }
-      })
-    )
+    this.dispatchInitializeEvent();
   },
 
   methods: {
@@ -62,6 +60,17 @@ module.exports = {
           detail: {
             tag: this.tag,
             response: this.response
+          }
+        })
+      );
+    },
+
+    dispatchInitializeEvent() {
+      if (!this.tag || this.initialized) { return; }
+      document.dispatchEvent(
+        new CustomEvent("fr-initialize", {
+          detail: {
+            tag: this.tag
           }
         })
       );
@@ -79,6 +88,7 @@ module.exports = {
       if (data.found) {
         this.response = data.response;
       }
+      this.initialized = true;
       document.removeEventListener("fr-initialize-response", this.onInitResponse);
     }
   }

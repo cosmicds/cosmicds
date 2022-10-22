@@ -484,8 +484,6 @@ export default {
       }
     },
     handleFRInitialization: function(event) {
-      console.log("FR initialization");
-      console.log(event);
       const tag = event.detail.tag;
       for (const values of Object.values(this.story_state.responses)) {
         if (tag in values) {
