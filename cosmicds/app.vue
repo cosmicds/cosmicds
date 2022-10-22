@@ -464,7 +464,7 @@ export default {
       app.update_state();
     });
 
-    document.addEventListener("fr-update", (_e) => {
+    document.addEventListener("fr-update", (e) => {
       app.update_free_response(e.detail);
       app.update_state();
     });
@@ -484,6 +484,8 @@ export default {
       }
     },
     handleFRInitialization: function(event) {
+      console.log("FR initialization");
+      console.log(event);
       const tag = event.detail.tag;
       for (const values of Object.values(this.story_state.responses)) {
         if (tag in values) {
@@ -491,8 +493,8 @@ export default {
           document.dispatchEvent(
             new CustomEvent("fr-initialize-response", {
               detail: {
-                response,
-                tag,
+                response: response,
+                tag: tag,
                 found: true,
               }
             })
@@ -504,7 +506,7 @@ export default {
       document.dispatchEvent(
           new CustomEvent("fr-initialize-response", {
             detail: {
-              tag,
+              tag: tag,
               found: false,
             }
           })

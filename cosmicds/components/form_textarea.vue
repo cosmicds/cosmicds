@@ -46,10 +46,17 @@ module.exports = {
   created() {
     if (!this.tag) { return; }
     document.addEventListener("fr-initialize-response", this.onInitResponse)
+    document.dispatchEvent(
+      new CustomEvent("fr-initialize", {
+        detail: {
+          tag: this.tag
+        }
+      })
+    )
   },
 
   methods: {
-    dispatchEvent() {
+    dispatchUpdateEvent() {
       document.dispatchEvent(
         new CustomEvent("fr-update", {
           detail: {
@@ -62,7 +69,7 @@ module.exports = {
 
     onBlur(_event) {
       if (this.tag !== undefined) {
-        this.dispatchEvent();
+        this.dispatchUpdateEvent();
       }
     },
 

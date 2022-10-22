@@ -47,6 +47,7 @@ class Story(CDSState, HubMixin):
     mc_scoring = DictCallbackProperty()
     total_score = CallbackProperty(0)
     has_scoring = CallbackProperty(True)
+    responses = DictCallbackProperty()
 
     def __init__(self, session, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -59,6 +60,7 @@ class Story(CDSState, HubMixin):
         add_callback(self, 'step_complete', self._on_step_complete_changed)
         add_callback(self, 'stage_index', self._on_stage_index_changed)
         add_callback(self, 'mc_scoring', self._update_total_score)
+        add_callback(self, 'responses', self.write_to_db)
 
     @debounce(wait=2)
     def write_to_db(self, *args, **kwargs):
