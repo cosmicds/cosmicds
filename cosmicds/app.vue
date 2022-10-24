@@ -464,7 +464,13 @@ export default {
       app.update_state();
     });
 
+    document.addEventListener("fr-update", (e) => {
+      app.update_free_response(e.detail);
+      app.update_state();
+    });
+
     document.addEventListener("mc-initialize", this.handleMCInitialization);
+    document.addEventListener("fr-initialize", this.handleFRInitialization);
   },
   methods: {
     getCurrentStage: function () {
@@ -476,6 +482,33 @@ export default {
         const els = document.querySelectorAll(`[tag=${key}]`);
         els.forEach(el => { el.value = String(value); });
       }
+    },
+    handleFRInitialization: function(event) {
+      const tag = event.detail.tag;
+      for (const values of Object.values(this.story_state.responses)) {
+        if (tag in values) {
+          const response = values[tag];
+          document.dispatchEvent(
+            new CustomEvent("fr-initialize-response", {
+              detail: {
+                response: response,
+                tag: tag,
+                found: true,
+              }
+            })
+          )
+        }
+      }
+
+      // If we don't have any data for this FR
+      document.dispatchEvent(
+          new CustomEvent("fr-initialize-response", {
+            detail: {
+              tag: tag,
+              found: false,
+            }
+          })
+      );
     },
     handleMCInitialization: function(event) {
       const tag = event.detail.tag;
