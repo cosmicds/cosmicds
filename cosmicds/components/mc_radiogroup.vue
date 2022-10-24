@@ -25,7 +25,7 @@
       v-show="column !== null"
       outlined
       :color="`${color(column)}`"
-      :type="complete ? 'success' : 'warning'"
+      :icon="`${icon(column)}`"
     >
       <div
         v-html="feedbacks[column]"
@@ -91,6 +91,9 @@ module.exports = {
       colorRight: 'green',
       colorNeutral: 'orange',
       colorWrong: 'red',
+      iconRight: 'mdi-check-circle-outline',
+      iconNeutral: 'mdi-thought-bubble-outline',
+      iconWrong: 'mdi-alert-circle-outline',
       complete: false,
       tries: 0,
       score: null
@@ -131,6 +134,15 @@ module.exports = {
         return this.colorNeutral;
       } else {
         return this.colorWrong;
+      }
+    },
+    icon: function(index) {
+      if (this.correctAnswers.includes(index)) {
+        return this.iconRight;
+      } else if (this.neutralAnswers.includes(index)) {
+        return this.iconNeutral;
+      } else {
+        return this.iconWrong;
       }
     },
     getScore: function(ntries) {
