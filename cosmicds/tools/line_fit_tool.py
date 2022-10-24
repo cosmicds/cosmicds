@@ -67,12 +67,14 @@ class LineFitTool(Tool, HubListener, HasTraits):
     # Message filters
 
     def _data_collection_filter(self, msg):
-        return msg.data in self.lines.keys()
+        return self.active and msg.data in self.lines.keys()
 
     def _create_filter(self, msg):
-        return msg.subset.data in self.lines.keys()
+        return self.active and msg.subset.data in self.lines.keys()
 
     def _data_update_filter(self, msg):
+        if not self.active:
+            return False
         subset_message = isinstance(msg, SubsetMessage)
         subset = msg.subset if subset_message else None
         data = subset.data if subset_message else msg.data
@@ -97,7 +99,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     def _refresh_if_active(self):
         if self.active:
-            self.refresh()
+            self._fit_to_layers()
 
     def _on_subset_created(self, msg):
         self._refresh_if_active()
@@ -168,7 +170,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
     @show_labels.setter
     def show_labels(self, show):
         self._show_labels = show
-        self.refresh()
+        self._refresh_if_active()
 
 
     # Add or remove ignore conditions
@@ -271,4 +273,4 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self.slopes = {}
 
     def refresh(self):
-        self._fit_to_layers()
+        self._refresh_if_active()
