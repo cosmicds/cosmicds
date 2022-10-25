@@ -263,8 +263,8 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def _remove_line(self, layer):
         data = layer.state.layer
         line = self.lines.get(data, None)
-        del self.lines[data]
-        del self.slopes[data]
+        self.lines.pop(data, None)
+        self.slopes.pop(data, None)
         self.figure.marks = [mark for mark in self.figure.marks if mark != line]
 
     def _clear_lines(self):
