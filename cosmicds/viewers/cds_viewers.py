@@ -155,13 +155,16 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
                 return False
             return super().add_subset(subset)
 
+        # The argument here can be either a Data or Subset object
+        def layer_artist_for_data(self, data):
+            return next((a for a in self.layers if a.layer == data), None)
+
         def _update_xtick_values(self, values):
             self.axis_x.tick_values = values
         
         def _update_ytick_values(self, values):
             self.axis_y.tick_values = values
 
-        
     return CDSViewer
 
 
