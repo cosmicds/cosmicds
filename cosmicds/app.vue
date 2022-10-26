@@ -246,7 +246,7 @@ export default {
           super();
           this.attachShadow({mode: "open"});
           this.input = document.createElement("input");
-          this.input.style.width = "35px";
+          this.input.style.width = "50px";
           this.input.onchange = this.handleChangeEvent.bind(this);
           this.shadowRoot.append(this.input);
 
