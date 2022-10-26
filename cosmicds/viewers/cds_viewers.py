@@ -26,7 +26,7 @@ def cds_viewer_state(state_class):
         def tick_spacing(naive_spacing):
             mantissa, exp = frexp10(naive_spacing)
             frac = CDSViewerState.best_spacing_frac(mantissa)
-            return frac * (10 ** exp)
+            return round(frac * (10 ** exp))
 
         @classmethod
         def best_spacing_frac(cls, frac):
