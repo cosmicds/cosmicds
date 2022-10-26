@@ -2,6 +2,7 @@ from glue.config import viewer_tool
 from glue.core import HubListener
 from glue.core.message import (DataCollectionDeleteMessage, DataUpdateMessage,
                                LayerArtistUpdatedMessage, LayerArtistVisibilityMessage,
+                               NumericalDataChangedMessage,
                                SubsetMessage, SubsetUpdateMessage)
 from glue.core.exceptions import IncompatibleAttribute
 from glue_jupyter.bqplot.common.tools import Tool
@@ -43,6 +44,8 @@ class LineFitTool(Tool, HubListener, HasTraits):
                            handler=self._on_layers_updated, filter=self._layers_update_filter)
         self.hub.subscribe(self, LayerArtistUpdatedMessage, filter=self._layer_filter,
                            handler=self._on_layer_artist_updated)
+        self.hub.subscribe(self, NumericalDataChangedMessage, filter=self._data_collection_filter,
+                           handler=self._on_data_updated)
 
 
     # Activation method
