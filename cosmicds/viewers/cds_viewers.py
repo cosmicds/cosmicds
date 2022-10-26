@@ -17,7 +17,7 @@ def cds_viewer_state(state_class):
 
     class CDSViewerState(state_class):
 
-        TICK_SPACINGS = [1, 0.75, 0.5, 0.4, 0.3, 0.25, 0.2, 0.1]
+        TICK_SPACINGS = [10, 7.5, 5, 4, 3, 2.5, 2, 1]
 
         xtick_values = CallbackProperty([])
         ytick_values = CallbackProperty([])
@@ -31,7 +31,7 @@ def cds_viewer_state(state_class):
         @classmethod
         def best_spacing_frac(cls, frac):
             default = (-1, cls.TICK_SPACINGS[-1])
-            index, fless = next(((i, t) for i, t in enumerate(cls.TICK_SPACINGS) if frac > t), default)
+            index, fless = next(((i, t) for i, t in enumerate(cls.TICK_SPACINGS) if frac >= t), default)
             fmore = cls.TICK_SPACINGS[index - 1]
             dist_less = abs(frac - fless)
             dist_more = abs(frac - fmore)

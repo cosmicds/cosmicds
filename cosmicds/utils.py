@@ -280,12 +280,17 @@ def debounce(wait):
 
     return decorator
 
-def frexp10(x):
+def frexp10(x, normed=False):
     """
     Find the mantissa and exponent of a value in base 10.
 
+    If normed is True, the mantissa is fractional, while it is between 0 and 10 if normed is False.
+    Example:
+        normed: 0.5 * 10^5
+        non-normed: 5 * 10^4
+
     TODO: JC added this quickly mid-Hubble beta. Are there possible improvements?
     """
-    exp = int(log10(x))
+    exp = int(log10(x)) + int(normed)
     mantissa = x / (10 ** exp)
     return mantissa, exp
