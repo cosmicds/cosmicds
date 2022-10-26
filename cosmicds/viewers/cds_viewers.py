@@ -11,15 +11,32 @@ from numpy import linspace, isnan
 
 from cosmicds.components.toolbar import Toolbar
 from cosmicds.message import CDSLayersUpdatedMessage
+from cosmicds.utils import frexp10
 
 def cds_viewer_state(state_class):
 
     class CDSViewerState(state_class):
 
-        TICK_SPACINGS = tick_spacings = [2000, 1500, 1000, 750, 500, 400, 300, 250, 200, 100, 75, 50, 25, 10, 7.5, 5, 4, 3, 2.5, 2, 1, 0.75, 0.5, 0.4, 0.3, 0.25, 0.2, 0.1]
+        TICK_SPACINGS = [1, 0.75, 0.5, 0.4, 0.3, 0.25, 0.2, 0.1]
 
         xtick_values = CallbackProperty([])
         ytick_values = CallbackProperty([])
+
+        @staticmethod
+        def tick_spacing(naive_spacing):
+            mantissa, exp = frexp10(naive_spacing)
+            frac = CDSViewerState.best_spacing_frac(mantissa)
+            return frac * (10 ** exp)
+
+        @classmethod
+        def best_spacing_frac(cls, frac):
+            default = (-1, cls.TICK_SPACINGS[-1])
+            index, fless = next(((i, t) for i, t in enumerate(cls.TICK_SPACINGS) if frac > t), default)
+            fmore = cls.TICK_SPACINGS[index - 1]
+            dist_less = abs(frac - fless)
+            dist_more = abs(frac - fmore)
+            spacing = fless if dist_less < dist_more else fmore
+            return spacing
 
         @callback_property
         def nxticks(self):
@@ -73,12 +90,8 @@ def cds_viewer_state(state_class):
             x_range = xmax - xmin
             if isnan(x_range):
                 x_range = 1
-            frac = int(x_range / self.nxticks)
-            index, val_less = next(((i, t) for i, t in enumerate(self.TICK_SPACINGS) if frac > t), (-1, self.TICK_SPACINGS[-1]))
-            val_more = self.TICK_SPACINGS[index - 1]
-            dist_less = abs(frac - val_less)
-            dist_more = abs(frac - val_more)
-            spacing = val_less if dist_less < dist_more else val_more
+            naive = int(x_range / self.nxticks)
+            spacing = CDSViewerState.tick_spacing(naive) if naive > 0 else 1
             self.set_xtick_spacing(spacing)
 
         def update_yticks(self, ymin=None, ymax=None):
@@ -89,12 +102,8 @@ def cds_viewer_state(state_class):
             y_range = ymax - ymin
             if isnan(y_range):
                 y_range = 1
-            frac = int(y_range / self.nyticks)
-            index, val_less = next(((i, t) for i, t in enumerate(self.TICK_SPACINGS) if frac > t), (-1, self.TICK_SPACINGS[-1]))
-            val_more = self.TICK_SPACINGS[index - 1]
-            dist_less = abs(frac - val_less)
-            dist_more = abs(frac - val_more)
-            spacing = val_less if dist_less < dist_more else val_more
+            naive = int(y_range / self.nyticks)
+            spacing = CDSViewerState.tick_spacing(naive) if naive > 0 else 1
             self.set_ytick_spacing(spacing)
 
         def set_xtick_spacing(self, spacing):

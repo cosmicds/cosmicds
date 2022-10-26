@@ -1,5 +1,6 @@
 import json
 import os
+from math import log10
 
 from astropy.modeling import models, fitting
 from bqplot.marks import Lines
@@ -278,3 +279,13 @@ def debounce(wait):
         return debounced
 
     return decorator
+
+def frexp10(x):
+    """
+    Find the mantissa and exponent of a value in base 10.
+
+    TODO: JC added this quickly mid-Hubble beta. Are there possible improvements?
+    """
+    exp = int(log10(x))
+    mantissa = x / (10 ** exp)
+    return mantissa, exp
