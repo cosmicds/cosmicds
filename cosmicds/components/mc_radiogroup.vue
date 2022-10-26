@@ -92,7 +92,7 @@ module.exports = {
       colorNeutral: 'orange',
       colorWrong: 'red',
       iconRight: 'mdi-check-circle-outline',
-      iconNeutral: 'mdi-thought-bubble-outline',
+      iconNeutral: 'mdi-lightbulb-on-outline',
       iconWrong: 'mdi-alert-circle-outline',
       complete: false,
       tries: 0,
