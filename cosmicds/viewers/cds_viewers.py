@@ -3,11 +3,14 @@
 
 from math import ceil, floor
 
-from echo import add_callback, callback_property, CallbackProperty
+from echo import add_callback, callback_property, CallbackProperty, ignore_callback
 from glue.config import viewer_tool
+from glue.core import Subset
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
+from glue_jupyter.utils import float_or_none
 from numpy import linspace, isnan
+import numpy as np
 
 from cosmicds.components.toolbar import Toolbar
 from cosmicds.message import CDSLayersUpdatedMessage
@@ -37,6 +40,10 @@ def cds_viewer_state(state_class):
             dist_more = abs(frac - fmore)
             spacing = fless if dist_less < dist_more else fmore
             return spacing
+
+        # def reset_limits(self):
+        #     with ignore_callback(self, 'x_min', 'x_max', 'y_min', 'y_max'):
+        #         super().reset_limits()
 
         @callback_property
         def nxticks(self):
@@ -90,7 +97,7 @@ def cds_viewer_state(state_class):
             x_range = xmax - xmin
             if isnan(x_range):
                 x_range = 1
-            naive = int(x_range / self.nxticks)
+            naive = ceil(x_range / self.nxticks)
             spacing = CDSViewerState.tick_spacing(naive) if naive > 0 else 1
             self.set_xtick_spacing(spacing)
 
@@ -102,7 +109,7 @@ def cds_viewer_state(state_class):
             y_range = ymax - ymin
             if isnan(y_range):
                 y_range = 1
-            naive = int(y_range / self.nyticks)
+            naive = ceil(y_range / self.nyticks)
             spacing = CDSViewerState.tick_spacing(naive) if naive > 0 else 1
             self.set_ytick_spacing(spacing)
 
@@ -111,7 +118,7 @@ def cds_viewer_state(state_class):
             xmax = 1 if isnan(self.x_max) else self.x_max
             tmin = ceil(xmin / spacing) * spacing
             tmax = floor(xmax / spacing) * spacing
-            n = int((tmax - tmin) / spacing) + 1
+            n = int(abs(tmax - tmin) / spacing) + 1
             self.xtick_values = list(linspace(tmin, tmax, n))
 
         def set_ytick_spacing(self, spacing):
@@ -119,7 +126,7 @@ def cds_viewer_state(state_class):
             ymax = 1 if isnan(self.y_max) else self.y_max
             tmin = ceil(ymin / spacing) * spacing
             tmax = floor(ymax / spacing) * spacing
-            n = int((tmax - tmin) / spacing) + 1
+            n = int(abs(tmax - tmin) / spacing) + 1
             self.ytick_values = list(linspace(tmin, tmax, n))
 
     return CDSViewerState
@@ -162,6 +169,23 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
         def ignore(self, condition):
             self.ignore_conditions.append(condition)
 
+        def _scales_synced(self):
+            x_scale = self.scales['x']
+            y_scale = self.scales['y']
+            return x_scale.min == self.state.x_min and \
+                   x_scale.max == self.state.x_max and \
+                   y_scale.min == self.state.y_min and \
+                   y_scale.max == self.state.y_max
+
+        def _sync_scales(self):
+            if not self._scales_synced():
+                x_scale = self.scales['x']
+                y_scale = self.scales['y']
+                x_scale.min = self.state.x_min
+                x_scale.max = self.state.x_max
+                y_scale.min = self.state.y_min
+                y_scale.max = self.state.y_max
+
         def add_data(self, data):
             if any(condition(data) for condition in self.ignore_conditions):
                 return False
@@ -182,6 +206,12 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
         def _update_ytick_values(self, values):
             self.axis_y.tick_values = values
 
+        def reset_limits(self):
+            self.state.reset_limits()
+            self._sync_scales()
+            self.state.update_xticks()
+            self.state.update_yticks()
+
     return CDSViewer
 
 
@@ -189,7 +219,7 @@ CDSScatterView = cds_viewer(
     BqplotScatterView,
     name='CDSScatterView',
     viewer_tools=[
-        'bqplot:home',
+        'cds:home',
         'bqplot:rectzoom',
         'bqplot:rectangle'
     ],
@@ -200,7 +230,7 @@ CDSHistogramView = cds_viewer(
     BqplotHistogramView,
     name='CDSHistogramView',
     viewer_tools=[
-        'bqplot:home',
+        'cds:home',
         'bqplot:xzoom',
         'bqplot:xrange'
     ],
