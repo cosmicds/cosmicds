@@ -2,7 +2,6 @@
   <v-card
     flat
   >
-    TOGGLER
     <v-list-item-group
       multiple
       v-model="selected"
@@ -22,7 +21,7 @@
             <v-checkbox
               :input-value="active"
               :color="layer.color"
-            ></v-checkbox>
+            />
           </v-list-item-action>
         </template>
 
