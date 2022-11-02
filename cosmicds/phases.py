@@ -48,12 +48,12 @@ class Story(CDSState, HubMixin):
     total_score = CallbackProperty(0)
     has_scoring = CallbackProperty(True)
     responses = DictCallbackProperty()
-    viewers = DictCallbackProperty()
 
     def __init__(self, session, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._session = session
+        self.viewers = {}
 
         # When the step index or completion status changes, store that change
         # in the stage state
@@ -94,9 +94,6 @@ class Story(CDSState, HubMixin):
         self.stages[self.stage_index]['steps'][self.step_index][
             'completed'] = value
         self.write_to_db()
-
-    def viewers(self):
-        return self.app.viewers
 
     def _update_total_score(self, mc_scoring):
         self.total_score = sum(mc["score"] or 0 for stage in mc_scoring.values() for mc in stage.values())
