@@ -11,7 +11,7 @@
         class="text-h6 text-uppercase font-weight-regular"
         v-if="title"
       >
-        {{ title }}
+        <span v-html="title">  </span>
         <v-spacer></v-spacer>
         <v-text-field v-if="use_search"
           v-model="search"
@@ -53,6 +53,14 @@
       :style="cssVars"
       hide-default-footer
     >
+    <!-- vuetify loop over headers and make them accept html -->
+    <template 
+      v-for="header in headers" 
+      v-slot:[`header.${header.value}`]="{ header }"
+    >
+      <span v-html="header.text"> </span>
+    </template>
+   
     </v-data-table>
   </v-card>
 </template>
