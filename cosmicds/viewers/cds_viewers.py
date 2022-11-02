@@ -3,23 +3,47 @@
 
 from math import ceil, floor
 
-from echo import add_callback, callback_property, CallbackProperty
+from echo import add_callback, callback_property, CallbackProperty, ignore_callback
 from glue.config import viewer_tool
+from glue.core import Subset
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
-from numpy import linspace
+from glue_jupyter.utils import float_or_none
+from numpy import linspace, isnan
+import numpy as np
 
 from cosmicds.components.toolbar import Toolbar
 from cosmicds.message import CDSLayersUpdatedMessage
+from cosmicds.utils import frexp10
 
 def cds_viewer_state(state_class):
 
     class CDSViewerState(state_class):
 
-        TICK_SPACINGS = tick_spacings = [2000, 1500, 1000, 750, 500, 400, 300, 250, 200, 100, 75, 50, 25, 10, 7.5, 5, 4, 3, 2.5, 2, 1, 0.75, 0.5, 0.4, 0.3, 0.25, 0.2, 0.1]
+        TICK_SPACINGS = [10, 7.5, 5, 4, 3, 2.5, 2, 1]
 
         xtick_values = CallbackProperty([])
         ytick_values = CallbackProperty([])
+
+        @staticmethod
+        def tick_spacing(naive_spacing):
+            mantissa, exp = frexp10(naive_spacing)
+            frac = CDSViewerState.best_spacing_frac(mantissa)
+            return round(frac * (10 ** exp))
+
+        @classmethod
+        def best_spacing_frac(cls, frac):
+            default = (-1, cls.TICK_SPACINGS[-1])
+            index, fless = next(((i, t) for i, t in enumerate(cls.TICK_SPACINGS) if frac >= t), default)
+            fmore = cls.TICK_SPACINGS[index - 1]
+            dist_less = abs(frac - fless)
+            dist_more = abs(frac - fmore)
+            spacing = fless if dist_less < dist_more else fmore
+            return spacing
+
+        # def reset_limits(self):
+        #     with ignore_callback(self, 'x_min', 'x_max', 'y_min', 'y_max'):
+        #         super().reset_limits()
 
         @callback_property
         def nxticks(self):
@@ -54,55 +78,55 @@ def cds_viewer_state(state_class):
             add_callback(self, "y_max", self._update_ymax)
 
         def _update_xmin(self, value):
-            self.update_xticks(min=value)
+            self.update_xticks(xmin=value)
 
         def _update_xmax(self, value):
-            self.update_xticks(max=value)
+            self.update_xticks(xmax=value)
 
         def _update_ymin(self, value):
-            self.update_yticks(min=value)
+            self.update_yticks(ymin=value)
 
         def _update_ymax(self, value):
-            self.update_yticks(max=value)
+            self.update_yticks(ymax=value)
 
-        def update_xticks(self, min=None, max=None):
-            min = min or self.x_min
-            max = max or self.x_max
-            if min is None or max is None:
+        def update_xticks(self, xmin=None, xmax=None):
+            xmin = xmin or self.x_min
+            xmax = xmax or self.x_max
+            if xmin is None or xmax is None:
                 return
-            x_range = max - min
-            frac = int(x_range / self.nxticks)
-            index, val_less = next(((i, t) for i, t in enumerate(self.TICK_SPACINGS) if frac > t), (-1, self.TICK_SPACINGS[-1]))
-            val_more = self.TICK_SPACINGS[index - 1]
-            dist_less = abs(frac - val_less)
-            dist_more = abs(frac - val_more)
-            spacing = val_less if dist_less < dist_more else val_more
+            x_range = xmax - xmin
+            if isnan(x_range):
+                x_range = 1
+            naive = ceil(x_range / self.nxticks)
+            spacing = CDSViewerState.tick_spacing(naive) if naive > 0 else 1
             self.set_xtick_spacing(spacing)
 
-        def update_yticks(self, min=None, max=None):
-            min = min or self.y_min
-            max = max or self.y_max
-            if min is None or max is None:
+        def update_yticks(self, ymin=None, ymax=None):
+            ymin = ymin or self.y_min
+            ymax = ymax or self.y_max
+            if ymin is None or ymax is None:
                 return
-            y_range = max - min
-            frac = int(y_range / self.nyticks)
-            index, val_less = next(((i, t) for i, t in enumerate(self.TICK_SPACINGS) if frac > t), (-1, self.TICK_SPACINGS[-1]))
-            val_more = self.TICK_SPACINGS[index - 1]
-            dist_less = abs(frac - val_less)
-            dist_more = abs(frac - val_more)
-            spacing = val_less if dist_less < dist_more else val_more
+            y_range = ymax - ymin
+            if isnan(y_range):
+                y_range = 1
+            naive = ceil(y_range / self.nyticks)
+            spacing = CDSViewerState.tick_spacing(naive) if naive > 0 else 1
             self.set_ytick_spacing(spacing)
 
         def set_xtick_spacing(self, spacing):
-            tmin = ceil(self.x_min / spacing) * spacing
-            tmax = floor(self.x_max / spacing) * spacing
-            n = int((tmax - tmin) / spacing) + 1
+            xmin = 0 if isnan(self.x_min) else self.x_min
+            xmax = 1 if isnan(self.x_max) else self.x_max
+            tmin = ceil(xmin / spacing) * spacing
+            tmax = floor(xmax / spacing) * spacing
+            n = int(abs(tmax - tmin) / spacing) + 1
             self.xtick_values = list(linspace(tmin, tmax, n))
 
         def set_ytick_spacing(self, spacing):
-            tmin = ceil(self.y_min / spacing) * spacing
-            tmax = floor(self.y_max / spacing) * spacing
-            n = int((tmax - tmin) / spacing) + 1
+            ymin = 0 if isnan(self.y_min) else self.y_min
+            ymax = 1 if isnan(self.y_max) else self.y_max
+            tmin = ceil(ymin / spacing) * spacing
+            tmax = floor(ymax / spacing) * spacing
+            n = int(abs(tmax - tmin) / spacing) + 1
             self.ytick_values = list(linspace(tmin, tmax, n))
 
     return CDSViewerState
@@ -145,6 +169,23 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
         def ignore(self, condition):
             self.ignore_conditions.append(condition)
 
+        def _scales_synced(self):
+            x_scale = self.scales['x']
+            y_scale = self.scales['y']
+            return x_scale.min == self.state.x_min and \
+                   x_scale.max == self.state.x_max and \
+                   y_scale.min == self.state.y_min and \
+                   y_scale.max == self.state.y_max
+
+        def _sync_scales(self):
+            if not self._scales_synced():
+                x_scale = self.scales['x']
+                y_scale = self.scales['y']
+                x_scale.min = self.state.x_min
+                x_scale.max = self.state.x_max
+                y_scale.min = self.state.y_min
+                y_scale.max = self.state.y_max
+
         def add_data(self, data):
             if any(condition(data) for condition in self.ignore_conditions):
                 return False
@@ -155,13 +196,22 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
                 return False
             return super().add_subset(subset)
 
+        # The argument here can be either a Data or Subset object
+        def layer_artist_for_data(self, data):
+            return next((a for a in self.layers if a.layer == data), None)
+
         def _update_xtick_values(self, values):
             self.axis_x.tick_values = values
         
         def _update_ytick_values(self, values):
             self.axis_y.tick_values = values
 
-        
+        def reset_limits(self):
+            self.state.reset_limits()
+            self._sync_scales()
+            self.state.update_xticks()
+            self.state.update_yticks()
+
     return CDSViewer
 
 
@@ -169,7 +219,7 @@ CDSScatterView = cds_viewer(
     BqplotScatterView,
     name='CDSScatterView',
     viewer_tools=[
-        'bqplot:home',
+        'cds:home',
         'bqplot:rectzoom',
         'bqplot:rectangle'
     ],
@@ -180,7 +230,7 @@ CDSHistogramView = cds_viewer(
     BqplotHistogramView,
     name='CDSHistogramView',
     viewer_tools=[
-        'bqplot:home',
+        'cds:home',
         'bqplot:xzoom',
         'bqplot:xrange'
     ],

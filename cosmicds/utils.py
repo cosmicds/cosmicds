@@ -1,5 +1,6 @@
 import json
 import os
+from math import log10
 
 from astropy.modeling import models, fitting
 from bqplot.marks import Lines
@@ -15,7 +16,8 @@ __all__ = [
     'load_template', 'update_figure_css', 'extend_tool',
     'convert_material_color', 'fit_line', 
     'line_mark', 'vertical_line_mark',
-    'API_URL', 'CDSJSONEncoder', 'RepeatedTimer'
+    'API_URL', 'CDSJSONEncoder', 'RepeatedTimer',
+    'debounce'
 ]
 
 # The URL for the CosmicDS API
@@ -252,3 +254,43 @@ def vertical_line_mark(layer, x, color, label=None):
     """
     viewer_state = layer.state.viewer_state
     return line_mark(layer, x, viewer_state.y_min, x, viewer_state.y_max, color, label)
+
+# Taken from https://jonlabelle.com/snippets/view/python/python-debounce-decorator-function
+def debounce(wait):
+    """Postpone a functions execution until after some time has elapsed
+ 
+    :type wait: int
+    :param wait: The amount of Seconds to wait before the next call can execute.
+    """
+
+    def decorator(fun):
+        def debounced(*args, **kwargs):
+            def call_it():
+                fun(*args, **kwargs)
+
+            try:
+                debounced.t.cancel()
+            except AttributeError:
+                pass
+
+            debounced.t = Timer(wait, call_it)
+            debounced.t.start()
+
+        return debounced
+
+    return decorator
+
+def frexp10(x, normed=False):
+    """
+    Find the mantissa and exponent of a value in base 10.
+
+    If normed is True, the mantissa is fractional, while it is between 0 and 10 if normed is False.
+    Example:
+        normed: 0.5 * 10^5
+        non-normed: 5 * 10^4
+
+    TODO: JC added this quickly mid-Hubble beta. Are there possible improvements?
+    """
+    exp = int(log10(x)) + int(normed)
+    mantissa = x / (10 ** exp)
+    return mantissa, exp

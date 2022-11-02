@@ -1,8 +1,6 @@
 from glue.config import DictRegistry
 from ipyvuetify import VuetifyTemplate
-from ipywidgets import Widget
 from glue.core.state_objects import State
-import warnings
 import requests
 
 from cosmicds.utils import API_URL
@@ -73,10 +71,13 @@ class StoryRegistry(UniqueDictRegistry):
         story_state.setup_for_student(app_state)
 
         for k, v in story_entry['stages'].items():
-            stage = v['cls'](session, story_state, app_state)
-            stage.index = k
-            if state is not None and "state" in state["stages"][k]:
-                stage.stage_state.update_from_dict(state["stages"][k]["state"])
+            stage_cls = v['cls']
+            stage_state = stage_cls._state_cls()
+            if state is not None and k in state["stages"] and "state" in state["stages"][k]:
+                stage_state.update_from_dict(state["stages"][k]["state"])
+            stage = stage_cls(session, story_state, app_state, index=k, stage_state=stage_state)
+
+            stage.stage_state.add_global_callback(story_state.write_to_db)
             
             story_state.stages[k] = {"title": stage.title,
                                      "subtitle": stage.subtitle,

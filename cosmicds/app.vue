@@ -115,9 +115,10 @@
         <template v-for="(stage, key, index) in story_state.stages">
           <v-stepper-step
             :key="index"
-            :complete="story_state.stage_index > index"
+            :editable="app_state.allow_advancing || index == 0 || story_state.max_stage_index >= index"
+            :complete="story_state.max_stage_index > index"
             :step="index"
-            editable
+            :edit-icon="'$complete'"
           >
             {{ stage.title }}
           </v-stepper-step>
@@ -244,7 +245,8 @@ export default {
         constructor() {
           super();
           this.attachShadow({mode: "open"});
-          this.input = document.createElement('input');
+          this.input = document.createElement("input");
+          this.input.style.width = "50px";
           this.input.onchange = this.handleChangeEvent.bind(this);
           this.shadowRoot.append(this.input);
 
@@ -463,7 +465,13 @@ export default {
       app.update_state();
     });
 
+    document.addEventListener("fr-update", (e) => {
+      app.update_free_response(e.detail);
+      app.update_state();
+    });
+
     document.addEventListener("mc-initialize", this.handleMCInitialization);
+    document.addEventListener("fr-initialize", this.handleFRInitialization);
   },
   methods: {
     getCurrentStage: function () {
@@ -475,6 +483,33 @@ export default {
         const els = document.querySelectorAll(`[tag=${key}]`);
         els.forEach(el => { el.value = String(value); });
       }
+    },
+    handleFRInitialization: function(event) {
+      const tag = event.detail.tag;
+      for (const values of Object.values(this.story_state.responses)) {
+        if (tag in values) {
+          const response = values[tag];
+          document.dispatchEvent(
+            new CustomEvent("fr-initialize-response", {
+              detail: {
+                response: response,
+                tag: tag,
+                found: true,
+              }
+            })
+          )
+        }
+      }
+
+      // If we don't have any data for this FR
+      document.dispatchEvent(
+          new CustomEvent("fr-initialize-response", {
+            detail: {
+              tag: tag,
+              found: false,
+            }
+          })
+      );
     },
     handleMCInitialization: function(event) {
       const tag = event.detail.tag;
@@ -569,6 +604,10 @@ input {
 .MathJax_Display {
   width: fit-content;
   height: fit-content;
+}
+
+mjx-container[jax="CHTML"][display="true"] {
+  display: block !important;
 }
 
 /* issues with empty headers pushing WWT widget south, anyone else having this problem? -HOH */

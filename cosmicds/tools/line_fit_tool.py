@@ -1,7 +1,8 @@
 from glue.config import viewer_tool
 from glue.core import HubListener
 from glue.core.message import (DataCollectionDeleteMessage, DataUpdateMessage,
-                               LayerArtistVisibilityMessage,
+                               LayerArtistUpdatedMessage, LayerArtistVisibilityMessage,
+                               NumericalDataChangedMessage,
                                SubsetMessage, SubsetUpdateMessage)
 from glue.core.exceptions import IncompatibleAttribute
 from glue_jupyter.bqplot.common.tools import Tool
@@ -29,6 +30,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self.slopes = {}
         self.tool_tip = self.inactive_tool_tip
         self.active = False
+        self._show_labels = kwargs.get("show_labels", True)
         self._ignore_conditions = []
         self.hub.subscribe(self, DataCollectionDeleteMessage,
                            handler=self._on_data_collection_deleted, filter=self._data_collection_filter)
@@ -37,9 +39,13 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self.hub.subscribe(self, SubsetUpdateMessage,
                            handler=self._on_data_updated, filter=self._data_update_filter)
         self.hub.subscribe(self, LayerArtistVisibilityMessage,
-                           handler=self._on_layer_visibility_updated, filter=self._layer_visibility_filter)
+                           handler=self._on_layer_visibility_updated, filter=self._layer_filter)
         self.hub.subscribe(self, CDSLayersUpdatedMessage,
                            handler=self._on_layers_updated, filter=self._layers_update_filter)
+        self.hub.subscribe(self, LayerArtistUpdatedMessage, filter=self._layer_filter,
+                           handler=self._on_layer_artist_updated)
+        self.hub.subscribe(self, NumericalDataChangedMessage, filter=self._data_collection_filter,
+                           handler=self._on_data_updated)
 
 
     # Activation method
@@ -64,12 +70,14 @@ class LineFitTool(Tool, HubListener, HasTraits):
     # Message filters
 
     def _data_collection_filter(self, msg):
-        return msg.data in self.lines.keys()
+        return self.active and msg.data in self.lines.keys()
 
     def _create_filter(self, msg):
-        return msg.subset.data in self.lines.keys()
+        return self.active and msg.subset.data in self.lines.keys()
 
     def _data_update_filter(self, msg):
+        if not self.active:
+            return False
         subset_message = isinstance(msg, SubsetMessage)
         subset = msg.subset if subset_message else None
         data = subset.data if subset_message else msg.data
@@ -79,7 +87,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def _layers_update_filter(self, msg):
         return self.active and msg.sender == self.viewer
 
-    def _layer_visibility_filter(self, msg):
+    def _layer_filter(self, msg):
         return self.active and msg.layer_artist in self.viewer.layers
 
 
@@ -94,7 +102,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     def _refresh_if_active(self):
         if self.active:
-            self.refresh()
+            self._fit_to_layers()
 
     def _on_subset_created(self, msg):
         self._refresh_if_active()
@@ -113,6 +121,19 @@ class LineFitTool(Tool, HubListener, HasTraits):
             self._update_fit_line(layer)
         else:
             self._remove_line(layer)
+
+    def _on_layer_artist_updated(self, msg):
+        layer = msg.layer_artist
+        data = layer.state.layer
+        mark = self.lines.get(data, None)
+        if mark is None:
+            return
+
+        # Update the color
+        # If we have other properties to update in the future, we can do so here
+        color = layer.state.color if layer.state.color != '0.35' else 'black'
+        if mark.colors[0] != color:
+            mark.colors = [color]
 
 
     # Properties
@@ -145,6 +166,15 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def x_range(self):
         return [0, 2 * self.viewer.state.x_max]
 
+    @property
+    def show_labels(self):
+        return self._show_labels
+
+    @show_labels.setter
+    def show_labels(self, show):
+        self._show_labels = show
+        self._refresh_if_active()
+
 
     # Add or remove ignore conditions
 
@@ -173,12 +203,13 @@ class LineFitTool(Tool, HubListener, HasTraits):
             return None, None
     
         # Create the fit line object
-        # Keep track of this line and its slope # For now, the line spans from 0 to twice the edge of the viewer
+        # Keep track of this line and its slope
+        # For now, the line spans from 0 to twice the edge of the viewer
         y = fit(self.x_range)
         start_x, end_x = self.x_range
         start_y, end_y = y
         slope = fit.slope.value
-        label = self.label(layer, fit)
+        label = self.label(layer, fit) if self.show_labels else None
         color = layer.state.color if layer.state.color != '0.35' else 'black'
         line = line_mark(layer, start_x, start_y, end_x, end_y, color, label)
         return line, slope
@@ -196,6 +227,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
             self.slopes[data] = slope
             label = self.label(layer, fit)
             is_label = label is not None
+            mark.colors = [layer.state.color if layer.state.color != '0.35' else 'black']
             mark.display_legend = is_label
             mark.labels = [label] if is_label else []
         else:
@@ -218,15 +250,12 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     def _fit_to_layers(self):
 
-        marks_to_keep = [mark for mark in self.figure.marks if mark not in self.line_marks]
-
-        self.lines = {}
-        self.slopes = {}
+        self._clear_lines()
         for layer in self.visible_layers:
             if not any(condition(layer) for condition in self._ignore_conditions):
                 self._fit_to_layer(layer, add_marks=False)
 
-        self.figure.marks = marks_to_keep + list(self.line_marks)
+        self.figure.marks = self.figure.marks + list(self.line_marks)
 
     def _update_fit_line_for_data(self, data):
         for layer in self.visible_layers:
@@ -237,8 +266,8 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def _remove_line(self, layer):
         data = layer.state.layer
         line = self.lines.get(data, None)
-        del self.lines[data]
-        del self.slopes[data]
+        self.lines.pop(data, None)
+        self.slopes.pop(data, None)
         self.figure.marks = [mark for mark in self.figure.marks if mark != line]
 
     def _clear_lines(self):
@@ -247,4 +276,4 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self.slopes = {}
 
     def refresh(self):
-        self._fit_to_layers()
+        self._refresh_if_active()

@@ -25,7 +25,7 @@
       v-show="column !== null"
       outlined
       :color="`${color(column)}`"
-      :type="complete ? 'success' : 'warning'"
+      :icon="`${icon(column)}`"
     >
       <div
         v-html="feedbacks[column]"
@@ -91,9 +91,12 @@ module.exports = {
       colorRight: 'green',
       colorNeutral: 'orange',
       colorWrong: 'red',
+      iconRight: 'mdi-check-circle-outline',
+      iconNeutral: 'mdi-lightbulb-on-outline',
+      iconWrong: 'mdi-alert-circle-outline',
       complete: false,
       tries: 0,
-      score: 0
+      score: null
     };
   },
   methods: {
@@ -101,21 +104,19 @@ module.exports = {
       this.column = index;
       this.tries += 1;
       const correct = this.correctAnswers.includes(index);
-      if (correct) {
-        this.complete = true;
-        this.score = this.scoring ? this.getScore(this.tries) : null;
-        if (this.scoreTag !== undefined && send) {
-          document.dispatchEvent(
-            new CustomEvent("mc-score", {
-              detail: {
-                tag: this.scoreTag,
-                score: this.score,
-                choice: this.column,
-                tries: this.tries
-              }
-            })
-          );
-        }
+      this.complete = correct;
+      this.score = this.scoring ? this.getScore(this.tries) : null;
+      if (this.scoreTag !== undefined && send) {
+        document.dispatchEvent(
+          new CustomEvent("mc-score", {
+            detail: {
+              tag: this.scoreTag,
+              score: this.score,
+              choice: this.column,
+              tries: this.tries
+            }
+          })
+        );
       }
       if (this.selectedCallback !== undefined) {
         this.selectedCallback({
@@ -133,6 +134,15 @@ module.exports = {
         return this.colorNeutral;
       } else {
         return this.colorWrong;
+      }
+    },
+    icon: function(index) {
+      if (this.correctAnswers.includes(index)) {
+        return this.iconRight;
+      } else if (this.neutralAnswers.includes(index)) {
+        return this.iconNeutral;
+      } else {
+        return this.iconWrong;
       }
     },
     getScore: function(ntries) {

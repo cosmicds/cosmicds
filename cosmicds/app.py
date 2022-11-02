@@ -1,4 +1,5 @@
 import json
+from os import getenv
 
 import ipyvuetify as v
 import requests
@@ -26,6 +27,7 @@ class ApplicationState(State):
     classroom = CallbackProperty({})
     update_db = CallbackProperty(False)
     show_team_interface = CallbackProperty(True)
+    allow_advancing = CallbackProperty(True)
 
 
 class Application(VuetifyTemplate, HubListener):
@@ -46,22 +48,44 @@ class Application(VuetifyTemplate, HubListener):
         self.app_state.show_team_interface = kwargs.get("show_team_interface",
                                                         True)
 
-        # # For testing purposes, we create a new dummy student on each startup
-        # if self.app_state.update_db:
-        #     response = requests.get(f"{API_URL}/new-dummy-student").json()
-        #     self.app_state.student = response["student"]
+        self.app_state.allow_advancing = kwargs.get("allow_advancing", False)
 
-        self.app_state.classroom["id"] = kwargs.get("class_id", 0)
-        self.app_state.student["id"] = kwargs.get("student_id", 0)
+        db_init = False
+        create_new = kwargs.get("create_new_student", False)
+        if create_new:
+            response = requests.get(f"{API_URL}/new-dummy-student").json()
+            self.app_state.student = response["student"]
+            self.app_state.classroom["id"] = 0
+            self.student_id = self.app_state.student["id"]
+            db_init = True
+        else:
+            username = getenv("JUPYTERHUB_USER")
+            if username is not None:
+                r = requests.get(f"{API_URL}/student/{username}")
+                student = r.json()["student"]
+                if student is not None:
+                    self.app_state.student = student
+                    self.student_id = student["id"]
+
+            if not self.app_state.student:
+                sid = kwargs.get("student_id", 0)
+                self.app_state.student["id"] = sid
+                self.student_id = sid
+            
+        r = requests.get(f"{API_URL}/class-for-student-story/{self.student_id}/{story}")
+        cls = r.json()["class"]
+        self.app_state.classroom = cls or { "id": 0 }
+
+        print(f"Student ID: {self.student_id}")
+        print(f"Class ID: {self.app_state.classroom['id']}")
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session,
                                                       self.app_state)
 
         # Initialize from database
-        if self.app_state.update_db:
-            # self._initialize_from_database()
-            pass
+        if db_init:
+            self._initialize_from_database()
 
         # Subscribe to events
         self.hub.subscribe(self, WriteToDatabaseMessage,
@@ -134,14 +158,22 @@ class Application(VuetifyTemplate, HubListener):
 
     def vue_update_mc_score(self, args):
         index = self.story_state.stage_index
-        if index not in self.story_state.mc_scoring:
-            self.story_state.mc_scoring[index] = {}
+        key = str(index)
+        if key not in self.story_state.mc_scoring:
+            self.story_state.mc_scoring[key] = {}
 
-        self.story_state.mc_scoring[index][args["tag"]] = {
+        self.story_state.mc_scoring[key][args["tag"]] = {
             "score": args["score"],
             "choice": args["choice"],
             "tries": args["tries"]
         }
+
+    def vue_update_free_response(self, args):
+        index = self.story_state.stage_index
+        key = str(index)
+        if key not in self.story_state.responses:
+            self.story_state.responses[key] = {}
+        self.story_state.responses[key][args["tag"]] = args["response"]
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
