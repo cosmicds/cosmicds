@@ -53,6 +53,7 @@ class Story(CDSState, HubMixin):
         super().__init__(*args, **kwargs)
 
         self._session = session
+        self.viewers = {}
 
         # When the step index or completion status changes, store that change
         # in the stage state
@@ -93,9 +94,6 @@ class Story(CDSState, HubMixin):
         self.stages[self.stage_index]['steps'][self.step_index][
             'completed'] = value
         self.write_to_db()
-
-    def viewers(self):
-        return self.app.viewers
 
     def _update_total_score(self, mc_scoring):
         self.total_score = sum(mc["score"] or 0 for stage in mc_scoring.values() for mc in stage.values())
@@ -143,10 +141,16 @@ class Stage(TemplateMixin):
 
         self.stage_state = kwargs.get('stage_state', self._state_cls())
 
-    def add_viewer(self, cls, label, viewer_label=None, data=None, layout=ViewerLayout, show_toolbar=True):
-        viewer = self.app.new_data_viewer(cls, data=data, show=False)
+    def add_viewer(self, cls=None, label=None, viewer_label=None, data=None, layout=ViewerLayout, show_toolbar=True):
+        viewer = self.story_state.viewers.get(label, None)
+        if viewer is None:
+            # Don't use this as the default in `get`
+            # since it would get called whether the label is found or not
+            viewer = self.app.new_data_viewer(cls, data=data, show=False)
+            self.story_state.viewers[label] = viewer
         if viewer_label is not None:
             viewer.LABEL = viewer_label
+
         current_viewers = {k: v for k, v in self.viewers.items()}
         viewer_layout = layout(viewer, classes=[label])
         viewer_layout.show_toolbar = show_toolbar
