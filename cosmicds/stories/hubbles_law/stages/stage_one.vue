@@ -60,39 +60,6 @@
       -->
       <v-col
         cols="12"
-        lg="4"
-      >
-        <v-btn
-          class="white-text px-a"
-          color="success"
-          @click="select_galaxies();"
-        >select 5 galaxies</v-btn>
-        <v-divider
-          class="my-3"
-          >
-        </v-divider>
-        <v-card
-          class="pa-4"
-          color="info"
-          elevation="6"
-        >
-          Click a row to display the spectrum.
-        </v-card>
-          <!--      
-        <c-choose-row-guidance
-          v-if="stage_state.marker == 'cho_row1'" />
-        <c-doppler-calc-3-guidance
-          v-if="stage_state.marker == 'dop_cal3'" /> 
-        <c-doppler-calc-4-component
-          v-if="stage_state.marker == 'dop_cal4' || stage_state.marker == 'dop_cal5'"/>
-        <c-doppler-calc-5-slideshow
-          v-if="stage_state.marker == 'dop_cal5'"/>
-        <c-doppler-calc-6-component
-          v-if="stage_state.marker == 'dop_cal6'"/> 
-          -->
-      </v-col>
-      <v-col
-        cols="12"
         lg="8"
         class="galtable_column"
       >

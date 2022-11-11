@@ -25,7 +25,7 @@ log = logging.getLogger()
 
 class StageState(State):
     gals_total = CallbackProperty(0)
-    gals_max = CallbackProperty(5)
+    gals_max = CallbackProperty(1)
     vel_win_opened = CallbackProperty(False)
     waveline_set = CallbackProperty(False)
     marker = CallbackProperty("")
@@ -130,13 +130,18 @@ class StageOne(HubbleStage):
         galaxy_table.observe(self.galaxy_table_selected_change, names=["selected"])
 
         # Set up components
-        sdss_data = self.get_data("SDSS_all_sample_filtered")
-        selection_tool = SelectionTool(data=sdss_data)
+        sample_data = self.get_data("Sample_Galaxy")
+        selection_tool = SelectionTool(data=sample_data)
         self.add_component(selection_tool, label='c-selection-tool')
         selection_tool.on_galaxy_selected = self._on_galaxy_selected
 
         spectrum_slideshow = SpectrumSlideshow(self.stage_state)
         self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
+
+        galaxy = { k.label : sample_data[k][0] for k in sample_data.main_components }
+        self._on_galaxy_selected(galaxy)
+        self.on_galaxy_row_click(galaxy)
+        self.galaxy_table_selected_change({"new": galaxy, "old": None})
 
         #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
 
@@ -256,7 +261,7 @@ class StageOne(HubbleStage):
         specview.state.reset_limits()
         self.stage_state.waveline_set = False
 
-        sdss = self.get_data("SDSS_all_sample_filtered")
+        sdss = self.get_data("Sample_Galaxy")
         sdss_index = next((i for i in range(sdss.size) if sdss["name"][i] == name), None)
         if sdss_index is not None:
             element = sdss['element'][sdss_index]
@@ -270,10 +275,7 @@ class StageOne(HubbleStage):
         if change["new"] == change["old"]:
             return
 
-        index = self.galaxy_table.index
-        if index is None:
-            self._empty_spectrum_viewer()
-            return
+        index = 0
         data = self.galaxy_table.glue_data
         galaxy = { x.label : data[x][index] for x in data.main_components }
         name = galaxy["name"]

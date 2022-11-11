@@ -73,10 +73,10 @@ class HubblesLaw(Story):
         ])
 
         # Load in the galaxy data
-        galaxies = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/data-generation-galaxies").json()
+        galaxy = requests.get(f"{API_URL}/{HUBBLE_ROUTE_PATH}/sample-galaxy").json()
         self.data_collection.append(Data(
-            label="SDSS_all_sample_filtered",
-            **{ k : [x[k] for x in galaxies] for k in galaxies[0] }
+            label="Sample_Galaxy",
+            **{ k : [galaxy[k]] for k in galaxy }
         ))
 
         # Compose empty data containers to be populated by user
