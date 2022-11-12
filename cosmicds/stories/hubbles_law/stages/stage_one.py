@@ -36,6 +36,7 @@ class StageState(State):
     doppler_calc_dialog = CallbackProperty(True)
     student_vel = CallbackProperty(0)
     doppler_calc_complete = CallbackProperty(False)
+    reset_flag = CallbackProperty(False)
 
     markers = CallbackProperty([
         # 'mee_gui1',
@@ -138,10 +139,7 @@ class StageOne(HubbleStage):
         spectrum_slideshow = SpectrumSlideshow(self.stage_state)
         self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
 
-        galaxy = { k.label : sample_data[k][0] for k in sample_data.main_components }
-        self._on_galaxy_selected(galaxy)
-        self.on_galaxy_row_click(galaxy)
-        self.galaxy_table_selected_change({"new": galaxy, "old": None})
+        self._select_galaxy()
 
         #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
 
@@ -194,7 +192,10 @@ class StageOne(HubbleStage):
         def reset(flag):
             if flag:
                 self.stage_state.marker = self.stage_state.markers[0]
+                self.stage_state.reset_flag = True
         add_callback(self.story_state, 'reset_flag', reset)
+
+        add_callback(self.stage_state, 'reset_flag', self._on_reset)
 
     def _on_marker_update(self, old, new):
         if not self.trigger_marker_update_cb:
@@ -240,6 +241,19 @@ class StageOne(HubbleStage):
             galaxy = { c: data[c][index] for c in components }
             self.selection_tool.select_galaxy(galaxy)
             self.story_state.update_student_data()
+
+    def _on_reset(self, reset):
+        if reset:
+            self._select_galaxy()
+            with ignore_callback(self.stage_state, 'reset_flag'):
+                self.stage_state.reset_flag = False
+
+    def _select_galaxy(self):
+        sample_data = self.get_data("Sample_Galaxy")
+        galaxy = { k.label : sample_data[k][0] for k in sample_data.main_components }
+        self._on_galaxy_selected(galaxy)
+        self.on_galaxy_row_click(galaxy)
+        self.galaxy_table_selected_change({"new": galaxy, "old": None})
 
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")

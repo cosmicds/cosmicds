@@ -39,15 +39,15 @@ class HubbleStage(Stage):
 
     def submit_measurement(self, measurement):
         prepared = self._prepare_measurement(measurement)
-        requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/submit-measurement", json=prepared)
+        requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/sample-measurement", json=prepared)
 
     def remove_measurement(self, galaxy_name):
         user = self.app_state.student
         if user.get("id", None) is not None:
-            requests.delete(f"{API_URL}/{HUBBLE_ROUTE_PATH}/measurement/{user['id']}/{galaxy_name}")
+            requests.delete(f"{API_URL}/{HUBBLE_ROUTE_PATH}/sample-measurement/{user['id']}")
 
     def _replace_galaxy_at_index(self, index):
-        sdss_data = self.get_data("SDSS_all_sample_filtered")
+        sdss_data = self.get_data("Sample_Galaxy")
         components = [x.label for x in sdss_data.main_components]
         meas_data = self.get_data("student_measurements")
         student_comps = [x.label for x in meas_data.main_components]
