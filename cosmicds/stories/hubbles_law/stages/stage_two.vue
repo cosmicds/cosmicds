@@ -45,27 +45,6 @@
           color="info"
           elevation="6"
         >
-          Click "Submit Age" to store result in database.
-        </v-card>           
-      </v-col>
-      <v-col cols="4">
-        <v-spacer></v-spacer>
-      </v-col>
-      <v-col cols="2" class="text-right">
-        <v-btn
-          class="white-text px-a"
-          color="success"
-          @click="submit()"
-        >submit</v-btn>
-      </v-col>      
-    </v-row>    
-    <v-row>
-      <v-col cols="4">
-        <v-card
-          class="pa-4"
-          color="info"
-          elevation="6"
-        >
           Click "Start Over" to create entry for a new student.
         </v-card>           
       </v-col>
@@ -79,18 +58,6 @@
           @click="start_over()"
         >start over</v-btn>
       </v-col>      
-    </v-row>   
-    <v-row>
-      <v-col cols="7">
-        <v-spacer></v-spacer>
-      </v-col>
-      <v-col cols="3" class="text-right">
-        <v-btn
-          class="white-text px-a"
-          color="accent"
-          @click="story_state.stage_index = 3"
-        >See Hubble Graph</v-btn>
-      </v-col>      
-    </v-row> 
+    </v-row>
   </v-container>
 </template>
