@@ -12,40 +12,50 @@ import requests
 from cosmicds.utils import API_URL
 from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
 
+def reverse(d):
+    return { v : k for k, v in d.items() }
+
+MEAS_TO_STATE = {
+    "measwave": "obs_wave_value",
+    "restwave": "rest_wave_value",
+    "velocity": "velocity_value",
+    "distance": "est_dist_value",
+    "name": "galaxy_name",
+    "student_id": "student_id",
+    "angular_size" : "ang_size_value"
+}
+
+STATE_TO_MEAS = reverse(MEAS_TO_STATE)
+
 @story_registry(name="hubbles_law")
 class HubblesLaw(Story):
-    measurements = DictCallbackProperty({
-        "galax_id": 123,
-        "rest_wave_value": 6563.0,
-        "rest_wave_unit": "Angstrom",
-        "obs_wave_value": 6863.0,
-        "obs_wave_unit": "Angstrom",
-        "velocity_value": 120.0,
-        "velocity_unit": "km / s",
-        "ang_size": 50,
-        "est_dist_value": 100,
-        "est_dist_unit": "lyr"
-    })
-    calculations = DictCallbackProperty({
-        "hubble_value_fit_value": 65.0,
-        "hubble_value_fit_unit": "km / s / Mpc",
-        "hubble_value_guess_value": 80.0,
-        "hubble_value_guess_unit": "km / s / Mpc",
-        "age_value": 1.3e9,
-        "age_unit": "Gyr"
-    })
-    validation_failure_counts = DictCallbackProperty({
-        "doppler_equation": 1,
-        "final_velocity": 3,
-        "mc_q1": 2
-    })
-    responses = DictCallbackProperty({
-        "dialog1": {
-            "free_response": "I'm 90% confident about my answer.",
-            "finished": True
-        }
-    })
+    measurements = DictCallbackProperty({})
+    calculations = DictCallbackProperty({})
+    validation_failure_counts = DictCallbackProperty({})
+    responses = DictCallbackProperty({})
     reset_flag = CallbackProperty(False)
+    sample_measurement = DictCallbackProperty({})
+
+    measurement_keys = [
+        "obs_wave_value",
+        "rest_wave_value",
+        "velocity_value",
+        "est_dist_value",
+        "ang_size_value",
+        "ra",
+        "decl",
+        "name",
+        "z",
+        "type",
+        "element",
+        "student_id",
+        "last_modified"
+    ]
+    summary_keys = [
+        "hubble_fit_value",
+        "age_value"
+    ]
+    name_ext = ".fits"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -89,7 +99,7 @@ class HubblesLaw(Story):
                for x in student_cols})
         student_data = Data(
             label="student_data",
-            **{x : ['X'] if x in ['id', 'element', 'type'] else [0] 
+            **{x : ['X'] if x in ['id', 'element', 'type', 'name'] else [0] 
                 for x in student_cols})
         self.data_collection.append(student_measurements)
         self.data_collection.append(student_data)
@@ -108,6 +118,16 @@ class HubblesLaw(Story):
     def make_data_writeable(self, data):
         for comp in data.main_components:
             data[comp.label].setflags(write=True)
+
+    def prune_none(self, data):
+        keep = set()
+        for i in range(data.size):
+            if all(data[comp][i] is not None for comp in data.main_components):
+                keep.add(i)
+
+        pruned_components = { comp.label: [data[comp][x] for x in keep] for comp in data.main_components }
+        pruned = Data(label=data.label, **pruned_components)
+        data.update_values_from_data(pruned)
 
     def _set_theme(self):
         v.theme.dark = True
@@ -172,9 +192,10 @@ class HubblesLaw(Story):
         main_components = [x.label for x in data.main_components]
         components = { col: list(df[col]) for col in main_components }
         new_data = Data(label='student_data', **components)
-        student_data = dc['student_data']
-        student_data.update_values_from_data(new_data)
-        self.make_data_writeable(student_data)
+        if new_data.size > 0:
+            student_data = dc['student_data']
+            student_data.update_values_from_data(new_data)
+            self.make_data_writeable(student_data)
 
     def reset_data(self):
         dc = self.data_collection
@@ -187,7 +208,7 @@ class HubblesLaw(Story):
                for x in student_cols})
         student_data = Data(
             label="student_data",
-            **{x : ['X'] if x in ['id', 'element', 'type'] else [0] 
+            **{x : ['X'] if x in ['id', 'element', 'type', 'name'] else [0] 
                 for x in student_cols})
         dc["student_measurements"].update_values_from_data(student_measurements)
         dc["student_data"].update_values_from_data(student_data)
@@ -198,3 +219,47 @@ class HubblesLaw(Story):
         self.reset_flag = True
         with ignore_callback(self, 'reset_flag'):
             self.reset_flag = False
+
+    def data_from_measurement(self, measurement):
+        measurement.update(measurement.get("galaxy", {}))
+        components = { STATE_TO_MEAS.get(k, k) : [measurement.get(k, None)] for k in self.measurement_keys }
+
+        for i, name in enumerate(components["name"]):
+            if name.endswith(self.name_ext):
+                components["name"][i] = name[:-len(self.name_ext)]
+        return Data(**components)
+
+    def fetch_measurement(self, url):
+        response = requests.get(url)
+        res_json = response.json()
+        return res_json["measurement"]
+
+    def fetch_measurement_data_and_update(self, url, label, prune_none=False, make_writeable=False, check_update=None, callbacks=None):
+        measurement = self.fetch_measurement(url)
+        need_update = check_update is None or check_update(measurement)
+        if not need_update or measurement is None:
+            return None
+        new_data = self.data_from_measurement(measurement)
+        new_data.label = label
+        if prune_none:
+            self.prune_none(new_data)
+        data = self.data_collection[label]
+        data.update_values_from_data(new_data)
+        if make_writeable:
+            self.make_data_writeable(data)
+
+        if callbacks is not None:
+            for cb in callbacks:
+                cb()
+
+        return new_data
+
+    def fetch_sample_data(self):
+        sample_meas_url = f"{API_URL}/{HUBBLE_ROUTE_PATH}/sample-measurements/{self.student_user['id']}"
+        self.fetch_measurement_data_and_update(sample_meas_url, "student_measurements", make_writeable=True)
+        self.update_student_data()
+
+    def sample_galaxy(self):
+        sample_data = self.data_collection["Sample_Galaxy"]
+        galaxy = { k.label : sample_data[k][0] for k in sample_data.main_components }
+        return galaxy

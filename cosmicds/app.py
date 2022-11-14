@@ -40,12 +40,20 @@ class Application(VuetifyTemplate, HubListener):
 
         self.app_state.update_db = kwargs.get("update_db", True)
         self.team_member = kwargs.get("team_member", None)
-        
-        # For testing purposes, we create a new dummy student on each startup
-        self._get_new_seed_student()
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
+
+        # For testing purposes, we create a new dummy student on each startup
+        student_id = kwargs.get("student_id", None)
+        if student_id:
+            student = { "id": student_id }
+            self.app_state.student = student
+            self.story_state.student_user = student
+            self.story_state.fetch_sample_data()
+        else:
+            self._get_new_seed_student()
+        print(f"Student id: {self.app_state.student['id']}")
 
         # Initialize from database
         if self.app_state.update_db:
@@ -102,12 +110,11 @@ class Application(VuetifyTemplate, HubListener):
             return
 
         # User information for a JupyterHub notebook session is stored in an
-        # environment  variable
+        # environment variable
         # user = os.environ['JUPYTERHUB_USER']
 
         user = self.app_state.student
         story = self.story_state.name
-        json.loads
         data = json.loads(json.dumps(self.story_state.as_dict()))
         if data:
             requests.put(f"{API_URL}/story-state/{user['id']}/{story}", json=data)
@@ -119,6 +126,8 @@ class Application(VuetifyTemplate, HubListener):
         if reset and self.app_state.update_db:
             data = { "seed": True, "team_member": self.team_member }
             response = requests.post(f"{API_URL}/new-dummy-student", json=data).json()
-            self.app_state.student = response["student"]
+            student = response["student"]
+            self.app_state.student = student
+            self.story_state.student_user = student
             with ignore_callback(self.app_state, 'reset_student'):
                 self.app_state.reset_student = False

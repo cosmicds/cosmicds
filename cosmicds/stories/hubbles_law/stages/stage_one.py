@@ -227,6 +227,7 @@ class StageOne(HubbleStage):
         else:
             filename = galaxy['name']
             gal_type = galaxy['type']
+            galaxy["restwave"] = H_ALPHA_REST_LAMBDA
             self.story_state.load_spectrum_data(filename, gal_type)
             self.add_data_values("student_measurements", galaxy)
 
@@ -249,11 +250,11 @@ class StageOne(HubbleStage):
                 self.stage_state.reset_flag = False
 
     def _select_galaxy(self):
-        sample_data = self.get_data("Sample_Galaxy")
-        galaxy = { k.label : sample_data[k][0] for k in sample_data.main_components }
+        galaxy = self.story_state.sample_galaxy()
         self._on_galaxy_selected(galaxy)
-        self.on_galaxy_row_click(galaxy)
-        self.galaxy_table_selected_change({"new": galaxy, "old": None})
+        self.galaxy_table.selected = [galaxy]
+        # self.on_galaxy_row_click(galaxy)
+        # self.galaxy_table_selected_change({"new": galaxy, "old": None})
 
     def vue_fill_data(self, _args=None):
         self._select_from_data("dummy_student_data")

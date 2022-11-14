@@ -92,14 +92,20 @@ class StageTwo(HubbleStage):
 
         self.distance_tool.observe(self._distance_tool_flagged, names=["flagged"])
 
+        add_callback(self.story_state, 'stage_index', self._on_stage_index_change)
+
+    def _on_stage_index_change(self, index):
+        if index == 2:
+            galaxy = self.story_state.sample_galaxy()
+            self.distance_table.selected = [galaxy]
+
     def distance_table_selected_change(self, change):
         selected = change["new"]
         if not selected or selected == change["old"]:
             return
 
-        index = self.distance_table.index
         data = self.distance_table.glue_data
-        galaxy = { x.label : data[x][index] for x in data.main_components }
+        galaxy = { x.label : data[x][0] for x in data.main_components }
         self.distance_tool.reset_canvas()
         self.distance_tool.go_to_location(galaxy["ra"], galaxy["decl"], fov=GALAXY_FOV)
 
@@ -138,7 +144,7 @@ class StageTwo(HubbleStage):
         fitted_line = fit(line_init, x, y)
         return fitted_line.slope.value
 
-    def vue_submit_age(self, _args=None):
+    def vue_submit(self, _args=None):
         h0 = self._find_H0()
         age = age_in_gyr_simple(h0)
         self.story_state.calculations["age_value"] = age

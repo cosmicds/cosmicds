@@ -38,8 +38,10 @@ class HubbleStage(Stage):
         return prepared
 
     def submit_measurement(self, measurement):
-        prepared = self._prepare_measurement(measurement)
-        requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/sample-measurement", json=prepared)
+        user = self.app_state.student
+        if user.get("id", None) is not None:
+            prepared = self._prepare_measurement(measurement)
+            requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/sample-measurement", json=prepared)
 
     def remove_measurement(self, galaxy_name):
         user = self.app_state.student

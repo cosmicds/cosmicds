@@ -55,16 +55,8 @@
         <v-btn
           class="white-text px-a"
           color="success"
-          @click="submit_age()"
-        >submit age</v-btn>
-        <v-card 
-          v-if="display_age"
-          class="pa-2 mt-2"
-          elevation="6"
-          outlined 
-        >
-          Estimated age: {{ age_to_display }} Gy
-        </v-card>
+          @click="submit()"
+        >submit</v-btn>
       </v-col>      
     </v-row>    
     <v-row>
