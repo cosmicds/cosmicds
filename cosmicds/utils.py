@@ -11,6 +11,7 @@ from glue.core.state_objects import State
 import numpy as np
 from threading import Timer
 from traitlets import Unicode
+from zmq.eventloop.ioloop import IOLoop
 
 __all__ = [
     'load_template', 'update_figure_css', 'extend_tool',
@@ -51,8 +52,11 @@ class RepeatedTimer(object):
 
     def _run(self):
         self.is_running = False
+        loop = IOLoop()
+        loop.make_current()
         self.start()
         self.function(*self.args, **self.kwargs)
+        loop.close()
 
     def start(self):
         if not self.is_running:
