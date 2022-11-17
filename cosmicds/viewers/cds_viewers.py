@@ -41,10 +41,6 @@ def cds_viewer_state(state_class):
             spacing = fless if dist_less < dist_more else fmore
             return spacing
 
-        # def reset_limits(self):
-        #     with ignore_callback(self, 'x_min', 'x_max', 'y_min', 'y_max'):
-        #         super().reset_limits()
-
         @callback_property
         def nxticks(self):
             return self._nxticks
@@ -169,23 +165,6 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
         def ignore(self, condition):
             self.ignore_conditions.append(condition)
 
-        def _scales_synced(self):
-            x_scale = self.scales['x']
-            y_scale = self.scales['y']
-            return x_scale.min == self.state.x_min and \
-                   x_scale.max == self.state.x_max and \
-                   y_scale.min == self.state.y_min and \
-                   y_scale.max == self.state.y_max
-
-        def _sync_scales(self):
-            if not self._scales_synced():
-                x_scale = self.scales['x']
-                y_scale = self.scales['y']
-                x_scale.min = self.state.x_min
-                x_scale.max = self.state.x_max
-                y_scale.min = self.state.y_min
-                y_scale.max = self.state.y_max
-
         def add_data(self, data):
             if any(condition(data) for condition in self.ignore_conditions):
                 return False
@@ -205,12 +184,6 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
         
         def _update_ytick_values(self, values):
             self.axis_y.tick_values = values
-
-        def reset_limits(self):
-            self.state.reset_limits()
-            self._sync_scales()
-            self.state.update_xticks()
-            self.state.update_yticks()
 
     return CDSViewer
 
