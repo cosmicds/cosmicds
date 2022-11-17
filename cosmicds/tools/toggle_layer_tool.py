@@ -14,16 +14,16 @@ class LayerToggleTool(Tool):
 
     def __init__(self, viewer, **kwargs):
         super().__init__(viewer, **kwargs)
-        self.layer_to_toggle = None
+        self.layer = None
 
     def activate(self):
-        if self.layer_to_toggle is None:
+        if self.layer is None:
             return
 
         # if we have no layers, don't do anything
         if len(self.viewer.layers) > 0:
-            self.layer_to_toggle.state.visible = not self.layer_to_toggle.state.visible
+            self.layer.state.visible = not self.layer.state.visible
             self.toggled_count += 1
     
     def set_layer_to_toggle(self, layer):
-        self.layer_to_toggle = layer
+        self.layer = layer
