@@ -8,7 +8,7 @@ from echo import add_callback, CallbackProperty
 from glue.core import HubListener
 from glue.core.state_objects import State
 from glue_jupyter.app import JupyterApplication
-from glue_jupyter.state_traitlets_helpers import GlueState
+from cosmicds.cds_glue_state import CDSGlueState
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
 from traitlets import Dict, Bool, Int
@@ -32,11 +32,11 @@ class ApplicationState(State):
 
 class Application(VuetifyTemplate, HubListener):
     _metadata = Dict({"mount_id": "content"}).tag(sync=True)
-    story_state = GlueState().tag(sync=True)
+    story_state = CDSGlueState().tag(sync=True)
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
     drawer = Bool(True).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
-    app_state = GlueState().tag(sync=True)
+    app_state = CDSGlueState().tag(sync=True)
     student_id = Int(0).tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):

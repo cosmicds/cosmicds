@@ -1,9 +1,9 @@
-from glue_jupyter.state_traitlets_helpers import GlueState
 from ipywidgets import widget_serialization
 from traitlets import Dict, Unicode
 from cosmicds.components.viewer_layout import ViewerLayout
 from cosmicds.events import WriteToDatabaseMessage
 
+from cosmicds.cds_glue_state import CDSGlueState
 from cosmicds.mixins import TemplateMixin, HubMixin
 from cosmicds.utils import debounce
 from glue.core import Data
@@ -120,9 +120,9 @@ class Story(CDSState, HubMixin):
 
 class Stage(TemplateMixin):
     template = Unicode().tag(sync=True)
-    story_state = GlueState().tag(sync=True)
-    stage_state = GlueState().tag(sync=True)
-    app_state = GlueState().tag(sync=True)
+    story_state = CDSGlueState().tag(sync=True)
+    stage_state = CDSGlueState().tag(sync=True)
+    app_state = CDSGlueState().tag(sync=True)
     stage_icon = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)
     subtitle = Unicode().tag(sync=True)
