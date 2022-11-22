@@ -11,10 +11,11 @@ class LayerToggle(VuetifyTemplate):
     layers = List().tag(sync=True)
     selected = List().tag(sync=True)
 
-    def __init__(self, viewer, names=None, *args, **kwargs):
+    def __init__(self, viewer, names=None, sort=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.name_transform = LayerToggle._create_name_transform(names)
+        self.sort = sort
 
         self._ignore_conditions = CallbackContainer()
 
@@ -46,7 +47,7 @@ class LayerToggle(VuetifyTemplate):
         self._update_layers_from_viewer()
 
     def _update_layers_from_viewer(self, layers=None):
-        self.layers = [self._layer_data(layer) for layer in self.watched_layers]
+        self.layers = sorted([self._layer_data(layer) for layer in self.watched_layers], key=self.sort)
         self.selected = [index for index, layer in enumerate(self.viewer.layers) if layer.state.visible]
 
     @observe('selected')
