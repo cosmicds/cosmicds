@@ -36,9 +36,10 @@ class LayerToggle(VuetifyTemplate):
 
     def _layer_index(self, layers, layer):
         try:
-            return layers.index(layer)
-        except Exception:
-            return len(self.watched_layers) + 1
+            index = layers.index(layer)
+            return index
+        except ValueError:
+            return len(layers) + 1
 
     def set_layer_order(self, layers):
         def sort_key(layer):
