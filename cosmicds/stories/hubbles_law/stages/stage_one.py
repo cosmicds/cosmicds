@@ -223,7 +223,6 @@ class StageOne(HubbleStage):
         self.story_state.load_spectrum_data(filename, gal_type)
         self.add_data_values("student_measurements", galaxy)
         self.add_data_values("student_measurements", galaxy) # Not a mistake - we want to do this twice
-        print("Selected the galaxy")
 
     def _select_from_data(self, dc_name):
         data = self.get_data(dc_name)

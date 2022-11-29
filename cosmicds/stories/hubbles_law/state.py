@@ -10,7 +10,7 @@ import ipyvuetify as v
 
 import requests
 from cosmicds.utils import API_URL
-from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH
+from cosmicds.stories.hubbles_law.utils import HUBBLE_ROUTE_PATH, H_ALPHA_REST_LAMBDA
 
 def reverse(d):
     return { v : k for k, v in d.items() }
@@ -49,7 +49,8 @@ class HubblesLaw(Story):
         "type",
         "element",
         "student_id",
-        "last_modified"
+        "last_modified",
+        "measurement_number"
     ]
     summary_keys = [
         "hubble_fit_value",
@@ -220,18 +221,25 @@ class HubblesLaw(Story):
         with ignore_callback(self, 'reset_flag'):
             self.reset_flag = False
 
-    def data_from_measurement(self, measurements):
+    def data_from_measurements(self, measurements):
         for measurement in measurements:
             measurement.update(measurement.get("galaxy", {}))
-        components = { STATE_TO_MEAS.get(k, k) : [m.get(k, None) for m in measurements] for k in self.measurement_keys }
 
+        galaxy = self.sample_galaxy()
+        for i in range(len(measurements), 2):
+            measurement = dict(galaxy)
+            number = "first" if i == 0 else "second"
+            measurement["rest_wave_value"] = H_ALPHA_REST_LAMBDA
+            measurement["measurement_number"] = number
+            measurements.append(measurement)
+        
+        components = { STATE_TO_MEAS.get(k, k) : [m.get(k, None) for m in measurements] for k in self.measurement_keys }
         for i, name in enumerate(components["name"]):
             if name.endswith(self.name_ext):
                 components["name"][i] = name[:-len(self.name_ext)]
         return Data(**components)
 
     def fetch_measurements(self, url):
-        print("Fetching measurements")
         response = requests.get(url)
         res_json = response.json()
         return res_json["measurements"]
@@ -241,7 +249,7 @@ class HubblesLaw(Story):
         need_update = check_update is None or check_update(measurements)
         if not need_update or len(measurements) == 0:
             return None
-        new_data = self.data_from_measurement(measurements)
+        new_data = self.data_from_measurements(measurements)
         new_data.label = label
         if prune_none:
             self.prune_none(new_data)

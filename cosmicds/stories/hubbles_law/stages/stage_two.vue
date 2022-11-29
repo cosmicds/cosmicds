@@ -12,11 +12,22 @@
 
     <v-row class="d-flex align-stretch">
       <v-col cols="4">
-        <c-distance-sidebar/>
+        <c-distance-sidebar-1/>
       </v-col>
       <v-col cols="6">
         <v-card class="align-self-stretch">
-          <c-distance-tool/>
+          <c-distance-tool-1/>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row class="d-flex align-stretch">
+      <v-col cols="4">
+        <c-distance-sidebar-2/>
+      </v-col>
+      <v-col cols="6">
+        <v-card class="align-self-stretch">
+          <c-distance-tool-2/>
         </v-card>
       </v-col>
     </v-row>

@@ -23,7 +23,6 @@ class DistanceTool(v.VueTemplate):
     view_changing = Bool(False).tag(sync=True)
     measuring_allowed = Bool(False).tag(sync=True)
     galaxy = Dict().tag(sync=True)
-    flagged = Bool(False).tag(sync=True)
 
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
@@ -91,8 +90,3 @@ class DistanceTool(v.VueTemplate):
     def go_to_location(self, ra, dec, fov=GALAXY_FOV):
         coordinates = SkyCoord(ra * u.deg, dec * u.deg, frame='icrs')
         self.widget.center_on_coordinates(coordinates, fov=fov, instant=True)
-
-    @observe('flagged')
-    def mark_galaxy_bad(self, _args=None):
-        data = { "galaxy_id" : int(self.galaxy["id"]) }
-        requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/mark-galaxy-bad", json=data)
