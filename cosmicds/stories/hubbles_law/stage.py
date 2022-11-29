@@ -15,7 +15,8 @@ class HubbleStage(Stage):
         "distance": "est_dist_value",
         "name": "galaxy_name",
         "student_id": "student_id",
-        "angular_size" : "ang_size_value"
+        "angular_size" : "ang_size_value",
+        "measurement_number": "measurement_number"
     }
 
     _units = {
@@ -43,10 +44,10 @@ class HubbleStage(Stage):
             prepared = self._prepare_measurement(measurement)
             requests.put(f"{API_URL}/{HUBBLE_ROUTE_PATH}/sample-measurement", json=prepared)
 
-    def remove_measurement(self, galaxy_name):
+    def remove_measurement(self, measurement_number):
         user = self.app_state.student
         if user.get("id", None) is not None:
-            requests.delete(f"{API_URL}/{HUBBLE_ROUTE_PATH}/sample-measurement/{user['id']}")
+            requests.delete(f"{API_URL}/{HUBBLE_ROUTE_PATH}/sample-measurement/{user['id']}/{measurement_number}")
 
     def _replace_galaxy_at_index(self, index):
         sdss_data = self.get_data("Sample_Galaxy")

@@ -92,14 +92,14 @@ class HubblesLaw(Story):
         # Compose empty data containers to be populated by user
         student_cols = ["id", "name", "ra", "decl", "z", "type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
-                         "element", "angular_size"]
+                         "element", "angular_size", "measurement_number"]
         student_measurements = Data(
             label='student_measurements',
             **{x: np.array([], dtype='float64')
                for x in student_cols})
         student_data = Data(
             label="student_data",
-            **{x : ['X'] if x in ['id', 'element', 'type', 'name'] else [0] 
+            **{x : ['X'] if x in ['id', 'element', 'type', 'name', 'measurement_number'] else [0] 
                 for x in student_cols})
         self.data_collection.append(student_measurements)
         self.data_collection.append(student_data)
@@ -201,14 +201,14 @@ class HubblesLaw(Story):
         dc = self.data_collection
         student_cols = ["id", "name", "ra", "decl", "z", "type", "measwave",
                          "restwave", "student_id", "velocity", "distance",
-                         "element", "angular_size"]
+                         "element", "angular_size", "measurement_number"]
         student_measurements = Data(
             label='student_measurements',
             **{x: np.array([], dtype='float64')
                for x in student_cols})
         student_data = Data(
             label="student_data",
-            **{x : ['X'] if x in ['id', 'element', 'type', 'name'] else [0] 
+            **{x : ['X'] if x in ['id', 'element', 'type', 'name', 'measurement_number'] else [0] 
                 for x in student_cols})
         dc["student_measurements"].update_values_from_data(student_measurements)
         dc["student_data"].update_values_from_data(student_data)
@@ -220,26 +220,28 @@ class HubblesLaw(Story):
         with ignore_callback(self, 'reset_flag'):
             self.reset_flag = False
 
-    def data_from_measurement(self, measurement):
-        measurement.update(measurement.get("galaxy", {}))
-        components = { STATE_TO_MEAS.get(k, k) : [measurement.get(k, None)] for k in self.measurement_keys }
+    def data_from_measurement(self, measurements):
+        for measurement in measurements:
+            measurement.update(measurement.get("galaxy", {}))
+        components = { STATE_TO_MEAS.get(k, k) : [m.get(k, None) for m in measurements] for k in self.measurement_keys }
 
         for i, name in enumerate(components["name"]):
             if name.endswith(self.name_ext):
                 components["name"][i] = name[:-len(self.name_ext)]
         return Data(**components)
 
-    def fetch_measurement(self, url):
+    def fetch_measurements(self, url):
+        print("Fetching measurements")
         response = requests.get(url)
         res_json = response.json()
-        return res_json["measurement"]
+        return res_json["measurements"]
 
     def fetch_measurement_data_and_update(self, url, label, prune_none=False, make_writeable=False, check_update=None, callbacks=None):
-        measurement = self.fetch_measurement(url)
-        need_update = check_update is None or check_update(measurement)
-        if not need_update or measurement is None:
+        measurements = self.fetch_measurements(url)
+        need_update = check_update is None or check_update(measurements)
+        if not need_update or len(measurements) == 0:
             return None
-        new_data = self.data_from_measurement(measurement)
+        new_data = self.data_from_measurement(measurements)
         new_data.label = label
         if prune_none:
             self.prune_none(new_data)

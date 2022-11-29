@@ -1,3 +1,4 @@
+from functools import partial
 from os.path import join
 from pathlib import Path
 
@@ -5,7 +6,6 @@ from echo import add_callback, ignore_callback, CallbackProperty
 from glue.core import Data
 from glue.core.state_objects import State
 from glue_jupyter.bqplot.scatter import BqplotScatterView
-from random import sample
 from traitlets import default
 
 from cosmicds.registries import register_stage
@@ -100,10 +100,10 @@ class StageOne(HubbleStage):
         add_callback(self.app_state, 'using_voila', self._update_image_location)
 
         # Set up viewers
-        spectrum_viewer = self.add_viewer(SpectrumView, label="spectrum_viewer")
-        spectrum_viewer.add_event_callback(self.on_spectrum_click, events=['click'])
-        sf_tool = spectrum_viewer.toolbar.tools["hubble:specflag"]
-        add_callback(sf_tool, "flagged", self._on_spectrum_flagged)
+        spectrum_viewer_1 = self.add_viewer(SpectrumView, label="spectrum_viewer_1")
+        spectrum_viewer_1.add_event_callback(partial(self.on_spectrum_click, measurement_number=1), events=['click'])
+        spectrum_viewer_2 = self.add_viewer(SpectrumView, label="spectrum_viewer_2")
+        spectrum_viewer_2.add_event_callback(partial(self.on_spectrum_click, measurement_number=2), events=['click'])
 
         for label in ['hub_const_viewer', 'hub_fit_viewer',
                       'hub_comparison_viewer', 'hub_students_viewer',
@@ -117,13 +117,15 @@ class StageOne(HubbleStage):
                                               'element',
                                               'restwave',
                                               'measwave',
-                                              'velocity'],
+                                              'velocity',
+                                              'measurement_number'],
                              key_component='name',
                              names=['Galaxy Name',
                                     'Element',
                                     'Rest Wavelength (Å)',
                                     'Observed Wavelength (Å)',
-                                    'Velocity (km/s)'],
+                                    'Velocity (km/s)',
+                                    'Number'],
                              title='My Galaxies',
                              single_select=True) # True for now
         self.add_widget(galaxy_table, label="galaxy_table")
@@ -215,21 +217,13 @@ class StageOne(HubbleStage):
         self.trigger_marker_update_cb = True
 
     def _on_galaxy_selected(self, galaxy):
-        data = self.get_data("student_measurements")
-        already_present = galaxy['name'] in data['name'] # Avoid duplicates
-        if already_present:
-            # To do nothing
-            return
-            # If instead we wanted to remove the point from the student's selection
-            # index = next(idx for idx, val in enumerate(component_dict['ID']) if val == galaxy['ID'])
-            # for component, values in component_dict.items():
-            #     values.pop(index)
-        else:
-            filename = galaxy['name']
-            gal_type = galaxy['type']
-            galaxy["restwave"] = H_ALPHA_REST_LAMBDA
-            self.story_state.load_spectrum_data(filename, gal_type)
-            self.add_data_values("student_measurements", galaxy)
+        filename = galaxy['name']
+        gal_type = galaxy['type']
+        galaxy["restwave"] = H_ALPHA_REST_LAMBDA
+        self.story_state.load_spectrum_data(filename, gal_type)
+        self.add_data_values("student_measurements", galaxy)
+        self.add_data_values("student_measurements", galaxy) # Not a mistake - we want to do this twice
+        print("Selected the galaxy")
 
     def _select_from_data(self, dc_name):
         data = self.get_data(dc_name)
@@ -262,29 +256,34 @@ class StageOne(HubbleStage):
     def vue_select_galaxies(self, _args=None):
         self._select_from_data("SDSS_all_sample_filtered")
 
-    def update_spectrum_viewer(self, name, z):
-        specview = self.get_viewer("spectrum_viewer")
-        specview.toolbar.active_tool = None
+    def update_spectrum_viewers(self, name, z):
         filename = name
         spec_name = filename.split(".")[0]
         data_name = spec_name + '[COADD]'
         data = self.get_data(data_name)
         self.story_state.update_data("spectrum_data", data)
-        if len(specview.layers) == 0:
-            spec_data = self.get_data("spectrum_data")
-            specview.add_data(spec_data)
-        specview.state.reset_limits()
-        self.stage_state.waveline_set = False
-
         sdss = self.get_data("Sample_Galaxy")
         sdss_index = next((i for i in range(sdss.size) if sdss["name"][i] == name), None)
-        if sdss_index is not None:
-            element = sdss['element'][sdss_index]
-            specview.update(name, element, z)
-            restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
-            index = self.get_widget("galaxy_table").index
-            self.update_data_value("student_measurements", "element", element, index)
-            self.update_data_value("student_measurements", "restwave", restwave, index)
+
+        for n in range(1, 3):
+            specview = self.get_viewer(f"spectrum_viewer_{n}")
+            specview.toolbar.active_tool = None
+            if len(specview.layers) == 0:
+                spec_data = self.get_data("spectrum_data")
+                specview.add_data(spec_data)
+            specview.state.reset_limits()
+            self.stage_state.waveline_set = False
+
+            if sdss_index is not None:
+                element = sdss['element'][sdss_index]
+                specview.update(name, element, z)
+                restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
+                index = n - 1
+                self.update_data_values("student_measurements", {
+                    "element": element,
+                    "restwave": restwave,
+                    "measurement_number": "first" if index == 0 else "second"
+                }, index)
 
     def galaxy_table_selected_change(self, change):
         if change["new"] == change["old"]:
@@ -304,7 +303,7 @@ class StageOne(HubbleStage):
 
         z = galaxy["z"]
         self.story_state.update_data("spectrum_data", spec_data)
-        self.update_spectrum_viewer(name, z)
+        self.update_spectrum_viewers(name, z)
 
         if self.stage_state.marker == 'cho_row1':
             self.stage_state.marker = 'mee_spe1'
@@ -321,20 +320,24 @@ class StageOne(HubbleStage):
         self.stage_state.lambda_rest = data["restwave"][index]
         self.stage_state.lambda_obs = data["measwave"][index]
 
-    def on_spectrum_click(self, event):
-        specview = self.get_viewer("spectrum_viewer")
+    def on_spectrum_click(self, event, measurement_number):
+        specview = self.get_viewer(f"spectrum_viewer_{measurement_number}")
         if event["event"] != "click" or not specview.line_visible:
             return
-        value = round(event["domain"]["x"], 0)
+        measwave = round(event["domain"]["x"], 0)
         self.stage_state.waveline_set = True
-        index = self.galaxy_table.index
-        self.update_data_value("student_measurements", "measwave", value, index)
+        index = measurement_number - 1
         
         #set up to auto fill velocity when wavelength is measured
         data = self.get_data("student_measurements")
         lamb_rest = data["restwave"][index]
-        velocity = int(3 * (10 ** 5) * (value/lamb_rest - 1))
-        self.update_data_value("student_measurements", "velocity", velocity, index)
+        velocity = int(3 * (10 ** 5) * (measwave/lamb_rest - 1))
+        number = "first" if index == 0 else "second"
+        self.update_data_values("student_measurements", {
+            "measwave": measwave,
+            "velocity": velocity,
+            "measurement_number": number
+        }, index)
         self.story_state.update_student_data()
 
 
@@ -373,21 +376,3 @@ class StageOne(HubbleStage):
         spectrum_viewer = self.get_viewer("spectrum_viewer")
         self.story_state.update_data(dc_name, data)
         spectrum_viewer.update("", "", 0)
-
-    def _on_spectrum_flagged(self, flagged):
-        if not flagged:
-            return
-        index = self.galaxy_table.index
-        if index is None:
-            return
-        item = self.galaxy_table.selected[0]
-        galaxy_name = item["name"]
-        self.remove_measurement(galaxy_name)
-        galaxy = self._replace_galaxy_at_index(index)
-        self.galaxy_table._populate_table()
-        self.galaxy_table.selected = [galaxy]
-
-        spectrum_viewer = self.get_viewer("spectrum_viewer")
-        sf_tool = spectrum_viewer.toolbar.tools["hubble:specflag"]
-        with ignore_callback(sf_tool, "flagged"):
-            sf_tool.flagged = False

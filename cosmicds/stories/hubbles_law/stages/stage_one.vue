@@ -118,7 +118,15 @@
           :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1' : 'pa-0'"
           outlined
         >
-          <jupyter-widget :widget="viewers.spectrum_viewer"/>
+          <jupyter-widget :widget="viewers.spectrum_viewer_1"/>
+        </v-card>
+        <v-card
+          v-if="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1']"
+          :color="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'info' : 'black'"
+          :class="stage_state.indices[stage_state.marker] >= stage_state.indices['mee_spe1'] ? 'pa-1' : 'pa-0'"
+          outlined
+        >
+          <jupyter-widget :widget="viewers.spectrum_viewer_2"/>
         </v-card>
       </v-col>
     </v-row>
