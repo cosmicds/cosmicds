@@ -91,11 +91,11 @@ class StageTwo(HubbleStage):
 
         self.add_component(DistanceSidebar(self.stage_state), label="c-distance-sidebar-1")
         self.distance_tool_1.observe(partial(self._angular_size_update, num=1), names=["angular_size"])
-        self.distance_tool_1.observe(partial(self._angular_height_update, num=2), names=["angular_height"])
+        self.distance_tool_1.observe(partial(self._angular_height_update, num=1), names=["angular_height"])
         self.distance_sidebar_1.angular_height = format_fov(self.distance_tool_1.angular_height)
 
         self.add_component(DistanceSidebar(self.stage_state), label="c-distance-sidebar-2")
-        self.distance_tool_2.observe(partial(self._angular_size_update, num=1), names=["angular_size"])
+        self.distance_tool_2.observe(partial(self._angular_size_update, num=2), names=["angular_size"])
         self.distance_tool_2.observe(partial(self._angular_height_update, num=2), names=["angular_height"])
         self.distance_sidebar_2.angular_height = format_fov(self.distance_tool_2.angular_height)
 
