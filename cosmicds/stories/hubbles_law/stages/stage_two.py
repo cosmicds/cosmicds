@@ -166,10 +166,14 @@ class StageTwo(HubbleStage):
 
     def vue_start_over(self, _args=None):
         self.app_state.reset_student = True
-        self.distance_tool.reset_canvas()
-        self.distance_tool.go_to_location(0, 0, FULL_FOV)
+        self.distance_tool_1.reset_canvas()
+        self.distance_tool_2.reset_canvas()
+        self.distance_tool_1.go_to_location(0, 0, FULL_FOV)
+        self.distance_tool_2.go_to_location(0, 0, FULL_FOV)
         self.display_age = False
         self.story_state.start_over()
+        self.distance_table.selected = []
+        self.distance_table.selected = self.distance_table.items
 
     @property
     def distance_sidebar_1(self):

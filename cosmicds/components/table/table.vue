@@ -25,7 +25,6 @@
     <v-data-table
       dense
       v-model="selected"
-      @click:row="(item, data) => handle_row_click(item, data)"
       @update:sort-by="(field) => update_sort_by(field)"
       :headers="headers"
       :items="items"

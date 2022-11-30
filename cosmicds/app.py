@@ -51,9 +51,9 @@ class Application(VuetifyTemplate, HubListener):
             self.app_state.student = student
             self.story_state.student_user = student
             self.story_state.fetch_sample_data()
+            print(f"Student id: {self.app_state.student['id']}")
         else:
             self._get_new_seed_student()
-        print(f"Student id: {self.app_state.student['id']}")
 
         # Initialize from database
         if self.app_state.update_db:
@@ -131,3 +131,4 @@ class Application(VuetifyTemplate, HubListener):
             self.story_state.student_user = student
             with ignore_callback(self.app_state, 'reset_student'):
                 self.app_state.reset_student = False
+            print(f"Student id: {self.app_state.student['id']}")

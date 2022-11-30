@@ -59,7 +59,6 @@ class StageThree(HubbleStage):
         viewer.state.reset_limits()
 
     def _on_reset(self, flag):
-        print(flag)
         if flag:
             fit_viewer = self.get_viewer("fit_viewer")
             fit_tool = fit_viewer.toolbar.tools["cds:linefit"]

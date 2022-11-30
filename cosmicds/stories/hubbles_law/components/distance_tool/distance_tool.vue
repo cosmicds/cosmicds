@@ -49,12 +49,10 @@
         class="distance-canvas"
         ref="canvas">
       </canvas>
-      <v-lazy>
-        <jupyter-widget
-          :widget="widget"
-          class="wwt-widget"
-        />
-      </v-lazy>
+      <jupyter-widget
+        :widget="widget"
+        class="wwt-widget"
+      />
     </div>
   </div>
 </template>
