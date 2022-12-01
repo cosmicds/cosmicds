@@ -48,6 +48,7 @@ class Application(VuetifyTemplate, HubListener):
         student_id = kwargs.get("student_id", None)
         if student_id:
             student = { "id": student_id }
+            self.student_id = student_id
             self.app_state.student = student
             self.story_state.student_user = student
             self.story_state.fetch_sample_data()
@@ -129,6 +130,7 @@ class Application(VuetifyTemplate, HubListener):
             student = response["student"]
             self.app_state.student = student
             self.story_state.student_user = student
+            self.student_id = student["id"]
             with ignore_callback(self.app_state, 'reset_student'):
                 self.app_state.reset_student = False
             print(f"Student id: {self.app_state.student['id']}")
