@@ -7,7 +7,7 @@ from glue_jupyter.app import JupyterApplication
 from glue_jupyter.state_traitlets_helpers import GlueState
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from traitlets import Dict, Bool
+from traitlets import Dict, Bool, Int
 from glue.core import HubListener
 
 from .events import StepChangeMessage, WriteToDatabaseMessage
@@ -32,6 +32,7 @@ class Application(VuetifyTemplate, HubListener):
     drawer = Bool(False).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
     app_state = GlueState().tag(sync=True)
+    student_id = Int(0).tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,6 +56,7 @@ class Application(VuetifyTemplate, HubListener):
             print(f"Student id: {self.app_state.student['id']}")
         else:
             self._get_new_seed_student()
+            self.story_state.reset_data()
 
         # Initialize from database
         if self.app_state.update_db:

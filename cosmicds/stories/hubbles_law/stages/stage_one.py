@@ -39,7 +39,7 @@ class StageState(State):
     reset_flag = CallbackProperty(False)
 
     markers = CallbackProperty([
-        # 'mee_gui1',
+        'mee_gui1',
         # 'sel_gal1',
         # 'sel_gal2',
         'cho_row1',
@@ -141,6 +141,16 @@ class StageOne(HubbleStage):
         spectrum_slideshow = SpectrumSlideshow(self.stage_state)
         self.add_component(spectrum_slideshow, label='c-spectrum-slideshow')
 
+        galaxy = self.story_state.sample_galaxy()
+        name = galaxy["name"]
+        gal_type = galaxy["type"]
+        filename = name
+        spec_data = self.story_state.load_spectrum_data(filename, gal_type)
+
+        z = galaxy["z"]
+        self.story_state.update_data("spectrum_data", spec_data)
+        self.update_spectrum_viewers(name, z)
+
         self._select_galaxy()
 
         #spectrum_slideshow.observe(self._on_slideshow_complete, names=['spectrum_slideshow_complete'])
@@ -217,12 +227,7 @@ class StageOne(HubbleStage):
         self.trigger_marker_update_cb = True
 
     def _on_galaxy_selected(self, galaxy):
-        filename = galaxy['name']
-        gal_type = galaxy['type']
-        galaxy["restwave"] = H_ALPHA_REST_LAMBDA
-        self.story_state.load_spectrum_data(filename, gal_type)
-        self.add_data_values("student_measurements", galaxy)
-        self.add_data_values("student_measurements", galaxy) # Not a mistake - we want to do this twice
+        pass
 
     def _select_from_data(self, dc_name):
         data = self.get_data(dc_name)
@@ -278,31 +283,10 @@ class StageOne(HubbleStage):
                 specview.update(name, element, z)
                 restwave = MG_REST_LAMBDA if element == 'Mg-I' else H_ALPHA_REST_LAMBDA
                 index = n - 1
-                self.update_data_values("student_measurements", {
-                    "element": element,
-                    "restwave": restwave,
-                    "measurement_number": "first" if index == 0 else "second"
-                }, index)
 
     def galaxy_table_selected_change(self, change):
         if change["new"] == change["old"]:
             return
-
-        index = 0
-        data = self.galaxy_table.glue_data
-        galaxy = { x.label : data[x][index] for x in data.main_components }
-        name = galaxy["name"]
-        gal_type = galaxy["type"]
-        if name is None or gal_type is None:
-            return
-
-        # Load the spectrum data, if necessary
-        filename = name
-        spec_data = self.story_state.load_spectrum_data(filename, gal_type)
-
-        z = galaxy["z"]
-        self.story_state.update_data("spectrum_data", spec_data)
-        self.update_spectrum_viewers(name, z)
 
         if self.stage_state.marker == 'cho_row1':
             self.stage_state.marker = 'mee_spe1'

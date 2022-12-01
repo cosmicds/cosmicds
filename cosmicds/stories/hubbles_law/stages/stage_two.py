@@ -99,6 +99,10 @@ class StageTwo(HubbleStage):
         self.distance_tool_2.observe(partial(self._angular_height_update, num=2), names=["angular_height"])
         self.distance_sidebar_2.angular_height = format_fov(self.distance_tool_2.angular_height)
 
+        galaxy = self.story_state.sample_galaxy()
+        self.distance_tool_1.go_to_location(galaxy["ra"], galaxy["decl"], fov=GALAXY_FOV)
+        self.distance_tool_2.go_to_location(galaxy["ra"], galaxy["decl"], fov=GALAXY_FOV)
+
         add_callback(self.story_state, 'stage_index', self._on_stage_index_change)
 
     def _on_stage_index_change(self, index):
@@ -115,8 +119,6 @@ class StageTwo(HubbleStage):
         galaxy = { x.label : data[x][0] for x in data.main_components }
         self.distance_tool_1.reset_canvas()
         self.distance_tool_2.reset_canvas()
-        self.distance_tool_1.go_to_location(galaxy["ra"], galaxy["decl"], fov=GALAXY_FOV)
-        self.distance_tool_2.go_to_location(galaxy["ra"], galaxy["decl"], fov=GALAXY_FOV)
 
         self.stage_state.galaxy = galaxy
         self.stage_state.galaxy_dist = None
@@ -168,12 +170,8 @@ class StageTwo(HubbleStage):
         self.app_state.reset_student = True
         self.distance_tool_1.reset_canvas()
         self.distance_tool_2.reset_canvas()
-        self.distance_tool_1.go_to_location(0, 0, FULL_FOV)
-        self.distance_tool_2.go_to_location(0, 0, FULL_FOV)
         self.display_age = False
         self.story_state.start_over()
-        self.distance_table.selected = []
-        self.distance_table.selected = self.distance_table.items
 
     @property
     def distance_sidebar_1(self):

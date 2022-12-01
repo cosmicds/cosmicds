@@ -214,6 +214,26 @@ class HubblesLaw(Story):
         dc["student_measurements"].update_values_from_data(student_measurements)
         dc["student_data"].update_values_from_data(student_data)
 
+        galaxy = self.sample_galaxy()
+        filename = galaxy['name']
+        gal_type = galaxy['type']
+        galaxy["restwave"] = H_ALPHA_REST_LAMBDA
+        meas_1 = { **galaxy, "measurement_number": "first" }
+        meas_2 = { **galaxy, "measurement_number": "second" }
+        self.load_spectrum_data(filename, gal_type)
+        self.add_data_values("student_measurements", meas_1)
+        self.add_data_values("student_measurements", meas_2)
+
+    def add_data_values(self, dc_name, values):
+        data = self.data_collection[dc_name]
+        main_components = [x.label for x in data.main_components]
+        component_dict = {c : list(data[c]) for c in main_components}
+        for component, vals in component_dict.items():
+            vals.append(values.get(component, None))
+        new_data = Data(label=data.label, **component_dict)
+        self.make_data_writeable(new_data)
+        data.update_values_from_data(new_data)
+
     def start_over(self):
         self.reset_data()
         self.stage_index = 1
