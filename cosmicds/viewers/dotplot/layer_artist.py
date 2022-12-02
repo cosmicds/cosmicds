@@ -38,12 +38,15 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             x_range = self._viewer_state.x_max - self._viewer_state.x_min
             y_range = self._viewer_state.y_max - self._viewer_state.y_min
             n = len(self.bars.x)
+            
 
+            # JC: As of right now, there's a bit of trickery here
+            # We're assuming that the viewer has its default height of 400px
+            # I reverse-engineered the formula relating size (the setting we give to bqplot)
+            # and the ratio (viewer pixel height / data y range), which is what we want the pixel height to be.
             ratio = 400 / y_range
             factor = 0.785
             size = floor(factor * (ratio ** 2))
-            #size = round(self.bins[1] - self.bins[0])
-            print(f"Size: {size}")
             self.bars.default_size = size
 
             skew = min(x_range / y_range, 1)
