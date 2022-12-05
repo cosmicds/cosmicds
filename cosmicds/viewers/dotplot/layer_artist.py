@@ -1,10 +1,13 @@
+from math import floor, pi
+
 from echo.core import add_callback
+from glue.utils import color2hex
 from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
 from glue_jupyter.link import dlink, link
-from bqplot import ScatterGL, Scatter
+
+from bqplot import ScatterGL
 from numpy import inf
-from math import floor, pi
-from glue.utils import color2hex
+
 
 
 class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
@@ -16,7 +19,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
 
         self.view = view
 
-        self.bars = Scatter(scales=self.view.scales, x=[0, 1], y=[0, 1], marker='circle')
+        self.bars = ScatterGL(scales=self.view.scales, x=[0, 1], y=[0, 1], marker='circle')
 
         self.view.figure.marks = list(self.view.figure.marks) + [self.bars]
 

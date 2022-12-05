@@ -10,7 +10,7 @@ class BqplotDotPlotView(BqplotHistogramView):
     _data_artist_cls = BqplotDotPlotLayerArtist
     _subset_artist_cls = BqplotDotPlotLayerArtist
 
-    tools = BqplotHistogramView.tools + ["bqplot:xzoom"]
+    tools = ["bqplot:home", "bqplot:xzoom"]
 
     def __init__(self, session, state=None):
         super(BqplotDotPlotView, self).__init__(session, state=state)
