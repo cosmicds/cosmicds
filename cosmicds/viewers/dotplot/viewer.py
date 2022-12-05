@@ -1,6 +1,7 @@
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
 from .layer_artist import BqplotDotPlotLayerArtist
 from .state import DotPlotViewerState
+from ipywidgets import DOMWidget
 
 class BqplotDotPlotView(BqplotHistogramView):
 
@@ -10,7 +11,7 @@ class BqplotDotPlotView(BqplotHistogramView):
     _data_artist_cls = BqplotDotPlotLayerArtist
     _subset_artist_cls = BqplotDotPlotLayerArtist
 
-    tools = ["bqplot:home", "bqplot:xzoom"]
+    tools = BqplotHistogramView.tools + ["bqplot:xzoom"]
 
     def __init__(self, session, state=None):
         super(BqplotDotPlotView, self).__init__(session, state=state)
@@ -21,7 +22,7 @@ class BqplotDotPlotView(BqplotHistogramView):
         # e.g. "300px"
         # TODO: Handle other height specifications
         height = change["new"]
-        if height.endswith("px"):
+        if height is not None and height.endswith("px"):
             height = int(height[:-2])
             height -= self.figure.fig_margin["bottom"]
             self.state.viewer_height = height

@@ -41,15 +41,16 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             y_range = self._viewer_state.y_max - self._viewer_state.y_min
 
             # The default_size parameter in bqplot specifies the area of the mark in pixels
-            # but we know what height (i.e. diameter) we want
+            # but we know what pixel height (i.e. diameter) we want
             # so the size should be (pi / 4) * height ^ 2
-            height = (self._viewer_state.viewer_height + self.view.figure.fig_margin["top"]) / y_range
+            pixel_height = (self._viewer_state.viewer_height + self.view.figure.fig_margin["top"]) / y_range
+
 
             # Shrink and scale height to add a bit of space
             spacing = 1
-            scaling = 0.85
-            size = floor((pi / 4) * ((scaling * height - spacing) ** 2))
-            
+            scaling = 0.7
+            size = floor((pi / 4) * ((scaling * pixel_height - spacing) ** 2))
+            size = max(size, 1)
             self.bars.default_size = size
 
     def _scale_histogram(self):
@@ -57,7 +58,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
         if self.bins is None:
             return  # can happen when the subset is empty
 
-        if self.bins.size == 0 or self.hist_unscaled.sum() == 0:
+        if self.bins.size == 0:
             return
 
         self.hist = self.hist_unscaled.astype(float)
