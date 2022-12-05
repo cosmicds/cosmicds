@@ -3,7 +3,7 @@ from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtis
 from glue_jupyter.link import dlink, link
 from bqplot import ScatterGL, Scatter
 from numpy import inf
-from math import floor
+from math import floor, pi
 from glue.utils import color2hex
 
 
@@ -31,26 +31,23 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
 
         add_callback(self._viewer_state, 'x_min', self._update_size)
         add_callback(self._viewer_state, 'x_max', self._update_size)
+        add_callback(self._viewer_state, 'viewer_height', self._update_size)
 
     def _update_size(self, arg=None):
-        print(self._viewer_state.y_min, self._viewer_state.y_max)
         if self._viewer_state.y_max is not None and self._viewer_state.y_min is not None:
-            x_range = self._viewer_state.x_max - self._viewer_state.x_min
             y_range = self._viewer_state.y_max - self._viewer_state.y_min
-            n = len(self.bars.x)
+
+            # The default_size parameter in bqplot specifies the area of the mark in pixels
+            # but we know what height (i.e. diameter) we want
+            # so the size should be (pi / 4) * height ^ 2
+            height = (self._viewer_state.viewer_height + self.view.figure.fig_margin["top"]) / y_range
+
+            # Shrink and scale height to add a bit of space
+            spacing = 1
+            scaling = 0.85
+            size = floor((pi / 4) * ((scaling * height - spacing) ** 2))
             
-
-            # JC: As of right now, there's a bit of trickery here
-            # We're assuming that the viewer has its default height of 400px
-            # I reverse-engineered the formula relating size (the setting we give to bqplot)
-            # and the ratio (viewer pixel height / data y range), which is what we want the pixel height to be.
-            ratio = 400 / y_range
-            factor = 0.785
-            size = floor(factor * (ratio ** 2))
             self.bars.default_size = size
-
-            skew = min(x_range / y_range, 1)
-            self.bars.default_skew = skew
 
     def _scale_histogram(self):
         # TODO: comes from glue/viewers/histogram/layer_artist.py

@@ -1,8 +1,10 @@
-from echo.core import add_callback, delay_callback
+from echo.core import add_callback, delay_callback, CallbackProperty
 from glue.viewers.histogram.state import HistogramViewerState
 
 
 class DotPlotViewerState(HistogramViewerState):
+
+    viewer_height = CallbackProperty(400) # in pixels
 
     def __init__(self, **kwargs):
         super(DotPlotViewerState, self).__init__(**kwargs)
