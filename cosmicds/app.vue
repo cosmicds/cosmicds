@@ -569,6 +569,15 @@ td.text-start {
   margin: 12px 12px 12px 0px !important;
 }
 
+.v-input__slot {
+  background-color: #FFAB4040!important;
+}
+
+textarea {
+  font-size: 1.2em!important;
+  color: #FFF8E1!important;
+}
+
 .jp-Notebook,
 .jp-OutputArea-output,
 .jupyter-widgets,

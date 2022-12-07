@@ -28,7 +28,7 @@ module.exports = {
     },
     color: {
       type: String,
-      default: "deep-purple"
+      default: "amber"
     },
     hint: {
       type: String,
