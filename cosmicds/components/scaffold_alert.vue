@@ -31,6 +31,7 @@
       </v-col>
       <v-spacer></v-spacer>
       <v-col
+        v-if="advance"
         class="shrink"
       >
         <v-btn
@@ -42,16 +43,35 @@
           next
         </v-btn>
       </v-col>
+      <v-col
+        v-else
+        class="shrink"
+      >
+        <div
+        >
+          {{ nextText }}
+        </div>
+      </v-col>
     </v-row>
   </v-alert>
 </template>
 
 <script>
 module.exports = {
-  props: ["headerText", "nextText"],
+  props: [
+    "headerText",
+    "nextText",
+    "canAdvance",
+    "state"
+  ],
   data: function () {
     return {
     };
   },
+  computed: {
+    advance() {
+      return !this.canAdvance || this.canAdvance(this.state)
+    }
+  }
 };
 </script>
