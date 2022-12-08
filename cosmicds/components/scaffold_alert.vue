@@ -16,14 +16,9 @@
         </h3>
       </v-col>
       <v-col
-        v-if="speechText.length > 0"
         cols="2"
       >
-        <v-icon
-          @click="sayText"
-        >
-          mdi-voice
-        </v-icon>
+        <speech-synthesizer />
       </v-col>
     </v-row>
     <slot></slot>
@@ -35,22 +30,33 @@
       align="center"
       no-gutters
     >
-      <v-col>
+      <v-col
+        cols="6"
+      >
         <v-btn
+          v-if="allowBack"  
           class="black--text"
           color="accent"
           elevation="2"
           @click="() => { $emit('back'); }"
+          
         >
           back
         </v-btn>
+        <span
+          v-else
+          style="font-size: 16px;"
+        >
+          <slot name="back-content"></slot>
+        </span>
       </v-col>
       <v-spacer></v-spacer>
       <v-col
-        v-if="advance"
-        class="shrink"
+        cols="6"
+        class="shrink text-right"
       >
         <v-btn
+          v-if="advance"
           class="black--text"
           color="accent"
           elevation="2"
@@ -58,15 +64,12 @@
         >
           next
         </v-btn>
-      </v-col>
-      <v-col
-        v-else
-        class="shrink"
-      >
-        <div
+        <span
+          v-else
+          style="font-size: 16px;"
         >
-          {{ nextText }}
-        </div>
+          <slot name="next-content"></slot>
+        </span>
       </v-col>
     </v-row>
   </v-alert>
@@ -74,38 +77,31 @@
 
 <script>
 module.exports = {
-  props: [
-    "headerText",
-    "nextText",
-    "canAdvance",
-    "state"
-  ],
-  data: function () {
-    return {
-      speechText: ''
-    };
+  props: {
+    allowBack: {
+      type: Boolean,
+      default: true
+    },
+    headerText: {
+      type: String,
+      required: true
+    },
+    backContent: {
+      type: String
+    },
+    nextContent: {
+      type: String
+    },
+    canAdvance: {
+      type: Function
+    },
+    state: {
+      type: Object
+    }
   },
   computed: {
     advance() {
       return !this.canAdvance || this.canAdvance(this.state)
-    }
-  },
-  mounted() {
-    const root = this.$el;
-    const elements = [...root.getElementsByTagName('p')];
-    const textItems = elements.map(element => element.textContent.trim());
-    this.speechText = textItems.join();
-    if (this.speechText.length > 0) {
-      window.speechSynthesis.speak(new SpeechSynthesisUtterance(""));
-    }
-  },
-  methods: {
-    sayText() {
-      const synth = window.speechSynthesis;
-      if (synth.speaking) {
-        synth.cancel();
-      }
-      synth.speak(new SpeechSynthesisUtterance(this.speechText));
     }
   }
 };
