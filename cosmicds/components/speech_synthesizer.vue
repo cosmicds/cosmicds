@@ -25,9 +25,6 @@ module.exports = {
     const tagElements = this.tags.map(tag => [...root.getElementsByTagName(tag)]);
     const elements = [].concat(...tagElements);
     this.speechItems = elements.map(element => element.textContent.trim());
-    if (this.headerText.length > 0) {
-      this.speechItems.unshift(this.headerText);
-    }
   },
   methods: {
     sayText() {
