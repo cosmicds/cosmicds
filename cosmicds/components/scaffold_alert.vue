@@ -12,13 +12,13 @@
         <h3
           class="mb-4"
         >
-          {{ headerText }}
+          {{ headerText instanceof Function ? headerText() : headerText }}
         </h3>
       </v-col>
       <v-col
-        cols="2"
+        align="right"
       >
-        <speech-synthesizer />
+        <speech-synthesizer/>
       </v-col>
     </v-row>
     <slot></slot>
@@ -30,16 +30,13 @@
       align="center"
       no-gutters
     >
-      <v-col
-        cols="6"
-      >
+      <v-col cols="6">
         <v-btn
           v-if="allowBack"  
           class="black--text"
           color="accent"
           elevation="2"
           @click="() => { $emit('back'); }"
-          
         >
           back
         </v-btn>
@@ -50,11 +47,10 @@
           <slot name="back-content"></slot>
         </span>
       </v-col>
-      <v-spacer></v-spacer>
       <v-col
-        cols="6"
-        class="shrink text-right"
+        class="text-right"
       >
+        <v-spacer></v-spacer>
         <v-btn
           v-if="advance"
           class="black--text"
@@ -62,14 +58,14 @@
           elevation="2"
           @click="() => { $emit('next'); }"
         >
-          next
+          {{ nextText }}
         </v-btn>
-        <span
+        <slot
           v-else
+          name="next-content"
           style="font-size: 16px;"
         >
-          <slot name="next-content"></slot>
-        </span>
+        </slot>
       </v-col>
     </v-row>
   </v-alert>
@@ -83,8 +79,12 @@ module.exports = {
       default: true
     },
     headerText: {
-      type: String,
+      type: [String, Function],
       required: true
+    },
+    nextText: {
+      type: String,
+      default: "next"
     },
     backContent: {
       type: String
