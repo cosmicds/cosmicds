@@ -30,7 +30,7 @@
       align="center"
       no-gutters
     >
-      <v-col cols="6">
+      <v-col>
         <v-btn
           v-if="allowBack"  
           class="black--text"

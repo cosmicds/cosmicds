@@ -16,23 +16,19 @@ module.exports = {
   },
   data: function () {
     return {
-      speechItems: [],
       speaking: false,
-      
     };
-  },
-  mounted() {
-    this.updateSpeechItems();
   },
   methods: {
     elementText(element) {
       return element.textContent;
     },
-    updateSpeechItems() {
+    getSpeechItems() {
       const root = this.$parent.$el;
       const tagElements = this.tags.map(tag => [...root.getElementsByTagName(tag)]);
       const elements = [].concat(...tagElements);
-      this.speechItems = elements.map(element => this.elementText(element));
+      const items = elements.map(element => this.elementText(element));
+      return items;
     },
     sayText() {
       const synth = window.speechSynthesis;
@@ -47,8 +43,8 @@ module.exports = {
       //
       // It also has the nice benefit of giving a better pause between paragraphs
       this.speaking = true;
-      this.updateSpeechItems();
-      const utterances = this.speechItems.map((item) => new SpeechSynthesisUtterance(item));
+      const items = this.getSpeechItems();
+      const utterances = items.map((item) => new SpeechSynthesisUtterance(item));
       utterances[utterances.length - 1].onend = (_event) => {
         this.speaking = false;
       }
