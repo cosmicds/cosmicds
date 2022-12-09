@@ -12,12 +12,21 @@ module.exports = {
     tags: {
       type: Array,
       default: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']
+    },
+    stopOnClose: {
+      type: Boolean,
+      default: true
     }
   },
   data: function () {
     return {
       speaking: false,
     };
+  },
+  destroyed() {
+    if (this.stopOnClose && this.speaking) {
+      window.speechSynthesis.cancel();
+    }
   },
   methods: {
     elementText(element) {
