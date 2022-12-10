@@ -29,15 +29,6 @@ module.exports = {
       rootElement: null
     };
   },
-  mounted() {
-    if (this.root instanceof Element) {
-      this.rootElement = this.root;
-    } else if (this.root instanceof Function) {
-      this.rootElement = this.root();
-    } else {
-      this.rootElement = this.$parent.$el;
-    }
-  },
   destroyed() {
     if (this.stopOnClose && this.speaking) {
       clearInterval(this.intervalID);
@@ -69,6 +60,15 @@ module.exports = {
 
       return utterance;
     },
+    findRootElement() {
+      if (this.root instanceof Element) {
+        this.rootElement = this.root;
+      } else if (this.root instanceof Function) {
+        this.rootElement = this.root();
+      } else {
+        this.rootElement = this.$parent.$el;
+      }
+    },
     
     // Taken from https://www.geeksforgeeks.org/how-to-check-if-an-element-is-visible-in-dom/
     // TODO: Is there a better way to check?
@@ -81,6 +81,9 @@ module.exports = {
              element.getClientRects().length;
     },
     getSpeechItems() {
+      if (this.rootElement === null) {
+        this.findRootElement();
+      }
       const selectedElements = this.rootElement.querySelectorAll(this.selectors.join(","));
       const elements = [].concat(...selectedElements).filter(this.isElementVisible);
       const items = elements.map(element => this.elementText(element)).filter(text => text.length > 0);
