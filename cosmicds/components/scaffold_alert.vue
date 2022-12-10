@@ -44,7 +44,7 @@
           v-else
           style="font-size: 16px;"
         >
-          <slot name="back-content"></slot>
+          <slot name="before-back"></slot>
         </span>
       </v-col>
       <v-col
@@ -62,7 +62,7 @@
         </v-btn>
         <slot
           v-else
-          name="next-content"
+          name="before-next"
           style="font-size: 16px;"
         >
         </slot>
