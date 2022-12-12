@@ -97,7 +97,6 @@ module.exports = {
     
     computed: {
         mystyle() {
-            console.log('slider style', this.SliderStyle)
             // console.log('contrast', Math.pow(10, this.contrast) * 100)
             // console.log('brightness', this.brightness)
             // console.log('**************')
