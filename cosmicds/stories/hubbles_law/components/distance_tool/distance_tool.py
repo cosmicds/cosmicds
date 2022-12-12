@@ -23,6 +23,8 @@ class DistanceTool(v.VueTemplate):
     view_changing = Bool(False).tag(sync=True)
     measuring_allowed = Bool(False).tag(sync=True)
     galaxy = Dict().tag(sync=True)
+    wwtStyle = Dict().tag(sync=True)
+    contrast_brightness_enabled = Bool(False).tag(sync=True)
 
     _ra = Angle(0 * u.deg)
     _dec = Angle(0 * u.deg)
@@ -37,6 +39,7 @@ class DistanceTool(v.VueTemplate):
         self.angular_height = Angle(60, u.deg)
         self.widget._set_message_type_callback('wwt_view_state', self._handle_view_message)
         self.last_update = datetime.now()
+        contrast_brightness_enabled = kwargs.get('contrast_brightness_enabled', False)
         self._rt = RepeatedTimer(self.UPDATE_TIME, self._check_view_changing)
         super().__init__(*args, **kwargs)
 

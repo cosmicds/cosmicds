@@ -52,9 +52,20 @@
       <jupyter-widget
         :widget="widget"
         class="wwt-widget"
+        :style="wwtStyle"
       />
+  </div>
+  <div>
+    <contrast-brightness-control 
+      :enabled="contrast_brightness_enabled" 
+      inlineStyle="border:1px solid lightgray" 
+      @newstyle="newstyle => {this.wwtStyle = newstyle}">
+    </contrast-brightness-control>
     </div>
   </div>
+
+  
+        <!-- add inline style to control using inline css like inlineStyle="border: 1px solid white" -->
 </template>
 
 <script>

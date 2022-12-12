@@ -70,8 +70,8 @@ class StageTwo(HubbleStage):
 
         self.stage_state = StageState()
 
-        self.add_component(DistanceTool(), label="c-distance-tool-1")
-        self.add_component(DistanceTool(), label="c-distance-tool-2")
+        self.add_component(DistanceTool(contrast_brightness_enabled = True), label="c-distance-tool-1")
+        self.add_component(DistanceTool(contrast_brightness_enabled = True), label="c-distance-tool-2")
 
         distance_table = Table(self.session,
                                data=self.get_data('student_measurements'),
