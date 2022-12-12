@@ -86,12 +86,6 @@ module.exports = {
       type: String,
       default: "next"
     },
-    backContent: {
-      type: String
-    },
-    nextContent: {
-      type: String
-    },
     canAdvance: {
       type: Function
     },
