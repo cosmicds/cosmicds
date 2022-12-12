@@ -100,8 +100,8 @@ module.exports = {
             // console.log('contrast', Math.pow(10, this.contrast) * 100)
             // console.log('brightness', this.brightness)
             // console.log('**************')
-            brightness = parseFloat(this.brightness).toFixed(2) * 100 // brightness in percent
-            contrast = Math.pow(10, this.contrast).toFixed(2) * 100  // contrast in percent
+            let brightness = parseFloat(this.brightness).toFixed(2) * 100 // brightness in percent
+            let contrast = Math.pow(10, this.contrast).toFixed(2) * 100  // contrast in percent
             let newstyle = { filter: `brightness(${brightness}%) contrast(${contrast}%)` }
             // sent this style to the parent. access using @newstyle="newstyle => { this.style = newstyle }"
             this.$emit('newstyle',newstyle)
