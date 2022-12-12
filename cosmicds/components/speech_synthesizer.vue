@@ -1,9 +1,13 @@
 <template>
-  <v-icon
-    @click="handlePress"
-  >
-    {{ speaking ? 'mdi-stop' : 'mdi-voice' }}
-  </v-icon>
+  <span>
+    <slot>
+      <v-icon
+        @click="speak"
+      >
+        {{ speaking ? 'mdi-stop' : 'mdi-voice' }}
+      </v-icon>
+    </slot>
+  </span>
 </template>
 
 <script>
@@ -89,7 +93,7 @@ module.exports = {
       const items = elements.map(element => this.elementText(element)).filter(text => text.length > 0);
       return items;
     },
-    handlePress() {
+    speak() {
       const synth = window.speechSynthesis;
       if (synth.speaking) {
         synth.cancel();
