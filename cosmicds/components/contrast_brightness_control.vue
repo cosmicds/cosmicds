@@ -8,12 +8,24 @@
         :min=0
         :max=4
         :label="parseFloat(brightness).toFixed(2)"
-        prepend-icon="mdi-brightness-6"
-        @click:prepend="resetBrightness"
         hide-details=true
         style="margin:auto; width:75%"
         @change="update_style"
         >
+        <!-- add tooltip to prepend slot -->
+        <template v-slot:prepend>
+          <v-tooltip left>
+            <template v-slot:activator="{ on }">
+              <v-icon 
+                v-on="on"
+                @click="resetBrightness"
+                >
+                  mdi-brightness-6
+                </v-icon>
+            </template>
+            <span>Brightness<br>Press to reset</br></span>
+          </v-tooltip>
+        </template>
       </v-slider>
       <!-- Contrast: a continuous (step="0") slider, logscale from .5, 1.5 -->
       <v-slider
@@ -22,12 +34,24 @@
         :min="Math.log10(0.50)"  
         :max="Math.log10(1.50)"
         :label="Math.pow(10,contrast).toFixed(2)"
-        prepend-icon="mdi-contrast-circle"
-        @click:prepend="resetContrast"
         hide-details=true
         style="margin:auto;width:75%;"
         @change="update_style"
         >
+        <!-- add tooltip to prepend slot -->
+        <template v-slot:prepend>
+          <v-tooltip left>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                v-on="on"
+                @click="resetContrast"
+                >
+                  mdi-contrast-circle
+                </v-icon>
+            </template>
+            <span>Contrast<br>Press to reset</br></span>
+          </v-tooltip>
+        </template>
       </v-slider>
     </div>
   </v-card>
