@@ -1,49 +1,32 @@
 <template>
   <v-card>
-    <div class="source"  :style="[mystyle]">
-    <!-- optional slot. this will also have it's style change -->
-      <slot> </slot>
-    </div>
     <div class="sliders" v-if="enabled">
-      <v-expansion-panels 
-          :flat="true"
-          :tile="true"
-          :style="inlineStyle">
-        <v-expansion-panel>
-          <v-expansion-panel-header disable-icon-rotate>Adjust Brightness & Contrast</v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <!-- wrap sliders in a class -->
-            <div class="brightness_contrast_sliders">
-              <!-- Brighntess slider: a continuous (step="0") slider, logscale from .5, 1.5 -->
-              <v-slider
-                v-model="brightness"
-                step="0"
-                :min=0
-                :max=4
-                :label="parseFloat(brightness).toFixed(2)"
-                prepend-icon="mdi-brightness-6"
-                @click:prepend="resetBrightness"
-                hide-details=true
-                style="margin:auto; width:75%"
-                >
-              </v-slider>
-              <!-- Contrast: a continuous (step="0") slider, logscale from .5, 1.5 -->
-              <v-slider
-                v-model="contrast"
-                step="0"
-                :min="Math.log10(0.50)"  
-                :max="Math.log10(1.50)"
-                :label="Math.pow(10,contrast).toFixed(2)"
-                prepend-icon="mdi-contrast-circle"
-                @click:prepend="resetContrast"
-                hide-details=true
-                style="margin:auto;width:75%;"
-                >
-              </v-slider>
-            </div>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
+      <!-- Brighntess slider: a continuous (step="0") slider, logscale from .5, 1.5 -->
+      <v-slider
+        v-model="brightness"
+        step="0"
+        :min=0
+        :max=4
+        :label="parseFloat(brightness).toFixed(2)"
+        prepend-icon="mdi-brightness-6"
+        @click:prepend="resetBrightness"
+        hide-details=true
+        style="margin:auto; width:75%"
+        >
+      </v-slider>
+      <!-- Contrast: a continuous (step="0") slider, logscale from .5, 1.5 -->
+      <v-slider
+        v-model="contrast"
+        step="0"
+        :min="Math.log10(0.50)"  
+        :max="Math.log10(1.50)"
+        :label="Math.pow(10,contrast).toFixed(2)"
+        prepend-icon="mdi-contrast-circle"
+        @click:prepend="resetContrast"
+        hide-details=true
+        style="margin:auto;width:75%;"
+        >
+      </v-slider>
     </div>
   </v-card>
 
@@ -53,11 +36,6 @@
 
 <style>
 
-div.brightness_contrast_sliders {
-}
-
-div.source {
-}
 
 div.sliders {
 }
