@@ -1,6 +1,8 @@
 <template>
   <v-card
     flat
+    color="primary"
+    class="layer_toggle"
   >
     <v-list-item-group
       multiple
