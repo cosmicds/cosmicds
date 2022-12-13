@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <div class="sliders" v-if="enabled">
+    <div class="sliders" v-if="enabled" :style="inlineStyle">
       <!-- Brighntess slider: a continuous (step="0") slider, logscale from .5, 1.5 -->
       <v-slider
         v-model="brightness"
@@ -12,6 +12,7 @@
         @click:prepend="resetBrightness"
         hide-details=true
         style="margin:auto; width:75%"
+        @change="update_style"
         >
       </v-slider>
       <!-- Contrast: a continuous (step="0") slider, logscale from .5, 1.5 -->
@@ -25,6 +26,7 @@
         @click:prepend="resetContrast"
         hide-details=true
         style="margin:auto;width:75%;"
+        @change="update_style"
         >
       </v-slider>
     </div>
@@ -77,7 +79,7 @@ module.exports = {
   },
   
   computed: {
-    mystyle() {
+    update_style() {
       // console.log('contrast', Math.pow(10, this.contrast) * 100)
       // console.log('brightness', this.brightness)
       // console.log('**************')
@@ -85,8 +87,7 @@ module.exports = {
       let contrast = Math.pow(10, this.contrast).toFixed(2) * 100  // contrast in percent
       let newstyle = { filter: `brightness(${brightness}%) contrast(${contrast}%)` }
       // sent this style to the parent. access using @newstyle="newstyle => { this.style = newstyle }"
-      this.$emit('newstyle',newstyle)
-      return newstyle
+      this.$emit('change_style',newstyle)
     },
 
     show() {
