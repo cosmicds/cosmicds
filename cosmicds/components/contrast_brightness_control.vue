@@ -3,6 +3,7 @@
     <div class="sliders" v-if="enabled" :style="inlineStyle">
       <!-- Brighntess slider: a continuous (step="0") slider, logscale from .5, 1.5 -->
       <v-slider
+        v-if="showBrighntess"
         v-model="brightness"
         step="0"
         :min=0
@@ -29,6 +30,7 @@
       </v-slider>
       <!-- Contrast: a continuous (step="0") slider, logscale from .5, 1.5 -->
       <v-slider
+        v-if="showContrast"
         v-model="contrast"
         step="0"
         :min="Math.log10(0.50)"  
@@ -91,6 +93,14 @@ module.exports = {
     reset: {
       type: Boolean,
       default: false
+    },
+    "showBrighntess": {
+      type: Boolean,
+      default: true
+    },
+    "showContrast": {
+      type: Boolean,
+      default: true
     },
   },
 
