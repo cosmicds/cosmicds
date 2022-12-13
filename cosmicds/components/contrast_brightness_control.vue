@@ -13,20 +13,7 @@
           <v-expansion-panel-header disable-icon-rotate>Adjust Brightness & Contrast</v-expansion-panel-header>
           <v-expansion-panel-content>
             <!-- wrap sliders in a class -->
-            <div class="background_contrast_sliders">
-              <!-- Contrast: a continuous (step="0") slider, logscale from .5, 1.5 -->
-              <v-slider
-                v-model="contrast"
-                step="0"
-                :min="Math.log10(0.50)"  
-                :max="Math.log10(1.50)"
-                :label="Math.pow(10,contrast).toFixed(2)"
-                prepend-icon="mdi-contrast-circle"
-                @click:prepend="resetContrast"
-                hide-details=true
-                style="margin:auto;width:75%;"
-                >
-              </v-slider>
+            <div class="brightness_contrast_sliders">
               <!-- Brighntess slider: a continuous (step="0") slider, logscale from .5, 1.5 -->
               <v-slider
                 v-model="brightness"
@@ -38,6 +25,19 @@
                 @click:prepend="resetBrightness"
                 hide-details=true
                 style="margin:auto; width:75%"
+                >
+              </v-slider>
+              <!-- Contrast: a continuous (step="0") slider, logscale from .5, 1.5 -->
+              <v-slider
+                v-model="contrast"
+                step="0"
+                :min="Math.log10(0.50)"  
+                :max="Math.log10(1.50)"
+                :label="Math.pow(10,contrast).toFixed(2)"
+                prepend-icon="mdi-contrast-circle"
+                @click:prepend="resetContrast"
+                hide-details=true
+                style="margin:auto;width:75%;"
                 >
               </v-slider>
             </div>
@@ -52,6 +52,9 @@
 
 
 <style>
+
+div.brightness_contrast_sliders {
+}
 
 div.source {
 }
