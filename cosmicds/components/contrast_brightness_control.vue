@@ -88,6 +88,10 @@ module.exports = {
       type: Boolean,
       default: true
     },
+    reset: {
+      type: Boolean,
+      default: false
+    },
   },
 
   // data are local to the component. they can be changed
@@ -113,13 +117,12 @@ module.exports = {
       // sent this style to the parent. access using @newstyle="newstyle => { this.style = newstyle }"
       this.$emit('change_style',newstyle)
     },
-
-    show() {
-      console.log(this.enabled)
-      return this.enabled
-    }
   },
-  
+
+  watch: {
+    // watch for incoming signal to reset sliders
+    reset: function () { if (this.reset) { this.reset_style() } }
+  },
 
   methods: {
     resetContrast() {
@@ -128,6 +131,11 @@ module.exports = {
     resetBrightness() {
       this.brightness = 1;
     },
+    reset_style() {
+      console.log('resetting style from contrast_brightness_control')
+      this.resetBrightness()
+      this.resetContrast()
+    }
   },
   
 }
