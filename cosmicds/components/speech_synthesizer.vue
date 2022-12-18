@@ -41,7 +41,26 @@ module.exports = {
   },
   methods: {
     elementText(element) {
-      return element.textContent;
+
+      // Replace any MDI icons with text representing their name
+      const clone = element.cloneNode(true);
+      const mdiStart = "mdi-";
+      const icons = clone.querySelectorAll(`i[class*='${mdiStart}']`);
+      icons.forEach(icon => {
+        const classes = [...icon.classList].filter(cls => cls.startsWith(mdiStart));
+        if (classes.length === 0) {
+          icon.remove();
+        } else {
+          const txt = document.createElement("text");
+          const cls = classes[0];
+          txt.textContent = `the ${cls.slice(mdiStart.length).replace("-", " ")} button`;
+          icon.parentNode.replaceChild(txt, icon);
+        }
+      });
+
+
+      return clone.textContent
+
     },
     makeUtterance(text) {
       const utterance = new SpeechSynthesisUtterance(text);
