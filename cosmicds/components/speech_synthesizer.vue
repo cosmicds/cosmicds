@@ -44,20 +44,33 @@ module.exports = {
 
       // Replace any MDI icons with text representing their name
       const clone = element.cloneNode(true);
-      const mdiStart = "mdi-";
-      const icons = clone.querySelectorAll(`i[class*='${mdiStart}']`);
+      const mdiPrefix = "mdi-";
+      const icons = clone.querySelectorAll(`i[class*='${mdiPrefix}']`);
       icons.forEach(icon => {
-        const classes = [...icon.classList].filter(cls => cls.startsWith(mdiStart));
+        const classes = [...icon.classList].filter(cls => cls.startsWith(mdiPrefix));
         if (classes.length === 0) {
           icon.remove();
         } else {
           const txt = document.createElement("text");
           const cls = classes[0];
-          txt.textContent = `the ${cls.slice(mdiStart.length).replace("-", " ")} button`;
+          txt.textContent = `the ${cls.slice(mdiPrefix.length).replace("-", " ")} button`;
           icon.parentNode.replaceChild(txt, icon);
         }
       });
 
+      // Replace any MathJax with its semantic speech text
+      const mathJax = clone.querySelectorAll(".JaxEquation");
+      const speechTextAttribute = "data-semantic-speech";
+      mathJax.forEach(equation => {
+        const speechElement = equation.querySelector(`[${speechTextAttribute}]`);
+        if (speechElement) {
+          const txt = document.createElement("text");
+          txt.textContent = speechElement.getAttribute(speechTextAttribute);
+          equation.parentNode.replaceChild(txt, equation);
+        } else {
+          equation.remove();
+        }
+      });
 
       return clone.textContent
 
