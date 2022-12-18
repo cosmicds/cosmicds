@@ -53,7 +53,7 @@ module.exports = {
         } else {
           const txt = document.createElement("text");
           const cls = classes[0];
-          txt.textContent = `the ${cls.slice(mdiPrefix.length).replace("-", " ")} button`;
+          txt.textContent = cls.slice(mdiPrefix.length).replace("-", " ");
           icon.parentNode.replaceChild(txt, icon);
         }
       });
