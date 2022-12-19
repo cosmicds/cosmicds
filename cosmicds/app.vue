@@ -303,7 +303,7 @@ export default {
 
     // Colors that seem to work consistently are in Section "4.3. Colors via svgnames option," pg 42 of this doc: https://ctan.math.washington.edu/tex-archive/macros/latex/contrib/xcolor/xcolor.pdf
     window.MathJax = {
-      loader: {load: ['[tex]/color', '[tex]/bbox']},
+      loader: {load: ['[tex]/color', '[tex]/bbox', 'a11y/semantic-enrich']},
       tex: {
         packages: {'[+]': ['input', 'color', 'bbox']},
         color: {
@@ -346,7 +346,12 @@ export default {
 
           MathJax.startup.defaultReady();
         }
-      }, 
+      },
+      options: {
+        a11y: {
+          speech: true
+        }
+      }
     };
 
     // Grab MathJax itself
