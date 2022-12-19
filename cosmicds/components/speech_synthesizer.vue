@@ -15,7 +15,7 @@ module.exports = {
   props: {
     selectors: {
       type: Array,
-      default: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', ':has(> mjx-container)']
+      default: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', ':not(mjx-assistive-mml) > mjx-container']
     },
     stopOnClose: {
       type: Boolean,
@@ -54,25 +54,23 @@ module.exports = {
           const txt = document.createElement("text");
           const cls = classes[0];
           txt.textContent = cls.slice(mdiPrefix.length).replace("-", " ");
-          icon.parentNode.replaceChild(txt, icon);
+          icon.parentNode?.replaceChild(txt, icon);
         }
       });
 
       // Replace any MathJax with its semantic speech text
-      const mathJax = clone.querySelectorAll("mjx-container");
-      const speechTextAttribute = "data-semantic-speech";
-      mathJax.forEach(jax => {
-        const speechElement = jax.querySelector(`[${speechTextAttribute}]`);
-        if (speechElement) {
+      if (clone.tagName === "mjx-container") {
+        const speechText = clone.getAttribute("aria-label");
+        if (speechText) {
           const txt = document.createElement("text");
-          txt.textContent = speechElement.getAttribute(speechTextAttribute);
-          jax.parentNode.replaceChild(txt, jax);
+          txt.textContent = speechText;
+          clone.parentNode?.replaceChild(txt, clone);
         } else {
-          jax.remove();
+          clone.remove();
         }
-      });
+      }
 
-      return clone.textContent
+      return clone.textContent.trim();
 
     },
     makeUtterance(text) {

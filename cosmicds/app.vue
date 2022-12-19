@@ -348,8 +348,16 @@ export default {
         }
       },
       options: {
+        menuOptions: {
+          settings: {
+            assistiveMml: true
+          }
+        },
         a11y: {
-          speech: true
+          speech: true,
+          sre: {
+            speech: 'deep'
+          }
         }
       }
     };
