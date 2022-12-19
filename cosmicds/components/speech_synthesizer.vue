@@ -15,7 +15,7 @@ module.exports = {
   props: {
     selectors: {
       type: Array,
-      default: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']
+      default: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', ':has(> mjx-container)']
     },
     stopOnClose: {
       type: Boolean,
@@ -59,16 +59,16 @@ module.exports = {
       });
 
       // Replace any MathJax with its semantic speech text
-      const mathJax = clone.querySelectorAll(".JaxEquation");
+      const mathJax = clone.querySelectorAll("mjx-container");
       const speechTextAttribute = "data-semantic-speech";
-      mathJax.forEach(equation => {
-        const speechElement = equation.querySelector(`[${speechTextAttribute}]`);
+      mathJax.forEach(jax => {
+        const speechElement = jax.querySelector(`[${speechTextAttribute}]`);
         if (speechElement) {
           const txt = document.createElement("text");
           txt.textContent = speechElement.getAttribute(speechTextAttribute);
-          equation.parentNode.replaceChild(txt, equation);
+          jax.parentNode.replaceChild(txt, jax);
         } else {
-          equation.remove();
+          jax.remove();
         }
       });
 
