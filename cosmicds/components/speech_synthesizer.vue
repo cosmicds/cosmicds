@@ -45,7 +45,7 @@ module.exports = {
       // Replace any MDI icons with text representing their name
       const clone = element.cloneNode(true);
       const mdiPrefix = "mdi-";
-      const icons = clone.querySelectorAll(`i[class*='${mdiPrefix}']`);
+      const icons = clone.querySelectorAll(`[class*='${mdiPrefix}']`);
       icons.forEach(icon => {
         const classes = [...icon.classList].filter(cls => cls.startsWith(mdiPrefix));
         if (classes.length === 0) {
