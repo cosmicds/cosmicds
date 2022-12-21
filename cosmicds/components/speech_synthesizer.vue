@@ -30,7 +30,10 @@ module.exports = {
     return {
       speaking: false,
       intervalID: 0,
-      rootElement: null
+      rootElement: null,
+      iconNameMap: {
+        'cache': 'reset'
+      }
     };
   },
   destroyed() {
@@ -53,7 +56,9 @@ module.exports = {
         } else {
           const txt = document.createElement("text");
           const cls = classes[0];
-          txt.textContent = cls.slice(mdiPrefix.length).replace("-", " ");
+          let iconName = cls.slice(mdiPrefix.length);
+          iconName = this.iconNameMap[iconName] ?? iconName;
+          iconName = iconName.replace("-", " ");
           icon.parentNode?.replaceChild(txt, icon);
         }
       });
