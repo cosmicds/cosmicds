@@ -8,6 +8,7 @@
     <v-row>
       <v-col
         cols="10"
+        v-if="showHeader"
       >
         <h3
           class="mb-4"
@@ -23,6 +24,7 @@
     </v-row>
     <slot></slot>
     <v-divider
+      v-if="showHeader"
       class="my-4"
     >
     </v-divider>
@@ -80,7 +82,7 @@ module.exports = {
     },
     headerText: {
       type: [String, Function],
-      required: true
+      default: null
     },
     nextText: {
       type: String,
@@ -96,6 +98,9 @@ module.exports = {
   computed: {
     advance() {
       return !this.canAdvance || this.canAdvance(this.state)
+    },
+    showHeader() {
+      return !!this.headerText
     }
   }
 };
