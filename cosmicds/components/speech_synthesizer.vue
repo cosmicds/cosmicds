@@ -32,7 +32,7 @@ module.exports = {
       intervalID: 0,
       rootElement: null,
       iconNameMap: {
-        'cache': 'reset'
+        'cached': 'reset'
       }
     };
   },
@@ -58,7 +58,7 @@ module.exports = {
           const cls = classes[0];
           let iconName = cls.slice(mdiPrefix.length);
           iconName = this.iconNameMap[iconName] ?? iconName;
-          iconName = iconName.replace("-", " ");
+          txt.textContent = iconName.replace("-", " ")
           icon.parentNode?.replaceChild(txt, icon);
         }
       });
