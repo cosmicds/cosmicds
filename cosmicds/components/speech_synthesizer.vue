@@ -57,8 +57,7 @@ module.exports = {
           const txt = document.createElement("text");
           const cls = classes[0];
           let iconName = cls.slice(mdiPrefix.length);
-          iconName = this.iconNameMap[iconName] ?? iconName;
-          txt.textContent = iconName.replace("-", " ")
+          txt.textContent = this.iconNameMap[iconName] ?? iconName.replace("-", " ");
           icon.parentNode?.replaceChild(txt, icon);
         }
       });
