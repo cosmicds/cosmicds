@@ -5,10 +5,9 @@
     max-width="800"
     elevation="6"
   >
-    <v-row>
+    <v-row v-if="showHeader">
       <v-col
         cols="10"
-        v-if="showHeader"
       >
         <h3
           class="mb-4"
@@ -32,7 +31,14 @@
       align="center"
       no-gutters
     >
-      <v-col>
+      <v-col
+        v-if="!showHeader"
+        cols="1"
+        class="mx-2"
+      >
+        <speech-synthesizer/>
+      </v-col>
+      <v-col cols="5">
         <v-btn
           v-if="allowBack"  
           class="black--text"
@@ -50,6 +56,7 @@
         </span>
       </v-col>
       <v-col
+        cols="5"
         class="text-right"
       >
         <v-spacer></v-spacer>
@@ -97,10 +104,10 @@ module.exports = {
   },
   computed: {
     advance() {
-      return !this.canAdvance || this.canAdvance(this.state)
+      return !this.canAdvance || this.canAdvance(this.state);
     },
     showHeader() {
-      return !!this.headerText
+      return !!this.headerText;
     }
   }
 };
