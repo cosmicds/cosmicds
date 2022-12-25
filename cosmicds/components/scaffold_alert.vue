@@ -21,7 +21,7 @@
         <speech-synthesizer/>
       </v-col>
     </v-row>
-    <slot></slot>
+    <slot :advance="advance"></slot>
     <v-divider
       class="my-4"
     >
