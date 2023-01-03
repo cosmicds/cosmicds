@@ -12,7 +12,7 @@
         <h3
           class="mb-4"
         >
-          {{ headerText instanceof Function ? headerText() : headerText }}
+          {{ header }}
         </h3>
       </v-col>
       <v-col
@@ -96,6 +96,13 @@ module.exports = {
   computed: {
     advance() {
       return !this.canAdvance || this.canAdvance(this.state)
+    },
+    header() {
+      if (this.headerText instanceof Function) {
+        return this.headerText(this.state);
+      } else {
+        return this.headerText;
+      }
     }
   }
 };
