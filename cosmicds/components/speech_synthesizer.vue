@@ -15,7 +15,7 @@ module.exports = {
   props: {
     selectors: {
       type: Array,
-      default: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']
+      default: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', ':not(mjx-assistive-mml) > mjx-container']
     },
     stopOnClose: {
       type: Boolean,
@@ -30,7 +30,10 @@ module.exports = {
     return {
       speaking: false,
       intervalID: 0,
-      rootElement: null
+      rootElement: null,
+      iconNameMap: {
+        'cached': 'reset'
+      }
     };
   },
   destroyed() {
@@ -41,7 +44,38 @@ module.exports = {
   },
   methods: {
     elementText(element) {
-      return element.textContent;
+
+      // Replace any MDI icons with text representing their name
+      const clone = element.cloneNode(true);
+      const mdiPrefix = "mdi-";
+      const icons = clone.querySelectorAll(`[class*='${mdiPrefix}']`);
+      icons.forEach(icon => {
+        const classes = [...icon.classList].filter(cls => cls.startsWith(mdiPrefix));
+        if (classes.length === 0) {
+          icon.remove();
+        } else {
+          const txt = document.createElement("text");
+          const cls = classes[0];
+          let iconName = cls.slice(mdiPrefix.length);
+          txt.textContent = this.iconNameMap[iconName] ?? iconName.replace("-", " ");
+          icon.parentNode?.replaceChild(txt, icon);
+        }
+      });
+
+      // Replace any MathJax with its semantic speech text
+      if (clone.tagName === "mjx-container") {
+        const speechText = clone.getAttribute("aria-label");
+        if (speechText) {
+          const txt = document.createElement("text");
+          txt.textContent = speechText;
+          clone.parentNode?.replaceChild(txt, clone);
+        } else {
+          clone.remove();
+        }
+      }
+
+      return clone.textContent.trim();
+
     },
     makeUtterance(text) {
       const utterance = new SpeechSynthesisUtterance(text);
