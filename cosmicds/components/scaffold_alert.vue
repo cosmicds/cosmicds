@@ -5,14 +5,14 @@
     max-width="800"
     elevation="6"
   >
-    <v-row v-if="showHeader">
+    <v-row v-if="header">
       <v-col
         cols="10"
       >
         <h3
           class="mb-4"
         >
-          {{ headerText instanceof Function ? headerText() : headerText }}
+          {{ header }}
         </h3>
       </v-col>
       <v-col
@@ -23,7 +23,7 @@
     </v-row>
     <slot></slot>
     <v-divider
-      v-if="showHeader"
+      v-if="header"
       class="my-4"
     >
     </v-divider>
@@ -32,7 +32,7 @@
       no-gutters
     >
       <v-col
-        v-if="!showHeader"
+        v-if="!header"
         cols="1"
         class="mx-2"
       >
@@ -106,8 +106,12 @@ module.exports = {
     advance() {
       return !this.canAdvance || this.canAdvance(this.state);
     },
-    showHeader() {
-      return !!this.headerText;
+    header() {
+      if (this.headerText instanceof Function) {
+        return this.headerText(this.state);
+      } else {
+        return this.headerText;
+      }
     }
   }
 };
