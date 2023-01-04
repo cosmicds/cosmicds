@@ -22,10 +22,12 @@
       </v-col>
     </v-row>
     <slot></slot>
+
     <v-divider
       class="my-4"
     >
     </v-divider>
+    
     <v-row
       align="center"
       no-gutters
@@ -47,25 +49,37 @@
           <slot name="back-content"></slot>
         </span>
       </v-col>
+      <v-spacer></v-spacer>
       <v-col
-        class="text-right"
+        v-if="advance"
+        class="shrink"
       >
-        <v-spacer></v-spacer>
-        <v-btn
-          v-if="advance"
-          class="black--text"
-          color="accent"
-          elevation="2"
-          @click="() => { $emit('next'); }"
-        >
-          {{ nextText }}
-        </v-btn>
-        <slot
-          v-else
-          name="before-next"
+        <div
           style="font-size: 16px;"
         >
-        </slot>
+          <v-btn
+            class="black--text"
+            color="accent"
+            elevation="2"
+            @click="() => { $emit('next'); }"
+          >
+            {{ nextText }}
+          </v-btn>
+        </div>
+      </v-col>
+      <v-col
+        v-else
+        cols="6"
+        class="shrink"
+      >
+        <div
+          style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px; color: #FFF8E1;"
+        >
+          <slot
+            name="before-next"
+          >
+          </slot>
+        </div>
       </v-col>
     </v-row>
   </v-alert>
