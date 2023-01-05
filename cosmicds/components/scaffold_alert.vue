@@ -5,7 +5,7 @@
     max-width="800"
     elevation="6"
   >
-    <v-row>
+    <v-row v-if="header">
       <v-col
         cols="10"
       >
@@ -23,6 +23,7 @@
     </v-row>
     <slot></slot>
     <v-divider
+      v-if="header"
       class="my-4"
     >
     </v-divider>
@@ -30,7 +31,14 @@
       align="center"
       no-gutters
     >
-      <v-col>
+      <v-col
+        v-if="!header"
+        cols="1"
+        class="mx-2"
+      >
+        <speech-synthesizer/>
+      </v-col>
+      <v-col cols="5">
         <v-btn
           v-if="allowBack"  
           class="black--text"
@@ -48,6 +56,7 @@
         </span>
       </v-col>
       <v-col
+        cols="5"
         class="text-right"
       >
         <v-spacer></v-spacer>
@@ -80,7 +89,7 @@ module.exports = {
     },
     headerText: {
       type: [String, Function],
-      required: true
+      default: null
     },
     nextText: {
       type: String,
@@ -95,7 +104,7 @@ module.exports = {
   },
   computed: {
     advance() {
-      return !this.canAdvance || this.canAdvance(this.state)
+      return !this.canAdvance || this.canAdvance(this.state);
     },
     header() {
       if (this.headerText instanceof Function) {
