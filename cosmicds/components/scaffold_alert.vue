@@ -103,6 +103,18 @@
   </v-card>
 </template>
 
+<style scoped>
+
+.theme--dark .v-card__text{
+  color: white!important;
+}
+
+.theme--light .v-card__text{
+  color: black!important;
+}
+
+</style>
+
 <script>
 module.exports = {
   props: {
