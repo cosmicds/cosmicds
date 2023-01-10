@@ -6,7 +6,7 @@
     elevation="6"
   >
     <v-card-text>
-      <v-row>
+      <v-row v-if="header">
         <v-col
           cols="10"
         >
@@ -25,7 +25,10 @@
       <slot></slot>
     </v-card-text>
 
-    <v-divider>
+    <v-divider
+      v-if="header"
+      class="my-4"
+    >
     </v-divider>
 
     <v-card-actions
@@ -36,6 +39,13 @@
         class="pa-1"
         no-gutters
       >
+        <v-col
+          v-if="!header"
+          cols="1"
+          class="mx-2"
+        >
+          <speech-synthesizer/>
+        </v-col>
         <v-col
           v-if="allowBack"
           class="shrink"
@@ -62,7 +72,7 @@
             style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px; color: #FFF8E1;"
           >
             <slot name="back-content"></slot>
-      </div>
+          </div>
         </v-col>
 
         <v-spacer></v-spacer>
@@ -124,7 +134,7 @@ module.exports = {
     },
     headerText: {
       type: [String, Function],
-      required: true
+      default: null
     },
     nextText: {
       type: String,
@@ -139,7 +149,7 @@ module.exports = {
   },
   computed: {
     advance() {
-      return !this.canAdvance || this.canAdvance(this.state)
+      return !this.canAdvance || this.canAdvance(this.state);
     },
     header() {
       if (this.headerText instanceof Function) {
