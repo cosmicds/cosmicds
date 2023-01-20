@@ -104,8 +104,9 @@ module.exports = {
       this.column = index;
       this.tries += 1;
       const correct = this.correctAnswers.includes(index);
-      this.complete = correct;
-      this.score = this.scoring ? this.getScore(this.tries) : null;
+      const neutral = this.neutralAnswers.includes(index);
+      this.complete = correct || (this.correctAnswers.length === 0 && neutral);
+      this.score = (this.scoring && this.complete) ? this.getScore(this.tries) : null;
       if (this.scoreTag !== undefined && send) {
         document.dispatchEvent(
           new CustomEvent("mc-score", {
