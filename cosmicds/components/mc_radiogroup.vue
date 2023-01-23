@@ -72,7 +72,14 @@ module.exports = {
     },
     radioOptions: Array,
     scoreTag: String,
-    selectedCallback: Function
+  },
+  emits: {
+    select(status) {
+      return typeof status.index === 'number' &&
+             typeof status.correct === 'boolean' &&
+             typeof status.neutral === 'boolean' &&
+             typeof status.tries === 'number';
+    }
   },
   created() {
     if (!this.scoreTag) { return; }
@@ -118,14 +125,12 @@ module.exports = {
           })
         );
       }
-      if (this.selectedCallback !== undefined) {
-        this.selectedCallback({
-          index: index,
-          correct: correct,
-          neutral: this.neutralAnswers.includes(index),
-          tries: this.tries
-        });
-      }
+      this.$emit('select', {
+        index: index,
+        correct: correct,
+        neutral: this.neutralAnswers.includes(index),
+        tries: this.tries
+      });
     },
     color: function(index) {
       if (this.correctAnswers.includes(index)) {
