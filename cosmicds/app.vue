@@ -582,10 +582,6 @@ td.text-start {
   margin: 12px 12px 12px 0px !important;
 }
 
-.v-input__slot {
-  background-color: #FFAB4040!important;
-}
-
 label.v-label--active div {
   color: white!important;
   font-weight: bold;
