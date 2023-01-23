@@ -194,11 +194,11 @@
         <v-container fluid>
           <v-tabs-items v-model="story_state.stage_index">
             <v-tab-item
-                v-for="(stage, key, index) in story_state.stages"
-                :key="index"
+              v-for="(stage, key, index) in story_state.stages"
+              :key="index"
             >
               <v-card flat>
-                <v-card-title>{{ stage.title }}</v-card-title>
+                <v-card-title style="display: none;">{{ stage.title }}</v-card-title>
                 <jupyter-widget :widget="stage.model_id"/>
               </v-card>
             </v-tab-item>
@@ -580,6 +580,20 @@ td.text-start {
 
 .v-navigation-drawer .v-list-item__action {
   margin: 12px 12px 12px 0px !important;
+}
+
+label.v-label--active div {
+  color: white!important;
+  font-weight: bold;
+}
+
+.layer_toggle .v-list-item__content {
+  color: white!important;
+}
+
+textarea {
+  font-size: 1.2em!important;
+  color: #FFF8E1!important;
 }
 
 .jp-Notebook,

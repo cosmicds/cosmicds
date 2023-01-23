@@ -28,7 +28,7 @@ module.exports = {
     },
     color: {
       type: String,
-      default: "deep-purple"
+      default: "amber"
     },
     hint: {
       type: String,
@@ -94,3 +94,9 @@ module.exports = {
   }
 };
 </script>
+
+<style scoped>
+.v-input__slot {
+  background-color: #FFAB4040!important;
+}
+</style>
