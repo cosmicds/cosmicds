@@ -24,7 +24,7 @@
           <speech-synthesizer/>
         </v-col>
       </v-row>
-      <slot></slot>
+      <slot :advance="advance"></slot>
     </v-card-text>
 
     <v-card-actions
@@ -35,6 +35,13 @@
         class="pa-1"
         no-gutters
       >
+        <v-col
+          v-if="!header"
+          cols="1"
+          class="mx-2"
+        >
+          <speech-synthesizer/>
+        </v-col>
         <v-col
           v-if="allowBack"
           class="shrink"

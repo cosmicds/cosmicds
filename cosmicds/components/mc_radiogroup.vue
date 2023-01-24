@@ -72,7 +72,14 @@ module.exports = {
     },
     radioOptions: Array,
     scoreTag: String,
-    selectedCallback: Function
+  },
+  emits: {
+    select(status) {
+      return typeof status.index === 'number' &&
+             typeof status.correct === 'boolean' &&
+             typeof status.neutral === 'boolean' &&
+             typeof status.tries === 'number';
+    }
   },
   created() {
     if (!this.scoreTag) { return; }
@@ -104,8 +111,9 @@ module.exports = {
       this.column = index;
       this.tries += 1;
       const correct = this.correctAnswers.includes(index);
-      this.complete = correct;
-      this.score = this.scoring ? this.getScore(this.tries) : null;
+      const neutral = this.neutralAnswers.includes(index);
+      this.complete = correct || (this.correctAnswers.length === 0 && neutral);
+      this.score = (this.scoring && this.complete) ? this.getScore(this.tries) : null;
       if (this.scoreTag !== undefined && send) {
         document.dispatchEvent(
           new CustomEvent("mc-score", {
@@ -118,14 +126,12 @@ module.exports = {
           })
         );
       }
-      if (this.selectedCallback !== undefined) {
-        this.selectedCallback({
-          index: index,
-          correct: correct,
-          neutral: this.neutralAnswers.includes(index),
-          tries: this.tries
-        });
-      }
+      this.$emit('select', {
+        index: index,
+        correct: correct,
+        neutral: this.neutralAnswers.includes(index),
+        tries: this.tries
+      });
     },
     color: function(index) {
       if (this.correctAnswers.includes(index)) {
