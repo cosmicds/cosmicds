@@ -50,6 +50,7 @@
         color="green"
         outlined
         class="mx-2"
+        style="background-color:#000A!important;"
       >
         <span
           class="white--text mr-2"

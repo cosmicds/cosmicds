@@ -1,11 +1,15 @@
 <template>
   <span>
     <slot>
-      <v-icon
-        @click="speak"
+      <v-btn
+        icon
       >
-        {{ speaking ? 'mdi-stop' : 'mdi-voice' }}
-      </v-icon>
+        <v-icon
+          @click="speak"
+        >
+          {{ speaking ? 'mdi-stop' : 'mdi-voice' }}
+        </v-icon>
+      </v-btn>
     </slot>
   </span>
 </template>
