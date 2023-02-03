@@ -4,7 +4,7 @@
       app
       color="primary"
       dark
-      src="https://cdn.eso.org/images/screen/eso1738b.jpg"
+      src="https://www.astropix.org/archive/esahubble/opo22051a/esahubble_opo22051a_1600.jpg"
       clipped-right
       flat
       height="72"
@@ -13,7 +13,7 @@
       <template v-slot:img="{ props }">
         <v-img
           v-bind="props"
-          gradient="to top right, rgba(1, 87, 155, .7), rgba(0, 0, 0, .5)"
+          gradient="to top right, rgba(25, 71, 161, .2), rgba(8, 47, 104, .9)"
         ></v-img>
       </template>
 
