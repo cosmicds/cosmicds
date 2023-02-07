@@ -89,7 +89,7 @@
               class="mr-3"
             >
               <v-avatar
-                color="info lighten-1"
+                color="warning"
               >
                 <v-icon dark>mdi-account-circle</v-icon>
               </v-avatar>
@@ -569,6 +569,18 @@ td:first-child, th:first-child {
 
 td.text-start {
   padding: 8px 16px!important;
+}
+
+.v-navigation-drawer .v-list-item--active.theme--light .v-list-item__content {
+  color: black;
+}
+
+.v-navigation-drawer .v-list-item--active.theme--dark .v-list-item__content {
+  color: white;
+}
+
+.v-window .v-toolbar {
+  border-bottom: solid 1px black!important;
 }
 
 .v-card__text {
