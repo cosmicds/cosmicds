@@ -573,10 +573,12 @@ td.text-start {
 
 .v-navigation-drawer .v-list-item--active.theme--light .v-list-item__content {
   color: black;
+  z-index: 1;
 }
 
 .v-navigation-drawer .v-list-item--active.theme--dark .v-list-item__content {
   color: white;
+  z-index: 1;
 }
 
 .v-window .v-toolbar {

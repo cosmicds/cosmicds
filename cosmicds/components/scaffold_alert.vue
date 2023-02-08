@@ -1,7 +1,7 @@
 <template>             
   <v-card
     color="info"
-    class="mb-4 mx-auto"
+    class="mb-4 mx-auto guideline"
     max-width="800"
     elevation="6"
   >
@@ -114,6 +114,10 @@
 
 .theme--light .v-card__text, .theme--light .v-card__actions{
   color: black!important;
+}
+
+.v-alert {
+  background-color: #000D!important;
 }
 
 </style>
