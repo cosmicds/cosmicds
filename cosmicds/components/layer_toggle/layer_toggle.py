@@ -1,5 +1,6 @@
-from echo import delay_callback
+from echo import delay_callback, ignore_callback
 from echo.callback_container import CallbackContainer
+from glue.viewers.common.layer_artist import LayerArtist
 from ipyvuetify import VuetifyTemplate
 from traitlets import List, observe
 
@@ -15,12 +16,12 @@ class LayerToggle(VuetifyTemplate):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.name_transform = LayerToggle._create_name_transform(names)
-        self.sort = sort or (lambda layer: layer.state.zorder)
+        self.sort = sort or (lambda state: state.zorder)
 
         self._ignore_conditions = CallbackContainer()
 
-        self._update_layers_from_viewer()
-        self.viewer.state.add_callback('layers', self._update_layers_from_viewer)
+        self._update_from_viewer()
+        self.viewer.state.add_callback('layers', self._update_from_viewer)
 
     def _ignore_layer(self, layer):
         for cb in self._ignore_conditions:
@@ -28,10 +29,10 @@ class LayerToggle(VuetifyTemplate):
                 return True
         return False
 
-    def _layer_data(self, layer):
+    def _layer_data(self, state):
         return {
-            "color": layer.state.color,
-            "label": self.name_transform(layer.layer.label)
+            "color": state.color,
+            "label": self.name_transform(state.layer.label)
         }
 
     def _layer_index(self, layers, layer):
@@ -43,37 +44,39 @@ class LayerToggle(VuetifyTemplate):
 
     def set_layer_order(self, layers):
         def sort_key(layer):
-            return (self._layer_index(layers, layer), layer.state.zorder)
+            if isinstance(layer, LayerArtist):
+                layer = layer.state
+            return (self._layer_index(layers, layer), layer.zorder)
         self.sort_by(sort_key)
 
     def sort_by(self, sort):
         self.sort = sort
-        self._update_layers_from_viewer()  
+        self._update_from_viewer()  
 
-    @property
-    def watched_layers(self):
-        return sorted([layer for layer in self.viewer.layers if not self._ignore_layer(layer)], key=self.sort)
+    def watched_layer_states(self, layers=None):
+        layers = layers or self.viewer.state.layers
+        return sorted([state for state in layers if not self._ignore_layer(state)], key=self.sort)
 
     def add_ignore_condition(self, condition):
         self._ignore_conditions.append(condition)
-        self._update_layers_from_viewer()
+        self._update_from_viewer()
 
     def remove_ignore_condition(self, condition):
         self._ignore_conditions.remove(condition)
-        self._update_layers_from_viewer()
+        self._update_from_viewer()
 
-    def _update_layers_from_viewer(self, layers=None):
-        watched = self.watched_layers
-        self.layers = [self._layer_data(layer) for layer in watched]
-        self.selected = [index for index, layer in enumerate(watched) if layer.state.visible]
+    def _update_from_viewer(self, layers=None):
+        watched = self.watched_layer_states(layers)
+        self.layers = [self._layer_data(state) for state in watched]
+        self.selected = [index for index, state in enumerate(watched) if state.visible]
 
     @observe('selected')
     def _on_selected_change(self, change):
         selected = change["new"]
         with delay_callback(self.viewer.state, 'layers'):
-            for index, layer in enumerate(self.watched_layers):
-                if not self._ignore_layer(layer):
-                    layer.state.visible = index in selected
+            for index, state in enumerate(self.watched_layer_states()):
+                if not self._ignore_layer(state):
+                    state.visible = index in selected
 
     @staticmethod
     def _create_name_transform(namer):
