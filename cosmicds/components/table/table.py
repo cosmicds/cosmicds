@@ -24,6 +24,7 @@ class Table(VuetifyTemplate, HubListener):
     search = Unicode().tag(sync=True)
     single_select = Bool(False).tag(sync=True)
     selected = List().tag(sync=True)
+    selected_class = Unicode("v-data-table__selected").tag(sync=True)
     sel_color = Unicode().tag(sync=True)
     sort_by = Unicode().tag(sync=True)
     title = Unicode().tag(sync=True)

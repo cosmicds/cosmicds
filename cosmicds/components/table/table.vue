@@ -69,10 +69,6 @@
 
 export default {
 
-  data: {
-    selectedClass: "v-data-table__selected"
-  },
-
   methods: {
     updateStyling: function(selected, sortBy) {
       const sortFunc = function(x,y) {
@@ -92,9 +88,9 @@ export default {
       rows.shift(); // The first row will be the header
       for (const [index, row] of rows.entries()) {
         if (indices.includes(index)) {
-          row.classList.add(this.selectedClass);
+          row.classList.add(this.selected_class);
         } else {
-          row.classList.remove(this.selectedClass);
+          row.classList.remove(this.selected_class);
         }
       }
     },
