@@ -4,7 +4,7 @@
       app
       color="primary"
       dark
-      src="https://cdn.eso.org/images/screen/eso1738b.jpg"
+      src="https://www.astropix.org/archive/esahubble/opo22051a/esahubble_opo22051a_1600.jpg"
       clipped-right
       flat
       height="72"
@@ -13,7 +13,7 @@
       <template v-slot:img="{ props }">
         <v-img
           v-bind="props"
-          gradient="to top right, rgba(1, 87, 155, .7), rgba(0, 0, 0, .5)"
+          gradient="to top right, rgba(25, 71, 161, .2), rgba(8, 47, 104, .9)"
         ></v-img>
       </template>
 
@@ -50,6 +50,7 @@
         color="green"
         outlined
         class="mx-2"
+        style="background-color:#000A!important;"
       >
         <span
           class="white--text mr-2"
@@ -88,7 +89,7 @@
               class="mr-3"
             >
               <v-avatar
-                color="info lighten-1"
+                color="warning"
               >
                 <v-icon dark>mdi-account-circle</v-icon>
               </v-avatar>
@@ -568,6 +569,20 @@ td:first-child, th:first-child {
 
 td.text-start {
   padding: 8px 16px!important;
+}
+
+.v-navigation-drawer .v-list-item--active.theme--light .v-list-item__content {
+  color: black;
+  z-index: 1;
+}
+
+.v-navigation-drawer .v-list-item--active.theme--dark .v-list-item__content {
+  color: white;
+  z-index: 1;
+}
+
+.v-window .v-toolbar {
+  border-bottom: solid 1px black!important;
 }
 
 .v-card__text {

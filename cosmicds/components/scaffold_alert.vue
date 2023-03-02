@@ -1,12 +1,14 @@
 <template>             
   <v-card
     color="info"
-    class="mb-4 mx-auto"
+    class="mb-4 mx-auto guideline"
     max-width="800"
     elevation="6"
   >
     <v-card-text>
-      <v-row v-if="header">
+      <v-row
+        v-if="header"
+      >
         <v-col
           cols="10"
         >
@@ -24,16 +26,8 @@
       </v-row>
       <slot :advance="advance"></slot>
     </v-card-text>
-    
-    <v-divider
-      v-if="header"
-      class="my-4"
-    >
-    </v-divider>
-
-    <v-card-actions
-      style="background-color: #0004;"
-    >
+    <v-divider></v-divider>
+    <v-card-actions>
       <v-row
         align="center"
         class="pa-1"
@@ -41,8 +35,7 @@
       >
         <v-col
           v-if="!header"
-          cols="1"
-          class="mx-2"
+          class="mx-2 shrink"
         >
           <speech-synthesizer/>
         </v-col>
@@ -69,7 +62,7 @@
           class="shrink"
         >
           <div
-            style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px; color: #FFF8E1;"
+            style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px;"
           >
             <slot name="back-content"></slot>
           </div>
@@ -100,7 +93,7 @@
           class="shrink"
         >
           <div
-            style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px; color: #FFF8E1;"
+            style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px;"
           >
             <slot
               name="before-next"
@@ -115,12 +108,16 @@
 
 <style scoped>
 
-.theme--dark .v-card__text{
+.theme--dark .v-card__text, .theme--dark .v-card__actions{
   color: white!important;
 }
 
-.theme--light .v-card__text{
+.theme--light .v-card__text, .theme--light .v-card__actions{
   color: black!important;
+}
+
+.v-alert {
+  background-color: #000D!important;
 }
 
 </style>
