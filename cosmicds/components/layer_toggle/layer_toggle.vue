@@ -1,7 +1,8 @@
 <template>
   <v-card
     flat
-    color="primary"
+    dark
+    color="blue-grey darken-3"
     class="layer_toggle"
   >
     <v-list-item-group
