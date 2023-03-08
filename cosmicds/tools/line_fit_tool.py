@@ -225,7 +225,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
             mark.y = fit(self.x_range)
             slope = fit.slope.value
             self.slopes[data] = slope
-            label = self.label(layer, fit)
+            label = self.label(layer, fit) if self.show_labels else None
             is_label = label is not None
             mark.colors = [layer.state.color if layer.state.color != '0.35' else 'black']
             mark.display_legend = is_label
