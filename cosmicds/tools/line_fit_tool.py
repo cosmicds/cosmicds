@@ -1,3 +1,4 @@
+from echo import add_callback
 from glue.config import viewer_tool
 from glue.core import HubListener
 from glue.core.message import (DataCollectionDeleteMessage, DataUpdateMessage,
@@ -9,7 +10,6 @@ from glue_jupyter.bqplot.common.tools import Tool
 from numpy import isnan
 from numpy.linalg import LinAlgError
 from traitlets import Unicode, HasTraits
-from cosmicds.message import CDSLayersUpdatedMessage
 
 from cosmicds.utils import fit_line, line_mark
 
@@ -40,12 +40,12 @@ class LineFitTool(Tool, HubListener, HasTraits):
                            handler=self._on_data_updated, filter=self._data_update_filter)
         self.hub.subscribe(self, LayerArtistVisibilityMessage,
                            handler=self._on_layer_visibility_updated, filter=self._layer_filter)
-        self.hub.subscribe(self, CDSLayersUpdatedMessage,
-                           handler=self._on_layers_updated, filter=self._layers_update_filter)
         self.hub.subscribe(self, LayerArtistUpdatedMessage, filter=self._layer_filter,
                            handler=self._on_layer_artist_updated)
         self.hub.subscribe(self, NumericalDataChangedMessage, filter=self._data_collection_filter,
                            handler=self._on_data_updated)
+
+        add_callback(self.viewer.state, 'layers', self._on_layers_updated)
 
 
     # Activation method
@@ -84,9 +84,6 @@ class LineFitTool(Tool, HubListener, HasTraits):
         return (data in self.lines.keys() or subset in self.lines.keys()) \
             and msg.attribute in [self.viewer.state.x_att, self.viewer.state.y_att]
 
-    def _layers_update_filter(self, msg):
-        return self.active and msg.sender == self.viewer
-
     def _layer_filter(self, msg):
         return self.active and msg.layer_artist in self.viewer.layers
 
@@ -111,7 +108,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
         data = msg.subset if isinstance(msg, SubsetMessage) else msg.data
         self._update_fit_line_for_data(data)
 
-    def _on_layers_updated(self, msg):
+    def _on_layers_updated(self, layers):
         self._refresh_if_active()
 
     def _on_layer_visibility_updated(self, msg):
