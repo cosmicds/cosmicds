@@ -169,8 +169,9 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     @show_labels.setter
     def show_labels(self, show):
-        self._show_labels = show
-        self._refresh_if_active()
+        if show != self._show_labels:
+            self._show_labels = show
+            self._refresh_if_active()
 
 
     # Add or remove ignore conditions
