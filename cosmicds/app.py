@@ -15,7 +15,7 @@ from traitlets import Dict, Bool, Int
 
 from .events import WriteToDatabaseMessage
 from .registries import story_registry
-from .utils import CDSJSONEncoder, load_template
+from .utils import CDSJSONEncoder, debounce, load_template
 
 v.theme.dark = True
 
@@ -210,11 +210,14 @@ class Application(VuetifyTemplate, HubListener):
             "value": value
         })
 
+    @debounce(2)
     def _speech_rate_changed(self, rate):
         self._student_option_changed('speech_rate', rate)
 
+    @debounce(2)
     def _speech_pitch_changed(self, pitch):
         self._student_option_changed('speech_pitch', pitch)
 
+    @debounce(2)
     def _speech_autoread_changed(self, autoread):
         self._student_option_changed('speech_autoread', autoread)
