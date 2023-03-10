@@ -58,8 +58,8 @@
         </v-col>
         <v-col
           v-else
-          cols="8"
-          class="shrink"
+          xl="8"
+          sm="6"
         >
           <div
             style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px;"
