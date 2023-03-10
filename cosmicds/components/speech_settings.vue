@@ -9,6 +9,12 @@
       </v-list-item>
       <v-divider></v-divider>
       <v-list-item>
+        <v-switch
+          v-model="state.speech_autoread"
+          label="Automatically read text"
+        ></v-switch>
+      </v-list-item>
+      <v-list-item>
         <v-slider
           v-model="state.speech_rate"
           label="Rate"
