@@ -74,6 +74,7 @@ class Application(VuetifyTemplate, HubListener):
                     self.student_id = student["id"]
 
             if not self.app_state.student:
+                db_init = "student_id" in kwargs
                 sid = kwargs.get("student_id", 0)
                 self.app_state.student["id"] = sid
                 self.student_id = sid
@@ -98,6 +99,9 @@ class Application(VuetifyTemplate, HubListener):
                            handler=self._on_write_to_database)
 
         add_callback(self.app_state, 'dark_mode', self._theme_toggle)
+        add_callback(self.app_state, 'speech_rate', self._speech_rate_changed)
+        add_callback(self.app_state, 'speech_pitch', self._speech_pitch_changed)
+        add_callback(self.app_state, 'speech_autoread', self._speech_autoread_changed)
 
     def reload(self):
         """
@@ -129,6 +133,11 @@ class Application(VuetifyTemplate, HubListener):
         story = self.story_state.name
         return f"{API_URL}/story-state/{user['id']}/{story}"
 
+    @property
+    def student_options_endpoint(self):
+        user = self.app_state.student
+        return f"{API_URL}/options/{user['id']}"
+
     def _initialize_from_database(self):
         try:
             # User information for a JupyterHub notebook session is stored in an
@@ -139,6 +148,16 @@ class Application(VuetifyTemplate, HubListener):
             state = data["state"]
             if state is not None:
                 self.story_state.update_from_dict(state)
+
+            # Get any persistent student options
+            response = requests.get(self.student_options_endpoint)
+            try:
+                data = response.json()
+                data.pop("student_id", 0)
+                self.app_state.update_from_dict(data)
+            except ValueError:
+                # If the student's options are empty, do nothing
+                pass
         except Exception as e:
             print(e)
 
@@ -183,3 +202,19 @@ class Application(VuetifyTemplate, HubListener):
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
+
+    def _student_option_changed(self, option, value):
+        url = self.student_options_endpoint
+        requests.put(url, json={
+            "option": option,
+            "value": value
+        })
+
+    def _speech_rate_changed(self, rate):
+        self._student_option_changed('speech_rate', rate)
+
+    def _speech_pitch_changed(self, pitch):
+        self._student_option_changed('speech_pitch', pitch)
+
+    def _speech_autoread_changed(self, autoread):
+        self._student_option_changed('speech_autoread', autoread)
