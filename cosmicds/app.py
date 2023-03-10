@@ -28,6 +28,9 @@ class ApplicationState(State):
     update_db = CallbackProperty(False)
     show_team_interface = CallbackProperty(True)
     allow_advancing = CallbackProperty(True)
+    speech_pitch = CallbackProperty(1)
+    speech_rate = CallbackProperty(1)
+    speech_autoread = CallbackProperty(False)
 
 
 class Application(VuetifyTemplate, HubListener):
@@ -35,14 +38,17 @@ class Application(VuetifyTemplate, HubListener):
     story_state = GlueState().tag(sync=True)
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
     drawer = Bool(True).tag(sync=True)
+    speech_menu = Bool(False).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
     app_state = GlueState().tag(sync=True)
+    speech_settings = GlueState().tag(sync=True)
     student_id = Int(0).tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.app_state = ApplicationState()
+        self.speech_state = ApplicationState()
 
         self.app_state.update_db = kwargs.get("update_db", True)
         self.app_state.show_team_interface = kwargs.get("show_team_interface",

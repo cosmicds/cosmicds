@@ -32,6 +32,34 @@
         <template
           v-slot:activator="{ on, attrs }"
         >
+          <v-menu
+            v-model="speech_menu"
+            :close-on-content-click="false"
+            offset-y
+          >
+            <template v-slot:activator="{ props }">
+              <v-btn
+                icon
+                v-bind:value="[props, attrs]"
+                v-on="on"
+                @click="speech_menu = !speech_menu"
+              >
+                <v-icon>mdi-voice</v-icon>
+              </v-btn>
+            </template>
+            <speech-settings
+              :state="app_state"
+            />
+          </v-menu>
+        </template>
+        Adjust speech settings
+      </v-tooltip>
+      <v-tooltip
+        bottom
+      >
+        <template
+          v-slot:activator="{ on, attrs }"
+        >
           <v-btn
             icon
             v-bind="attrs"
