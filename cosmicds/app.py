@@ -74,7 +74,6 @@ class Application(VuetifyTemplate, HubListener):
                     self.student_id = student["id"]
 
             if not self.app_state.student:
-                db_init = "student_id" in kwargs
                 sid = kwargs.get("student_id", 0)
                 self.app_state.student["id"] = sid
                 self.student_id = sid
@@ -89,6 +88,8 @@ class Application(VuetifyTemplate, HubListener):
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session,
                                                       self.app_state)
+
+        self._get_student_options()
 
         # Initialize from database
         if db_init:
@@ -148,17 +149,18 @@ class Application(VuetifyTemplate, HubListener):
             state = data["state"]
             if state is not None:
                 self.story_state.update_from_dict(state)
-
-            # Get any persistent student options
-            response = requests.get(self.student_options_endpoint)
-            try:
-                data = response.json()
-                data.pop("student_id", 0)
-                self.app_state.update_from_dict(data)
-            except ValueError:
-                # If the student's options are empty, do nothing
-                pass
         except Exception as e:
+            print(e)
+
+    def _get_student_options(self):
+        # Get any persistent student options
+        try:
+            response = requests.get(self.student_options_endpoint)
+            data = response.json()
+            print(data)
+            data.pop("student_id", 0)
+            self.app_state.update_from_dict(data)
+        except ValueError as e:
             print(e)
 
     def _on_write_to_database(self, _msg=None):
@@ -205,10 +207,11 @@ class Application(VuetifyTemplate, HubListener):
 
     def _student_option_changed(self, option, value):
         url = self.student_options_endpoint
-        requests.put(url, json={
+        response = requests.put(url, json={
             "option": option,
             "value": value
         })
+        print(response.text)
 
     @debounce(2)
     def _speech_rate_changed(self, rate):
