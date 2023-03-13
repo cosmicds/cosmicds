@@ -30,6 +30,7 @@ module.exports = {
       default: null
     }
   },
+  inject: ['appState'],
   data: function () {
     return {
       speaking: false,
@@ -39,6 +40,12 @@ module.exports = {
         'cached': 'reset'
       }
     };
+  },
+  mounted() {
+    console.log(this);
+    if (this.appState && this.appState.autoread) {
+      this.speak();
+    }
   },
   destroyed() {
     if (this.stopOnClose && this.speaking) {
@@ -81,8 +88,13 @@ module.exports = {
       return clone.textContent.trim();
 
     },
-    makeUtterance(text) {
+    makeUtterance(text, options) {
       const utterance = new SpeechSynthesisUtterance(text);
+
+      options = options || this.getSpeechOptions();
+      Object.keys(options).forEach(key => {
+        utterance[key] = options[key];
+      });
 
       // The interval is to work around this issue:
       // https://bugs.chromium.org/p/chromium/issues/detail?id=679437
@@ -111,7 +123,13 @@ module.exports = {
         this.rootElement = this.$parent.$el;
       }
     },
-    
+    getSpeechOptions() {
+      return {
+        autoread: this.appState.autoread ?? false,
+        pitch: this.appState.pitch ?? 1,
+        rate: this.appState.rate ?? 1
+      };
+    },
     // Taken from https://www.geeksforgeeks.org/how-to-check-if-an-element-is-visible-in-dom/
     // TODO: Is there a better way to check?
     //
@@ -148,7 +166,8 @@ module.exports = {
       // This gives a nice pause between paragraphs
       this.speaking = true;
       const items = this.getSpeechItems();
-      const utterances = items.map(this.makeUtterance);
+      const options = this.getSpeechOptions();
+      const utterances = items.map(item => this.makeUtterance(item, options));
       const lastUtterance = utterances[utterances.length - 1];
       const lastOnEnd = lastUtterance.onend;
       utterances[utterances.length - 1].onend = (event) => {

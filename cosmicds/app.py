@@ -41,14 +41,12 @@ class Application(VuetifyTemplate, HubListener):
     speech_menu = Bool(False).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
     app_state = GlueState().tag(sync=True)
-    speech_settings = GlueState().tag(sync=True)
     student_id = Int(0).tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.app_state = ApplicationState()
-        self.speech_state = ApplicationState()
 
         self.app_state.update_db = kwargs.get("update_db", True)
         self.app_state.show_team_interface = kwargs.get("show_team_interface",
