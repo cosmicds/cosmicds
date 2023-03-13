@@ -30,7 +30,6 @@ module.exports = {
       default: null
     }
   },
-  inject: ['appState'],
   data: function () {
     return {
       speaking: false,
@@ -42,8 +41,9 @@ module.exports = {
     };
   },
   mounted() {
-    console.log(this);
-    if (this.appState && this.appState.autoread) {
+    console.log(this.getSpeechOptions());
+    const appComponent = this.$root.$children[0].$children[0];
+    if (appComponent.app_state.speech_autoread) {
       this.speak();
     }
   },
@@ -54,6 +54,7 @@ module.exports = {
     }
   },
   methods: {
+
     elementText(element) {
 
       // Replace any MDI icons with text representing their name
@@ -124,10 +125,14 @@ module.exports = {
       }
     },
     getSpeechOptions() {
+      // TODO: Find a better way to access this piece of global state!
+      const appComponent = this.$root.$children[0].$children[0];
+      console.log(appComponent);
+      const state = appComponent.app_state;
       return {
-        autoread: this.appState.autoread ?? false,
-        pitch: this.appState.pitch ?? 1,
-        rate: this.appState.rate ?? 1
+        autoread: state.speech_autoread ?? false,
+        pitch: state.speech_pitch ?? 1,
+        rate: state.speech_rate ?? 1
       };
     },
     // Taken from https://www.geeksforgeeks.org/how-to-check-if-an-element-is-visible-in-dom/

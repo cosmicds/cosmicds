@@ -155,9 +155,9 @@ class Application(VuetifyTemplate, HubListener):
         try:
             response = requests.get(self.student_options_endpoint)
             data = response.json()
-            print(data)
-            data.pop("student_id", 0)
-            self.app_state.update_from_dict(data)
+            if data is not None:
+                data.pop("student_id", 0)
+                self.app_state.update_from_dict(data)
         except ValueError as e:
             print(e)
 
