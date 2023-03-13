@@ -5,7 +5,7 @@
         icon
       >
         <v-icon
-          @click="speak"
+          @click="(_event) => speak()"
         >
           {{ speaking ? 'mdi-stop' : 'mdi-voice' }}
         </v-icon>
@@ -28,11 +28,20 @@ module.exports = {
     root: {
       type: [Object, Function],
       default: null
+    },
+    autospeakOnChange: {
+      type: [Boolean, Number],
+      default: null
+    },
+    speakFlag: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
     return {
-      speaking: false,
+      utteranceSpeaking: false,
+      speakingTimeoutID: null,
       intervalID: 0,
       rootElement: null,
       iconNameMap: {
@@ -41,19 +50,39 @@ module.exports = {
     };
   },
   mounted() {
-    console.log(this.getSpeechOptions());
-    const appComponent = this.$root.$children[0].$children[0];
-    if (appComponent.app_state.speech_autoread) {
-      this.speak();
-    }
+    console.log(this);
+    this.triggerAutospeak();
   },
   destroyed() {
+    console.log("Destroying!");
     if (this.stopOnClose && this.speaking) {
       clearInterval(this.intervalID);
       window.speechSynthesis.cancel();
     }
   },
+  computed: {
+    speaking: {
+      get() {
+        return this.utteranceSpeaking;
+      },
+      set(value) {
+        if (this.speakingTimeoutID) {
+          clearTimeout(this.speakingTimeoutID);
+        }
+        this.speakingTimeoutID = setTimeout(() => {
+          this.utteranceSpeaking = value;
+        }, 400);
+      }
+    }
+  },
   methods: {
+
+    triggerAutospeak() {
+      const appComponent = this.$root.$children[0].$children[0];
+      if (appComponent.app_state.speech_autoread) {
+        this.$nextTick(() => this.speak(true));
+      }
+    },
 
     elementText(element) {
 
@@ -104,12 +133,17 @@ module.exports = {
       // but the pause-resume is sometimes slightly audible, so better to minimize that.
       // Note that the pause-resume won't happen if the text takes longer than 14 seconds to say
       utterance.onstart = (_event) => {
+        console.log("Utterance onstart");
         this.intervalID = setInterval(() => {
+          console.log("Here");
           window.speechSynthesis.pause();
           window.speechSynthesis.resume();
         }, 14000);
+        this.speaking = true;
       }
       utterance.onend = (_event) => {
+        console.log("Utterance onend");
+        this.speaking = false;
         clearInterval(this.intervalID);
       }
 
@@ -141,6 +175,9 @@ module.exports = {
     // Note that element.checkVisibility() doesn't work on Safari:
     // https://caniuse.com/mdn-api_element_checkvisibility
     isElementVisible(element) {
+      if (element.checkVisibility) {
+        return element.checkVisibility();
+      }
       return element.offsetWidth || 
              element.offsetHeight || 
              element.getClientRects().length;
@@ -149,22 +186,32 @@ module.exports = {
       if (this.rootElement === null) {
         this.findRootElement();
       }
+      console.log(this.rootElement);
       const selectedElements = this.rootElement.querySelectorAll(this.selectors.join(","));
+      console.log(this.selectors);
       const elements = [].concat(...selectedElements).filter(this.isElementVisible);
+      elements.forEach(el => {
+        console.log(el);
+        console.log(this.isElementVisible(el));
+        console.log(this.elementText(el));
+      });
       const items = elements.map(element => this.elementText(element)).filter(text => text.length > 0);
+      console.log(items);
       return items;
     },
-    speak() {
+
+    speak(forceSpeak=false) {
       const synth = window.speechSynthesis;
       if (synth.speaking) {
         synth.cancel();
         if (this.speaking) {
           clearInterval(this.intervalID);
           this.speaking = false;
-          return;
+          console.log(`forceSpeak: ${forceSpeak}`);
+          if (!forceSpeak) {
+            return;
+          }
         }
-      } else {
-        this.speaking = false;
       }
 
       // We say each speech item as its own utterance
@@ -173,13 +220,44 @@ module.exports = {
       const items = this.getSpeechItems();
       const options = this.getSpeechOptions();
       const utterances = items.map(item => this.makeUtterance(item, options));
-      const lastUtterance = utterances[utterances.length - 1];
-      const lastOnEnd = lastUtterance.onend;
-      utterances[utterances.length - 1].onend = (event) => {
-        lastOnEnd(event);
-        this.speaking = false;
+      console.log("Made utterances");
+
+      // const lastUtterance = utterances[utterances.length - 1];
+      // const lastOnEnd = lastUtterance.onend;
+      // lastUtterance.onend = (event) => {
+      //   lastOnEnd(event);
+      //   this.speaking = false;
+      // }
+      
+      //utterances.forEach((utterance) => synth.speak(utterance));
+      utterances.forEach(utterance => {
+        console.log(utterance.text);
+        synth.speak(utterance);
+      });
+    }
+  },
+
+  watch: {
+    // For the v-dialog slideshows, using nextTick (again, since triggerAutospeak uses it)
+    // didn't seem to be enough - the DOM changes hadn't finished propagating yet.
+    // But this does the trick, and I don't notice it at all
+    autospeakOnChange(_item) {
+      setTimeout(() => {{
+        this.triggerAutospeak();
+      }}, 100);
+    },
+
+    speakFlag(flag) {
+      if (flag) {
+        setTimeout(() => {{
+          this.triggerAutospeak();
+        }}, 100);
+      } else {
+        if (this.speaking) {
+          window.speechSynthesis.cancel();
+          this.speaking = false;
+        }
       }
-      utterances.forEach((utterance) => synth.speak(utterance));
     }
   }
 }
