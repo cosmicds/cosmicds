@@ -78,7 +78,8 @@ module.exports = {
   methods: {
 
     triggerAutospeak() {
-      const appComponent = this.$root.$children[0].$children[0];
+      // const appComponent = this.$root.$children[0].$children[0];
+      const appComponent = document.querySelector("#inspire").__vue__;
       if (appComponent.app_state.speech_autoread) {
         this.$nextTick(() => this.speak(true));
       }
@@ -160,8 +161,8 @@ module.exports = {
     },
     getSpeechOptions() {
       // TODO: Find a better way to access this piece of global state!
-      const appComponent = this.$root.$children[0].$children[0];
-      console.log(appComponent);
+      // const appComponent = this.$root.$children[0].$children[0];
+      const appComponent = document.querySelector("#inspire").__vue__;
       const state = appComponent.app_state;
       return {
         autoread: state.speech_autoread ?? false,
