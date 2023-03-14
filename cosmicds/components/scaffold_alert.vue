@@ -34,12 +34,6 @@
         no-gutters
       >
         <v-col
-          v-if="!header"
-          class="mx-2 shrink"
-        >
-          <speech-synthesizer/>
-        </v-col>
-        <v-col
           v-if="allowBack"
           class="shrink"
         >
@@ -55,6 +49,12 @@
               back
             </v-btn>
           </div>
+        </v-col>
+        <v-col
+          v-if="!header"
+          class="mx-2 shrink"
+        >
+          <speech-synthesizer/>
         </v-col>
         <v-col
           v-else
@@ -120,6 +120,10 @@
 
 .v-alert {
   background-color: #000D!important;
+}
+
+.v-textarea .v-input__slot {
+  background-color: #0001!important;
 }
 
 </style>
