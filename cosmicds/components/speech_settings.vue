@@ -22,7 +22,7 @@
           :min="0.5"
           :max="2"
           :step="0.1"
-          thumb-label
+          :thumb-label="false"
         >
         <template v-slot:prepend>
           <v-tooltip left>
@@ -46,7 +46,7 @@
           :min="0.1"
           :max="2"
           :step="0.1"
-          thumb-label
+          :thumb-label="false"
         >
         <template v-slot:prepend>
           <v-tooltip left>
