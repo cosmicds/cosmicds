@@ -31,6 +31,7 @@ class ApplicationState(State):
     speech_pitch = CallbackProperty(1)
     speech_rate = CallbackProperty(1)
     speech_autoread = CallbackProperty(False)
+    speech_voice = CallbackProperty(None)
 
 
 class Application(VuetifyTemplate, HubListener):
@@ -101,6 +102,7 @@ class Application(VuetifyTemplate, HubListener):
         add_callback(self.app_state, 'speech_rate', self._speech_rate_changed)
         add_callback(self.app_state, 'speech_pitch', self._speech_pitch_changed)
         add_callback(self.app_state, 'speech_autoread', self._speech_autoread_changed)
+        add_callback(self.app_state, 'speech_voice', self._speech_voice_changed)
 
     def reload(self):
         """
@@ -205,20 +207,23 @@ class Application(VuetifyTemplate, HubListener):
 
     def _student_option_changed(self, option, value):
         url = self.student_options_endpoint
-        response = requests.put(url, json={
+        requests.put(url, json={
             "option": option,
             "value": value
         })
-        print(response.text)
 
-    @debounce(2)
+    @debounce(1)
     def _speech_rate_changed(self, rate):
         self._student_option_changed('speech_rate', rate)
 
-    @debounce(2)
+    @debounce(1)
     def _speech_pitch_changed(self, pitch):
         self._student_option_changed('speech_pitch', pitch)
 
-    @debounce(2)
+    @debounce(1)
     def _speech_autoread_changed(self, autoread):
         self._student_option_changed('speech_autoread', autoread)
+
+    @debounce(1)
+    def _speech_voice_changed(self, voice):
+        self._student_option_changed('speech_voice', voice)
