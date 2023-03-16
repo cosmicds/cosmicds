@@ -164,11 +164,17 @@ module.exports = {
       // const appComponent = this.$root.$children[0].$children[0];
       const appComponent = document.querySelector("#inspire").__vue__;
       const state = appComponent.app_state;
-      return {
+      const voiceName = state.speech_voice;
+      const voice = window.speechSynthesis.getVoices().find(voice => voice.name == voiceName);
+      const options = {
         autoread: state.speech_autoread ?? false,
         pitch: state.speech_pitch ?? 1,
-        rate: state.speech_rate ?? 1
+        rate: state.speech_rate ?? 1,
       };
+      if (voice) {
+        options.voice = voice;
+      }
+      return options;
     },
     // Taken from https://www.geeksforgeeks.org/how-to-check-if-an-element-is-visible-in-dom/
     // TODO: Is there a better way to check?
