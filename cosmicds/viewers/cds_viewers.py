@@ -3,17 +3,13 @@
 
 from math import ceil, floor
 
-from echo import add_callback, callback_property, CallbackProperty, ignore_callback
+from echo import add_callback, callback_property, CallbackProperty
 from glue.config import viewer_tool
-from glue.core import Subset
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
-from glue_jupyter.utils import float_or_none
 from numpy import linspace, isnan
-import numpy as np
 
 from cosmicds.components.toolbar import Toolbar
-from cosmicds.message import CDSLayersUpdatedMessage
 from cosmicds.utils import frexp10
 
 def cds_viewer_state(state_class):
@@ -147,12 +143,6 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
             self.ignore_conditions = []
             add_callback(self.state, "xtick_values", self._update_xtick_values)
             add_callback(self.state, "ytick_values", self._update_ytick_values)
-
-            self._layer_artist_container.on_changed(self._send_layers_updated_message)
-
-        def _send_layers_updated_message(self, *args):
-            message = CDSLayersUpdatedMessage(self)
-            self._hub.broadcast(message)
 
         def initialize_toolbar(self):
             self.toolbar = Toolbar(self)
