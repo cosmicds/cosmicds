@@ -602,10 +602,6 @@ label.v-label--active div {
   font-weight: bold;
 }
 
-.layer_toggle .v-list-item__content {
-  color: white!important;
-}
-
 textarea {
   font-size: 1.2em!important;
   color: #FFF8E1!important;
