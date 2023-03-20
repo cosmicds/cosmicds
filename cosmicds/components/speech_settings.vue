@@ -66,7 +66,7 @@
         <v-select
           v-model="state.speech_voice"
           :items="window.speechSynthesis.getVoices()"
-          item-text="name"
+          :item-text="voice => `${voice.name} (${voice.lang})`"
           item-value="name"
           label="Select voice"
         ></v-select>
