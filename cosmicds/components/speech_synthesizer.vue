@@ -46,7 +46,13 @@ module.exports = {
       rootElement: null,
       iconNameMap: {
         'cached': 'reset'
-      }
+      },
+      defaultVoicesURIs: [
+        "Microsoft Aria",
+        "Google US English",
+        "Tessa"
+      ],
+      defaultVoice: null
     };
   },
   mounted() {
@@ -165,7 +171,8 @@ module.exports = {
       // const appComponent = document.querySelector("#inspire").__vue__;
       const state = appComponent.app_state;
       const voiceName = state.speech_voice;
-      const voice = window.speechSynthesis.getVoices().find(voice => voice.name == voiceName);
+      this.defaultVoice = this.defaultVoice || window.speechSynthesis.getVoices().find(voice => this.defaultVoicesURIs.includes(voice.voiceURI));
+      const voice = window.speechSynthesis.getVoices().find(voice => voice.name == voiceName) || this.defaultVoice;
       const options = {
         autoread: state.speech_autoread ?? false,
         pitch: state.speech_pitch ?? 1,
