@@ -4,7 +4,7 @@
       app
       color="primary"
       dark
-      src="https://www.astropix.org/archive/esahubble/opo22051a/esahubble_opo22051a_1600.jpg"
+      src="https://www.astropix.org/archive/esahubble/heic1518b/esahubble_heic1518b_1600.jpg"
       clipped-right
       flat
       height="72"
