@@ -34,12 +34,6 @@
         no-gutters
       >
         <v-col
-          v-if="!header"
-          class="mx-2 shrink"
-        >
-          <speech-synthesizer/>
-        </v-col>
-        <v-col
           v-if="allowBack"
           class="shrink"
         >
@@ -57,9 +51,15 @@
           </div>
         </v-col>
         <v-col
+          v-if="!header"
+          class="mx-2 shrink"
+        >
+          <speech-synthesizer/>
+        </v-col>
+        <v-col
           v-else
-          cols="8"
-          class="shrink"
+          xl="8"
+          sm="6"
         >
           <div
             style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px;"
@@ -108,16 +108,22 @@
 
 <style scoped>
 
-.theme--dark .v-card__text, .theme--dark .v-card__actions{
+.theme--dark .v-card__text, .theme--dark .v-card__actions,
+  .theme--dark .v-alert.trend-alert, .theme--dark .v-icon{
   color: white!important;
 }
 
-.theme--light .v-card__text, .theme--light .v-card__actions{
+.theme--light .v-card__text, .theme--light .v-card__actions,
+  .theme--light .v-alert.trend-alert, .theme--light .v-icon{
   color: black!important;
 }
 
 .v-alert {
   background-color: #000D!important;
+}
+
+.v-textarea .v-input__slot {
+  background-color: #0001!important;
 }
 
 </style>

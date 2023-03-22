@@ -4,7 +4,7 @@
       app
       color="primary"
       dark
-      src="https://www.astropix.org/archive/esahubble/opo22051a/esahubble_opo22051a_1600.jpg"
+      src="https://www.astropix.org/archive/esahubble/heic1518b/esahubble_heic1518b_1600.jpg"
       clipped-right
       flat
       height="72"
@@ -600,10 +600,6 @@ td.text-start {
 label.v-label--active div {
   color: white!important;
   font-weight: bold;
-}
-
-.layer_toggle .v-list-item__content {
-  color: white!important;
 }
 
 textarea {

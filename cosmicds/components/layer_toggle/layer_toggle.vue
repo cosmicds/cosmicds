@@ -1,7 +1,8 @@
 <template>
   <v-card
     flat
-    color="primary"
+    light
+    color="grey lighten-2"
     class="layer_toggle"
   >
     <v-list-item-group
@@ -15,7 +16,9 @@
         inactive
       >
         <template v-slot:default="{ active }">
-          <v-list-item-content>
+          <v-list-item-content
+            class="font-weight-bold"
+          >
             {{ layer.label }}
           </v-list-item-content>
 
@@ -32,3 +35,5 @@
     </v-list-item-group>
   </v-card>
 </template>
+
+
