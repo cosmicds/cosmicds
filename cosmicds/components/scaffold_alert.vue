@@ -109,12 +109,12 @@
 <style scoped>
 
 .theme--dark .v-card__text, .theme--dark .v-card__actions,
-  .theme--dark .v-alert, .theme--dark .v-icon{
+  .theme--dark .v-alert.trend-alert, .theme--dark .v-icon{
   color: white!important;
 }
 
 .theme--light .v-card__text, .theme--light .v-card__actions,
-  .theme--light .v-alert, .theme--light .v-icon{
+  .theme--light .v-alert.trend-alert, .theme--light .v-icon{
   color: black!important;
 }
 
