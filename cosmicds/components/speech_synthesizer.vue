@@ -56,8 +56,19 @@ module.exports = {
     };
   },
   mounted() {
-    console.log(this);
     this.triggerAutospeak();
+    this.intersectionCallback = (entries, _observer) => {
+      entries.forEach((entry) => {
+        if (entry.target !== this.rootElement) { return; }
+        if (!entry.isIntersecting) {
+          this.stopSpeaking();
+        }
+      });
+    };
+    if (this.rootElement) {
+      this.intersectionObserver = new IntersectionObserver(this.intersectionCallback);
+      this.intersectionObserver.observe(newRoot);
+    }
   },
   destroyed() {
     console.log("Destroying!");
@@ -196,13 +207,13 @@ module.exports = {
              element.offsetHeight || 
              element.getClientRects().length;
     },
-    getSpeechItems() {
+    getSpeechItems(selectors=this.selectors) {
       if (this.rootElement === null) {
         this.findRootElement();
       }
       console.log(this.rootElement);
-      const selectedElements = this.rootElement.querySelectorAll(this.selectors.join(","));
-      console.log(this.selectors);
+      const selectedElements = this.rootElement.querySelectorAll(selectors.join(","));
+      console.log(selectors);
       const elements = [].concat(...selectedElements).filter(this.isElementVisible);
       elements.forEach(el => {
         console.log(el);
@@ -214,24 +225,23 @@ module.exports = {
       return items;
     },
 
-    speak(forceSpeak=false) {
+    speakForSelectors(selectors) {
+      this.speak(true, selectors)
+    },
+
+    speak(forceSpeak=false, selectors=this.selectors) {
       const synth = window.speechSynthesis;
-      if (synth.speaking) {
-        synth.cancel();
-        if (this.speaking) {
-          clearInterval(this.intervalID);
-          this.speaking = false;
-          console.log(`forceSpeak: ${forceSpeak}`);
-          if (!forceSpeak) {
-            return;
-          }
-        }
+      const wasSpeaking = this.speaking;
+      this.stopSpeaking();
+      console.log(`forceSpeak: ${forceSpeak}`);
+      if (wasSpeaking && !forceSpeak) {
+        return;
       }
 
       // We say each speech item as its own utterance
       // This gives a nice pause between paragraphs
       this.speaking = true;
-      const items = this.getSpeechItems();
+      const items = this.getSpeechItems(selectors);
       const options = this.getSpeechOptions();
       const utterances = items.map(item => this.makeUtterance(item, options));
       console.log("Made utterances");
@@ -248,6 +258,17 @@ module.exports = {
         console.log(utterance.text);
         synth.speak(utterance);
       });
+    },
+
+    stopSpeaking() {
+      const synth = window.speechSynthesis;
+      if (synth.speaking) {
+        synth.cancel();
+      }
+      if (this.speaking) {
+        clearInterval(this.intervalID);
+        this.speaking = false;
+      }
     }
   },
 
@@ -272,6 +293,14 @@ module.exports = {
           this.speaking = false;
         }
       }
+    },
+    rootElement(newRoot, oldRoot) {
+      console.log("Changing root element");
+      if (this.intersectionObserver) {
+        this.intersectionObserver.unobserve(oldRoot);
+      }
+      this.intersectionObserver = new IntersectionObserver(this.intersectionCallback);
+      this.intersectionObserver.observe(newRoot);
     }
   }
 }
