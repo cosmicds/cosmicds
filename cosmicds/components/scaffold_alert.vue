@@ -21,7 +21,7 @@
         <v-col
           align="right"
         >
-          <speech-synthesizer :state="state"/>
+          <speech-synthesizer />
         </v-col>
       </v-row>
       <slot :advance="advance"></slot>
