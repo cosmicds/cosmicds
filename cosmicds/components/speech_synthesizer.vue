@@ -52,28 +52,52 @@ module.exports = {
         "Google US English",
         "Tessa"
       ],
-      defaultVoice: null
+      defaultVoice: null,
+      utterances: new Set(),
+      findingRoot: false
     };
   },
   mounted() {
-    this.triggerAutospeak();
+    console.log("Mounting!");
     this.intersectionCallback = (entries, _observer) => {
+      console.log("Inside intersection observer");
+      console.log(entries);
+
+      // The IntersectionObserver is called once as soon as it's instantiated
+      // We don't want that!
+      // so here's a workaround
+      // This is set in the rootElement watcher, where the observer is created
+      // if (this.findingRoot) {
+      //   this.findingRoot = false;
+      //   return;
+      // }
+
       entries.forEach((entry) => {
+        console.log(entry.target);
+        console.log(this.rootElement);
         if (entry.target !== this.rootElement) { return; }
-        if (!entry.isIntersecting) {
+        console.log(this);
+        console.log(`isSpeaking: ${this.isSpeaking()}`);
+        console.log(`isIntersecting: ${entry.isIntersecting}`);
+        console.log(`autoread: ${this.getSpeechOptions().autoread}`);
+        if (this.isSpeaking() && !entry.isIntersecting) {
           this.stopSpeaking();
+        } else if (!this.speaking && entry.isIntersecting && this.getSpeechOptions().autoread > 0) {
+          this.triggerAutospeak(false);
         }
       });
     };
-    if (this.rootElement) {
-      this.intersectionObserver = new IntersectionObserver(this.intersectionCallback);
-      this.intersectionObserver.observe(newRoot);
-    }
+    this.$nextTick(() => {
+      this.findRootElement();
+      console.log("Here");
+      console.log(this.rootElement);
+    });
   },
   destroyed() {
     console.log("Destroying!");
-    if (this.stopOnClose && this.speaking) {
+    if (this.stopOnClose && this.isSpeaking()) {
       clearInterval(this.intervalID);
+      this.speaking = false;
       window.speechSynthesis.cancel();
     }
   },
@@ -88,17 +112,18 @@ module.exports = {
         }
         this.speakingTimeoutID = setTimeout(() => {
           this.utteranceSpeaking = value;
-        }, 400);
+        }, 300);
       }
     }
   },
   methods: {
 
-    triggerAutospeak() {
+    triggerAutospeak(forceSpeak=true) {
+      console.log("In triggerAutospeak");
       const appComponent = this.$root.$children[0].$children[0];
       // const appComponent = document.querySelector("#inspire").__vue__;
       if (appComponent.app_state.speech_autoread) {
-        this.$nextTick(() => this.speak(true));
+        this.$nextTick(() => this.speak(forceSpeak));
       }
     },
 
@@ -150,24 +175,29 @@ module.exports = {
       // We could just use one interval for the entire block of text items
       // but the pause-resume is sometimes slightly audible, so better to minimize that.
       // Note that the pause-resume won't happen if the text takes longer than 14 seconds to say
+      const synth = window.speechSynthesis;
       utterance.onstart = (_event) => {
         console.log("Utterance onstart");
         this.intervalID = setInterval(() => {
           console.log("Here");
-          window.speechSynthesis.pause();
-          window.speechSynthesis.resume();
+          synth.pause();
+          synth.resume();
         }, 14000);
+        synth.utterance = utterance;
         this.speaking = true;
       }
       utterance.onend = (_event) => {
         console.log("Utterance onend");
+        synth.utterance = null;
         this.speaking = false;
+        this.utterances.delete(utterance);
         clearInterval(this.intervalID);
       }
 
       return utterance;
     },
     findRootElement() {
+      console.log("Inside findRootElement");
       if (this.root instanceof Element) {
         this.rootElement = this.root;
       } else if (this.root instanceof Function) {
@@ -230,9 +260,9 @@ module.exports = {
     },
 
     speak(forceSpeak=false, selectors=this.selectors) {
-      const synth = window.speechSynthesis;
-      const wasSpeaking = this.speaking;
+      const wasSpeaking = this.isSpeaking();
       this.stopSpeaking();
+      console.log(`wasSpeaking: ${wasSpeaking}`);
       console.log(`forceSpeak: ${forceSpeak}`);
       if (wasSpeaking && !forceSpeak) {
         return;
@@ -244,6 +274,7 @@ module.exports = {
       const items = this.getSpeechItems(selectors);
       const options = this.getSpeechOptions();
       const utterances = items.map(item => this.makeUtterance(item, options));
+      this.utterances = new Set(utterances);
       console.log("Made utterances");
 
       // const lastUtterance = utterances[utterances.length - 1];
@@ -255,20 +286,23 @@ module.exports = {
       
       //utterances.forEach((utterance) => synth.speak(utterance));
       utterances.forEach(utterance => {
-        console.log(utterance.text);
-        synth.speak(utterance);
+        window.speechSynthesis.speak(utterance);
       });
     },
 
     stopSpeaking() {
-      const synth = window.speechSynthesis;
-      if (synth.speaking) {
-        synth.cancel();
-      }
-      if (this.speaking) {
+      if (this.isSpeaking()) {
+        window.speechSynthesis.cancel();
         clearInterval(this.intervalID);
         this.speaking = false;
+        this.utterances.clear();
       }
+    },
+
+    // I made this a method rather than a computed since synth.speaking is not reactive
+    isSpeaking() {
+      const synth = window.speechSynthesis;
+      return synth.speaking && this.utterances.has(synth.utterance);
     }
   },
 
@@ -288,7 +322,7 @@ module.exports = {
           this.triggerAutospeak();
         }}, 100);
       } else {
-        if (this.speaking) {
+        if (this.isSpeaking()) {
           window.speechSynthesis.cancel();
           this.speaking = false;
         }
@@ -296,6 +330,7 @@ module.exports = {
     },
     rootElement(newRoot, oldRoot) {
       console.log("Changing root element");
+      this.findingRoot = true;
       if (this.intersectionObserver) {
         this.intersectionObserver.unobserve(oldRoot);
       }
