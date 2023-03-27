@@ -1,12 +1,11 @@
-from glue.core.hub import Hub
 from glue.core import SubsetGroup
 import numpy as np
-from glue.core.message import (DataCollectionAddMessage, DataCollectionDeleteMessage,
+from glue.core.message import (DataCollectionDeleteMessage,
                               DataUpdateMessage, NumericalDataChangedMessage, SubsetUpdateMessage)
 from glue.core import HubListener
 from glue.core.subset import SubsetState
 from ipyvuetify import VuetifyTemplate
-from traitlets import Bool, Dict, List, Unicode, observe, HasTraits
+from traitlets import Bool, Dict, List, Unicode, observe
 
 from ...utils import convert_material_color, load_template
 
@@ -31,7 +30,7 @@ class Table(VuetifyTemplate, HubListener):
     tools = Dict(default_value={}).tag(sync=True)
     use_search = Bool(False).tag(sync=True)
 
-    def __init__(self, session, data, tools=None, *args, **kwargs):
+    def __init__(self, session, data, tools=None, item_filter=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._session = session
@@ -54,6 +53,8 @@ class Table(VuetifyTemplate, HubListener):
                     tool_id: tool,
                     **self.tools
                 }
+
+        self.item_filter = item_filter or (lambda item: True)
 
         self.subset_color = kwargs.get('color', Table.default_color)
         self.use_subset_group = kwargs.get('use_subset_group', True)
@@ -164,9 +165,9 @@ class Table(VuetifyTemplate, HubListener):
         } for name, component in zip(self._glue_component_names, self._glue_components)]
         self.headers[0]['align'] = 'start'
         self.items = [
-            {
+            item for row in df.itertuples() if self.item_filter(item:={
                 component : self._transform(component)(getattr(row, component, None)) for component in self._glue_components
-            } for row in df.itertuples()
+            })
         ]
 
     def _new_subset(self):
@@ -180,6 +181,10 @@ class Table(VuetifyTemplate, HubListener):
         return subset
 
     def _on_data_updated(self, message=None):
+        self._populate_table()
+
+    def filter_by(self, item_filter):
+        self.item_filter = item_filter or (lambda item: True)
         self._populate_table()
 
     def _on_subset_updated(self, message=None):
