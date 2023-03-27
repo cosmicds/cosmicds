@@ -74,23 +74,19 @@ module.exports = {
 
       entries.forEach((entry) => {
         console.log(entry.target);
-        console.log(this.rootElement);
         if (entry.target !== this.rootElement) { return; }
-        console.log(this);
-        console.log(`isSpeaking: ${this.isSpeaking()}`);
+        console.log(`speaking: ${this.speaking}`);
         console.log(`isIntersecting: ${entry.isIntersecting}`);
         console.log(`autoread: ${this.getSpeechOptions().autoread}`);
-        if (this.isSpeaking() && !entry.isIntersecting) {
-          this.stopSpeaking();
+        if (!entry.isIntersecting) {
+          this.stopThisSpeaking();
         } else if (!this.speaking && entry.isIntersecting && this.getSpeechOptions().autoread > 0) {
-          this.triggerAutospeak(false);
+          this.triggerAutospeak(true);
         }
       });
     };
     this.$nextTick(() => {
       this.findRootElement();
-      console.log("Here");
-      console.log(this.rootElement);
     });
   },
   destroyed() {
@@ -261,7 +257,7 @@ module.exports = {
 
     speak(forceSpeak=false, selectors=this.selectors) {
       const wasSpeaking = this.isSpeaking();
-      this.stopSpeaking();
+      this.cancelSpeech();
       console.log(`wasSpeaking: ${wasSpeaking}`);
       console.log(`forceSpeak: ${forceSpeak}`);
       if (wasSpeaking && !forceSpeak) {
@@ -290,18 +286,25 @@ module.exports = {
       });
     },
 
-    stopSpeaking() {
+    stopThisSpeaking() {
+      this.speaking = false;
       if (this.isSpeaking()) {
-        window.speechSynthesis.cancel();
-        clearInterval(this.intervalID);
-        this.speaking = false;
-        this.utterances.clear();
+        this.cancelSpeech();
       }
+    },
+
+    cancelSpeech() {
+      window.speechSynthesis.utterance = null;
+      window.speechSynthesis.cancel();
+      this.utterances.clear();
+      clearInterval(this.intervalID);
+      this.speaking = false;
     },
 
     // I made this a method rather than a computed since synth.speaking is not reactive
     isSpeaking() {
       const synth = window.speechSynthesis;
+      console.log(synth.utterance);
       return synth.speaking && this.utterances.has(synth.utterance);
     }
   },
