@@ -29,6 +29,10 @@ module.exports = {
       type: [Object, Function],
       default: null
     },
+    elementFilter: {
+      type: [Function],
+      default: null
+    },
     autospeakOnChange: {
       type: [Boolean, Number],
       default: null
@@ -61,6 +65,7 @@ module.exports = {
     console.log("Mounting!");
     this.intersectionCallback = (entries, _observer) => {
       console.log("Inside intersection observer");
+      console.log(this);
       console.log(entries);
 
       // The IntersectionObserver is called once as soon as it's instantiated
@@ -240,7 +245,10 @@ module.exports = {
       console.log(this.rootElement);
       const selectedElements = this.rootElement.querySelectorAll(selectors.join(","));
       console.log(selectors);
-      const elements = [].concat(...selectedElements).filter(this.isElementVisible);
+      let elements = [].concat(...selectedElements).filter(this.isElementVisible);
+      if (this.elementFilter) {
+        elements = elements.filter(this.elementFilter);
+      }
       elements.forEach(el => {
         console.log(el);
         console.log(this.isElementVisible(el));
