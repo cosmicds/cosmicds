@@ -137,6 +137,12 @@ class LineDrawTool(InteractCheckableTool, HasTraits):
         self.viewer.figure.interaction = self._original_interaction
         self.viewer.toolbar.active_tool = None
 
+        # Make sure that we can't end up with the line defined but not the endpoint
+        if self.line is not None and self.endpoint is None:
+            fig = self.viewer.figure
+            fig.marks = [m for m in fig.marks if m != self.line]
+            self.line = None
+
     def close(self):
         super().close()
 
