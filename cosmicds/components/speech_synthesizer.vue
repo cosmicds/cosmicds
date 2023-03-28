@@ -62,11 +62,7 @@ module.exports = {
     };
   },
   mounted() {
-    console.log("Mounting!");
     this.intersectionCallback = (entries, _observer) => {
-      console.log("Inside intersection observer");
-      console.log(this);
-      console.log(entries);
 
       // The IntersectionObserver is called once as soon as it's instantiated
       // We don't want that!
@@ -78,11 +74,7 @@ module.exports = {
       // }
 
       entries.forEach((entry) => {
-        console.log(entry.target);
         if (entry.target !== this.rootElement) { return; }
-        console.log(`speaking: ${this.speaking}`);
-        console.log(`isIntersecting: ${entry.isIntersecting}`);
-        console.log(`autoread: ${this.getSpeechOptions().autoread}`);
         if (!entry.isIntersecting) {
           this.stopThisSpeaking();
         } else if (!this.speaking && entry.isIntersecting && this.getSpeechOptions().autoread > 0) {
@@ -95,7 +87,6 @@ module.exports = {
     });
   },
   destroyed() {
-    console.log("Destroying!");
     if (this.stopOnClose && this.isSpeaking()) {
       clearInterval(this.intervalID);
       this.speaking = false;
@@ -120,7 +111,6 @@ module.exports = {
   methods: {
 
     triggerAutospeak(forceSpeak=true) {
-      console.log("In triggerAutospeak");
       const appComponent = this.$root.$children[0].$children[0];
       // const appComponent = document.querySelector("#inspire").__vue__;
       if (appComponent.app_state.speech_autoread) {
@@ -178,9 +168,7 @@ module.exports = {
       // Note that the pause-resume won't happen if the text takes longer than 14 seconds to say
       const synth = window.speechSynthesis;
       utterance.onstart = (_event) => {
-        console.log("Utterance onstart");
         this.intervalID = setInterval(() => {
-          console.log("Here");
           synth.pause();
           synth.resume();
         }, 14000);
@@ -188,7 +176,6 @@ module.exports = {
         this.speaking = true;
       }
       utterance.onend = (_event) => {
-        console.log("Utterance onend");
         synth.utterance = null;
         this.speaking = false;
         this.utterances.delete(utterance);
@@ -198,7 +185,6 @@ module.exports = {
       return utterance;
     },
     findRootElement() {
-      console.log("Inside findRootElement");
       if (this.root instanceof Element) {
         this.rootElement = this.root;
       } else if (this.root instanceof Function) {
@@ -242,20 +228,12 @@ module.exports = {
       if (this.rootElement === null) {
         this.findRootElement();
       }
-      console.log(this.rootElement);
       const selectedElements = this.rootElement.querySelectorAll(selectors.join(","));
-      console.log(selectors);
       let elements = [].concat(...selectedElements).filter(this.isElementVisible);
       if (this.elementFilter) {
         elements = elements.filter(this.elementFilter);
       }
-      elements.forEach(el => {
-        console.log(el);
-        console.log(this.isElementVisible(el));
-        console.log(this.elementText(el));
-      });
       const items = elements.map(element => this.elementText(element)).filter(text => text.length > 0);
-      console.log(items);
       return items;
     },
 
@@ -266,8 +244,6 @@ module.exports = {
     speak(forceSpeak=false, selectors=this.selectors) {
       const wasSpeaking = this.isSpeaking();
       this.cancelSpeech();
-      console.log(`wasSpeaking: ${wasSpeaking}`);
-      console.log(`forceSpeak: ${forceSpeak}`);
       if (wasSpeaking && !forceSpeak) {
         return;
       }
@@ -279,7 +255,6 @@ module.exports = {
       const options = this.getSpeechOptions();
       const utterances = items.map(item => this.makeUtterance(item, options));
       this.utterances = new Set(utterances);
-      console.log("Made utterances");
 
       // const lastUtterance = utterances[utterances.length - 1];
       // const lastOnEnd = lastUtterance.onend;
@@ -312,7 +287,6 @@ module.exports = {
     // I made this a method rather than a computed since synth.speaking is not reactive
     isSpeaking() {
       const synth = window.speechSynthesis;
-      console.log(synth.utterance);
       return synth.speaking && this.utterances.has(synth.utterance);
     }
   },
@@ -340,7 +314,6 @@ module.exports = {
       }
     },
     rootElement(newRoot, oldRoot) {
-      console.log("Changing root element");
       this.findingRoot = true;
       if (this.intersectionObserver) {
         this.intersectionObserver.unobserve(oldRoot);
