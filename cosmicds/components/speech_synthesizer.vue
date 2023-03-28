@@ -52,9 +52,9 @@ module.exports = {
         'cached': 'reset'
       },
       defaultVoicesURIs: [
-        "Microsoft Aria",
+        "Microsoft Aria Online (Natural) - English (United States)",
         "Google US English",
-        "Tessa"
+        "com.apple.speech.synthesis.voice.tessa"
       ],
       defaultVoice: null,
       utterances: new Set(),
