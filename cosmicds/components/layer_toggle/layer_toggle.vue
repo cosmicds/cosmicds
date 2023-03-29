@@ -2,7 +2,8 @@
   <v-card
     flat
     light
-    color="grey lighten-2"
+    variant="outlined"
+    color="white"
     class="layer_toggle"
   >
     <v-list-item-group
@@ -35,5 +36,13 @@
     </v-list-item-group>
   </v-card>
 </template>
+
+<style scoped>
+
+.v-card{
+  border: solid 1px black!important;
+}
+
+</style>
 
 

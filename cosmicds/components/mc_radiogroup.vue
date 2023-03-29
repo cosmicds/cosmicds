@@ -29,6 +29,7 @@
     >
       <div
         v-html="feedbacks[column]"
+        class="feedback"
       >
       </div>
       <div
@@ -47,6 +48,14 @@
     </v-alert>
   </v-container>
 </template>
+
+<style scoped>
+
+.feedback{
+  color: white;
+}
+
+</style>
 
 <script>
 module.exports = {

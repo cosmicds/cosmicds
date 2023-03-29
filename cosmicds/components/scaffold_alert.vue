@@ -51,15 +51,24 @@
           </div>
         </v-col>
         <v-col
-          v-if="!header"
+          v-else
           class="mx-2 shrink"
         >
-          <speech-synthesizer/>
+          <speech-synthesizer
+            v-if="!header"/>
+        </v-col>
+        <v-col
+          v-if="allowBack"
+          class="mx-2 shrink"
+        >
+          <speech-synthesizer
+            v-if="!header" />
         </v-col>
         <v-col
           v-else
           xl="8"
           sm="6"
+          class="shrink"
         >
           <div
             style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px;"
@@ -109,12 +118,12 @@
 <style scoped>
 
 .theme--dark .v-card__text, .theme--dark .v-card__actions,
-  .theme--dark .v-alert.trend-alert, .theme--dark .v-icon{
+  .theme--dark .v-alert.trend-alert, .theme--dark .v-icon:not(.v-alert__icon, .mdi-piggy-bank){
   color: white!important;
 }
 
 .theme--light .v-card__text, .theme--light .v-card__actions,
-  .theme--light .v-alert.trend-alert, .theme--light .v-icon{
+  .theme--light .v-alert.trend-alert, .theme--light .v-icon:not(.v-alert__icon, .mdi-piggy-bank){
   color: black!important;
 }
 
