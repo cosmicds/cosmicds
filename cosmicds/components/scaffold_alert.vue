@@ -52,21 +52,29 @@
         </v-col>
         <v-col
           v-else
+          class="mx-2 shrink"
+        >
+          <speech-synthesizer
+            v-if="!header"/>
+        </v-col>
+        <v-col
+          v-if="allowBack"
+          class="mx-2 shrink"
+        >
+          <speech-synthesizer
+            v-if="!header" />
+        </v-col>
+        <v-col
+          v-else
           xl="8"
           sm="6"
           class="shrink"
         >
           <div
-            style="font-size: 16px; border-right: solid 3px #FFD740; padding-right: 10px;"
+            style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px;"
           >
             <slot name="back-content"></slot>
           </div>
-        </v-col>
-        <v-col
-          v-if="!header"
-          class="mx-2 shrink"
-        >
-          <speech-synthesizer/>
         </v-col>
 
         <v-spacer></v-spacer>
