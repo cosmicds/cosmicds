@@ -5,7 +5,7 @@
         icon
       >
         <v-icon
-          @click="speak"
+          @click="(_event) => speak()"
         >
           {{ speaking ? 'mdi-stop' : 'mdi-voice' }}
         </v-icon>
@@ -28,25 +28,96 @@ module.exports = {
     root: {
       type: [Object, Function],
       default: null
+    },
+    elementFilter: {
+      type: [Function],
+      default: null
+    },
+    autospeakOnChange: {
+      type: [Boolean, Number],
+      default: null
+    },
+    speakFlag: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
     return {
-      speaking: false,
+      utteranceSpeaking: false,
+      speakingTimeoutID: null,
       intervalID: 0,
       rootElement: null,
       iconNameMap: {
         'cached': 'reset'
-      }
+      },
+      defaultVoicesURIs: [
+        "Microsoft Aria Online (Natural) - English (United States)",
+        "Google US English",
+        "com.apple.speech.synthesis.voice.tessa"
+      ],
+      defaultVoice: null,
+      utterances: new Set(),
+      findingRoot: false
     };
   },
+  mounted() {
+    this.intersectionCallback = (entries, _observer) => {
+
+      // The IntersectionObserver is called once as soon as it's instantiated
+      // We don't want that!
+      // so here's a workaround
+      // This is set in the rootElement watcher, where the observer is created
+      // if (this.findingRoot) {
+      //   this.findingRoot = false;
+      //   return;
+      // }
+
+      entries.forEach((entry) => {
+        if (entry.target !== this.rootElement) { return; }
+        if (!entry.isIntersecting) {
+          this.stopThisSpeaking();
+        } else if (!this.speaking && entry.isIntersecting && this.getSpeechOptions().autoread > 0) {
+          this.triggerAutospeak(true);
+        }
+      });
+    };
+    this.$nextTick(() => {
+      this.findRootElement();
+    });
+  },
   destroyed() {
-    if (this.stopOnClose && this.speaking) {
+    if (this.stopOnClose && this.isSpeaking()) {
       clearInterval(this.intervalID);
+      this.speaking = false;
       window.speechSynthesis.cancel();
     }
   },
+  computed: {
+    speaking: {
+      get() {
+        return this.utteranceSpeaking;
+      },
+      set(value) {
+        if (this.speakingTimeoutID) {
+          clearTimeout(this.speakingTimeoutID);
+        }
+        this.speakingTimeoutID = setTimeout(() => {
+          this.utteranceSpeaking = value;
+        }, 300);
+      }
+    }
+  },
   methods: {
+
+    triggerAutospeak(forceSpeak=true) {
+      const appComponent = this.$root.$children[0].$children[0];
+      // const appComponent = document.querySelector("#inspire").__vue__;
+      if (appComponent.app_state.speech_autoread) {
+        this.$nextTick(() => this.speak(forceSpeak));
+      }
+    },
+
     elementText(element) {
 
       // Replace any MDI icons with text representing their name
@@ -81,8 +152,13 @@ module.exports = {
       return clone.textContent.trim();
 
     },
-    makeUtterance(text) {
+    makeUtterance(text, options) {
       const utterance = new SpeechSynthesisUtterance(text);
+
+      options = options || this.getSpeechOptions();
+      Object.keys(options).forEach(key => {
+        utterance[key] = options[key];
+      });
 
       // The interval is to work around this issue:
       // https://bugs.chromium.org/p/chromium/issues/detail?id=679437
@@ -90,13 +166,19 @@ module.exports = {
       // We could just use one interval for the entire block of text items
       // but the pause-resume is sometimes slightly audible, so better to minimize that.
       // Note that the pause-resume won't happen if the text takes longer than 14 seconds to say
+      const synth = window.speechSynthesis;
       utterance.onstart = (_event) => {
         this.intervalID = setInterval(() => {
-          window.speechSynthesis.pause();
-          window.speechSynthesis.resume();
+          synth.pause();
+          synth.resume();
         }, 14000);
+        synth.utterance = utterance;
+        this.speaking = true;
       }
       utterance.onend = (_event) => {
+        synth.utterance = null;
+        this.speaking = false;
+        this.utterances.delete(utterance);
         clearInterval(this.intervalID);
       }
 
@@ -111,51 +193,133 @@ module.exports = {
         this.rootElement = this.$parent.$el;
       }
     },
-    
+    getSpeechOptions() {
+      // TODO: Find a better way to access this piece of global state!
+      const appComponent = this.$root.$children[0].$children[0];
+      // const appComponent = document.querySelector("#inspire").__vue__;
+      const state = appComponent.app_state;
+      const voiceName = state.speech_voice;
+      this.defaultVoice = this.defaultVoice || window.speechSynthesis.getVoices().find(voice => this.defaultVoicesURIs.includes(voice.voiceURI));
+      const voice = window.speechSynthesis.getVoices().find(voice => voice.name == voiceName) || this.defaultVoice;
+      const options = {
+        autoread: state.speech_autoread ?? false,
+        pitch: state.speech_pitch ?? 1,
+        rate: state.speech_rate ?? 1,
+      };
+      if (voice) {
+        options.voice = voice;
+      }
+      return options;
+    },
     // Taken from https://www.geeksforgeeks.org/how-to-check-if-an-element-is-visible-in-dom/
     // TODO: Is there a better way to check?
     //
     // Note that element.checkVisibility() doesn't work on Safari:
     // https://caniuse.com/mdn-api_element_checkvisibility
     isElementVisible(element) {
+      if (element.checkVisibility) {
+        return element.checkVisibility();
+      }
       return element.offsetWidth || 
              element.offsetHeight || 
              element.getClientRects().length;
     },
-    getSpeechItems() {
+    getSpeechItems(selectors=this.selectors) {
       if (this.rootElement === null) {
         this.findRootElement();
       }
-      const selectedElements = this.rootElement.querySelectorAll(this.selectors.join(","));
-      const elements = [].concat(...selectedElements).filter(this.isElementVisible);
+      const selectedElements = this.rootElement.querySelectorAll(selectors.join(","));
+      let elements = [].concat(...selectedElements).filter(this.isElementVisible);
+      if (this.elementFilter) {
+        elements = elements.filter(this.elementFilter);
+      }
       const items = elements.map(element => this.elementText(element)).filter(text => text.length > 0);
       return items;
     },
-    speak() {
-      const synth = window.speechSynthesis;
-      if (synth.speaking) {
-        synth.cancel();
-        if (this.speaking) {
-          clearInterval(this.intervalID);
-          this.speaking = false;
-          return;
-        }
-      } else {
-        this.speaking = false;
+
+    speakForSelectors(selectors) {
+      this.speak(true, selectors)
+    },
+
+    speak(forceSpeak=false, selectors=this.selectors) {
+      const wasSpeaking = this.isSpeaking();
+      this.cancelSpeech();
+      if (wasSpeaking && !forceSpeak) {
+        return;
       }
 
       // We say each speech item as its own utterance
       // This gives a nice pause between paragraphs
       this.speaking = true;
-      const items = this.getSpeechItems();
-      const utterances = items.map(this.makeUtterance);
-      const lastUtterance = utterances[utterances.length - 1];
-      const lastOnEnd = lastUtterance.onend;
-      utterances[utterances.length - 1].onend = (event) => {
-        lastOnEnd(event);
-        this.speaking = false;
+      const items = this.getSpeechItems(selectors);
+      const options = this.getSpeechOptions();
+      const utterances = items.map(item => this.makeUtterance(item, options));
+      this.utterances = new Set(utterances);
+
+      // const lastUtterance = utterances[utterances.length - 1];
+      // const lastOnEnd = lastUtterance.onend;
+      // lastUtterance.onend = (event) => {
+      //   lastOnEnd(event);
+      //   this.speaking = false;
+      // }
+      
+      //utterances.forEach((utterance) => synth.speak(utterance));
+      utterances.forEach(utterance => {
+        window.speechSynthesis.speak(utterance);
+      });
+    },
+
+    stopThisSpeaking() {
+      this.speaking = false;
+      if (this.isSpeaking()) {
+        this.cancelSpeech();
       }
-      utterances.forEach((utterance) => synth.speak(utterance));
+    },
+
+    cancelSpeech() {
+      window.speechSynthesis.utterance = null;
+      window.speechSynthesis.cancel();
+      this.utterances.clear();
+      clearInterval(this.intervalID);
+      this.speaking = false;
+    },
+
+    // I made this a method rather than a computed since synth.speaking is not reactive
+    isSpeaking() {
+      const synth = window.speechSynthesis;
+      return synth.speaking && this.utterances.has(synth.utterance);
+    }
+  },
+
+  watch: {
+    // For the v-dialog slideshows, using nextTick (again, since triggerAutospeak uses it)
+    // didn't seem to be enough - the DOM changes hadn't finished propagating yet.
+    // But this does the trick, and I don't notice it at all
+    autospeakOnChange(_item) {
+      setTimeout(() => {{
+        this.triggerAutospeak();
+      }}, 100);
+    },
+
+    speakFlag(flag) {
+      if (flag) {
+        setTimeout(() => {{
+          this.triggerAutospeak();
+        }}, 100);
+      } else {
+        if (this.isSpeaking()) {
+          window.speechSynthesis.cancel();
+          this.speaking = false;
+        }
+      }
+    },
+    rootElement(newRoot, oldRoot) {
+      this.findingRoot = true;
+      if (this.intersectionObserver) {
+        this.intersectionObserver.unobserve(oldRoot);
+      }
+      this.intersectionObserver = new IntersectionObserver(this.intersectionCallback);
+      this.intersectionObserver.observe(newRoot);
     }
   }
 }

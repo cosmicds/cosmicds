@@ -15,7 +15,7 @@ from traitlets import Dict, Bool, Int
 
 from .events import WriteToDatabaseMessage
 from .registries import story_registry
-from .utils import CDSJSONEncoder, load_template
+from .utils import CDSJSONEncoder, debounce, load_template
 
 v.theme.dark = True
 
@@ -28,6 +28,10 @@ class ApplicationState(State):
     update_db = CallbackProperty(False)
     show_team_interface = CallbackProperty(True)
     allow_advancing = CallbackProperty(True)
+    speech_pitch = CallbackProperty(1)
+    speech_rate = CallbackProperty(1)
+    speech_autoread = CallbackProperty(False)
+    speech_voice = CallbackProperty(None)
 
 
 class Application(VuetifyTemplate, HubListener):
@@ -35,6 +39,7 @@ class Application(VuetifyTemplate, HubListener):
     story_state = GlueState().tag(sync=True)
     template = load_template("app.vue", __file__, traitlet=True).tag(sync=True)
     drawer = Bool(True).tag(sync=True)
+    speech_menu = Bool(False).tag(sync=True)
     vue_components = Dict().tag(sync=True, **widget_serialization)
     app_state = GlueState().tag(sync=True)
     student_id = Int(0).tag(sync=True)
@@ -83,6 +88,8 @@ class Application(VuetifyTemplate, HubListener):
         self.story_state = story_registry.setup_story(story, self.session,
                                                       self.app_state)
 
+        self._get_student_options()
+
         # Initialize from database
         if db_init:
             self._initialize_from_database()
@@ -92,6 +99,10 @@ class Application(VuetifyTemplate, HubListener):
                            handler=self._on_write_to_database)
 
         add_callback(self.app_state, 'dark_mode', self._theme_toggle)
+        add_callback(self.app_state, 'speech_rate', self._speech_rate_changed)
+        add_callback(self.app_state, 'speech_pitch', self._speech_pitch_changed)
+        add_callback(self.app_state, 'speech_autoread', self._speech_autoread_changed)
+        add_callback(self.app_state, 'speech_voice', self._speech_voice_changed)
 
     def reload(self):
         """
@@ -123,6 +134,11 @@ class Application(VuetifyTemplate, HubListener):
         story = self.story_state.name
         return f"{API_URL}/story-state/{user['id']}/{story}"
 
+    @property
+    def student_options_endpoint(self):
+        user = self.app_state.student
+        return f"{API_URL}/options/{user['id']}"
+
     def _initialize_from_database(self):
         try:
             # User information for a JupyterHub notebook session is stored in an
@@ -134,6 +150,17 @@ class Application(VuetifyTemplate, HubListener):
             if state is not None:
                 self.story_state.update_from_dict(state)
         except Exception as e:
+            print(e)
+
+    def _get_student_options(self):
+        # Get any persistent student options
+        try:
+            response = requests.get(self.student_options_endpoint)
+            data = response.json()
+            if data is not None:
+                data.pop("student_id", 0)
+                self.app_state.update_from_dict(data)
+        except ValueError as e:
             print(e)
 
     def _on_write_to_database(self, _msg=None):
@@ -177,3 +204,26 @@ class Application(VuetifyTemplate, HubListener):
 
     def _theme_toggle(self, dark):
         v.theme.dark = dark
+
+    def _student_option_changed(self, option, value):
+        url = self.student_options_endpoint
+        requests.put(url, json={
+            "option": option,
+            "value": value
+        })
+
+    @debounce(1)
+    def _speech_rate_changed(self, rate):
+        self._student_option_changed('speech_rate', rate)
+
+    @debounce(1)
+    def _speech_pitch_changed(self, pitch):
+        self._student_option_changed('speech_pitch', pitch)
+
+    @debounce(1)
+    def _speech_autoread_changed(self, autoread):
+        self._student_option_changed('speech_autoread', autoread)
+
+    @debounce(1)
+    def _speech_voice_changed(self, voice):
+        self._student_option_changed('speech_voice', voice)
