@@ -180,8 +180,8 @@ def extend_tool(viewer, tool_id,
     if not tool:
         return None
 
-    activate = tool.activate
-    deactivate = tool.deactivate
+    activate = getattr(tool, 'activate', lambda: None)
+    deactivate = getattr(tool, 'deactivate', lambda: None)
 
     def extended_activate():
         if activate_before_tool:
