@@ -39,6 +39,14 @@ class LineHoverStateMixin:
     resolution_x = CallbackProperty(0)
     resolution_y = CallbackProperty(0)
 
+    show_line = CallbackProperty(True)
+    show_previous = CallbackProperty(True)
+    show_label = CallbackProperty(True)
+    show_previous_label = CallbackProperty(True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     @property
     def ymax_factor(self):
         return self._YMAX_FACTOR
@@ -54,16 +62,11 @@ class LineHoverStateMixin:
 
 class LineHoverViewerMixin:
 
-    show_line = CallbackProperty(True)
-    show_previous = CallbackProperty(True)
-    show_label = CallbackProperty(True)
-    show_previous_label = CallbackProperty(True)
-
     _x_zoom_id = None
 
     def __init__(self, *args, **kwargs):
 
-        print("LineHoverViewerMixin __init__")
+        super().__init__(*args, **kwargs)
 
         self.figure_size_x = 0
         self.figure_size_y = 230
@@ -148,10 +151,10 @@ class LineHoverViewerMixin:
             self.line_label,
         ]
 
-        add_callback(self, 'show_line', self._show_line_changed)
-        add_callback(self, 'show_previous', self._show_previous_changed)
-        add_callback(self, 'show_label', self._show_label_changed)
-        add_callback(self, 'show_previous_label', self._show_previous_label_changed)
+        add_callback(self.state, 'show_line', self._show_line_changed)
+        add_callback(self.state, 'show_previous', self._show_previous_changed)
+        add_callback(self.state, 'show_label', self._show_label_changed)
+        add_callback(self.state, 'show_previous_label', self._show_previous_label_changed)
 
         self.scale_y.observe(self._update_locations, names=['min', 'max'])
         add_callback(self.state, 'x_min', self._on_xmin_change, echo_old=True)
@@ -206,7 +209,7 @@ class LineHoverViewerMixin:
         if ymin is None or ymax is None:
             return
         
-        line_bounds = [ymin, ymax / self.state._ymax_factor]
+        line_bounds = [ymin, ymax / self.state.ymax_factor]
         
         self.line.y = line_bounds
         self.previous_line.y = line_bounds
