@@ -68,7 +68,7 @@ class LineHoverViewerMixin:
 
         super().__init__(*args, **kwargs)
 
-        self.figure_size_x = 0
+        self.figure_size_x = 1
         self.figure_size_y = 230
         self._resolution_dirty = True
 
@@ -157,10 +157,10 @@ class LineHoverViewerMixin:
         add_callback(self.state, 'show_previous_label', self._show_previous_label_changed)
 
         self.scale_y.observe(self._update_locations, names=['min', 'max'])
-        add_callback(self.state, 'x_min', self._on_xmin_change, echo_old=True)
-        add_callback(self.state, 'x_max', self._on_xmax_change, echo_old=True)
-        add_callback(self.state, 'y_min', self._on_ymin_change, echo_old=True)
-        add_callback(self.state, 'y_max', self._on_ymax_change, echo_old=True)
+        add_callback(self.state, 'x_min', self._on_xmin_change)
+        add_callback(self.state, 'x_max', self._on_xmax_change)
+        add_callback(self.state, 'y_min', self._on_ymin_change)
+        add_callback(self.state, 'y_max', self._on_ymax_change)
         add_callback(self.state, 'resolution_x', self._update_x_locations)
         add_callback(self.state, 'resolution_y', self._update_y_locations)
 
@@ -224,29 +224,29 @@ class LineHoverViewerMixin:
         self._update_x_locations()
         self._update_y_locations()
 
-    def _on_xmin_change(self, old, new):
-        if old is not None:
-            xmax = self.state.x_max
-            self.state.resolution_x *= (xmax - new) / (xmax - old)
-        self._update_x_locations()
+    def _on_xmin_change(self, new):
+        if new is not None:
+            xmax = self.state.x_max or 0
+            self.state.resolution_x = (xmax - new) / self.figure_size_x
+        self._resolution_dirty = True
 
-    def _on_xmax_change(self, old, new):
-        if old is not None:
-            xmin = self.state.x_min
-            self.state.resolution_x *= (new - xmin) / (old - xmin)
-        self._update_x_locations()
+    def _on_xmax_change(self, new):
+        if new is not None:
+            xmin = self.state.x_min or 0
+            self.state.resolution_x = (new - xmin) / self.figure_size_x
+        self._resolution_dirty = True
 
-    def _on_ymin_change(self, old, new):
-        if old is not None:
+    def _on_ymin_change(self, new):
+        if new is not None:
             ymax = self.state.y_max
-            self.state.resolution_y *= (ymax - new + 20) / (ymax - old + 20)
-        self._update_y_locations()
+            self.state.resolution_y = (ymax - new) / (self.figure_size_y - 10)
+        self._resolution_dirty = True
 
-    def _on_ymax_change(self, old, new):
-        if old is not None:
+    def _on_ymax_change(self, new):
+        if new is not None:
             ymin = self.state.y_min
-            self.state.resolution_y *= (new - ymin + 20) / (old - ymin + 20)
-        self._update_y_locations()
+            self.state.resolution_y = (new - ymin) / (self.figure_size_y - 10)
+        self._resolution_dirty = True
 
     @staticmethod
     def _label_text(value):
@@ -268,7 +268,7 @@ class LineHoverViewerMixin:
             if self.state.resolution_x != 0:
                 self.figure_size_x = (self.state.x_max - self.state.x_min) / self.state.resolution_x
             self.state.resolution_y = (self.state.y_max - y) / (
-                        pixel_y - 10)  # The y-axis has 10px "extra" on the top and bottom
+                        pixel_y - 10)  # The y-axis has 10px "extra" padding on the top and bottom
             if self.state.resolution_y != 0:
                 self.figure_size_y = (self.state.y_max - self.state.y_min) / self.state.resolution_y
             self._resolution_dirty = False
