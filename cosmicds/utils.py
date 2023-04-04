@@ -149,7 +149,9 @@ def update_figure_css(viewer, style_dict=None, style_path=None):
                 setattr(viewer_prop, k, val)
 
 
-def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
+def extend_tool(viewer, tool_id,
+                activate_cb=None, deactivate_cb=None,
+                activate_before_tool=True, deactivate_before_tool=False):
     """
     This function extends the functionality of a tool on a viewer toolbar
     by adding callbacks that are activate upon tool item activation
@@ -162,9 +164,15 @@ def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
     tool_id: str
         The id of the tool that we want to modify - e.g. 'bqplot:xrange'
     activate_cb:
-        The callback to be executed before the tool's `activate` method. Takes no arguments.
+        The callback to be executed before or after the tool's `activate` method. Takes no arguments.
     deactivate_cb:
-        The callback to be executed after the tool's `deactivate` method. Takes no arguments.
+        The callback to be executed before or after the tool's `deactivate` method. Takes no arguments.
+    activate_before_tool: bool
+        Whether to run the inserted activate callback before the tool's `activate` method. If False, it runs after.
+        Default is True.
+    deactivate_before_tool: bool
+        Whether to run the inserted activate callback before the tool's `deactivate` method. If False, it runs after.
+        Default is False.
 
     """
 
@@ -172,21 +180,27 @@ def extend_tool(viewer, tool_id, activate_cb=None, deactivate_cb=None):
     if not tool:
         return None
 
-    activate = tool.activate
-    deactivate = tool.deactivate
+    activate = getattr(tool, 'activate', lambda: None)
+    deactivate = getattr(tool, 'deactivate', lambda: None)
 
     def extended_activate():
-        if activate_cb:
+        if activate_before_tool:
             activate_cb()
         activate()
+        if not activate_before_tool:
+            activate_cb()
 
     def extended_deactivate():
+        if deactivate_before_tool:
+            deactivate_cb()
         deactivate()
-        if deactivate_cb:
+        if not deactivate_before_tool:
             deactivate_cb()
 
-    tool.activate = extended_activate
-    tool.deactivate = extended_deactivate
+    if activate_cb:
+        tool.activate = extended_activate
+    if deactivate_cb:
+        tool.deactivate = extended_deactivate
 
 
 def convert_material_color(color_string):
