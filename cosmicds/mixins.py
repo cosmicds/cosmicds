@@ -164,6 +164,9 @@ class LineHoverViewerMixin:
         add_callback(self.state, 'resolution_x', self._update_x_locations)
         add_callback(self.state, 'resolution_y', self._update_y_locations)
 
+        self.add_event_callback(self._on_mouse_moved, events=["mousemove"])
+        self.add_event_callback(self._on_click, events=["click"])
+
     def _show_line_changed(self, show):
         self.line.visible = show
         show_label = show and self.show_label
