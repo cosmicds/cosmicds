@@ -43,7 +43,7 @@ class LayerToggle(VuetifyTemplate):
             return len(layers) + 1
 
     def set_layer_order(self, layers):
-        layers = [layer.state if isinstance(LayerArtist) else layer for layer in layers]
+        layers = [layer.state if isinstance(layer, LayerArtist) else layer for layer in layers]
         def sort_key(layer):
             if isinstance(layer, LayerArtist):
                 layer = layer.state
