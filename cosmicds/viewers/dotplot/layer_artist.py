@@ -1,6 +1,6 @@
 from math import floor, pi
 
-from echo.core import add_callback
+from echo.core import add_callback, delay_callback
 from glue.utils import color2hex
 from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
 from glue_jupyter.link import dlink, link
@@ -95,25 +95,26 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
         #
         # because this would never allow y_max to get smaller.
 
-        self.state._y_max = self.hist.max()
-        if self._viewer_state.y_log:
-            self.state._y_max *= 2
-        else:
-            self.state._y_max *= 1.2
+        with delay_callback(self._viewer_state, 'y_min', 'y_max'):
+            self.state._y_max = self.hist.max()
+            if self._viewer_state.y_log:
+                self.state._y_max *= 2
+            else:
+                self.state._y_max *= 1.2
 
-        if self._viewer_state.y_log:
-            self.state._y_min = self.hist[self.hist > 0].min() / 10
-        else:
-            self.state._y_min = 0
+            if self._viewer_state.y_log:
+                self.state._y_min = self.hist[self.hist > 0].min() / 10
+            else:
+                self.state._y_min = 0
 
-        largest_y_max = max(getattr(layer, '_y_max', 0)
-                            for layer in self._viewer_state.layers)
-        if largest_y_max != self._viewer_state.y_max:
-            self._viewer_state.y_max = largest_y_max
+            largest_y_max = max(getattr(layer, '_y_max', 0)
+                                for layer in self._viewer_state.layers if layer.visible)
+            if largest_y_max != self._viewer_state.y_max:
+                self._viewer_state.y_max = largest_y_max
 
-        smallest_y_min = min(getattr(layer, '_y_min', inf)
-                             for layer in self._viewer_state.layers)
-        if smallest_y_min != self._viewer_state.y_min:
-            self._viewer_state.y_min = smallest_y_min
+            smallest_y_min = min(getattr(layer, '_y_min', inf)
+                                 for layer in self._viewer_state.layers if layer.visible)
+            if smallest_y_min != self._viewer_state.y_min:
+                self._viewer_state.y_min = smallest_y_min
 
-        self.redraw()
+            self.redraw()
