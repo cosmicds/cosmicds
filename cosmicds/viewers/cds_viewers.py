@@ -145,6 +145,13 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
             add_callback(self.state, "ytick_values", self._update_ytick_values)
 
         def initialize_toolbar(self):
+
+            # If viewer_class has its own custom initialize_toolbar, defer to that
+            # This will ONLY be called if it's defined in viewer_class
+            if 'initialize_toolbar' in viewer_class.__dict__:
+                viewer_class.initialize_toolbar(self)
+                return
+            
             self.toolbar = Toolbar(self)
 
             for tool_id in self.tools:
