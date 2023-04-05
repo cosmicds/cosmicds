@@ -68,7 +68,7 @@ class LineHoverViewerMixin:
 
         super().__init__(*args, **kwargs)
 
-        self.figure_size_x = 1
+        self.figure_size_x = 11
         self.figure_size_y = 230
         self._resolution_dirty = True
 
@@ -241,13 +241,13 @@ class LineHoverViewerMixin:
 
     def _on_ymin_change(self, new):
         if new is not None:
-            ymax = self.state.y_max
+            ymax = self.state.y_max or 0
             self.state.resolution_y = (ymax - new) / (self.figure_size_y - 10)
         self._resolution_dirty = True
 
     def _on_ymax_change(self, new):
         if new is not None:
-            ymin = self.state.y_min
+            ymin = self.state.y_min or 0
             self.state.resolution_y = (new - ymin) / (self.figure_size_y - 10)
         self._resolution_dirty = True
 
