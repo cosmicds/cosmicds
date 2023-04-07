@@ -17,7 +17,7 @@ class Toolbar(VuetifyTemplate):
         'bqplot:rectangle': 'mdi-select-drag',
     }
 
-    _TOOL_TRAITS = ["tool_tip"]
+    _TOOL_TRAITS = ["tool_tip", "mdi_icon"]
 
     template = load_template("toolbar.vue", __file__, traitlet=True).tag(sync=True)
     active_tool = Instance(Tool, allow_none=True,
