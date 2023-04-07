@@ -6,24 +6,12 @@
     elevation="6"
   >
     <v-card-text>
-      <v-row
+      <h3
         v-if="header"
+        class="mb-4"
       >
-        <v-col
-          cols="10"
-        >
-          <h3
-            class="mb-4"
-          >
-            {{ header }}
-          </h3>
-        </v-col>
-        <v-col
-          align="right"
-        >
-          <speech-synthesizer />
-        </v-col>
-      </v-row>
+        {{ header }}
+      </h3>
       <slot :advance="advance"></slot>
     </v-card-text>
     <v-divider></v-divider>
@@ -54,15 +42,13 @@
           v-else
           class="mx-2 shrink"
         >
-          <speech-synthesizer
-            v-if="!header"/>
+          <speech-synthesizer/>
         </v-col>
         <v-col
           v-if="allowBack"
           class="mx-2 shrink"
         >
-          <speech-synthesizer
-            v-if="!header" />
+          <speech-synthesizer/>
         </v-col>
         <v-col
           v-else
