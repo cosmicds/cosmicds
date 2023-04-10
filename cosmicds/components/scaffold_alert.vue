@@ -32,6 +32,7 @@
               class="black--text"
               color="accent"
               elevation="2"
+              ref="back"
               @click="() => { $emit('back'); }"
             >
               back
@@ -76,6 +77,7 @@
               class="black--text"
               color="accent"
               elevation="2"
+              ref="next"
               @click="() => { $emit('next'); }"
             >
               {{ nextText }}
