@@ -165,8 +165,8 @@ class Table(VuetifyTemplate, HubListener):
         } for name, component in zip(self._glue_component_names, self._glue_components)]
         self.headers[0]['align'] = 'start'
         self.items = [
-            item for row in df.itertuples() if self.item_filter(item:={
-                component : self._transform(component)(getattr(row, component, None)) for component in self._glue_components
+            item for _, row in df.iterrows() if self.item_filter(item:={
+                component : self._transform(component)(row[component]) for component in self._glue_components
             })
         ]
 
