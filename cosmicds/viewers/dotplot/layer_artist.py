@@ -24,7 +24,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
         self.view.figure.marks = list(self.view.figure.marks) + [self.bars]
 
         dlink((self.state, 'color'), (self.bars, 'colors'), lambda x: [color2hex(x)])
-        dlink((self.state, 'alpha'), (self.bars, 'opacities'), lambda x: [x])
+        dlink((self.state, 'alpha'), (self.bars, 'opacities'), lambda x: [1])
 
         self._viewer_state.add_global_callback(self._update_histogram)
         self.state.add_global_callback(self._update_histogram)
@@ -39,6 +39,9 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
     def _update_size(self, arg=None):
         if self._viewer_state.y_max is not None and self._viewer_state.y_min is not None:
             y_range = self._viewer_state.y_max - self._viewer_state.y_min
+            if y_range == 0:
+                self._viewer_state.y_max += 1
+                y_range = 1
 
             # The default_size parameter in bqplot specifies the area of the mark in pixels
             # but we know what pixel height (i.e. diameter) we want
@@ -107,12 +110,12 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             self.state._y_min = 0
 
         largest_y_max = max(getattr(layer, '_y_max', 0)
-                            for layer in self._viewer_state.layers)
+                            for layer in self._viewer_state.layers if layer.visible)
         if largest_y_max != self._viewer_state.y_max:
             self._viewer_state.y_max = largest_y_max
 
         smallest_y_min = min(getattr(layer, '_y_min', inf)
-                             for layer in self._viewer_state.layers)
+                             for layer in self._viewer_state.layers if layer.visible)
         if smallest_y_min != self._viewer_state.y_min:
             self._viewer_state.y_min = smallest_y_min
 
