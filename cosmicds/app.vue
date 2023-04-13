@@ -379,7 +379,8 @@ export default {
       options: {
         menuOptions: {
           settings: {
-            assistiveMml: true
+            assistiveMml: true,
+            inTabOrder: false
           }
         },
         a11y: {
@@ -705,6 +706,10 @@ mjx-container[jax="CHTML"][display="true"] {
 
 /** Hide bqplot legend 'checkmark' symbols */
 .g_legend path.line {
+  display: none;
+}
+
+mjx-assistive-mml cds-input {
   display: none;
 }
 </style>
