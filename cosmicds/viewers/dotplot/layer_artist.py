@@ -54,7 +54,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
 
     def _update_size(self, arg=None):
         if self._viewer_state.y_max is not None and self._viewer_state.y_min is not None:
-            y_range = self._viewer_state.y_max - self._viewer_state.y_min
+            y_range = max(self._viewer_state.y_max - self._viewer_state.y_min, 1)
 
             # The default_size parameter in bqplot specifies the area of the mark in pixels
             # but we know what pixel height (i.e. diameter) we want
