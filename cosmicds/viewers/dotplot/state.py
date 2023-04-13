@@ -1,5 +1,5 @@
 from echo.core import add_callback, delay_callback, CallbackProperty
-from glue.viewers.histogram.state import HistogramViewerState
+from glue.viewers.histogram.state import HistogramLayerState, HistogramViewerState
 
 
 class DotPlotViewerState(HistogramViewerState):
@@ -23,3 +23,12 @@ class DotPlotViewerState(HistogramViewerState):
             largest_y_max = max(y_max, default=1)
             if largest_y_max != self.y_max:
                 self.y_max = largest_y_max
+
+
+class DotPlotLayerState(HistogramLayerState):
+
+    rotation = CallbackProperty(0)
+    skew = CallbackProperty(0)
+
+    def __init__(self, **kwargs):
+        super(DotPlotLayerState, self).__init__(**kwargs)
