@@ -5,12 +5,15 @@ from glue.utils import color2hex
 from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
 from glue_jupyter.link import dlink, link
 
-from bqplot import ScatterGL
+from bqplot import Scatter, ScatterGL, LinearScale
 from numpy import inf
 
+from cosmicds.viewers.dotplot.state import DotPlotLayerState
 
 
 class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
+
+    _layer_state_cls = DotPlotLayerState
 
     def __init__(self, view, viewer_state, layer_state=None, layer=None):
 
@@ -19,12 +22,20 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
 
         self.view = view
 
-        self.bars = ScatterGL(scales=self.view.scales, x=[0, 1], y=[0, 1], marker='circle')
+        self.scales = {
+            **self.view.scales,
+            'rotation': LinearScale(min=0, max=180)
+        }
+        self.bars = Scatter(scales=self.scales,
+                            x=[0, 1],
+                            y=[0, 1],
+                            marker='ellipse')
 
         self.view.figure.marks = list(self.view.figure.marks) + [self.bars]
 
         dlink((self.state, 'color'), (self.bars, 'colors'), lambda x: [color2hex(x)])
         dlink((self.state, 'alpha'), (self.bars, 'opacities'), lambda x: [x])
+        dlink((self.state, 'skew'), (self.bars, 'default_skew'))
 
         self._viewer_state.add_global_callback(self._update_histogram)
         self.state.add_global_callback(self._update_histogram)
@@ -32,13 +43,18 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
 
         link((self.state, 'visible'), (self.bars, 'visible'))
 
+        # Because of how the glue_jupyter link class checks for updates, we currently can't
+        # do this as a link or dlink - the equality check in there doesn't correctly handle
+        # numpy arrays of size > 1
+        add_callback(self.state, 'rotation', self._update_rotation)
+
         add_callback(self._viewer_state, 'x_min', self._update_size)
         add_callback(self._viewer_state, 'x_max', self._update_size)
         add_callback(self._viewer_state, 'viewer_height', self._update_size)
 
     def _update_size(self, arg=None):
         if self._viewer_state.y_max is not None and self._viewer_state.y_min is not None:
-            y_range = self._viewer_state.y_max - self._viewer_state.y_min
+            y_range = max(self._viewer_state.y_max - self._viewer_state.y_min, 1)
 
             # The default_size parameter in bqplot specifies the area of the mark in pixels
             # but we know what pixel height (i.e. diameter) we want
@@ -117,3 +133,6 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             self._viewer_state.y_min = smallest_y_min
 
         self.redraw()
+
+    def _update_rotation(self, rotation):
+        self.bars.rotation = [rotation] * len(self.bars.x)
