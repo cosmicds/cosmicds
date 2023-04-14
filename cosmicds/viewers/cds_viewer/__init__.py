@@ -3,12 +3,12 @@
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
 
-from .state import CDSScatterState
+from .state import CDSHistogramViewerState, CDSScatterViewerState
 from .viewer import cds_viewer
 
 CDSScatterView = cds_viewer(
     BqplotScatterView,
-    state_cls=CDSScatterState,
+    state_cls=CDSScatterViewerState,
     name='CDSScatterView',
     viewer_tools=[
         'bqplot:home',
@@ -20,6 +20,7 @@ CDSScatterView = cds_viewer(
 
 CDSHistogramView = cds_viewer(
     BqplotHistogramView,
+    state_cls=CDSHistogramViewerState,
     name='CDSHistogramView',
     viewer_tools=[
         'bqplot:home',

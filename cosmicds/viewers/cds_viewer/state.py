@@ -4,7 +4,7 @@ from echo import add_callback, callback_property, delay_callback, CallbackProper
 from glue.core import Subset
 from glue.viewers.histogram.state import HistogramViewerState
 from glue.viewers.scatter.state import ScatterViewerState
-from numpy import linspace, isnan
+from numpy import linspace, inf, isfinite, isnan
 
 from cosmicds.utils import frexp10
 
@@ -121,7 +121,7 @@ def cds_viewer_state(state_class):
     return CDSViewerState
 
 
-class CDSScatterState(ScatterViewerState):
+class CDSScatterViewerState(ScatterViewerState):
 
     def _layer_bounds(self, layer_state, att):
         data = layer_state.layer
@@ -157,4 +157,40 @@ class CDSScatterState(ScatterViewerState):
         y_min, y_max = self._bounds_for_att(self.y_att)
         with delay_callback(self, 'y_min', 'y_max'):
             self.y_min = y_min
+            self.y_max = y_max
+
+
+
+class CDSHistogramViewerState(HistogramViewerState):
+
+    def _reset_x_limits(self):
+        bounds = []
+        for layer in filter(lambda layer: layer.visible, self.layers):
+            data = layer.layer
+            if isinstance(data, Subset):
+                subset = data
+                data = subset.data
+                subset_state = subset.subset_state
+            else:
+                subset_state = None
+
+            min_value = data.compute_statistic('minimum', self.x_att, subset_state=subset_state)
+            max_value = data.compute_statistic('maximum', self.x_att, subset_state=subset_state)
+            bounds.append([min_value, max_value])
+        
+        min_value = min(b[0] for b in bounds)
+        max_value = max(b[1] for b in bounds)
+
+        with delay_callback(self, 'x_min', 'x_max'):
+            self.x_min = min_value
+            self.x_max = max_value
+
+    
+    def reset_limits(self):
+        self._reset_x_limits()
+        y_min = min(getattr(layer, '_y_min', inf) for layer in self.layers if layer.visible)
+        if isfinite(y_min):
+            self.y_min = y_min
+        y_max = max(getattr(layer, '_y_max', 0) for layer in self.layers if layer.visible)
+        if isfinite(y_max):
             self.y_max = y_max
