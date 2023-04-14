@@ -17,7 +17,7 @@ class Toolbar(VuetifyTemplate):
         'bqplot:rectangle': 'mdi-select-drag',
     }
 
-    _TOOL_TRAITS = ["tool_tip"]
+    _TOOL_TRAITS = ["tool_tip", "mdi_icon"]
 
     template = load_template("toolbar.vue", __file__, traitlet=True).tag(sync=True)
     active_tool = Instance(Tool, allow_none=True,
@@ -96,7 +96,9 @@ class Toolbar(VuetifyTemplate):
         self.update_tools_data(tool, data)
 
         if isinstance(tool, HasTraits):
-            for trait in self._TOOL_TRAITS:
-                if trait in tool.traits():
-                    tool.observe(self.refresh_tools_data, names=[trait])
+            names = [
+                trait for trait in tool.traits()
+                if trait in self._TOOL_TRAITS or tool.trait_metadata(trait, 'tools_data')
+            ]
+            tool.observe(self.refresh_tools_data, names=names)
 
