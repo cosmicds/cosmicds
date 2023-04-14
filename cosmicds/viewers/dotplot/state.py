@@ -24,7 +24,6 @@ class DotPlotViewerState(HistogramViewerState):
             if largest_y_max != self.y_max:
                 self.y_max = largest_y_max
 
-
 class DotPlotLayerState(HistogramLayerState):
 
     rotation = CallbackProperty(0)
