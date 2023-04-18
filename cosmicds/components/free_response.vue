@@ -44,6 +44,7 @@ module.exports = {
     return {
       response: "",
       initialized: false,
+      filledOut: false
     };
   },
 
@@ -79,6 +80,11 @@ module.exports = {
     onBlur(_event) {
       if (this.tag !== undefined) {
         this.dispatchUpdateEvent();
+
+        // Normally we would just have this be a computed
+        // but we want this to be in sync with the response
+        // that's been emitted which only happens here
+        this.filledOut = response.length > 0;
       }
     },
 
