@@ -9,6 +9,7 @@
     :hint="hint"
     @blur="onBlur"
     v-intersect="dispatchInitializeEvent"
+    class="cds-free-response"
   >
     <template v-slot:label>
       <div>{{ label }}</div>
@@ -83,8 +84,8 @@ module.exports = {
 
         // Normally we would just have this be a computed
         // but we want this to be in sync with the response
-        // that's been emitted which only happens here
-        this.filledOut = response.length > 0;
+        // that's been emitted, which only happens here
+        this.filledOut = this.response.length > 0;
       }
     },
 

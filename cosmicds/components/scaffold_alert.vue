@@ -78,6 +78,7 @@
               color="accent"
               elevation="2"
               ref="next"
+              :disabled="disableNext"
               @click="() => { $emit('next'); }"
             >
               {{ nextText }}
@@ -127,6 +128,11 @@
 
 <script>
 module.exports = {
+  mounted() {
+    this.updateFreeResponseList();
+    this.updateDisableNext();
+    this.$el.addEventListener('change', (_event) => this.updateDisableNext());
+  },
   props: {
     allowBack: {
       type: Boolean,
@@ -143,8 +149,18 @@ module.exports = {
     canAdvance: {
       type: Function
     },
+    requireFr: {
+      type: Boolean,
+      default: true
+    },
     state: {
       type: Object
+    }
+  },
+  data() {
+    return {
+      freeResponses: [],
+      disableNext: false
     }
   },
   computed: {
@@ -157,6 +173,26 @@ module.exports = {
       } else {
         return this.headerText;
       }
+    }
+  },
+  methods: {
+
+    // These methods are kinda hacky!
+    // but they let us not ever have to deal with this stuff elsewhere
+    // and not have to rewrite this in each guideline that has free responses
+    updateFreeResponseList() {
+      const frElements = this.$el.querySelectorAll(".cds-free-response");
+      this.freeResponses = [...frElements].map(fr => fr.__vue__);
+    },
+
+    allFreeResponsesFilled() {
+      return this.freeResponses.every(fr => fr.filledOut);
+    },
+
+    updateDisableNext() {
+      setTimeout(() => {
+        this.disableNext = this.requireFr && !this.allFreeResponsesFilled();
+      }, 100);
     }
   }
 };
