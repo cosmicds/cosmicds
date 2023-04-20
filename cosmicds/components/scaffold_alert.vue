@@ -130,11 +130,7 @@
 module.exports = {
   mounted() {
     this.$nextTick(() => {
-      this.updateFreeResponseList(true);
       this.updateDisableNext();
-      this.$el.addEventListener('input', (_event) => {
-        this.updateDisableNext();
-      });
       this.initialized = true;
     });
   },
@@ -209,6 +205,11 @@ module.exports = {
       this.$nextTick(() => {
         if (!this.frsInitialized) {
           this.updateFreeResponseList();
+          if (this.freeResponses.length > 0) {
+            this.$el.addEventListener('input', (_event) => {
+              this.updateDisableNext();
+            });
+          }
         }
         this.disableNext = this.requireFr && !this.allFreeResponsesFilled();
       });
