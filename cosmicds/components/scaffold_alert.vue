@@ -129,9 +129,14 @@
 <script>
 module.exports = {
   mounted() {
-    this.updateFreeResponseList();
-    this.updateDisableNext();
-    this.$el.addEventListener('change', (_event) => this.updateDisableNext());
+    this.$nextTick(() => {
+      this.updateFreeResponseList(true);
+      this.updateDisableNext();
+      this.$el.addEventListener('input', (_event) => {
+        this.updateDisableNext();
+      });
+      this.initialized = true;
+    });
   },
   props: {
     allowBack: {
@@ -160,7 +165,9 @@ module.exports = {
   data() {
     return {
       freeResponses: [],
-      disableNext: false
+      disableNext: false,
+      initialized: false,
+      frsInitialized: false
     }
   },
   computed: {
@@ -182,17 +189,29 @@ module.exports = {
     // and not have to rewrite this in each guideline that has free responses
     updateFreeResponseList() {
       const frElements = this.$el.querySelectorAll(".cds-free-response");
-      this.freeResponses = [...frElements].map(fr => fr.__vue__);
+      const frComponents = [...frElements].map(fr => fr.__vue__);
+      for (let i = 0; i < frComponents.length; i++) {
+        if (frComponents[i].$vnode.tag.indexOf("free-response") < 0) {
+          frComponents[i] = frComponents[i].$parent;
+        }
+      }
+      this.freeResponses = frComponents;
+      if (!this.initialized || this.freeResponses.length > 0) {
+        this.frsInitialized = true;
+      }
     },
 
     allFreeResponsesFilled() {
-      return this.freeResponses.every(fr => fr.filledOut);
+      return this.freeResponses.every(fr => fr.response.length > 0);
     },
 
     updateDisableNext() {
-      setTimeout(() => {
+      this.$nextTick(() => {
+        if (!this.frsInitialized) {
+          this.updateFreeResponseList();
+        }
         this.disableNext = this.requireFr && !this.allFreeResponsesFilled();
-      }, 100);
+      });
     }
   }
 };
