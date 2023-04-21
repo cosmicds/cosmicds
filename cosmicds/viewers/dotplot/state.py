@@ -1,4 +1,4 @@
-from echo.core import add_callback, delay_callback, CallbackProperty, ignore_callback
+from echo.core import add_callback, delay_callback, CallbackProperty
 from glue.viewers.histogram.state import HistogramLayerState, HistogramViewerState
 
 
