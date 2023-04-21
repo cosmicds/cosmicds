@@ -23,7 +23,6 @@ class DotPlotViewerState(HistogramViewerState):
             largest_y_max = max(y_max, default=1)
             if largest_y_max != self.y_max:
                 self.y_max = largest_y_max
-        with ignore_callback(self, 'x_min', 'x_max'):
             padding = (self.x_max - self.x_min) * 0.05
             self.x_max = self.x_max + padding
             self.x_min = self.x_min - padding
