@@ -129,10 +129,30 @@
 <script>
 module.exports = {
   mounted() {
-    this.$nextTick(() => {
-      this.updateDisableNext();
-      this.initialized = true;
+    this.frElements = this.$el.getElementsByClassName("cds-free-response");
+
+    this.updateFreeResponseList();
+    this.updateDisableNext();
+
+    this.frObserver = new MutationObserver((mutations) => {
+      let needUpdate = false;
+      mutations.forEach(mutation => {
+        if (needUpdate) {
+          return;
+        }
+        if (mutation.addedNodes.length > 0) {
+          needUpdate = [...mutation.addedNodes].some(node => {
+            return node.classList != undefined &&
+            (node.classList.contains("cds-free-response") || node.querySelectorAll(".cds-free-response").length > 0);
+          });
+        }
+      });
+      if (needUpdate) {
+        this.updateFreeResponseList();
+        this.updateDisableNext();
+      }
     });
+    this.frObserver.observe(this.$el, { childList: true, subtree: true });
   },
   props: {
     allowBack: {
@@ -160,10 +180,10 @@ module.exports = {
   },
   data() {
     return {
+      frObserver: null,
       freeResponses: [],
       disableNext: false,
-      initialized: false,
-      frsInitialized: false
+      frListener: null
     }
   },
   computed: {
@@ -192,8 +212,12 @@ module.exports = {
         }
       }
       this.freeResponses = frComponents;
-      if (!this.initialized || this.freeResponses.length > 0) {
-        this.frsInitialized = true;
+
+      if (this.freeResponses.length > 0 && this.frListener === null) {
+        this.frListener = (_event) => {
+          this.updateDisableNext();
+        };
+        this.$el.addEventListener('input', this.frListener);
       }
     },
 
@@ -202,17 +226,7 @@ module.exports = {
     },
 
     updateDisableNext() {
-      this.$nextTick(() => {
-        if (!this.frsInitialized) {
-          this.updateFreeResponseList();
-          if (this.freeResponses.length > 0) {
-            this.$el.addEventListener('input', (_event) => {
-              this.updateDisableNext();
-            });
-          }
-        }
-        this.disableNext = this.requireFr && !this.allFreeResponsesFilled();
-      });
+      this.disableNext = this.requireFr && !this.allFreeResponsesFilled();
     }
   }
 };
