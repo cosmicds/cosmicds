@@ -141,10 +141,10 @@ module.exports = {
           return;
         }
         if (mutation.addedNodes.length > 0) {
-          needUpdate = [...mutation.addedNodes].some(node => {
-            return node.classList != undefined &&
-            (node.classList.contains("cds-free-response") || node.querySelectorAll(".cds-free-response").length > 0);
-          });
+          needUpdate = [...mutation.addedNodes].some(this.needUpdateNode);
+        }
+        if (!needUpdate && mutation.removedNodes.length > 0) {
+          needUpdate = [...mutation.removedNodes].some(this.needUpdateNode);
         }
       });
       if (needUpdate) {
@@ -227,6 +227,15 @@ module.exports = {
 
     updateDisableNext() {
       this.disableNext = this.requireFr && !this.allFreeResponsesFilled();
+    },
+
+    needUpdateNode(node) {
+      return node.classList != undefined &&
+        (
+          node.classList.contains("cds-free-response")
+            ||
+          node.querySelectorAll(".cds-free-response").length > 0
+        );
     }
   }
 };
