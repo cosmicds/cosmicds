@@ -1,1 +1,1 @@
-from .cds_viewers import cds_viewer, CDSHistogramView, CDSScatterView
+from .cds_viewer import CDSScatterViewerState, CDSHistogramViewerState, CDSScatterView, CDSHistogramView

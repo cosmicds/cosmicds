@@ -1,16 +1,13 @@
-# This file is for viewers that don't need anything beyond
-# the standard CDS updating (the new toolbar, etc.)
-
 from math import ceil, floor
 
-from echo import add_callback, callback_property, CallbackProperty
-from glue.config import viewer_tool
-from glue_jupyter.bqplot.scatter import BqplotScatterView
-from glue_jupyter.bqplot.histogram import BqplotHistogramView
-from numpy import linspace, isnan
+from echo import add_callback, callback_property, delay_callback, CallbackProperty
+from glue.core import Subset
+from glue.viewers.histogram.state import HistogramViewerState
+from glue.viewers.scatter.state import ScatterViewerState
+from numpy import linspace, inf, isfinite, isnan
 
-from cosmicds.components.toolbar import Toolbar
 from cosmicds.utils import frexp10
+
 
 def cds_viewer_state(state_class):
 
@@ -124,85 +121,76 @@ def cds_viewer_state(state_class):
     return CDSViewerState
 
 
-def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
+class CDSScatterViewerState(ScatterViewerState):
 
-    state_class = state_cls or viewer_class._state_cls
-    cds_state_class = cds_viewer_state(state_class)
+    def _layer_bounds(self, layer_state, att):
+        data = layer_state.layer
+        if isinstance(data, Subset):
+            subset = data
+            data = subset.data
+            subset_state = subset.subset_state
+        else:
+            subset_state = None
 
-    class CDSViewer(viewer_class):
-
-        __name__ = name
-        __qualname__ = name
-        _state_cls = cds_state_class
-        inherit_tools = viewer_tools is None
-        tools = viewer_tools or viewer_class.tools
-        LABEL = label or viewer_class.LABEL
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.ignore_conditions = []
-            add_callback(self.state, "xtick_values", self._update_xtick_values)
-            add_callback(self.state, "ytick_values", self._update_ytick_values)
-
-        def initialize_toolbar(self):
-
-            # If viewer_class has its own custom initialize_toolbar, defer to that
-            # This will ONLY be called if it's defined in viewer_class
-            if 'initialize_toolbar' in viewer_class.__dict__:
-                viewer_class.initialize_toolbar(self)
-                return
-            
-            self.toolbar = Toolbar(self)
-
-            for tool_id in self.tools:
-                mode_cls = viewer_tool.members[tool_id]
-                mode = mode_cls(self)
-                self.toolbar.add_tool(mode)
-
-        def ignore(self, condition):
-            self.ignore_conditions.append(condition)
-
-        def add_data(self, data):
-            if any(condition(data) for condition in self.ignore_conditions):
-                return False
-            return super().add_data(data)
-
-        def add_subset(self, subset):
-            if any(condition(subset) for condition in self.ignore_conditions):
-                return False
-            return super().add_subset(subset)
-
-        # The argument here can be either a Data or Subset object
-        def layer_artist_for_data(self, data):
-            return next((a for a in self.layers if a.layer == data), None)
-
-        def _update_xtick_values(self, values):
-            self.axis_x.tick_values = values
+        min_value = data.compute_statistic('minimum', att, subset_state=subset_state)
+        max_value = data.compute_statistic('maximum', att, subset_state=subset_state)
         
-        def _update_ytick_values(self, values):
-            self.axis_y.tick_values = values
+        rng = max_value - min_value
+        margin = 0.04  # Default glue scatter viewer value
+        min_value -= rng * margin
+        max_value += rng * margin
+        return min_value, max_value
+    
+    def _bounds_for_att(self, att):
+        bounds = [self._layer_bounds(layer, att) for layer in filter(lambda layer: layer.visible, self.layers)]
+        min_value = min((b[0] for b in bounds))
+        max_value = max((b[1] for b in bounds))
+        return min_value, max_value
+    
+    def _reset_x_limits(self):
+        x_min, x_max = self._bounds_for_att(self.x_att)
+        with delay_callback(self, 'x_min', 'x_max'):
+            self.x_min = x_min
+            self.x_max = x_max
 
-    return CDSViewer
+    def _reset_y_limits(self):
+        y_min, y_max = self._bounds_for_att(self.y_att)
+        with delay_callback(self, 'y_min', 'y_max'):
+            self.y_min = y_min
+            self.y_max = y_max
 
 
-CDSScatterView = cds_viewer(
-    BqplotScatterView,
-    name='CDSScatterView',
-    viewer_tools=[
-        'cds:home',
-        'bqplot:rectzoom',
-        'bqplot:rectangle'
-    ],
-    label='2D scatter'
-)
 
-CDSHistogramView = cds_viewer(
-    BqplotHistogramView,
-    name='CDSHistogramView',
-    viewer_tools=[
-        'cds:home',
-        'bqplot:xzoom',
-        'bqplot:xrange'
-    ],
-    label='Histogram'
-)
+class CDSHistogramViewerState(HistogramViewerState):
+
+    def _reset_x_limits(self):
+        bounds = []
+        for layer in filter(lambda layer: layer.visible, self.layers):
+            data = layer.layer
+            if isinstance(data, Subset):
+                subset = data
+                data = subset.data
+                subset_state = subset.subset_state
+            else:
+                subset_state = None
+
+            min_value = data.compute_statistic('minimum', self.x_att, subset_state=subset_state)
+            max_value = data.compute_statistic('maximum', self.x_att, subset_state=subset_state)
+            bounds.append([min_value, max_value])
+        
+        min_value = min(b[0] for b in bounds)
+        max_value = max(b[1] for b in bounds)
+
+        with delay_callback(self, 'x_min', 'x_max'):
+            self.x_min = min_value
+            self.x_max = max_value
+
+    
+    def reset_limits(self):
+        self._reset_x_limits()
+        y_min = min(getattr(layer, '_y_min', inf) for layer in self.layers if layer.visible)
+        if isfinite(y_min):
+            self.y_min = y_min
+        y_max = max(getattr(layer, '_y_max', 0) for layer in self.layers if layer.visible)
+        if isfinite(y_max):
+            self.y_max = y_max
