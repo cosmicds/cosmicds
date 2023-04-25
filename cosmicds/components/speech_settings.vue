@@ -77,6 +77,35 @@
 
 <script>
 module.exports = {
-  props: ['state']
+  props: ['state'],
+  created() {
+    window.speechSynthesis.onvoiceschanged = (_event) => {
+      this.updateVoiceList();
+    };
+    this.updateVoiceList();
+  },
+  data() {
+    return {
+      voiceURIs: [
+        'Google US English',
+        'urn:moz-tts:speechd:English%20(America)?en'
+        'Alex',
+        'Tessa',
+        'urn:moz-tts:osx:com.apple.speech.synthesis.voice.Alex',
+        'urn:moz-tts:osx:com.apple.speech.synthesis.voice.tessa',
+        'com.apple.speech.synthesis.voice.Alex',
+        'com.apple.speech.synthesis.voice.tessa',
+        'Microsoft Zira - English (United States)',
+        'Microsoft Aria Online (Natural) - English (United States)',
+        'urn:moz-tts:sapi:Microsoft Zira - English (United States)?en-US'
+      ],
+      voices: []
+    }
+  },
+  methods: {
+    updateVoiceList() {
+      this.voices = window.speechSynthesis.getVoices().filter(voice => this.voiceURIs.includes(voice.voiceURI));
+    }
+  }
 }
 </script>
