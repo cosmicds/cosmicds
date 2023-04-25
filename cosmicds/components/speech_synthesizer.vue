@@ -159,6 +159,7 @@ module.exports = {
       Object.keys(options).forEach(key => {
         utterance[key] = options[key];
       });
+      transformRate(utterance);
 
       // The interval is to work around this issue:
       // https://bugs.chromium.org/p/chromium/issues/detail?id=679437
@@ -288,8 +289,44 @@ module.exports = {
     isSpeaking() {
       const synth = window.speechSynthesis;
       return synth.speaking && this.utterances.has(synth.utterance);
-    }
-  },
+    },
+
+    function detectBrowser() {
+      let userAgent = navigator.userAgent;
+      let browserName;
+
+      if (userAgent.match(/chrome|chromium|crios/i)) {
+        browserName = "chrome";
+      } else if (userAgent.match(/firefox|fxios/i)) {
+        browserName = "firefox";
+      } else if (userAgent.match(/safari/i)) {
+        browserName = "safari";
+      } else if (userAgent.match(/opr\//i)) {
+        browserName = "opera";
+      } else if (userAgent.match(/edg/i)) {
+        browserName = "edge";
+      } else {
+        browserName = null;
+      }
+
+      return browserName
+    },
+
+    transformRate(utterance) {
+      const uri = utterance.voice.voiceURI;
+      if (uri === "Google US English") {
+        utterance.rate = Math.sqrt(2 * utterance.rate);
+      } else if (uri === 'Microsoft Zira - English (United States)') {
+        const browser = this.detectBrowser();
+        if (browser === 'chrome') {
+          utterance.rate = Math.pow(utterance.rate, 2.5);
+        } else if (browser === 'edge') {
+          utterance.rate = 1.5 * utterance.rate;
+        } else if (browser === 'firefox') {
+          utterance.rate = 1.2 * utterance.rate;
+        }
+      }
+    },
 
   watch: {
     // For the v-dialog slideshows, using nextTick (again, since triggerAutospeak uses it)
