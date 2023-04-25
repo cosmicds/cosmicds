@@ -143,8 +143,8 @@ class CDSScatterViewerState(ScatterViewerState):
     
     def _bounds_for_att(self, att):
         bounds = [self._layer_bounds(layer, att) for layer in filter(lambda layer: layer.visible, self.layers)]
-        min_value = min((b[0] for b in bounds))
-        max_value = max((b[1] for b in bounds))
+        min_value = min((b[0] for b in bounds), default=0)
+        max_value = max((b[1] for b in bounds), default=1)
         return min_value, max_value
     
     def _reset_x_limits(self):
@@ -178,8 +178,8 @@ class CDSHistogramViewerState(HistogramViewerState):
             max_value = data.compute_statistic('maximum', self.x_att, subset_state=subset_state)
             bounds.append([min_value, max_value])
         
-        min_value = min(b[0] for b in bounds)
-        max_value = max(b[1] for b in bounds)
+        min_value = min((b[0] for b in bounds), default=0)
+        max_value = max((b[1] for b in bounds), default=1)
 
         with delay_callback(self, 'x_min', 'x_max'):
             self.x_min = min_value
