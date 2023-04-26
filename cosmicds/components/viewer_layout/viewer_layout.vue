@@ -18,6 +18,31 @@
         <jupyter-widget :widget="controls.toolbar_selection_tools"></jupyter-widget>
       </v-toolbar-items>
     </v-toolbar>
-    <jupyter-widget :style="css_style" :widget="figure"></jupyter-widget>
+    <jupyter-widget class="viewer-widget" :style="css_style" :widget="figure"></jupyter-widget>
   </v-card>
 </template>
+
+<script>
+module.exports = {
+  data() {
+    return {
+      resizeObserver: null
+    }
+  },
+  mounted() {
+    this.resizeObserver = new ResizeObserver((entries, _observer) => {
+      entries.forEach((entry) => {
+        const el = entry.target;
+        const viewerWidget = el.querySelector(".viewer-widget");
+        if (!viewerWidget) {
+          return;
+        }
+        this.viewer_height = viewerWidget.clientHeight;
+        this.viewer_width = viewerWidget.clientWidth;
+      });
+    });
+
+    this.resizeObserver.observe(this.$el);
+  }
+}
+</script>

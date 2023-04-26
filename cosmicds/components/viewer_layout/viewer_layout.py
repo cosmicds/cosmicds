@@ -1,6 +1,6 @@
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from traitlets import Bool, Dict, Instance, List, Unicode
+from traitlets import Bool, Dict, Instance, Int, List, Unicode, observe
 from ipywidgets import DOMWidget
 
 from ...utils import load_template
@@ -15,6 +15,8 @@ class ViewerLayout(VuetifyTemplate):
     show_toolbar = Bool(True).tag(sync=True)
     title = Unicode().tag(sync=True)
     classes = List().tag(sync=True)
+    viewer_width = Int().tag(sync=True)
+    viewer_height = Int().tag(sync=True)
 
     def __init__(self, viewer, classes=None, style=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,3 +32,12 @@ class ViewerLayout(VuetifyTemplate):
 
         self.css_style = style or {'height': '300px'}
         self.figure = viewer.figure_widget
+
+
+    @observe("viewer_width")
+    def _on_width_update(self, change):
+        self.viewer.state.viewer_width = change["new"]
+
+    @observe("viewer_height")
+    def _on_height_change(self, change):
+        self.viewer.state.viewer_height = change["new"]

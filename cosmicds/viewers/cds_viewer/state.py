@@ -18,6 +18,9 @@ def cds_viewer_state(state_class):
         xtick_values = CallbackProperty([])
         ytick_values = CallbackProperty([])
 
+        viewer_height = CallbackProperty(400)
+        viewer_width = CallbackProperty(400)
+
         @staticmethod
         def tick_spacing(naive_spacing):
             mantissa, exp = frexp10(naive_spacing)
