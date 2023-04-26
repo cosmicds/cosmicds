@@ -9,6 +9,7 @@
     :hint="hint"
     @blur="onBlur"
     v-intersect="dispatchInitializeEvent"
+    class="cds-free-response"
   >
     <template v-slot:label>
       <div>{{ label }}</div>
@@ -43,7 +44,7 @@ module.exports = {
   data: function () {
     return {
       response: "",
-      initialized: false,
+      initialized: false
     };
   },
 

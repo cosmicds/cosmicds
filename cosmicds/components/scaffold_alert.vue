@@ -78,6 +78,7 @@
               color="accent"
               elevation="2"
               ref="next"
+              :disabled="disableNext"
               @click="() => { $emit('next'); }"
             >
               {{ nextText }}
@@ -127,6 +128,32 @@
 
 <script>
 module.exports = {
+  mounted() {
+    this.frElements = this.$el.getElementsByClassName("cds-free-response");
+
+    this.updateFreeResponseList();
+    this.updateDisableNext();
+
+    this.frObserver = new MutationObserver((mutations) => {
+      let needUpdate = false;
+      mutations.forEach(mutation => {
+        if (needUpdate) {
+          return;
+        }
+        if (mutation.addedNodes.length > 0) {
+          needUpdate = [...mutation.addedNodes].some(this.needUpdateNode);
+        }
+        if (!needUpdate && mutation.removedNodes.length > 0) {
+          needUpdate = [...mutation.removedNodes].some(this.needUpdateNode);
+        }
+      });
+      if (needUpdate) {
+        this.updateFreeResponseList();
+        this.updateDisableNext();
+      }
+    });
+    this.frObserver.observe(this.$el, { childList: true, subtree: true });
+  },
   props: {
     allowBack: {
       type: Boolean,
@@ -143,8 +170,20 @@ module.exports = {
     canAdvance: {
       type: Function
     },
+    requireFr: {
+      type: Boolean,
+      default: true
+    },
     state: {
       type: Object
+    }
+  },
+  data() {
+    return {
+      frObserver: null,
+      freeResponses: [],
+      disableNext: false,
+      frListener: null
     }
   },
   computed: {
@@ -157,6 +196,46 @@ module.exports = {
       } else {
         return this.headerText;
       }
+    }
+  },
+  methods: {
+
+    // These methods are kinda hacky!
+    // but they let us not ever have to deal with this stuff elsewhere
+    // and not have to rewrite this in each guideline that has free responses
+    updateFreeResponseList() {
+      const frElements = this.$el.querySelectorAll(".cds-free-response");
+      const frComponents = [...frElements].map(fr => fr.__vue__);
+      for (let i = 0; i < frComponents.length; i++) {
+        if (frComponents[i].$vnode.tag.indexOf("free-response") < 0) {
+          frComponents[i] = frComponents[i].$parent;
+        }
+      }
+      this.freeResponses = frComponents;
+
+      if (this.freeResponses.length > 0 && this.frListener === null) {
+        this.frListener = (_event) => {
+          this.updateDisableNext();
+        };
+        this.$el.addEventListener('input', this.frListener);
+      }
+    },
+
+    allFreeResponsesFilled() {
+      return this.freeResponses.every(fr => fr.response.length > 0);
+    },
+
+    updateDisableNext() {
+      this.disableNext = this.requireFr && !this.allFreeResponsesFilled();
+    },
+
+    needUpdateNode(node) {
+      return node.classList != undefined &&
+        (
+          node.classList.contains("cds-free-response")
+            ||
+          node.querySelectorAll(".cds-free-response").length > 0
+        );
     }
   }
 };
