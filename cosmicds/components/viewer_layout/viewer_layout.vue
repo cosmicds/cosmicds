@@ -1,5 +1,6 @@
 <template>
   <v-card
+    v-intersect.once="(entries) => updateFromEntries(entries)"
     flat
     :class="classes"
   >
@@ -31,19 +32,28 @@ module.exports = {
   },
   mounted() {
     this.resizeObserver = new ResizeObserver((entries, _observer) => {
-      entries.forEach((entry) => {
-        const el = entry.target;
-        const viewerWidget = el.querySelector("rect.plotarea_events");
-        if (!viewerWidget) {
-          return;
-        }
-        const bbox = viewerWidget.getBoundingClientRect();
-        this.viewer_height = Math.round(bbox.height);
-        this.viewer_width = Math.round(bbox.width); 
-      });
+      this.updateFromEntries(entries);
     });
 
     this.resizeObserver.observe(this.$el);
+  },
+  methods: {
+    updateFromEntries(entries) {
+      entries.forEach((entry) => {
+        const el = entry.target;
+        this.updateViewerSizes(el);
+      });
+    },
+    updateViewerSizes(root=null) {
+      const el = root || this.$el;
+      const viewerWidget = el.querySelector("rect.plotarea_events");
+      if (!viewerWidget) {
+        return;
+      }
+      const bbox = viewerWidget.getBoundingClientRect();
+      this.viewer_height = Math.round(bbox.height);
+      this.viewer_width = Math.round(bbox.width);    
+    }
   }
 }
 </script>
