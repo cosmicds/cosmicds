@@ -1,10 +1,8 @@
 from echo.core import add_callback, delay_callback, CallbackProperty
-from glue.viewers.histogram.state import HistogramLayerState, HistogramViewerState
+from glue.viewers.histogram.state import HistogramLayerState
+from cosmicds.viewers.cds_viewer.state import CDSHistogramViewerState
 
-
-class DotPlotViewerState(HistogramViewerState):
-
-    viewer_height = CallbackProperty(400) # in pixels
+class DotPlotViewerState(CDSHistogramViewerState):
 
     def __init__(self, **kwargs):
         super(DotPlotViewerState, self).__init__(**kwargs)
