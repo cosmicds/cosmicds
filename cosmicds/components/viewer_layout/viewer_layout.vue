@@ -18,7 +18,7 @@
         <jupyter-widget :widget="controls.toolbar_selection_tools"></jupyter-widget>
       </v-toolbar-items>
     </v-toolbar>
-    <jupyter-widget class="viewer-widget" :style="css_style" :widget="figure"></jupyter-widget>
+    <jupyter-widget :style="css_style" :widget="figure"></jupyter-widget>
   </v-card>
 </template>
 
@@ -33,12 +33,13 @@ module.exports = {
     this.resizeObserver = new ResizeObserver((entries, _observer) => {
       entries.forEach((entry) => {
         const el = entry.target;
-        const viewerWidget = el.querySelector(".viewer-widget");
+        const viewerWidget = el.querySelector("rect.plotarea_events");
         if (!viewerWidget) {
           return;
         }
-        this.viewer_height = viewerWidget.clientHeight;
-        this.viewer_width = viewerWidget.clientWidth;
+        const bbox = viewerWidget.getBoundingClientRect();
+        this.viewer_height = Math.round(bbox.height);
+        this.viewer_width = Math.round(bbox.width); 
       });
     });
 
