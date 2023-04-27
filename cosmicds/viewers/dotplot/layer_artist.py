@@ -50,6 +50,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
 
         add_callback(self._viewer_state, 'x_min', self._update_size)
         add_callback(self._viewer_state, 'x_max', self._update_size)
+        add_callback(self._viewer_state, 'hist_n_bin', self._update_size)
         add_callback(self._viewer_state, 'viewer_height', self._update_size)
         add_callback(self._viewer_state, 'viewer_width', self._update_size)
 
@@ -71,11 +72,10 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             heights.append(y_pixel_height)
 
         pixel_height = min(heights, default=1)
-        axis = 'x' if pixel_height == heights[0] else 'y'
 
         # Shrink and scale height to add a bit of space
-        spacing = 1 
-        scaling = 0.75
+        spacing = 0.5
+        scaling = 0.86
         size = floor((pi / 4) * ((scaling * pixel_height - spacing) ** 2))
         size = max(size, 1)
         self.bars.default_size = size
