@@ -54,6 +54,8 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
         add_callback(self._viewer_state, 'viewer_height', self._update_size)
         add_callback(self._viewer_state, 'viewer_width', self._update_size)
 
+        self._update_size()
+
     def _update_size(self, arg=None):
         heights = []
         x_pixel_height = self._viewer_state.viewer_width / self._viewer_state.hist_n_bin
