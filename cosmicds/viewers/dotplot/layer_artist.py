@@ -50,9 +50,17 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
 
         add_callback(self._viewer_state, 'x_min', self._update_size)
         add_callback(self._viewer_state, 'x_max', self._update_size)
+        add_callback(self._viewer_state, 'hist_n_bin', self._update_size)
         add_callback(self._viewer_state, 'viewer_height', self._update_size)
+        add_callback(self._viewer_state, 'viewer_width', self._update_size)
+
+        self._update_size()
 
     def _update_size(self, arg=None):
+        heights = []
+        x_pixel_height = self._viewer_state.viewer_width / self._viewer_state.hist_n_bin
+        heights.append(x_pixel_height)
+
         if self._viewer_state.y_max is not None and self._viewer_state.y_min is not None:
             y_range = max(self._viewer_state.y_max - self._viewer_state.y_min, 1)
             if y_range == 0:
@@ -62,15 +70,17 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             # The default_size parameter in bqplot specifies the area of the mark in pixels
             # but we know what pixel height (i.e. diameter) we want
             # so the size should be (pi / 4) * height ^ 2
-            pixel_height = (self._viewer_state.viewer_height + self.view.figure.fig_margin["top"]) / y_range
+            y_pixel_height = self._viewer_state.viewer_height / y_range
+            heights.append(y_pixel_height)
 
+        pixel_height = min(heights, default=1)
 
-            # Shrink and scale height to add a bit of space
-            spacing = 1
-            scaling = 0.7
-            size = floor((pi / 4) * ((scaling * pixel_height - spacing) ** 2))
-            size = max(size, 1)
-            self.bars.default_size = size
+        # Shrink and scale height to add a bit of space
+        spacing = 0.5
+        scaling = 0.86
+        size = floor((pi / 4) * ((scaling * pixel_height - spacing) ** 2))
+        size = max(size, 1)
+        self.bars.default_size = size
 
     def _scale_histogram(self):
         # TODO: comes from glue/viewers/histogram/layer_artist.py
