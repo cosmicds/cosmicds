@@ -33,7 +33,7 @@
       >
       </div>
       <div
-        v-if="scoring && complete"
+        v-if="scoring && complete && score > 0"
         class="text-right"
       >
         <strong>{{ `+ ${score} ${score == 1 ? 'point' : 'points'}` }}</strong>
@@ -118,11 +118,15 @@ module.exports = {
   methods: {
     selectChoice: function(index, send=true) {
       this.column = index;
-      this.tries += 1;
       const correct = this.correctAnswers.includes(index);
       const neutral = this.neutralAnswers.includes(index);
+      if (!neutral) {
+        this.tries += 1;
+      }
       this.complete = correct || (this.correctAnswers.length === 0 && neutral);
-      this.score = (this.scoring && this.complete) ? this.getScore(this.tries) : null;
+      if (this.scoring && this.complete) {
+        this.score = correct ? this.getScore(this.tries) : 0;
+      }
       if (this.scoreTag !== undefined && send) {
         document.dispatchEvent(
           new CustomEvent("mc-score", {
