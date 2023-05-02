@@ -731,4 +731,8 @@ mjx-assistive-mml cds-input {
   margin: 2px;
 }
 
+#inspire{
+  contain:layout
+}
+
 </style>
