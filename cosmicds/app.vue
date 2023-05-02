@@ -247,9 +247,21 @@
       <v-row justify="center" no-gutters>
         <v-col
           class="py-2 text-center"
-          cols="12"
-        >
+          cols="3"
+        >          
           {{ new Date().getFullYear() }} — <strong>CosmicDS</strong>
+
+          <img class="icon-img" alt="CosmicDS Logo" src="https://raw.githubusercontent.com/cosmicds/minids/main/assets/cosmicds_logo_for_dark_backgrounds.png"
+              />
+
+          <img class="icon-img" alt="SciAct Logo" src="https://raw.githubusercontent.com/cosmicds/minids/main/assets/NASA_Partner_color_300_no_outline.png"
+            />
+        </v-col>
+        <v-col
+          class="text-left"
+          cols="9"
+        >
+          <span style="color:#BDBDBD!important; font-size:90%; line-height:80%; align-items:center">The material contained on this website is based upon work supported by NASA under award No. 80NSSC21M0002. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Aeronautics and Space Administration.</span>
         </v-col>
       </v-row>
     </v-footer>
@@ -712,4 +724,11 @@ mjx-container[jax="CHTML"][display="true"] {
 mjx-assistive-mml cds-input {
   display: none;
 }
+
+.icon-img {
+  height: 40px !important;
+  vertical-align: middle;
+  margin: 2px;
+}
+
 </style>
