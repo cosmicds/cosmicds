@@ -726,7 +726,7 @@ mjx-assistive-mml cds-input {
 }
 
 .icon-img {
-  height: 40px;
+  height: 40px !important;
   vertical-align: middle;
   margin: 2px;
 }
