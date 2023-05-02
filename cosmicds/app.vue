@@ -7,7 +7,7 @@
       src="https://www.astropix.org/archive/esahubble/heic1518b/esahubble_heic1518b_1600.jpg"
       clipped-right
       flat
-      height="72"
+      height="50"
       style="z-index: 50;"
     >
       <template v-slot:img="{ props }">
@@ -108,9 +108,9 @@
       </v-responsive>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app width="300">
+    <v-navigation-drawer v-model="drawer" app width="200">
       <!-- TODO: This should be a built-in prop, but border radius requires explicit style def... -->
-      <v-sheet height="72" width="100%" style="border-radius: 0px">
+      <v-sheet height="50" width="100%" style="border-radius: 0px">
         <v-list class="ma-0 pa-0">
           <v-list-item>
             <v-list-item-action
@@ -118,6 +118,8 @@
             >
               <v-avatar
                 color="warning"
+                max-height="40"
+                max-width="40"
               >
                 <v-icon dark>mdi-account-circle</v-icon>
               </v-avatar>
@@ -259,9 +261,12 @@
         </v-col>
         <v-col
           class="text-left"
+          style="align-self:center!important"
           cols="9"
         >
-          <span style="color:#BDBDBD!important; font-size:90%; line-height:80%; align-items:center">The material contained on this website is based upon work supported by NASA under award No. 80NSSC21M0002. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Aeronautics and Space Administration.</span>
+          <div style="color:#BDBDBD!important; font-size:70%; line-height:0.8em; align-self:center!important">
+            The material contained on this website is based upon work supported by NASA under award No. 80NSSC21M0002. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Aeronautics and Space Administration.
+          </div>
         </v-col>
       </v-row>
     </v-footer>
@@ -631,11 +636,11 @@ td.text-start {
 }
 
 .v-alert {
-  font-size: 18px !important;
+  font-size: 1rem !important;
 }
 
 .v-navigation-drawer .v-list-item__action {
-  margin: 12px 12px 12px 0px !important;
+  margin: 10px 10px 10px 0px !important;
 }
 
 label.v-label--active div {
@@ -726,13 +731,21 @@ mjx-assistive-mml cds-input {
 }
 
 .icon-img {
-  height: 40px !important;
+  height: 30px !important;
   vertical-align: middle;
   margin: 2px;
 }
 
 #inspire{
-  contain:layout
+  contain:layout;
 }
+
+/*
+Don't think this is doing anything 
+  @media (min-width: 700px) {
+  .icon-img {
+    display: none;
+  }
+} */
 
 </style>
