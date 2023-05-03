@@ -740,12 +740,12 @@ mjx-assistive-mml cds-input {
   contain:layout;
 }
 
-/*
-Don't think this is doing anything 
-  @media (min-width: 700px) {
-  .icon-img {
+/* This is not responding to window size, so just leave off for now.
+@media (min-width: 50px) {
+  */
+.icon-img {
     display: none;
   }
-} */
+
 
 </style>
