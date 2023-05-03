@@ -42,7 +42,7 @@ module.exports = {
       default: false
     }
   },
-  data: function () {
+  data() {
     return {
       utteranceSpeaking: false,
       speakingTimeoutID: null,
@@ -291,7 +291,7 @@ module.exports = {
       return synth.speaking && this.utterances.has(synth.utterance);
     },
 
-    function detectBrowser() {
+    detectBrowser() {
       let userAgent = navigator.userAgent;
       let browserName;
 
@@ -326,7 +326,9 @@ module.exports = {
           utterance.rate = 1.2 * utterance.rate;
         }
       }
-    },
+    }
+
+  },
 
   watch: {
     // For the v-dialog slideshows, using nextTick (again, since triggerAutospeak uses it)

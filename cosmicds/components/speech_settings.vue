@@ -32,6 +32,7 @@
                 @click="state.speech_rate = 1"
               >
                 mdi-speedometer
+              </v-icon>
             </template>
             Reset rate
           </v-tooltip>
@@ -56,6 +57,7 @@
                 @click="state.speech_pitch = 1"
               >
                 mdi-music-note
+              </v-icon>
             </template>
             Reset pitch
           </v-tooltip>
@@ -88,7 +90,7 @@ module.exports = {
     return {
       voiceURIs: [
         'Google US English',
-        'urn:moz-tts:speechd:English%20(America)?en'
+        'urn:moz-tts:speechd:English%20(America)?en',
         'Alex',
         'Tessa',
         'urn:moz-tts:osx:com.apple.speech.synthesis.voice.Alex',
