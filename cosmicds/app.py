@@ -43,6 +43,7 @@ class Application(VuetifyTemplate, HubListener):
     vue_components = Dict().tag(sync=True, **widget_serialization)
     app_state = GlueState().tag(sync=True)
     student_id = Int(0).tag(sync=True)
+    user_info = Dict({}).tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,8 +56,13 @@ class Application(VuetifyTemplate, HubListener):
 
         self.app_state.allow_advancing = kwargs.get("allow_advancing", False)
 
+        self.observe(lambda x: self.__setup(story, kwargs), 'user_info')
+
+    def __setup(self, story, kwargs):
         db_init = False
+
         create_new = kwargs.get("create_new_student", False)
+
         if create_new:
             response = requests.get(f"{API_URL}/new-dummy-student").json()
             self.app_state.student = response["student"]
@@ -64,7 +70,8 @@ class Application(VuetifyTemplate, HubListener):
             self.student_id = self.app_state.student["id"]
             db_init = True
         else:
-            username = getenv("JUPYTERHUB_USER")
+            username = self.user_info.get('name', getenv("JUPYTERHUB_USER"))
+
             if username is not None:
                 r = requests.get(f"{API_URL}/student/{username}")
                 student = r.json()["student"]
