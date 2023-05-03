@@ -85,9 +85,10 @@ class Story(CDSState, HubMixin):
 
     def _on_step_index_changed(self, value):
         self.stages[self.stage_index]['step_index'] = value
-        self.step_index = max(min(value, len(self.stages[self.stage_index]['steps'])-1), 0)
-        self.step_complete = self.stages[self.stage_index]['steps'][
-            self.step_index]['completed']
+        steps = self.stages[self.stage_index]['steps']
+        self.step_index = max(min(value, len(steps)-1), 0)
+        if len(steps) > 0:
+            self.step_complete = self.stages[self.stage_index]['steps'][self.step_index]['completed']
         self.write_to_db()
 
     def _on_step_complete_changed(self, value):
