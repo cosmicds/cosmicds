@@ -313,6 +313,9 @@ module.exports = {
     },
 
     transformRate(utterance) {
+      if (!utterance.voice) {
+        return;
+      }
       const uri = utterance.voice.voiceURI;
       let rate = utterance.rate;
       if (uri === "Google US English") {
