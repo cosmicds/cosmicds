@@ -54,7 +54,7 @@ module.exports = {
       defaultVoicesURIs: [
         "Microsoft Aria Online (Natural) - English (United States)",
         "Google US English",
-        "com.apple.speech.synthesis.voice.tessa"
+        "com.apple.speech.synthesis.voice.Alex"
       ],
       defaultVoice: null,
       utterances: new Set(),
