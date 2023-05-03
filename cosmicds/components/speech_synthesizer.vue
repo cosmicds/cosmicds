@@ -159,7 +159,7 @@ module.exports = {
       Object.keys(options).forEach(key => {
         utterance[key] = options[key];
       });
-      transformRate(utterance);
+      this.transformRate(utterance);
 
       // The interval is to work around this issue:
       // https://bugs.chromium.org/p/chromium/issues/detail?id=679437
@@ -314,18 +314,19 @@ module.exports = {
 
     transformRate(utterance) {
       const uri = utterance.voice.voiceURI;
+      let rate = utterance.rate;
       if (uri === "Google US English") {
-        utterance.rate = Math.sqrt(2 * utterance.rate);
+        rate = Math.sqrt(2 * utterance.rate - 2 / 3) - 1 / 5;
       } else if (uri === 'Microsoft Zira - English (United States)') {
         const browser = this.detectBrowser();
         if (browser === 'chrome') {
-          utterance.rate = Math.pow(utterance.rate, 2.5);
+          rate = Math.pow(utterance.rate, 2.5);
         } else if (browser === 'edge') {
-          utterance.rate = 1.5 * utterance.rate;
-        } else if (browser === 'firefox') {
-          utterance.rate = 1.2 * utterance.rate;
+          rate = 1.5 * (utterance.rate - 0.25);
         }
       }
+      rate = Math.max(rate, 0.5);
+      utterance.rate = rate;
     }
 
   },

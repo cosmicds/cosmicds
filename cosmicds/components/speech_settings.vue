@@ -66,8 +66,8 @@
       </v-list-item>
       <v-list-item>
         <v-select
-          v-model="state.speech_voice"
-          :items="window.speechSynthesis.getVoices()"
+          v-model="voice"
+          :items="voices"
           :item-text="voice => `${voice.name} (${voice.lang})`"
           item-value="name"
           label="Select voice"
@@ -101,12 +101,18 @@ module.exports = {
         'Microsoft Aria Online (Natural) - English (United States)',
         'urn:moz-tts:sapi:Microsoft Zira - English (United States)?en-US'
       ],
-      voices: []
+      voices: [],
+      voice: null
     }
   },
   methods: {
     updateVoiceList() {
       this.voices = window.speechSynthesis.getVoices().filter(voice => this.voiceURIs.includes(voice.voiceURI));
+    }
+  },
+  watch: {
+    voice(newVoice) {
+      this.state.speech_voice = newVoice.voiceURI;
     }
   }
 }
