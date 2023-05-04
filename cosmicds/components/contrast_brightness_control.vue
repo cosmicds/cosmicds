@@ -12,6 +12,7 @@
         hide-details=true
         style="margin:auto; width:75%"
         @change="update_style"
+        @end="(val) => {$emit('change_brightness', brightness2Per(val)); }"
         >
         <!-- add tooltip to prepend slot -->
         <template v-slot:prepend>
@@ -39,6 +40,7 @@
         hide-details=true
         style="margin:auto;width:75%;"
         @change="update_style"
+        @end="(val) => {$emit('change_contrast', contrast2Per(val));}"
         >
         <!-- add tooltip to prepend slot -->
         <template v-slot:prepend>
