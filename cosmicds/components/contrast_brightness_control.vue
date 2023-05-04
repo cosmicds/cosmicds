@@ -121,13 +121,11 @@ module.exports = {
       // console.log('contrast', Math.pow(10, this.contrast) * 100)
       // console.log('brightness', this.brightness)
       // console.log('**************')
-      let brightness = parseFloat(this.brightness).toFixed(2) * 100 // brightness in percent
-      let contrast = Math.pow(10, this.contrast).toFixed(2) * 100  // contrast in percent
+      let brightness = this.brightness2Per(this.brightness) // brightness in percent
+      let contrast = this.contrast2Per(this.contrast)  // contrast in percent
       let newstyle = { filter: `brightness(${brightness}%) contrast(${contrast}%)` }
       // sent this style to the parent. access using @newstyle="newstyle => { this.style = newstyle }"
       this.$emit('change_style',newstyle)
-      this.$emit('change_brightness', brightness)
-      this.$emit('change_contrast', contrast)
     },
   },
 
@@ -147,7 +145,13 @@ module.exports = {
       console.log('resetting style from contrast_brightness_control')
       this.resetBrightness()
       this.resetContrast()
-    }
+    },
+    brightness2Per(brightness) {
+      return parseFloat(brightness).toFixed(2) * 100
+    },
+    contrast2Per(contrast) {
+      return Math.pow(10, contrast).toFixed(2) * 100
+    },
   },
   
 }
