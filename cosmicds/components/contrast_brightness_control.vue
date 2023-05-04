@@ -126,6 +126,8 @@ module.exports = {
       let newstyle = { filter: `brightness(${brightness}%) contrast(${contrast}%)` }
       // sent this style to the parent. access using @newstyle="newstyle => { this.style = newstyle }"
       this.$emit('change_style',newstyle)
+      this.$emit('change_brightness', brightness)
+      this.$emit('change_contrast', contrast)
     },
   },
 
