@@ -24,7 +24,7 @@
                   mdi-brightness-6
                 </v-icon>
             </template>
-            <span>Brightness<br>Press to reset</br></span>
+            <span>Brightness<br>Press to reset </span>
           </v-tooltip>
         </template>
       </v-slider>
@@ -51,7 +51,7 @@
                   mdi-contrast-circle
                 </v-icon>
             </template>
-            <span>Contrast<br>Press to reset</br></span>
+            <span>Contrast<br>Press to reset </span>
           </v-tooltip>
         </template>
       </v-slider>
