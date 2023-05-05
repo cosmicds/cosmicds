@@ -154,16 +154,17 @@ class CDSScatterViewerState(ScatterViewerState):
         if not visible_only:
             super().reset_limits()
             return
-        self._reset_x_limits()
-        self._reset_y_limits()
 
-    def _reset_x_limits(self):
+        self.reset_x_limits()
+        self.reset_y_limits()
+
+    def reset_x_limits(self):
         x_min, x_max = self._bounds_for_att(self.x_att)
         with delay_callback(self, 'x_min', 'x_max'):
             self.x_min = x_min
             self.x_max = x_max
 
-    def _reset_y_limits(self):
+    def reset_y_limits(self):
         y_min, y_max = self._bounds_for_att(self.y_att)
         with delay_callback(self, 'y_min', 'y_max'):
             self.y_min = y_min
