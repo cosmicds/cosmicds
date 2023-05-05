@@ -1,6 +1,7 @@
 import json
 import os
 from os import getenv
+import time
 
 import ipyvuetify as v
 import requests
@@ -45,7 +46,7 @@ class Application(VuetifyTemplate, HubListener):
     app_state = GlueState().tag(sync=True)
     student_id = Int(0).tag(sync=True)
     hub_user_info = Dict().tag(sync=True)
-    hub_user_loaded = Bool().tag(sync=True)
+    hub_user_loaded = Bool(False).tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -65,8 +66,6 @@ class Application(VuetifyTemplate, HubListener):
             self._setup(story, **kwargs)
 
     def _setup(self, story, **kwargs):
-        self.hub_user_loaded = True
-
         db_init = False
 
         create_new = kwargs.get("create_new_student", False)
@@ -118,6 +117,8 @@ class Application(VuetifyTemplate, HubListener):
         add_callback(self.app_state, 'speech_pitch', self._speech_pitch_changed)
         add_callback(self.app_state, 'speech_autoread', self._speech_autoread_changed)
         add_callback(self.app_state, 'speech_voice', self._speech_voice_changed)
+
+        self.hub_user_loaded = True
 
     def reload(self):
         """
