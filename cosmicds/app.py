@@ -56,9 +56,9 @@ class Application(VuetifyTemplate, HubListener):
 
         self.app_state.allow_advancing = kwargs.get("allow_advancing", False)
 
-        self.observe(lambda x: self.__setup(story, kwargs), 'user_info')
+        self.observe(lambda x: self._setup(story, **kwargs), 'user_info')
 
-    def __setup(self, story, kwargs):
+    def _setup(self, story, **kwargs):
         db_init = False
 
         create_new = kwargs.get("create_new_student", False)
