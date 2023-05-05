@@ -279,7 +279,7 @@
 
 <script>
 export default {
-  created() {
+  async mounted() {
     // NOTE: THIS IS ONLY VALID FOR CONTAINDS USAGE
     // The environment does not always reflect the actual user account that's
     // using the app, so fetch the current user info
@@ -297,8 +297,6 @@ export default {
         console.log(data);
         vm.hub_user_info = data;
     });
-  },
-  async mounted() {
 
     // We ultimately don't want to expose this
     // It's just for testing purposes
