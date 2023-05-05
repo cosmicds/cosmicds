@@ -1,4 +1,5 @@
 import json
+import os
 from os import getenv
 
 import ipyvuetify as v
@@ -43,7 +44,8 @@ class Application(VuetifyTemplate, HubListener):
     vue_components = Dict().tag(sync=True, **widget_serialization)
     app_state = GlueState().tag(sync=True)
     student_id = Int(0).tag(sync=True)
-    user_info = Dict({}).tag(sync=True)
+    hub_user_info = Dict().tag(sync=True)
+    hub_user_loaded = Bool().tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,9 +58,15 @@ class Application(VuetifyTemplate, HubListener):
 
         self.app_state.allow_advancing = kwargs.get("allow_advancing", False)
 
-        self.observe(lambda x: self._setup(story, **kwargs), 'user_info')
+        # NOTE: This procedure is only valid when using ContainDS
+        if "JUPYTERHUB_USER" in os.environ:
+            self.observe(lambda x: self._setup(story, **kwargs), 'hub_user_info')
+        else:
+            self._setup(story, **kwargs)
 
     def _setup(self, story, **kwargs):
+        self.hub_user_loaded = True
+
         db_init = False
 
         create_new = kwargs.get("create_new_student", False)
@@ -70,7 +78,7 @@ class Application(VuetifyTemplate, HubListener):
             self.student_id = self.app_state.student["id"]
             db_init = True
         else:
-            username = self.user_info.get('name', getenv("JUPYTERHUB_USER"))
+            username = self.hub_user_info.get('name', getenv("JUPYTERHUB_USER"))
 
             if username is not None:
                 r = requests.get(f"{API_URL}/student/{username}")
