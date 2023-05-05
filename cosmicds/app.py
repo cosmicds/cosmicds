@@ -1,7 +1,6 @@
 import json
 import os
 from os import getenv
-import time
 
 import ipyvuetify as v
 import requests
