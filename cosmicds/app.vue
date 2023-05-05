@@ -1,5 +1,14 @@
 <template>
   <v-app id="inspire">
+    <v-overlay :value="!hub_user_loaded"
+      opacity="0.75"
+      z-index=1000>
+      <v-progress-circular
+      indeterminate
+      color="primary"
+      ></v-progress-circular>
+      Loading User Data...
+    </v-overlay>
     <v-app-bar
       app
       color="primary"
@@ -289,7 +298,6 @@ export default {
         vm.user_info = data;
     });
   },
-
   async mounted() {
 
     // We ultimately don't want to expose this
