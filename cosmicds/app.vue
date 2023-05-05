@@ -295,7 +295,7 @@ export default {
     ).then(response=>response.json())
     .then(data=>{
         console.log(data);
-        vm.user_info = data;
+        vm.hub_user_info = data;
     });
   },
   async mounted() {
