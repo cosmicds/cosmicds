@@ -150,13 +150,21 @@ class CDSScatterViewerState(ScatterViewerState):
         max_value = max((b[1] for b in bounds), default=1)
         return min_value, max_value
     
-    def _reset_x_limits(self):
+    def reset_limits(self, visible_only=True):
+        if not visible_only:
+            super().reset_limits()
+            return
+
+        self.reset_x_limits()
+        self.reset_y_limits()
+
+    def reset_x_limits(self):
         x_min, x_max = self._bounds_for_att(self.x_att)
         with delay_callback(self, 'x_min', 'x_max'):
             self.x_min = x_min
             self.x_max = x_max
 
-    def _reset_y_limits(self):
+    def reset_y_limits(self):
         y_min, y_max = self._bounds_for_att(self.y_att)
         with delay_callback(self, 'y_min', 'y_max'):
             self.y_min = y_min
@@ -189,7 +197,11 @@ class CDSHistogramViewerState(HistogramViewerState):
             self.x_max = max_value
 
     
-    def reset_limits(self):
+    def reset_limits(self, visible_only=True):
+        if not visible_only:
+            super().reset_limits()
+            return
+
         self._reset_x_limits()
         y_min = min(getattr(layer, '_y_min', inf) for layer in self.layers if layer.visible)
         if isfinite(y_min):
