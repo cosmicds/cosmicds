@@ -697,7 +697,7 @@ textarea {
 }
 
 .bqplot {
-  height: 100%;
+  height: 300px;
 }
 
 input {
