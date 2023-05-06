@@ -32,6 +32,7 @@
                 @click="state.speech_rate = 1"
               >
                 mdi-speedometer
+              </v-icon>
             </template>
             Reset rate
           </v-tooltip>
@@ -56,6 +57,7 @@
                 @click="state.speech_pitch = 1"
               >
                 mdi-music-note
+              </v-icon>
             </template>
             Reset pitch
           </v-tooltip>
@@ -64,8 +66,8 @@
       </v-list-item>
       <v-list-item>
         <v-select
-          v-model="state.speech_voice"
-          :items="window.speechSynthesis.getVoices()"
+          v-model="voice"
+          :items="voices"
           :item-text="voice => `${voice.name} (${voice.lang})`"
           item-value="name"
           label="Select voice"
@@ -77,6 +79,41 @@
 
 <script>
 module.exports = {
-  props: ['state']
+  props: ['state'],
+  created() {
+    window.speechSynthesis.onvoiceschanged = (_event) => {
+      this.updateVoiceList();
+    };
+    this.updateVoiceList();
+  },
+  data() {
+    return {
+      voiceURIs: [
+        'Google US English',
+        'urn:moz-tts:speechd:English%20(America)?en',
+        'Alex',
+        'Tessa',
+        'urn:moz-tts:osx:com.apple.speech.synthesis.voice.Alex',
+        'urn:moz-tts:osx:com.apple.speech.synthesis.voice.tessa',
+        'com.apple.speech.synthesis.voice.Alex',
+        'com.apple.speech.synthesis.voice.tessa',
+        'Microsoft Zira - English (United States)',
+        'Microsoft Aria Online (Natural) - English (United States)',
+        'urn:moz-tts:sapi:Microsoft Zira - English (United States)?en-US'
+      ],
+      voices: [],
+      voice: null
+    }
+  },
+  methods: {
+    updateVoiceList() {
+      this.voices = window.speechSynthesis.getVoices().filter(voice => this.voiceURIs.includes(voice.voiceURI));
+    }
+  },
+  watch: {
+    voice(newVoice) {
+      this.state.speech_voice = newVoice.voiceURI;
+    }
+  }
 }
 </script>

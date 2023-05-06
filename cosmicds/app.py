@@ -81,8 +81,8 @@ class Application(VuetifyTemplate, HubListener):
         cls = r.json()["class"]
         self.app_state.classroom = cls or { "id": 0 }
 
-        print(f"Student ID: {self.student_id}")
-        print(f"Class ID: {self.app_state.classroom['id']}")
+        # print(f"Student ID: {self.student_id}")
+        # print(f"Class ID: {self.app_state.classroom['id']}")
 
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session,

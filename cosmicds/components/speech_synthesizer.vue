@@ -42,7 +42,7 @@ module.exports = {
       default: false
     }
   },
-  data: function () {
+  data() {
     return {
       utteranceSpeaking: false,
       speakingTimeoutID: null,
@@ -54,7 +54,7 @@ module.exports = {
       defaultVoicesURIs: [
         "Microsoft Aria Online (Natural) - English (United States)",
         "Google US English",
-        "com.apple.speech.synthesis.voice.tessa"
+        "com.apple.speech.synthesis.voice.Alex"
       ],
       defaultVoice: null,
       utterances: new Set(),
@@ -159,6 +159,7 @@ module.exports = {
       Object.keys(options).forEach(key => {
         utterance[key] = options[key];
       });
+      this.transformRate(utterance);
 
       // The interval is to work around this issue:
       // https://bugs.chromium.org/p/chromium/issues/detail?id=679437
@@ -288,7 +289,49 @@ module.exports = {
     isSpeaking() {
       const synth = window.speechSynthesis;
       return synth.speaking && this.utterances.has(synth.utterance);
+    },
+
+    detectBrowser() {
+      let userAgent = navigator.userAgent;
+      let browserName;
+
+      if (userAgent.match(/chrome|chromium|crios/i)) {
+        browserName = "chrome";
+      } else if (userAgent.match(/firefox|fxios/i)) {
+        browserName = "firefox";
+      } else if (userAgent.match(/safari/i)) {
+        browserName = "safari";
+      } else if (userAgent.match(/opr\//i)) {
+        browserName = "opera";
+      } else if (userAgent.match(/edg/i)) {
+        browserName = "edge";
+      } else {
+        browserName = null;
+      }
+
+      return browserName
+    },
+
+    transformRate(utterance) {
+      if (!utterance.voice) {
+        return;
+      }
+      const uri = utterance.voice.voiceURI;
+      let rate = utterance.rate;
+      if (uri === "Google US English") {
+        rate = Math.sqrt(2 * utterance.rate - 2 / 3) - 1 / 5;
+      } else if (uri === 'Microsoft Zira - English (United States)') {
+        const browser = this.detectBrowser();
+        if (browser === 'chrome') {
+          rate = Math.pow(utterance.rate, 2.5);
+        } else if (browser === 'edge') {
+          rate = 1.5 * (utterance.rate - 0.25);
+        }
+      }
+      rate = Math.max(rate, 0.5);
+      utterance.rate = rate;
     }
+
   },
 
   watch: {

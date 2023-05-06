@@ -169,23 +169,23 @@ class LineHoverViewerMixin:
 
     def _show_line_changed(self, show):
         self.line.visible = show
-        show_label = show and self.show_label
+        show_label = show and self.state.show_label
         self.line_label.visible = show_label
         self.label_background.visible = show_label
 
     def _show_previous_changed(self, show):
         self.previous_line.visible = show
-        show_label = show and self.show_previous_label
+        show_label = show and self.state.show_previous_label
         self.previous_line_label.visible = show_label
         self.previous_label_background.visible = show_label
 
     def _show_label_changed(self, show):
-        show_label = self.show_line and show
+        show_label = self.state.show_line and show
         self.line_label.visible = show_label
         self.label_background.visible = show_label
 
     def _show_previous_label_changed(self, show):
-        show_label = self.show_previous and show
+        show_label = self.state.show_previous and show
         self.previous_line_label.visible = show_label
         self.previous_label_background.visible = show_label
 
