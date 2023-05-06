@@ -43,6 +43,7 @@ class Application(VuetifyTemplate, HubListener):
     vue_components = Dict().tag(sync=True, **widget_serialization)
     app_state = GlueState().tag(sync=True)
     student_id = Int(0).tag(sync=True)
+    show_snackbar = Bool(True).tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
