@@ -7,7 +7,7 @@
       src="https://www.astropix.org/archive/esahubble/heic1518b/esahubble_heic1518b_1600.jpg"
       clipped-right
       flat
-      height="50"
+      height="60"
       style="z-index: 50;"
     >
       <template v-slot:img="{ props }">
@@ -108,9 +108,9 @@
       </v-responsive>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app width="200">
+    <v-navigation-drawer v-model="drawer" app width="250">
       <!-- TODO: This should be a built-in prop, but border radius requires explicit style def... -->
-      <v-sheet height="50" width="100%" style="border-radius: 0px">
+      <v-sheet height="60" width="100%" style="border-radius: 0px">
         <v-list class="ma-0 pa-0">
           <v-list-item>
             <v-list-item-action
@@ -118,8 +118,6 @@
             >
               <v-avatar
                 color="warning"
-                max-height="40"
-                max-width="40"
               >
                 <v-icon dark>mdi-account-circle</v-icon>
               </v-avatar>
@@ -127,7 +125,7 @@
 
             <v-list-item-content>
               <v-list-item-title>
-                Guest Student {{ student_id }}
+                Student {{ student_id }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -636,7 +634,7 @@ td.text-start {
 }
 
 .v-alert {
-  font-size: 1rem !important;
+  font-size: 18px !important;
 }
 
 .v-navigation-drawer .v-list-item__action {
