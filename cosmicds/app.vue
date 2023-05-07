@@ -53,7 +53,7 @@
                 v-on="on"
                 @click="speech_menu = !speech_menu"
               >
-                <v-icon>mdi-tune</v-icon>
+                <v-icon>mdi-tune-vertical</v-icon>
               </v-btn>
             </template>
             <speech-settings
@@ -276,6 +276,7 @@
           </div>
         </v-col>
       </v-row>
+    </v-footer>
       <v-snackbar
         v-model="show_snackbar"
         timeout="200000"
@@ -283,13 +284,12 @@
         top
         center
         color="info"
-        :text="app_state.dark_mode ? 'white' : 'black!important'"
-        style="font-size: 1.2rem; line-height: 2"
+        :style="app_state.dark_mode ? 'font-size: 1em; line-height: 1.5; color:white' : 'font-size: 1em; line-height: 1.5; color:black !important'"
         multi-line
         elevation="24"
       >
         <p class="pt-3 pl-3">
-          <v-icon>mdi-tune</v-icon> &nbsp;adjust speech settings
+          <v-icon>mdi-tune-vertical</v-icon> &nbsp;adjust speech settings
           <br>
           <v-icon>mdi-brightness-4</v-icon> &nbsp;toggle light/dark mode
           <br>
@@ -306,7 +306,6 @@
           Close
         </v-btn>
       </v-snackbar>
-    </v-footer>
   </v-app>
 </template>
 
