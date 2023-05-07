@@ -274,7 +274,7 @@
         top
         center
         color="info"
-        text="app_state.dark_mode ? 'white' : 'black!important'"
+        :text="app_state.dark_mode ? 'white' : 'black!important'"
         style="font-size: 1.2rem; line-height: 2"
         multi-line
         elevation="24"
