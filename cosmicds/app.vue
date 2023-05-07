@@ -16,7 +16,7 @@
       src="https://www.astropix.org/archive/esahubble/heic1518b/esahubble_heic1518b_1600.jpg"
       clipped-right
       flat
-      height="72"
+      height="60"
       style="z-index: 50;"
     >
       <template v-slot:img="{ props }">
@@ -53,7 +53,7 @@
                 v-on="on"
                 @click="speech_menu = !speech_menu"
               >
-                <v-icon>mdi-voice</v-icon>
+                <v-icon>mdi-tune-vertical</v-icon>
               </v-btn>
             </template>
             <speech-settings
@@ -117,9 +117,9 @@
       </v-responsive>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app width="300">
+    <v-navigation-drawer v-model="drawer" app width="250">
       <!-- TODO: This should be a built-in prop, but border radius requires explicit style def... -->
-      <v-sheet height="72" width="100%" style="border-radius: 0px">
+      <v-sheet height="60" width="100%" style="border-radius: 0px">
         <v-list class="ma-0 pa-0">
           <v-list-item>
             <v-list-item-action
@@ -134,7 +134,7 @@
 
             <v-list-item-content>
               <v-list-item-title>
-                Guest Student {{ student_id }}
+                Student {{ student_id }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -268,12 +268,44 @@
         </v-col>
         <v-col
           class="text-left"
+          style="align-self:center!important"
           cols="9"
         >
-          <span style="color:#BDBDBD!important; font-size:90%; line-height:80%; align-items:center">The material contained on this website is based upon work supported by NASA under award No. 80NSSC21M0002. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Aeronautics and Space Administration.</span>
+          <div style="color:#BDBDBD!important; font-size:70%; line-height:0.8em; align-self:center!important">
+            The material contained on this website is based upon work supported by NASA under award No. 80NSSC21M0002. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Aeronautics and Space Administration.
+          </div>
         </v-col>
       </v-row>
     </v-footer>
+      <v-snackbar
+        v-model="show_snackbar"
+        timeout="200000"
+        transition="fab-transition"
+        top
+        center
+        color="info"
+        :style="app_state.dark_mode ? 'font-size: 1em; line-height: 1.5; color:white' : 'font-size: 1em; line-height: 1.5; color:black !important'"
+        multi-line
+        elevation="24"
+      >
+        <p class="pt-3 pl-3">
+          <v-icon>mdi-tune-vertical</v-icon> &nbsp;adjust speech settings
+          <br>
+          <v-icon>mdi-brightness-4</v-icon> &nbsp;toggle light/dark mode
+          <br>
+          <v-icon>mdi-voice</v-icon> &nbsp;auto-read text
+
+        </p>
+        <v-btn
+          color="accent"
+          class="mx-4 black--text"
+          @click="{
+            show_snackbar=false;
+          }"
+        >
+          Close
+        </v-btn>
+      </v-snackbar>
   </v-app>
 </template>
 
@@ -661,7 +693,7 @@ td.text-start {
 }
 
 .v-navigation-drawer .v-list-item__action {
-  margin: 12px 12px 12px 0px !important;
+  margin: 10px 10px 10px 0px !important;
 }
 
 label.v-label--active div {
@@ -752,9 +784,21 @@ mjx-assistive-mml cds-input {
 }
 
 .icon-img {
-  height: 40px !important;
+  height: 30px !important;
   vertical-align: middle;
   margin: 2px;
 }
+
+#inspire{
+  contain:layout;
+}
+
+/* This is not responding to window size, so just leave off for now.
+@media (min-width: 50px) {
+  */
+.icon-img {
+    display: none;
+  }
+
 
 </style>
