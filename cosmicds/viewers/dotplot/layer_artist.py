@@ -93,7 +93,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
     def _scale_histogram(self):
         if not getattr(self.view,'use_dots',True):
             super()._scale_histogram()
-            return
+        
         # TODO: comes from glue/viewers/histogram/layer_artist.py
         if self.bins is None:
             return  # can happen when the subset is empty
@@ -122,10 +122,11 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             y_i = range(1, counts[i] + 1)
             x.extend([x_i] * counts[i])
             y.extend(y_i)
-     
-        self.bars.x = x
-        self.bars.y = y if getattr(self.view,'use_dots',True) else counts
-        self._update_size()
+        
+        if getattr(self.view,'use_dots',True):
+            self.bars.x = x
+            self.bars.y = y
+            self._update_size()
 
         # We have to do the following to make sure that we reset the y_max as
         # needed. We can't simply reset based on the maximum for this layer
