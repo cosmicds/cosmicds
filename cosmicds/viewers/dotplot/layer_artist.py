@@ -5,7 +5,7 @@ from glue.utils import color2hex
 from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
 from glue_jupyter.link import dlink, link
 
-from bqplot import Scatter, ScatterGL, LinearScale
+from bqplot import Scatter, ScatterGL, LinearScale, Bars
 from numpy import inf
 
 from cosmicds.viewers.dotplot.state import DotPlotLayerState
@@ -26,16 +26,22 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             **self.view.scales,
             'rotation': LinearScale(min=0, max=180)
         }
-        self.bars = Scatter(scales=self.scales,
-                            x=[0, 1],
-                            y=[0, 1],
-                            marker='ellipse')
+        
+        if getattr(self.view,'use_dots',True):
+            self.bars = Scatter(scales=self.scales,
+                                x=[0, 1],
+                                y=[0, 1],
+                                marker='ellipse')
+        else:
+            self.bars = Bars(
+                scales=self.view.scales, x=[0, 1], y=[0, 1])
 
         self.view.figure.marks = list(self.view.figure.marks) + [self.bars]
 
         dlink((self.state, 'color'), (self.bars, 'colors'), lambda x: [color2hex(x)])
         dlink((self.state, 'alpha'), (self.bars, 'opacities'), lambda x: [x])
-        dlink((self.state, 'skew'), (self.bars, 'default_skew'))
+        if  getattr(self.view,'use_dots',True):
+            dlink((self.state, 'skew'), (self.bars, 'default_skew'))
 
         self._viewer_state.add_global_callback(self._update_histogram)
         self.state.add_global_callback(self._update_histogram)
@@ -57,6 +63,8 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
         self._update_size()
 
     def _update_size(self, arg=None):
+        if not getattr(self.view,'use_dots',True):
+            return
         heights = []
         x_pixel_height = self._viewer_state.viewer_width / self._viewer_state.hist_n_bin
         heights.append(x_pixel_height)
@@ -83,6 +91,9 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
         self.bars.default_size = size
 
     def _scale_histogram(self):
+        if not getattr(self.view,'use_dots',True):
+            super()._scale_histogram()
+            return
         # TODO: comes from glue/viewers/histogram/layer_artist.py
         if self.bins is None:
             return  # can happen when the subset is empty
@@ -113,7 +124,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             y.extend(y_i)
      
         self.bars.x = x
-        self.bars.y = y
+        self.bars.y = y if getattr(self.view,'use_dots',True) else counts
         self._update_size()
 
         # We have to do the following to make sure that we reset the y_max as
