@@ -13,10 +13,10 @@ class BqplotDotPlotView(BqplotHistogramView):
 
     tools = BqplotHistogramView.tools + ["bqplot:xzoom"]
 
-    def __init__(self, session, state=None, use_dots = True):
+    def __init__(self, session, state=None, use_bars = False):
         super(BqplotDotPlotView, self).__init__(session, state=state)
         self.figure.layout.observe(self._update_height, names='height')
-        self.use_dots = use_dots
+        self.use_bars = use_bars
 
     def _update_height(self, change):
         # For now, we just assume that the height is entered in pixels
