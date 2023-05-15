@@ -27,7 +27,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             'rotation': LinearScale(min=0, max=180)
         }
         
-        if getattr(self.view,'use_bars',False):
+        if self.view.state.use_bars:
             self.bars = Bars(
                 scales=self.view.scales, x=[0, 1], y=[0, 1])
         else:
@@ -41,7 +41,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
 
         dlink((self.state, 'color'), (self.bars, 'colors'), lambda x: [color2hex(x)])
         dlink((self.state, 'alpha'), (self.bars, 'opacities'), lambda x: [x])
-        if  not getattr(self.view,'use_bars',False):
+        if  not self.view.state.use_bars:
             dlink((self.state, 'skew'), (self.bars, 'default_skew'))
 
         self._viewer_state.add_global_callback(self._update_histogram)
@@ -64,7 +64,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
         self._update_size()
 
     def _update_size(self, arg=None):
-        if getattr(self.view,'use_bars',False):
+        if self.view.state.use_bars:
             return
         heights = []
         x_pixel_height = self._viewer_state.viewer_width / self._viewer_state.hist_n_bin
@@ -92,7 +92,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
         self.bars.default_size = size
 
     def _scale_histogram(self):
-        if getattr(self.view,'use_bars',False):
+        if self.view.state.use_bars:
             super()._scale_histogram()
         
         # TODO: comes from glue/viewers/histogram/layer_artist.py
