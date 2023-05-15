@@ -1,6 +1,6 @@
 from math import floor, pi
 
-from echo.core import add_callback
+from echo.core import add_callback, delay_callback
 from glue.utils import color2hex
 from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
 from glue_jupyter.link import dlink, link
@@ -60,9 +60,21 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
         add_callback(self._viewer_state, 'hist_n_bin', self._update_size)
         add_callback(self._viewer_state, 'viewer_height', self._update_size)
         add_callback(self._viewer_state, 'viewer_width', self._update_size)
+        add_callback(self._viewer_state, 'use_bars', self._update_bar_type)
 
         self._update_size()
-
+    
+    def _update_bar_type(self, new):
+        style = {'colors': self.bars.colors, 'visible': self.bars.visible, 'scales': self.bars.scales, 'opacities': list(self.bars.opacities), 'scales_metadata': self.bars.scales_metadata}
+        marks = [m for m in self.view.figure.marks if m is not self.bars]
+        if new:
+            self.bars = Bars(**style, x = [0,1], y = [0,1])
+        else:
+            self.bars = Scatter(**style, x = [0,1], y = [0,1], marker = 'ellipse', default_skew = 0)
+        with delay_callback(self._viewer_state, 'y_min', 'y_max'):
+            self._scale_histogram()
+        self.view.figure.marks = marks + [self.bars]
+        
     def _update_size(self, arg=None):
         if self.view.state.use_bars:
             return
@@ -95,36 +107,37 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
         if self.view.state.use_bars:
             super()._scale_histogram()
         
-        # TODO: comes from glue/viewers/histogram/layer_artist.py
-        if self.bins is None:
-            return  # can happen when the subset is empty
+        else:
+            # TODO: comes from glue/viewers/histogram/layer_artist.py
+            if self.bins is None:
+                return  # can happen when the subset is empty
 
-        if self.bins.size == 0:
-            return
+            if self.bins.size == 0:
+                return
 
-        self.hist = self.hist_unscaled.astype(float)
-        dx = self.bins[1] - self.bins[0]
+            self.hist = self.hist_unscaled.astype(float)
+            dx = self.bins[1] - self.bins[0]
 
-        if self._viewer_state.cumulative:
-            self.hist = self.hist.cumsum()
-            if self._viewer_state.normalize:
-                self.hist /= self.hist.max()
-        elif self._viewer_state.normalize:
-            self.hist /= (self.hist.sum() * dx)
+            if self._viewer_state.cumulative:
+                self.hist = self.hist.cumsum()
+                if self._viewer_state.normalize:
+                    self.hist /= self.hist.max()
+            elif self._viewer_state.normalize:
+                self.hist /= (self.hist.sum() * dx)
 
-        # TODO this won't work for log ...
-        centers = (self.bins[:-1] + self.bins[1:]) / 2
-        assert len(centers) == len(self.hist)
+            # TODO this won't work for log ...
+            centers = (self.bins[:-1] + self.bins[1:]) / 2
+            assert len(centers) == len(self.hist)
 
-        x, y = [], []
-        counts = self.hist.astype(int)
-        for i in range(self.bins.size - 1):
-            x_i = (self.bins[i] + self.bins[i+1])/2
-            y_i = range(1, counts[i] + 1)
-            x.extend([x_i] * counts[i])
-            y.extend(y_i)
-        
-        if not getattr(self.view,'use_bars',False):
+            x, y = [], []
+            counts = self.hist.astype(int)
+            for i in range(self.bins.size - 1):
+                x_i = (self.bins[i] + self.bins[i+1])/2
+                y_i = range(1, counts[i] + 1)
+                x.extend([x_i] * counts[i])
+                y.extend(y_i)
+            
+
             self.bars.x = x
             self.bars.y = y
             self._update_size()
