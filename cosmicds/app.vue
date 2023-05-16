@@ -157,6 +157,7 @@
             :complete="story_state.max_stage_index > index"
             :step="index"
             :edit-icon="'$complete'"
+            :class="{ info: story_state.stage_index === index }"
           >
             {{ stage.title }}
           </v-stepper-step>
