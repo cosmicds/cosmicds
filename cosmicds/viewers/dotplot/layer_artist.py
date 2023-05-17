@@ -71,6 +71,7 @@ class BqplotDotPlotLayerArtist(BqplotHistogramLayerArtist):
             self.bars = Bars(**style, x = [0,1], y = [0,1])
         else:
             self.bars = Scatter(**style, x = [0,1], y = [0,1], marker = 'ellipse', default_skew = 0)
+            dlink((self.state, 'skew'), (self.bars, 'default_skew'))
         with delay_callback(self._viewer_state, 'y_min', 'y_max'):
             self._scale_histogram()
         self.view.figure.marks = marks + [self.bars]
