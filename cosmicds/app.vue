@@ -289,11 +289,11 @@
         elevation="24"
       >
         <p class="pt-3 pl-3">
-          <v-icon>mdi-tune-vertical</v-icon> &nbsp;adjust speech settings
+          <v-icon>mdi-tune-vertical</v-icon> &nbsp;Adjust speech settings
           <br>
-          <v-icon>mdi-brightness-4</v-icon> &nbsp;toggle light/dark mode
+          <v-icon>mdi-brightness-4</v-icon> &nbsp;Toggle light/dark mode
           <br>
-          <v-icon>mdi-voice</v-icon> &nbsp;auto-read text
+          <v-icon>mdi-voice</v-icon> &nbsp;Auto-read text
 
         </p>
         <v-btn

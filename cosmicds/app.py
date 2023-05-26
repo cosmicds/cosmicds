@@ -44,7 +44,7 @@ class Application(VuetifyTemplate, HubListener):
     vue_components = Dict().tag(sync=True, **widget_serialization)
     app_state = GlueState().tag(sync=True)
     student_id = Int(0).tag(sync=True)
-    show_snackbar = Bool(True).tag(sync=True)
+    show_snackbar = Bool(False).tag(sync=True)
     hub_user_info = Dict().tag(sync=True)
     hub_user_loaded = Bool(False).tag(sync=True)
 
@@ -119,6 +119,7 @@ class Application(VuetifyTemplate, HubListener):
         add_callback(self.app_state, 'speech_voice', self._speech_voice_changed)
 
         self.hub_user_loaded = True
+        self.show_snackbar = True
 
     def reload(self):
         """
