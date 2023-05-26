@@ -29,6 +29,7 @@ class Table(VuetifyTemplate, HubListener):
     title = Unicode().tag(sync=True)
     tools = Dict(default_value={}).tag(sync=True)
     use_search = Bool(False).tag(sync=True)
+    allow_row_click = Bool(True).tag(sync=True)
 
     def __init__(self, session, data, tools=None, item_filter=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -247,6 +248,8 @@ class Table(VuetifyTemplate, HubListener):
         self._row_click_callback = cb
 
     def vue_handle_row_click(self, item, data=None):
+        if not self.allow_row_click:
+            return
         key = item[self.key_component]
         if self.row_click_callback:
             self.row_click_callback(item, data)
