@@ -91,9 +91,12 @@ class Application(VuetifyTemplate, HubListener):
                 self.app_state.student["id"] = sid
                 self.student_id = sid
             
-        r = requests.get(f"{API_URL}/class-for-student-story/{self.student_id}/{story}")
-        cls = r.json()["class"]
+        class_response = requests.get(f"{API_URL}/class-for-student-story/{self.student_id}/{story}")
+        class_json = class_response.json()
+        cls = class_json["class"]
+        size = class_json["size"]
         self.app_state.classroom = cls or { "id": 0 }
+        self.app_state.classroom["size"] = size
 
         # print(f"Student ID: {self.student_id}")
         # print(f"Class ID: {self.app_state.classroom['id']}")
