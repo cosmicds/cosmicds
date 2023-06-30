@@ -3,6 +3,11 @@ from glue.viewers.histogram.state import HistogramLayerState
 from cosmicds.viewers.cds_viewer.state import CDSHistogramViewerState
 
 class DotPlotViewerState(CDSHistogramViewerState):
+    
+    use_bars = CallbackProperty(False)
+    
+    viewer_height = CallbackProperty(400)
+    viewer_width = CallbackProperty(400)
 
     def __init__(self, **kwargs):
         super(DotPlotViewerState, self).__init__(**kwargs)
