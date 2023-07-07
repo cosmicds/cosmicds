@@ -39,8 +39,8 @@
 
 <style scoped>
 
-.v-card{
-  border: solid 1px black!important;
+.v-card {
+  border: solid 1px black !important;
 }
 
 </style>
