@@ -19,19 +19,6 @@
   </v-card>
 </template>
 
-<script>
-export default {
-  props: {
-    options: {
-      validator(value) {
-        return Array.isArray(value) && value.every(x => typeof x === "number");
-      },
-      required: true
-    }
-  } 
-}
-</script>
-
 <style scoped>
 .v-card {
   border: solid 1px black !important;

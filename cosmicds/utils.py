@@ -5,6 +5,7 @@ from math import log10
 from astropy.modeling import models, fitting
 from bqplot.marks import Lines
 from bqplot.scales import LinearScale
+from glue.viewers.common.viewer import LayerArtist
 from glue_jupyter.bqplot.common import BqplotBaseView
 from glue_jupyter.bqplot.histogram import BqplotHistogramLayerArtist
 from glue_jupyter.bqplot.scatter import BqplotScatterLayerArtist
@@ -261,7 +262,7 @@ def line_mark(has_scales, start_x, start_y, end_x, end_y, color, label=None):
                    display_legend=label is not None,
                    labels_visibility='label')
 
-def vertical_line_mark(layer, x, color, label=None):
+def vertical_line_mark(has_scales, x, color, label=None):
     """
     A specialization of `line_mark` specifically for vertical lines.
     Parameters
@@ -273,8 +274,11 @@ def vertical_line_mark(layer, x, color, label=None):
     color : str
         The desired color of the line, represented as a hex string.
     """
-    viewer_state = layer.state.viewer_state
-    return line_mark(layer, x, viewer_state.y_min, x, viewer_state.y_max, color, label)
+    if isinstance(has_scales, LayerArtist):
+        viewer_state = has_scales.state.viewer_state
+    elif isinstance(has_scales, BqplotBaseView):
+        viewer_state = has_scales.state
+    return line_mark(has_scales, x, viewer_state.y_min, x, viewer_state.y_max, color, label)
 
 # Taken from https://jonlabelle.com/snippets/view/python/python-debounce-decorator-function
 def debounce(wait):

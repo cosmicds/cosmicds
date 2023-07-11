@@ -13,7 +13,7 @@ class StatisticsSelector(VuetifyTemplate):
     def __init__(self, viewer, data, component_id, layer, statistics=['mean', 'median', 'mode'], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
-        self.data = data
+        self.glue_data = data
         self.component_id = component_id
         self.layer = layer
         self.statistics = statistics
@@ -24,9 +24,11 @@ class StatisticsSelector(VuetifyTemplate):
         selected = change["new"]
         marks = [mark for mark in self.viewer.figure.marks if mark not in self._lines]
         lines = []
-        for index, stat in enumerate(selected):
+        for index, stat in enumerate(self.statistics):
+            if index not in selected:
+               continue 
             try:
-                value = self.data.compute_statistic(stat, self.component_id)
+                value = self.glue_data.compute_statistic(stat, self.component_id)
                 mark = vertical_line_mark(self.layer, value, self.colors[index])
                 lines.append(mark)
             except ValueError:
