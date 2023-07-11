@@ -10,7 +10,7 @@ class PercentageSelector(VuetifyTemplate):
 
     def __init__(self, data, component_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.data = data
+        self.glue_data = data
         self.component_id = component_id
         self._subset = None
 

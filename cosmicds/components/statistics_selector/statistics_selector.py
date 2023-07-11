@@ -24,7 +24,7 @@ class StatisticsSelector(VuetifyTemplate):
         selected = change["new"]
         marks = [mark for mark in self.viewer.figure.marks if mark not in self._lines]
         lines = []
-        for index, stat in enumerate(self.statistics):
+        for index, stat in enumerate(selected):
             try:
                 value = self.data.compute_statistic(stat, self.component_id)
                 mark = vertical_line_mark(self.layer, value, self.colors[index])
