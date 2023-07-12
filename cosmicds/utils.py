@@ -223,7 +223,7 @@ def fit_line(x, y):
     fitted_line = fit(line_init, x, y)
     return fitted_line
 
-def line_mark(has_scales, start_x, start_y, end_x, end_y, color, label=None):
+def line_mark(has_scales, start_x, start_y, end_x, end_y, color, label=None, label_visibility=None):
     """
     Creates a Lines mark between the given start and end points
     using the scales of the given layer.
@@ -255,14 +255,14 @@ def line_mark(has_scales, start_x, start_y, end_x, end_y, color, label=None):
     elif isinstance(has_scales, BqplotBaseView):
         scales = has_scales.scales
     return Lines(x=[start_x, end_x],
-                   y=[start_y, end_y],
-                   scales=scales,
-                   colors=[color],
-                   labels=[label] if label is not None else [],
-                   display_legend=label is not None,
-                   labels_visibility='label')
+                 y=[start_y, end_y],
+                 scales=scales,
+                 colors=[color],
+                 labels=[label] if label is not None else [],
+                 display_legend=label is not None,
+                 labels_visibility=label_visibility or "label")
 
-def vertical_line_mark(has_scales, x, color, label=None):
+def vertical_line_mark(has_scales, x, color, label=None, label_visibility=None):
     """
     A specialization of `line_mark` specifically for vertical lines.
     Parameters
@@ -278,7 +278,8 @@ def vertical_line_mark(has_scales, x, color, label=None):
         viewer_state = has_scales.state.viewer_state
     elif isinstance(has_scales, BqplotBaseView):
         viewer_state = has_scales.state
-    return line_mark(has_scales, x, viewer_state.y_min, x, viewer_state.y_max, color, label)
+    return line_mark(has_scales, x, viewer_state.y_min, x, viewer_state.y_max, 
+                     color, label=label, label_visibility=label_visibility)
 
 # Taken from https://jonlabelle.com/snippets/view/python/python-debounce-decorator-function
 def debounce(wait):

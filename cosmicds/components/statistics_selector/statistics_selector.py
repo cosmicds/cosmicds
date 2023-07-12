@@ -12,12 +12,13 @@ class StatisticsSelector(VuetifyTemplate):
     statistics = List().tag(sync=True)
     colors = List(['red', 'orange', 'yellow', 'green', 'blue', 'purple']).tag(sync=True)
 
-    def __init__(self, viewer, data, component_id, layer, bins=None, statistics=['mean', 'median', 'mode'], *args, **kwargs):
+    def __init__(self, viewer, data, component_id, layer, transform=None, bins=None, statistics=['mean', 'median', 'mode'], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.glue_data = data
         self.component_id = component_id
         self.layer = layer
+        self.transform = transform
         self.statistics = statistics
         self._bins = bins
         if "colors" in kwargs:
@@ -26,7 +27,7 @@ class StatisticsSelector(VuetifyTemplate):
 
     def _mode(self):
         data = self.glue_data[self.component_id]
-        if self.bins:
+        if self.bins is not None:
             hist, bins = histogram(data, bins=self.bins)
             idx = argmax(hist)
             return 0.5 * (bins[idx] + bins[idx + 1])
@@ -61,6 +62,8 @@ class StatisticsSelector(VuetifyTemplate):
                continue 
             try:
                 value = self._find_statistic(stat)
+                if self.transform is not None:
+                    value = self.transform(value)
                 label = f"{stat.capitalize()}: {value}"
                 mark = vertical_line_mark(self.layer, value, self.colors[index],
                                           label=label, label_visibility="none")
