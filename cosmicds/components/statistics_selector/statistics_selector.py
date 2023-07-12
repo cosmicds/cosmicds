@@ -12,12 +12,11 @@ class StatisticsSelector(VuetifyTemplate):
     statistics = List().tag(sync=True)
     colors = List(['red', 'orange', 'yellow', 'green', 'blue', 'purple']).tag(sync=True)
 
-    def __init__(self, viewer, data, component_id, layer, transform=None, bins=None, statistics=['mean', 'median', 'mode'], *args, **kwargs):
+    def __init__(self, viewer, data, component_id, transform=None, bins=None, statistics=['mean', 'median', 'mode'], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.glue_data = data
         self.component_id = component_id
-        self.layer = layer
         self.transform = transform
         self.statistics = statistics
         self._bins = bins
@@ -65,7 +64,7 @@ class StatisticsSelector(VuetifyTemplate):
                 if self.transform is not None:
                     value = self.transform(value)
                 label = f"{stat.capitalize()}: {value}"
-                mark = vertical_line_mark(self.layer, value, self.colors[index],
+                mark = vertical_line_mark(self.viewer.layers[0], value, self.colors[index],
                                           label=label, label_visibility="none")
                 lines.append(mark)
             except ValueError:

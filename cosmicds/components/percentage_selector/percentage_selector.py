@@ -1,5 +1,6 @@
 from ipyvuetify import VuetifyTemplate
-from traitlets import Int, List, observe
+from numpy import percentile
+from traitlets import Float, Int, List, observe
 
 from glue.core.subset import RangeSubsetState
 
@@ -10,15 +11,27 @@ class PercentageSelector(VuetifyTemplate):
     template = load_template("percentage_selector.vue", __file__, traitlet=True).tag(sync=True)
     options = List([50, 68, 95]).tag(sync=True)
     selected = Int().tag(sync=True)
+    selected_min = Float().tag(sync=True)
+    selected_max = Float().tag(sync=True)
 
     def __init__(self, viewer, data, component_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.glue_data = data
         self.component_id = component_id
+        self._bins = kwargs.get("bins", None)
         self.subset_label = kwargs.get("subset_label", None)
         self.subset_group = kwargs.get("subset_group", False)
+        self.transform = kwargs.get("transform", None)
         self._subset = None
+
+    @property
+    def bins(self):
+        if self._bins is not None:
+            return self._bins
+        if hasattr(self.viewer.state, "bins"):
+            return self.viewer.state.bins
+        return None
 
     @observe('selected')
     def _update_subset(self, change):
@@ -26,9 +39,19 @@ class PercentageSelector(VuetifyTemplate):
         around_median = selected / 2
         bottom_percent = 50 - around_median
         top_percent = 50 + around_median
-        bottom = self.glue_data.compute_statistic('percentile', self.component_id, percentile=bottom_percent)
-        top = self.glue_data.compute_statistic('percentile', self.component_id, percentile=top_percent)
+        data = self.glue_data[self.component_id]
+        bottom = percentile(data, bottom_percent, method="nearest")
+        top = percentile(data, top_percent, method="nearest")
         state = RangeSubsetState(bottom, top, self.component_id)
+        if self.bins is not None:
+            print(self.bins)
+            bottom = next((x for x in self.bins if x > bottom), bottom)
+            top = next((x for x in self.bins if x > top), top)
+        if self.transform:
+            bottom = self.transform(bottom)
+            top = self.transform(top)
+        self.selected_min = bottom
+        self.selected_max = top
         if self._subset is None:
             kwargs = { "label": self.subset_label } if self.subset_label else {}
             if self.subset_group:
@@ -36,7 +59,5 @@ class PercentageSelector(VuetifyTemplate):
             else:
                 self._subset = self.glue_data.new_subset(state, **kwargs)
                 self.viewer.add_subset(self._subset)
-                print(self._subset)
-                print(self.viewer.layers)
         else:
             self._subset.subset_state = state
