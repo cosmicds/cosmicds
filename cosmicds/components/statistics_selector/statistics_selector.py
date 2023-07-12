@@ -1,4 +1,6 @@
+from collections import Counter
 from ipyvuetify import VuetifyTemplate
+from numpy import argmax, histogram
 from traitlets import List, observe
 
 from ...utils import load_template, vertical_line_mark
@@ -10,14 +12,44 @@ class StatisticsSelector(VuetifyTemplate):
     statistics = List().tag(sync=True)
     colors = List(['red', 'orange', 'yellow', 'green', 'blue', 'purple']).tag(sync=True)
 
-    def __init__(self, viewer, data, component_id, layer, statistics=['mean', 'median', 'mode'], *args, **kwargs):
+    def __init__(self, viewer, data, component_id, layer, bins=None, statistics=['mean', 'median', 'mode'], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.glue_data = data
         self.component_id = component_id
         self.layer = layer
         self.statistics = statistics
+        self._bins = bins
+        if "colors" in kwargs:
+            self.colors = kwargs.get("colors")
         self._lines = []
+
+    def _mode(self):
+        data = self.glue_data[self.component_id]
+        if self.bins:
+            hist, bins = histogram(data, bins=self.bins)
+            idx = argmax(hist)
+            return 0.5 * (bins[idx] + bins[idx + 1])
+        else:
+            counter = Counter(data)
+            return counter.most_common(1)[0]
+
+    def _glue_statistic(self, stat):
+        return self.glue_data.compute_statistic(stat, self.component_id)
+
+    # glue doesn't implement a mode statistic, so we roll our own
+    def _find_statistic(self, stat):
+        if stat == 'mode':
+            return self._mode()
+        return self._glue_statistic(stat)
+
+    @property
+    def bins(self):
+        if self._bins is not None:
+            return self._bins
+        if hasattr(self.viewer.state, "bins"):
+            return self.viewer.state.bins
+        return None
 
     @observe('selected')
     def _update_marks(self, change):
@@ -25,11 +57,13 @@ class StatisticsSelector(VuetifyTemplate):
         marks = [mark for mark in self.viewer.figure.marks if mark not in self._lines]
         lines = []
         for index, stat in enumerate(self.statistics):
-            if index not in selected:
+            if stat not in selected:
                continue 
             try:
-                value = self.glue_data.compute_statistic(stat, self.component_id)
-                mark = vertical_line_mark(self.layer, value, self.colors[index])
+                value = self._find_statistic(stat)
+                label = f"{stat.capitalize()}: {value}"
+                mark = vertical_line_mark(self.layer, value, self.colors[index],
+                                          label=label, label_visibility="none")
                 lines.append(mark)
             except ValueError:
                 continue

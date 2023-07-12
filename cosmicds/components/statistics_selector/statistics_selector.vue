@@ -1,9 +1,7 @@
 <template>
   <v-card
     flat
-    light
     variant="outlined"
-    color="white"
     class="statistics-selector"
   >
     <v-list-item-group

@@ -1,9 +1,7 @@
 <template>
   <v-card
     flat
-    light
     variant="outlined"
-    color="white"
     class="percentage-selector"
   >
     <v-radio-group
@@ -14,13 +12,8 @@
         v-for="(option, index) in options"
         :key="index"
         :value="option"
+        :label="`${option}%`"
       >
     </v-radio-group>
   </v-card>
 </template>
-
-<style scoped>
-.v-card {
-  border: solid 1px black !important;
-}
-</style>
