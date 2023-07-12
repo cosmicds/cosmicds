@@ -20,6 +20,8 @@ class PercentageSelector(VuetifyTemplate):
         self.glue_data = data
         self.component_id = component_id
         self._bins = kwargs.get("bins", None)
+        if "options" in kwargs:
+            self.options = kwargs.get("options")
         self.subset_label = kwargs.get("subset_label", None)
         self.subset_group = kwargs.get("subset_group", False)
         self.transform = kwargs.get("transform", None)
