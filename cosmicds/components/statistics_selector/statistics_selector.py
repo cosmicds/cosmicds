@@ -1,6 +1,6 @@
 from collections import Counter
 from ipyvuetify import VuetifyTemplate
-from numpy import argmax, histogram
+from numpy import amax, flatnonzero, histogram
 from traitlets import List, Unicode, observe
 
 from ...utils import load_template, vertical_line_mark
@@ -31,20 +31,23 @@ class StatisticsSelector(VuetifyTemplate):
         data = self.glue_data[self.component_id]
         if self.bins is not None:
             hist, bins = histogram(data, bins=self.bins)
-            idx = argmax(hist)
-            return 0.5 * (bins[idx] + bins[idx + 1])
+            indices = flatnonzero(hist == amax(hist)) 
+            return [0.5 * (bins[idx] + bins[idx + 1]) for idx in indices]
         else:
             counter = Counter(data)
-            return counter.most_common(1)[0]
+            max_count = counter.most_common(1)[0][1]
+            return [k for k, v in counter.items() if v == max_count]
 
     def _glue_statistic(self, stat):
         return self.glue_data.compute_statistic(stat, self.component_id)
 
     # glue doesn't implement a mode statistic, so we roll our own
+    # Since there can be multiple modes, mode can be a list
+    # and so we return a list for every statistic to make things simpler
     def _find_statistic(self, stat):
         if stat == 'mode':
             return self._mode()
-        return self._glue_statistic(stat)
+        return [self._glue_statistic(stat)]
 
     @property
     def bins(self):
@@ -63,15 +66,16 @@ class StatisticsSelector(VuetifyTemplate):
             if stat not in selected:
                continue 
             try:
-                value = self._find_statistic(stat)
+                values = self._find_statistic(stat)
                 if self.transform is not None:
-                    value = self.transform(value)
-                label = f"{stat.capitalize()}: {value}"
-                if self.unit:
-                    label += f" {self.unit}"
-                mark = vertical_line_mark(self.viewer.layers[0], value, self.colors[index],
+                    values = [self.transform(v) for v in values]
+                for value in values:
+                    label = f"{stat.capitalize()}: {value}"
+                    if self.unit:
+                        label += f" {self.unit}"
+                    mark = vertical_line_mark(self.viewer.layers[0], value, self.colors[index],
                                           label=label, label_visibility="none")
-                lines.append(mark)
+                    lines.append(mark)
             except ValueError:
                 continue
 
