@@ -1,7 +1,7 @@
 from collections import Counter
 from ipyvuetify import VuetifyTemplate
 from numpy import argmax, histogram
-from traitlets import List, observe
+from traitlets import List, Unicode, observe
 
 from ...utils import load_template, vertical_line_mark
 
@@ -11,17 +11,20 @@ class StatisticsSelector(VuetifyTemplate):
     selected = List().tag(sync=True)
     statistics = List().tag(sync=True)
     colors = List(['red', 'orange', 'yellow', 'green', 'blue', 'purple']).tag(sync=True)
+    unit = Unicode().tag(sync=True)
 
-    def __init__(self, viewer, data, component_id, transform=None, bins=None, statistics=['mean', 'median', 'mode'], *args, **kwargs):
+    def __init__(self, viewer, data, component_id, statistics=['mean', 'median', 'mode'], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.glue_data = data
         self.component_id = component_id
-        self.transform = transform
         self.statistics = statistics
-        self._bins = bins
+        self.transform = kwargs.get("transform", None)
+        self._bins = kwargs.get("bins", None)
         if "colors" in kwargs:
-            self.colors = kwargs.get("colors")
+            self.colors = kwargs["colors"]
+        if "unit" in kwargs:
+            self.unit = kwargs["unit"]
         self._lines = []
 
     def _mode(self):
@@ -64,6 +67,8 @@ class StatisticsSelector(VuetifyTemplate):
                 if self.transform is not None:
                     value = self.transform(value)
                 label = f"{stat.capitalize()}: {value}"
+                if self.unit:
+                    label += f" {self.unit}"
                 mark = vertical_line_mark(self.viewer.layers[0], value, self.colors[index],
                                           label=label, label_visibility="none")
                 lines.append(mark)

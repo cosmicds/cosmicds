@@ -23,8 +23,9 @@
 export default {
   methods: {
     optionText(option) {
+      const unitStr = this.unit ? ` ${this.unit}` : "";
       if (option === this.selected) {
-        return `${option}%: ${this.selected_min} - ${this.selected_max}`;
+        return `${option}%: ${this.selected_min}${unitStr} - ${this.selected_max}${unitStr}`;
       } else {
         return `${option}%`;
       }

@@ -1,6 +1,6 @@
 from ipyvuetify import VuetifyTemplate
 from numpy import array, percentile
-from traitlets import Float, Int, List, observe
+from traitlets import Float, Int, List, Unicode, observe
 
 from glue.core.subset import RangeSubsetState
 
@@ -13,6 +13,7 @@ class PercentageSelector(VuetifyTemplate):
     selected = Int(allow_none=True).tag(sync=True)
     selected_min = Float().tag(sync=True)
     selected_max = Float().tag(sync=True)
+    unit = Unicode().tag(sync=True)
     was_selected = Int(allow_none=True).tag(sync=True)
 
     def __init__(self, viewer, data, component_id, *args, **kwargs):
@@ -22,11 +23,13 @@ class PercentageSelector(VuetifyTemplate):
         self.component_id = component_id
         self._bins = kwargs.get("bins", None)
         if "options" in kwargs:
-            self.options = kwargs.get("options")
+            self.options = kwargs["options"]
         self.subset_label = kwargs.get("subset_label", None)
         self.subset_group = kwargs.get("subset_group", False)
         self.transform = kwargs.get("transform", None)
-        self._subset = None
+        self.subset = None
+        if "unit" in kwargs:
+            self.unit = kwargs["unit"]
 
     @property
     def bins(self):
@@ -37,15 +40,15 @@ class PercentageSelector(VuetifyTemplate):
         return None
 
     def _update_subset(self, state):
-        if self._subset is None:
+        if self.subset is None:
             kwargs = { "label": self.subset_label } if self.subset_label else {}
             if self.subset_group:
-                self._subset = self.viewer.session.data_collection.new_subset_group(state, **kwargs)
+                self.subset = self.viewer.session.data_collection.new_subset_group(state, **kwargs)
             else:
-                self._subset = self.glue_data.new_subset(state, **kwargs)
-                self.viewer.add_subset(self._subset)
+                self.subset = self.glue_data.new_subset(state, **kwargs)
+                self.viewer.add_subset(self.subset)
         else:
-            self._subset.subset_state = state
+            self.subset.subset_state = state
 
     @observe('selected')
     def _update(self, change):
