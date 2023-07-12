@@ -13,6 +13,7 @@
         :key="index"
         :value="option"
         :label="optionText(option)"
+        @click.native.stop.prevent="resetIfNeeded(option)"
       >
     </v-radio-group>
   </v-card>
@@ -27,7 +28,21 @@ export default {
       } else {
         return `${option}%`;
       }
+    },
+    resetIfNeeded(value) {
+      this.was_selected = (this.was_selected === value) ? null : value;
+      this.selected = this.was_selected;
     }
   }
 }
 </script>
+
+<style scoped>
+.v-radio {
+  pointer-events: none;
+}
+
+.v-radio .v-input--selection-controls__input {
+  pointer-events: auto;
+}
+</style>
