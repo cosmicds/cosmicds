@@ -12,8 +12,8 @@
         v-for="(option, index) in options"
         :key="index"
         :value="option"
-        :label="optionText(option)"
-        :color="color"
+        :label="`${option}%`"
+        :color="radio_color"
         @click.native.stop.prevent="resetIfNeeded(option)"
       >
       </v-radio>
@@ -24,14 +24,6 @@
 <script>
 export default {
   methods: {
-    optionText(option) {
-      const unitStr = this.unit ? ` ${this.unit}` : "";
-      if (option === this.selected) {
-        return `${option}%: ${this.selected_min}${unitStr} - ${this.selected_max}${unitStr}`;
-      } else {
-        return `${option}%`;
-      }
-    },
     resetIfNeeded(value) {
       this.was_selected = (this.was_selected === value) ? null : value;
       this.selected = this.was_selected;
