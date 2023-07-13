@@ -26,6 +26,7 @@ class StatisticsSelector(VuetifyTemplate):
         if "unit" in kwargs:
             self.unit = kwargs["unit"]
         self._lines = []
+        self.viewer.figure.observe(self._on_marks_updated, names=["marks"])
 
     def _mode(self):
         data = self.glue_data[self.component_id]
@@ -56,6 +57,13 @@ class StatisticsSelector(VuetifyTemplate):
         if hasattr(self.viewer.state, "bins"):
             return self.viewer.state.bins
         return None
+
+    # This is a bit of a hack to prevent layer artists from
+    # redrawing their marks without ours included
+    def _on_marks_updated(self, _marks):
+        if not all(line in self.viewer.figure.marks for line in self._lines):
+            other_marks = [mark for mark in self.viewer.figure.marks if mark not in self._lines]
+            self.viewer.figure.marks = other_marks + self._lines
 
     @observe('selected')
     def _update_marks(self, change):

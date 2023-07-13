@@ -1,7 +1,6 @@
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
 from .layer_artist import BqplotDotPlotLayerArtist
 from .state import DotPlotViewerState
-from ipywidgets import DOMWidget
 
 class BqplotDotPlotView(BqplotHistogramView):
 
