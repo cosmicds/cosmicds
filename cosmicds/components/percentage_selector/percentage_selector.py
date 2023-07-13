@@ -29,7 +29,8 @@ class PercentageSelector(VuetifyTemplate):
             self.color = kwargs["color"]
         self.subset_label = kwargs.get("subset_label", None)
         self.subset_group = kwargs.get("subset_group", False)
-        self.transform = kwargs.get("transform", None)
+        self.lower_transform = kwargs.get("lower_transform", None)
+        self.upper_transform = kwargs.get("upper_transform", None)
         self.subset = None
         if "unit" in kwargs:
             self.unit = kwargs["unit"]
@@ -73,9 +74,10 @@ class PercentageSelector(VuetifyTemplate):
         if self.bins is not None:
             bottom = next((x for x in self.bins if x > bottom), bottom)
             top = next((x for x in self.bins if x > top), top)
-        if self.transform:
-            bottom = self.transform(bottom)
-            top = self.transform(top)
+        if self.lower_transform is not None:
+            bottom = self.lower_transform(bottom)
+        if self.upper_transform is not None:
+            top = self.upper_transform(top)
         self.selected_min = bottom
         self.selected_max = top
         self._update_subset(state)
