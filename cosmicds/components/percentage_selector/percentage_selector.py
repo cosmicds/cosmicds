@@ -2,6 +2,7 @@ from ipyvuetify import VuetifyTemplate
 from numpy import array, percentile
 from traitlets import Float, Int, List, Unicode, observe
 
+from glue.core import Data
 from glue.core.subset import RangeSubsetState
 
 from ...utils import load_template
@@ -17,16 +18,19 @@ class PercentageSelector(VuetifyTemplate):
     unit = Unicode().tag(sync=True)
     was_selected = Int(allow_none=True).tag(sync=True)
 
-    def __init__(self, viewer, data, component_id, *args, **kwargs):
+    _deselected_color = "#D3D3D3"
+
+    # Note: we pass in the data, rather than the layer itself,
+    # to deal with cases where, for either setup or story reasons,
+    # the layer doesn't exist in the viewer when we have to create
+    # this component (which will be in the stage initializer)
+    def __init__(self, viewer, data, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.glue_data = data
-        self.component_id = component_id
         self._bins = kwargs.get("bins", None)
         if "options" in kwargs:
             self.options = kwargs["options"]
-        if "color" in kwargs:
-            self.color = kwargs["color"]
         self.subset_label = kwargs.get("subset_label", None)
         self.subset_group = kwargs.get("subset_group", False)
         self.lower_transform = kwargs.get("lower_transform", None)
@@ -45,7 +49,7 @@ class PercentageSelector(VuetifyTemplate):
 
     def _update_subset(self, state):
         if self.subset is None:
-            kwargs = { "color": self.color }
+            kwargs = { "color": self.color, "alpha": 1 }
             if self.subset_label:
                 kwargs["label"] = self.subset_label
             if self.subset_group:
@@ -56,21 +60,30 @@ class PercentageSelector(VuetifyTemplate):
         else:
             self.subset.subset_state = state
 
+    @property
+    def layer(self):
+        return self.viewer.layer_artist_for_data(self.glue_data)
+
     @observe('selected')
     def _update(self, change):
+        if self.layer is None:
+            return
         selected = change["new"]
         if selected is None:
             state = array([False for _ in range(self.glue_data.size)])
+            self.layer.state.color = self.color
             self._update_subset(state)
             return
 
+        self.layer.state.color = self._deselected_color
         around_median = selected / 2
         bottom_percent = 50 - around_median
         top_percent = 50 + around_median
-        data = self.glue_data[self.component_id]
+        component_id = self.viewer.state.x_att
+        data = self.glue_data[component_id]
         bottom = percentile(data, bottom_percent, method="nearest")
         top = percentile(data, top_percent, method="nearest")
-        state = RangeSubsetState(bottom, top, self.component_id)
+        state = RangeSubsetState(bottom, top, component_id)
         if self.bins is not None:
             bottom = next((x for x in self.bins if x > bottom), bottom)
             top = next((x for x in self.bins if x > top), top)

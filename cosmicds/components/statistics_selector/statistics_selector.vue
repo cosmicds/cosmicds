@@ -17,7 +17,7 @@
       >
         <template v-slot:label>
           <span>{{ capitalizeFirstLetter(stat) }}</span>
-          <v-dialog>
+          <v-dialog class="help-dialog">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 icon
@@ -28,7 +28,7 @@
               </v-btn>
             </template>
             <v-card
-              class="mx-auto help-card"
+              class="mx-auto"
             >
               <v-toolbar
                 color="secondary"
@@ -82,7 +82,7 @@ export default {
   pointer-events: auto;
 }
 
-.help-card {
+.help-dialog {
   width: fit-content !important;
 }
 
