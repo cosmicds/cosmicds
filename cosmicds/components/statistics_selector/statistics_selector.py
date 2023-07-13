@@ -1,7 +1,7 @@
 from collections import Counter
 from ipyvuetify import VuetifyTemplate
 from numpy import amax, flatnonzero, histogram
-from traitlets import List, Unicode, observe
+from traitlets import Dict, List, Unicode, observe
 
 from ...utils import load_template, vertical_line_mark
 
@@ -13,6 +13,18 @@ class StatisticsSelector(VuetifyTemplate):
     statistics = List().tag(sync=True)
     unit = Unicode().tag(sync=True)
     was_selected = Unicode(allow_none=True).tag(sync=True)
+
+    help_text = Dict({
+        "mode": "Description of the mode",
+        "mean": "Description of the mean",
+        "median": "Description of the median"
+    }).tag(sync=True)
+
+    help_images = Dict({
+        "mode": "path to mode image",
+        "mean": "path to mean image",
+        "median": "path to median image"
+    }).tag(sync=True)
 
     def __init__(self, viewer, data, component_id, statistics=['mean', 'median', 'mode'], *args, **kwargs):
         super().__init__(*args, **kwargs)
