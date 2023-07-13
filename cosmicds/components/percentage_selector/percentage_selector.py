@@ -1,6 +1,6 @@
 from ipyvuetify import VuetifyTemplate
 from numpy import array, percentile
-from traitlets import Float, Int, List, Unicode, observe
+from traitlets import Int, List, Unicode, observe
 
 from glue.core.subset import RangeSubsetState
 
@@ -75,9 +75,11 @@ class PercentageSelector(VuetifyTemplate):
         selected = change["new"]
         if selected is None:
             states = []
-            for index in range(len(self.viewers)):
+            for (index, viewer) in enumerate(self.viewers):
                 if self.layers[index] is not None:
                     self.layers[index].state.color = self._original_colors[index]
+                    viewer.figure.title = ""
+                    viewer.figure.title_style = {}
                 state = array([False for _ in range(self.glue_data[index].size)])
                 states.append(state)
             self._update_subsets(states)
@@ -91,7 +93,8 @@ class PercentageSelector(VuetifyTemplate):
         for (index, viewer) in enumerate(self.viewers):
             component_id = viewer.state.x_att
             data = self.glue_data[index][component_id]
-            self.layers[index].state.color = self._deselected_color
+            layer = self.layers[index]
+            layer.state.color = self._deselected_color
             bottom = percentile(data, bottom_percent, method="nearest")
             top = percentile(data, top_percent, method="nearest")
             state = RangeSubsetState(bottom, top, component_id)
@@ -104,6 +107,13 @@ class PercentageSelector(VuetifyTemplate):
                 bottom = self.lower_transform(bottom)
             if self.upper_transform is not None:
                 top = self.upper_transform(top)
+            if self.units and self.units[index]:
+                unit_str = f" {self.units[index]}"
+            else:
+                unit_str = ""
+            label_text = f"{bottom}{unit_str} - {top}{unit_str}"
+            viewer.figure.title = label_text
+            viewer.figure.title_style = { "font-size": '20pt', "color": f"{self._original_colors[index]}" }
 
         self._update_subsets(states)
 
