@@ -9,6 +9,7 @@ from ...utils import load_template
 class PercentageSelector(VuetifyTemplate):
     
     template = load_template("percentage_selector.vue", __file__, traitlet=True).tag(sync=True)
+    color = Unicode("#1e90ff").tag(sync=True)
     options = List([50, 68, 95]).tag(sync=True)
     selected = Int(allow_none=True).tag(sync=True)
     selected_min = Float().tag(sync=True)
@@ -24,6 +25,8 @@ class PercentageSelector(VuetifyTemplate):
         self._bins = kwargs.get("bins", None)
         if "options" in kwargs:
             self.options = kwargs["options"]
+        if "color" in kwargs:
+            self.color = kwargs["color"]
         self.subset_label = kwargs.get("subset_label", None)
         self.subset_group = kwargs.get("subset_group", False)
         self.transform = kwargs.get("transform", None)
@@ -41,7 +44,9 @@ class PercentageSelector(VuetifyTemplate):
 
     def _update_subset(self, state):
         if self.subset is None:
-            kwargs = { "label": self.subset_label } if self.subset_label else {}
+            kwargs = { "color": self.color }
+            if self.subset_label:
+                kwargs["label"] = self.subset_label
             if self.subset_group:
                 self.subset = self.viewer.session.data_collection.new_subset_group(state, **kwargs)
             else:

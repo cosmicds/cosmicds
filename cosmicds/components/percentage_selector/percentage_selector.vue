@@ -13,8 +13,10 @@
         :key="index"
         :value="option"
         :label="optionText(option)"
+        :color="color"
         @click.native.stop.prevent="resetIfNeeded(option)"
       >
+      </v-radio>
     </v-radio-group>
   </v-card>
 </template>

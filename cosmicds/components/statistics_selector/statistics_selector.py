@@ -8,10 +8,11 @@ from ...utils import load_template, vertical_line_mark
 class StatisticsSelector(VuetifyTemplate):
 
     template = load_template("statistics_selector.vue", __file__, traitlet=True).tag(sync=True)
-    selected = List().tag(sync=True)
+    color = Unicode("#1e90ff").tag(sync=True)
+    selected = Unicode(allow_none=True).tag(sync=True)
     statistics = List().tag(sync=True)
-    colors = List(['red', 'orange', 'yellow', 'green', 'blue', 'purple']).tag(sync=True)
     unit = Unicode().tag(sync=True)
+    was_selected = Unicode(allow_none=True).tag(sync=True)
 
     def __init__(self, viewer, data, component_id, statistics=['mean', 'median', 'mode'], *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -21,11 +22,11 @@ class StatisticsSelector(VuetifyTemplate):
         self.statistics = statistics
         self.transform = kwargs.get("transform", None)
         self._bins = kwargs.get("bins", None)
-        if "colors" in kwargs:
-            self.colors = kwargs["colors"]
+        self._line = None
+        if "color" in kwargs:
+            self.color = kwargs["color"]
         if "unit" in kwargs:
             self.unit = kwargs["unit"]
-        self._lines = []
         self.viewer.figure.observe(self._on_marks_updated, names=["marks"])
 
     def _mode(self):
@@ -61,32 +62,27 @@ class StatisticsSelector(VuetifyTemplate):
     # This is a bit of a hack to prevent layer artists from
     # redrawing their marks without ours included
     def _on_marks_updated(self, _marks):
-        if not all(line in self.viewer.figure.marks for line in self._lines):
-            other_marks = [mark for mark in self.viewer.figure.marks if mark not in self._lines]
-            self.viewer.figure.marks = other_marks + self._lines
+        if self._line is not None and self._line not in self.viewer.figure.marks:
+            self.viewer.figure.marks = self.viewer.figure.marks + [self._line]
 
     @observe('selected')
     def _update_marks(self, change):
         selected = change["new"]
-        marks = [mark for mark in self.viewer.figure.marks if mark not in self._lines]
-        lines = []
-        for index, stat in enumerate(self.statistics):
-            if stat not in selected:
-               continue 
-            try:
-                values = self._find_statistic(stat)
-                if self.transform is not None:
-                    values = [self.transform(v) for v in values]
-                for value in values:
-                    label = f"{stat.capitalize()}: {value}"
-                    if self.unit:
-                        label += f" {self.unit}"
-                    mark = vertical_line_mark(self.viewer.layers[0], value, self.colors[index],
-                                          label=label, label_visibility="none")
-                    lines.append(mark)
-            except ValueError:
-                continue
+        marks = [mark for mark in self.viewer.figure.marks if mark is not self._line]
+        try:
+            values = self._find_statistic(selected)
+            if self.transform is not None:
+                values = [self.transform(v) for v in values]
+            for value in values:
+                label = f"{selected.capitalize()}: {value}"
+                if self.unit:
+                    label += f" {self.unit}"
+                line = vertical_line_mark(self.viewer.layers[0], value, self.color,
+                                      label=label, label_visibility="none")
+        except ValueError:
+            line = None 
 
-        self.viewer.figure.marks = marks + lines
-        self._lines = lines
+        self._line = line
+        line_mark_list = [line] if line is not None else []
+        self.viewer.figure.marks = marks + line_mark_list
 

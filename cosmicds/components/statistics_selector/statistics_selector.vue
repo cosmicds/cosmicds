@@ -4,32 +4,20 @@
     variant="outlined"
     class="statistics-selector"
   >
-    <v-list-item-group
-      multiple
+    <v-radio-group
       v-model="selected"
+      column
     >
-      <v-list-item
+      <v-radio
         v-for="(stat, index) in statistics"
         :key="index"
         :value="stat"
-        inactive
+        :label="capitalizeFirstLetter(stat)"
+        :color="color"
+        @click.native.stop.prevent="resetIfNeeded(stat)"
       >
-        <template v-slot:default="{ active }">
-          <v-list-item-content
-            class="font-weight-bold"
-          >
-            {{ capitalizeFirstLetter(stat) }}
-          </v-list-item-content>
-
-          <v-list-item-action>
-            <v-checkbox
-              :input-value="active"
-              :color="colors[index]"
-            />
-          </v-list-item-action>
-        </template>
-      </v-list-item>
-    </v-list-item-group>
+      </v-radio>
+    </v-radio-group>
   </v-card>
 </template>
 
@@ -38,7 +26,21 @@ export default {
   methods: {
     capitalizeFirstLetter(text) {
       return text.charAt(0).toUpperCase() + text.slice(1);
+    },
+    resetIfNeeded(value) {
+      this.was_selected = (this.was_selected === value) ? null : value;
+      this.selected = this.was_selected;
     }
   }
 }
 </script>
+
+<style scoped>
+.v-radio {
+  pointer-events: none;
+}
+
+.v-radio .v-input--selection-controls__input {
+  pointer-events: auto;
+}
+</style>
