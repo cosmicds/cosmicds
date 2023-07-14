@@ -15,7 +15,7 @@ class PercentageSelector(VuetifyTemplate):
     unit = Unicode().tag(sync=True)
     was_selected = Int(allow_none=True).tag(sync=True)
 
-    _deselected_color = "#D3D3D3"
+    _deselected_color = "#a9a9a9"
 
     # Note: we pass in the data, rather than the layer itself,
     # to deal with cases where, for either setup or story reasons,
