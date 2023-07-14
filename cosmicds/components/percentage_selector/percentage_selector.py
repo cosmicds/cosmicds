@@ -111,9 +111,9 @@ class PercentageSelector(VuetifyTemplate):
                 unit_str = f" {self.units[index]}"
             else:
                 unit_str = ""
-            label_text = f"{bottom}{unit_str} - {top}{unit_str}"
+            label_text = f"{selected}%: {bottom} - {top}{unit_str}"
             viewer.figure.title = label_text
-            viewer.figure.title_style = { "font-size": '20pt', "color": f"{self._original_colors[index]}" }
+            viewer.figure.title_style = { "font-size": '1rem', "color": f"{self._original_colors[index]}" }
 
         self._update_subsets(states)
 
