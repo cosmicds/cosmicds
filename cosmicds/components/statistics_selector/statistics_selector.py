@@ -37,8 +37,8 @@ class StatisticsSelector(VuetifyTemplate):
             self.color = kwargs["color"]
         if "units" in kwargs:
             self.units = kwargs["units"]
-        for (index, viewer) in enumerate(self.viewers):
-            viewer.figure.observe(lambda _change: self._on_marks_updated(index), names=["marks"])
+        for viewer in self.viewers:
+            viewer.figure.observe(self._on_marks_updated, names=["marks"])
 
     def _mode(self, viewer, data, bins):
         component_id = viewer.state.x_att
@@ -69,13 +69,16 @@ class StatisticsSelector(VuetifyTemplate):
 
     # This is a bit of a hack to prevent layer artists from
     # redrawing their marks without ours included
-    def _on_marks_updated(self, index):
+    def _on_marks_updated(self, change):
         if not self.lines:
             return
+        figure = change["owner"]
+        marks = change["new"]
+        index = [viewer.figure for viewer in self.viewers].index(figure)
         lines = self.lines[index]
-        viewer = self.viewers[index]
-        if lines and any(line not in viewer.figure.marks for line in lines):
-            viewer.figure.marks = viewer.figure.marks + lines
+        if lines and any(line not in marks for line in lines):
+            figure.marks = marks + lines
+
 
     def _remove_lines(self):
         if self.lines:
@@ -87,7 +90,7 @@ class StatisticsSelector(VuetifyTemplate):
                 viewer.figure.marks = [m for m in viewer.figure.marks if m not in viewer_lines]
 
     @observe('selected')
-    def _update_marks(self, change):
+    def _update_lines(self, change):
         selected = change["new"]
         self._remove_lines()
 
