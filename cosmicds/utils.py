@@ -5,8 +5,10 @@ from math import log10
 from astropy.modeling import models, fitting
 from bqplot.marks import Lines
 from bqplot.scales import LinearScale
-from glue_jupyter.bqplot.histogram.layer_artist import BqplotHistogramLayerArtist
-from glue_jupyter.bqplot.scatter.layer_artist import BqplotScatterLayerArtist
+from glue.viewers.common.viewer import LayerArtist
+from glue_jupyter.bqplot.common import BqplotBaseView
+from glue_jupyter.bqplot.histogram import BqplotHistogramLayerArtist
+from glue_jupyter.bqplot.scatter import BqplotScatterLayerArtist
 from glue.core.state_objects import State
 import numpy as np
 from threading import Timer
@@ -221,7 +223,7 @@ def fit_line(x, y):
     fitted_line = fit(line_init, x, y)
     return fitted_line
 
-def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
+def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None, label_visibility=None):
     """
     Creates a Lines mark between the given start and end points
     using the scales of the given layer.
@@ -243,22 +245,16 @@ def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None):
     if isinstance(layer, BqplotScatterLayerArtist):
         scales = layer.image.scales
     elif isinstance(layer, BqplotHistogramLayerArtist):
-        layer_scales = layer.view.scales
-        layer_x = layer_scales['x']
-        layer_y = layer_scales['y']
-        scales = {
-            'x': LinearScale(min=layer_x.min, max=layer_x.max, allow_padding=layer_x.allow_padding),
-            'y': LinearScale(min=layer_y.min, max=layer_y.max, allow_padding=layer_y.allow_padding),
-        }
+        scales = layer.view.scales
     return Lines(x=[start_x, end_x],
-                   y=[start_y, end_y],
-                   scales=scales,
-                   colors=[color],
-                   labels=[label] if label is not None else [],
-                   display_legend=label is not None,
-                   labels_visibility='label')
+                 y=[start_y, end_y],
+                 scales=scales,
+                 colors=[color],
+                 labels=[label] if label is not None else [],
+                 display_legend=label is not None,
+                 labels_visibility=label_visibility or "label")
 
-def vertical_line_mark(layer, x, color, label=None):
+def vertical_line_mark(layer, x, color, label=None, label_visibility=None):
     """
     A specialization of `line_mark` specifically for vertical lines.
     Parameters
@@ -271,7 +267,8 @@ def vertical_line_mark(layer, x, color, label=None):
         The desired color of the line, represented as a hex string.
     """
     viewer_state = layer.state.viewer_state
-    return line_mark(layer, x, viewer_state.y_min, x, viewer_state.y_max, color, label)
+    return line_mark(layer, x, viewer_state.y_min, x, viewer_state.y_max, 
+                     color, label=label, label_visibility=label_visibility)
 
 # Taken from https://jonlabelle.com/snippets/view/python/python-debounce-decorator-function
 def debounce(wait):
