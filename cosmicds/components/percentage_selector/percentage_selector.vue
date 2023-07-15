@@ -46,8 +46,8 @@
                 {{ 
                   `
                   The range of values shown are the inner ${option}% of data points. 
-                  This means that ${option/2}% of the data points in the distribution 
-                  have values less than this range, and ${option/2}% of the data points 
+                  This means that ${(100-option)/2}% of the data points in the distribution 
+                  have values less than this range, and ${(100-option)/2}% of the data points 
                   have values greater than this range.
                   `
                 }}
