@@ -15,7 +15,7 @@ class PercentageSelector(VuetifyTemplate):
     unit = Unicode().tag(sync=True)
     was_selected = Int(allow_none=True).tag(sync=True)
 
-    _deselected_color = "#D3D3D3"
+    _deselected_color = "#a9a9a9"
 
     # Note: we pass in the data, rather than the layer itself,
     # to deal with cases where, for either setup or story reasons,
@@ -25,23 +25,15 @@ class PercentageSelector(VuetifyTemplate):
         super().__init__(*args, **kwargs)
         self.viewers = viewers
         self.glue_data = data
-        self._bins = kwargs.get("bins", None)
         self._original_colors = []
+        self.resolution = kwargs.get("resolution", None)  # Number of decimal places for reporting bounds
         if "options" in kwargs:
             self.options = kwargs["options"]
         self.subset_labels = kwargs.get("subset_labels", [])
         self.subset_group = kwargs.get("subset_group", False)
-        self.lower_transform = kwargs.get("lower_transform", None)
-        self.upper_transform = kwargs.get("upper_transform", None)
         self.subsets = []
         if "units" in kwargs:
             self.units = kwargs["units"]
-
-    @property
-    def bins(self):
-        if self._bins is not None:
-            return self._bins
-        return [getattr(viewer.state, "bins", None) for viewer in self.viewers]
 
     def _update_subsets(self, states):
         if not self.subsets:
@@ -99,21 +91,23 @@ class PercentageSelector(VuetifyTemplate):
             top = percentile(data, top_percent, method="nearest")
             state = RangeSubsetState(bottom, top, component_id)
             states.append(state)
-            bins = self.bins[index]
-            if bins is not None:
-                bottom = next((x for x in bins if x > bottom), bottom)
-                top = next((x for x in bins if x > top), top)
-            if self.lower_transform is not None:
-                bottom = self.lower_transform(bottom)
-            if self.upper_transform is not None:
-                top = self.upper_transform(top)
+            if self.resolution is not None:
+                bottom = round(bottom, self.resolution)
+                top = round(top, self.resolution)
+
+            bottom_str = "{:g}".format(bottom)
+            top_str = "{:g}".format(top)
             if self.units and self.units[index]:
                 unit_str = f" {self.units[index]}"
             else:
                 unit_str = ""
-            label_text = f"{bottom}{unit_str} - {top}{unit_str}"
+            label_text = f"{selected}%: {bottom_str} - {top_str}{unit_str}"
             viewer.figure.title = label_text
-            viewer.figure.title_style = { "font-size": '20pt', "color": f"{self._original_colors[index]}" }
+            viewer.figure.title_style = {
+                "font-size": '1rem',
+                "fill": "black",  # Since this is all happening in svg-land, use fill to set the text color
+                "transform": "translate(0, 5px)"
+            }
 
         self._update_subsets(states)
 
