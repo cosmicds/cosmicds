@@ -222,7 +222,7 @@ module.exports = {
     },
 
     allFreeResponsesFilled() {
-      return this.freeResponses.every(fr => fr.response.length > 0);
+      return this.freeResponses.every(fr => fr.response.length > 0 && fr.$refs.textarea.valid);
     },
 
     updateDisableNext() {

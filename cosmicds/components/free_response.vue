@@ -1,5 +1,6 @@
 <template>
   <v-textarea
+    ref="textarea"
     v-model="response"
     :outlined="outlined"
     :auto-grow="autoGrow"
@@ -7,6 +8,8 @@
     :color="color"
     :rows="rows"
     :hint="hint"
+    :icon="icon"
+    :rules="[isValid]"
     @blur="onBlur"
     v-intersect="dispatchInitializeEvent"
     class="cds-free-response"
@@ -31,20 +34,51 @@ module.exports = {
       type: String,
       default: "amber"
     },
+    help: {
+      type: String,
+      default: "Invalid format"
+    },
     hint: {
       type: String,
-      default: "Type your response here"
+      required: false
+    },
+    icon: {
+      type: String,
+      required: false
     },
     rows: {
       type: Number,
       default: 1
     },
-    tag: String
+    rules: {
+      type: Array, // Should be an array of functions with signature (string) => bool
+      default: []
+    },
+    tag: String,
+    type: {
+      type: String,
+      required: false
+    }
   },
   data: function () {
     return {
       response: "",
-      initialized: false
+      initialized: false,
+
+      allowedInput: {
+        int: {
+          characters: "-01233456789",
+          help: "Please input an integer"
+        },
+        uint: {
+          characters: "0123456789",
+          help: "Please input a non-negative integer"
+        },
+        float: {
+          characters: "-0123456789",
+          help: "Please input a number"
+        }
+      }
     };
   },
 
@@ -91,8 +125,24 @@ module.exports = {
       }
       this.initialized = true;
       document.removeEventListener("fr-initialize-response", this.onInitResponse);
+    },
+
+    isValid(input) {
+      if (this.type in this.allowedInput) {
+        const inputData = this.allowedInput[this.type];
+        const allowed = inputData.characters;
+        const pattern = new RegExp(`^[${allowed}]+$`);
+        return pattern.test(input) || inputData.help;
+      }
+
+      if (this.rules) {
+        return this.rules.every(rule => rule(input)) || this.help;
+      }
+
+      return true;
     }
   }
+
 };
 </script>
 
