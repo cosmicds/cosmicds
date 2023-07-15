@@ -23,6 +23,7 @@
                 icon
                 v-on="on"
                 v-bind="attrs"
+                @click="selected = stat"
               >
                 <v-icon small>mdi-help</v-icon>
               </v-btn>
