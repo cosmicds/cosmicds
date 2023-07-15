@@ -72,10 +72,10 @@ class StatisticsSelector(VuetifyTemplate):
     def _on_marks_updated(self, index):
         if not self.lines:
             return
-        line = self.lines[index]
+        lines = self.lines[index]
         viewer = self.viewers[index]
-        if line is not None and line not in viewer.figure.marks:
-            viewer.figure.marks = viewer.figure.marks + [line]
+        if lines and any(line not in viewer.figure.marks for line in lines):
+            viewer.figure.marks = viewer.figure.marks + lines
 
     def _remove_lines(self):
         if self.lines:
@@ -83,8 +83,8 @@ class StatisticsSelector(VuetifyTemplate):
             lines = self.lines
             self.lines = []
             
-            for (viewer, line) in zip(self.viewers, lines):
-                viewer.figure.marks = [m for m in viewer.figure.marks if m is not line]
+            for (viewer, viewer_lines) in zip(self.viewers, lines):
+                viewer.figure.marks = [m for m in viewer.figure.marks if m not in viewer_lines]
 
     @observe('selected')
     def _update_marks(self, change):
@@ -96,6 +96,7 @@ class StatisticsSelector(VuetifyTemplate):
 
         lines = []
         for viewer, data, bins, unit in zip(self.viewers, self.glue_data, self.bins, self.units):
+            viewer_lines = []
             try:
                 values = self._find_statistic(selected, viewer, data, bins)
                 if self.transform is not None:
@@ -106,12 +107,12 @@ class StatisticsSelector(VuetifyTemplate):
                         label += f" {unit}"
                     line = vertical_line_mark(viewer.layers[0], value, self.color,
                                           label=label, label_visibility="none")
+                    viewer_lines.append(line)
             except ValueError:
-                line = None 
+                pass
 
-            lines.append(line)
-            line_mark_list = [line] if line is not None else []
-            viewer.figure.marks = viewer.figure.marks + line_mark_list
+            lines.append(viewer_lines)
+            viewer.figure.marks = viewer.figure.marks + viewer_lines
 
         self.lines = lines
 
