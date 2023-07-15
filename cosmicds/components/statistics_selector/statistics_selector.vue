@@ -17,7 +17,7 @@
       >
         <template v-slot:label>
           <span>{{ capitalizeFirstLetter(stat) }}</span>
-          <v-dialog class="help-dialog">
+          <v-dialog content-class="stat-help-dialog">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 icon
@@ -42,7 +42,7 @@
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
               </v-toolbar>
-              <div class="help-content">
+              <div class="stat-help-content">
                 <div>{{ help_text[stat] }}</div>
                 <v-img
                   :src="help_images[stat]"
@@ -82,11 +82,11 @@ export default {
   pointer-events: auto;
 }
 
-.help-dialog {
+.stat-help-dialog {
   width: fit-content !important;
 }
 
-.help-content {
+.stat-help-content {
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: 2fr 1fr;

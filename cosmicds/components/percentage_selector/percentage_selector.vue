@@ -12,10 +12,49 @@
         v-for="(option, index) in options"
         :key="index"
         :value="option"
-        :label="`${option}%`"
         :color="radio_color"
         @click.native.stop.prevent="resetIfNeeded(option)"
       >
+        <template v-slot:label>
+          <span>{{ `${option}%` }}</span>
+          <v-dialog content-class="percentage-help-dialog">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                v-on="on"
+                v-bind="attrs"
+              >
+                <v-icon small>mdi-help</v-icon>
+              </v-btn>
+            </template>
+            <v-card
+              class="mx-auto"
+            >
+              <v-toolbar
+                color="secondary"
+                dense
+                dark
+              >
+                <v-toolbar-title
+                  class="text-h6 text-uppercase font-weight-regular"
+                >
+                {{ `${option}% of the data` }}
+                </v-toolbar-title>
+                <v-spacer></v-spacer>
+              </v-toolbar>
+              <div>
+                {{ 
+                  `
+                  The range of values shown are the inner ${option}% of data points. 
+                  This means that ${option/2}% of the data points in the distribution 
+                  have values less than this range, and ${option/2}% of the data points 
+                  have values greater than this range.
+                  `
+                }}
+              </div>
+            </v-card>
+          </v-dialog>
+        </template>
       </v-radio>
     </v-radio-group>
   </v-card>
@@ -39,5 +78,9 @@ export default {
 
 .v-radio .v-input--selection-controls__input {
   pointer-events: auto;
+}
+
+.percentage-help-dialog {
+  width: 67% !important;
 }
 </style>
