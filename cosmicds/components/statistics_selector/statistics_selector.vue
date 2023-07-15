@@ -43,8 +43,9 @@
                 <v-spacer></v-spacer>
               </v-toolbar>
               <div class="stat-help-content">
-                <div>{{ help_text[stat] }}</div>
+                <div class="ma-4">{{ help_text[stat] }}</div>
                 <v-img
+                  class="my-4 mx-4 image-fit"
                   :src="help_images[stat]"
                   placeholder="https://dummyimage.com/640x360/fff/aaa"
                 ></v-img>

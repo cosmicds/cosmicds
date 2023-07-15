@@ -38,11 +38,11 @@
                 <v-toolbar-title
                   class="text-h6 text-uppercase font-weight-regular"
                 >
-                {{ `${option}% of the data` }}
+                  {{ `Inner ${option}% of the data` }}
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
               </v-toolbar>
-              <div>
+              <div class="ma-4">
                 {{ 
                   `
                   The range of values shown are the inner ${option}% of data points. 
