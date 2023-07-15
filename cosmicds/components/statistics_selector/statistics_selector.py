@@ -11,7 +11,6 @@ class StatisticsSelector(VuetifyTemplate):
     color = Unicode("#1e90ff").tag(sync=True)
     selected = Unicode(None, allow_none=True).tag(sync=True)
     statistics = List().tag(sync=True)
-    unit = Unicode().tag(sync=True)
     was_selected = Unicode(allow_none=True).tag(sync=True)
 
     help_text = Dict({
@@ -96,15 +95,15 @@ class StatisticsSelector(VuetifyTemplate):
             return
 
         lines = []
-        for viewer, data, bins in zip(self.viewers, self.glue_data, self.bins):
+        for viewer, data, bins, unit in zip(self.viewers, self.glue_data, self.bins, self.units):
             try:
                 values = self._find_statistic(selected, viewer, data, bins)
                 if self.transform is not None:
                     values = [self.transform(v) for v in values]
                 for value in values:
                     label = f"{selected.capitalize()}: {value}"
-                    if self.unit:
-                        label += f" {self.unit}"
+                    if unit:
+                        label += f" {unit}"
                     line = vertical_line_mark(viewer.layers[0], value, self.color,
                                           label=label, label_visibility="none")
             except ValueError:
