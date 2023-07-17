@@ -152,7 +152,7 @@ class PercentageSelector(VuetifyTemplate):
             viewer.figure.title_style = {
                 "font-size": '1rem',
                 "fill": "black",  # Since this is all happening in svg-land, use fill to set the text color
-                "transform": "translate(0, 5px)"
+                "transform": "translate(-25%, 5px)"
             }
 
         self._update_subsets(states)
