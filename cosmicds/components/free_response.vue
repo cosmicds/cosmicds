@@ -34,7 +34,7 @@ module.exports = {
       type: String,
       default: "amber"
     },
-    help: {
+    helpMessage: {
       type: String,
       default: "Invalid format"
     },
@@ -49,6 +49,10 @@ module.exports = {
     rows: {
       type: Number,
       default: 1
+    },
+    allowEmpty: {
+      type: Boolean,
+      default: false
     },
     rules: {
       type: Array, // Should be an array of functions with signature (string) => bool
@@ -68,15 +72,15 @@ module.exports = {
       allowedInput: {
         int: {
           characters: "-01233456789",
-          help: "Please input an integer"
+          helpMessage: "Please input an integer"
         },
         uint: {
           characters: "0123456789",
-          help: "Please input a non-negative integer"
+          helpMessage: "Please input a non-negative integer"
         },
         float: {
-          characters: "-0123456789",
-          help: "Please input a number"
+          characters: "-0123456789.",
+          helpMessage: "Please input a number"
         }
       }
     };
@@ -128,18 +132,27 @@ module.exports = {
     },
 
     isValid(input) {
+      let valid = true;
+
+      if (!this.allowEmpty && !input) {
+        return "";
+      }
+
+      let helpMessage = this.helpMessage;
       if (this.type in this.allowedInput) {
         const inputData = this.allowedInput[this.type];
         const allowed = inputData.characters;
         const pattern = new RegExp(`^[${allowed}]+$`);
-        return pattern.test(input) || inputData.help;
+
+        valid = pattern.test(input);
+        helpMessage = inputData.helpMessage;
       }
 
-      if (this.rules) {
-        return this.rules.every(rule => rule(input)) || this.help;
+      if (this.rules.length > 0) {
+        valid = this.rules.every(rule => rule(input));
       }
 
-      return true;
+      return valid || helpMessage;
     }
   }
 
