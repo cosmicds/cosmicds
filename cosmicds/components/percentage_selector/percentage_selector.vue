@@ -1,15 +1,15 @@
 <template>
   <v-card
     flat
-    variant="outlined"
-    class="percentage-selector"
+    outlined
+    class="percentage-selector px-2"
   >
-    <v-radio-group
-      v-model="selected"
-      column
+    <v-container
+      fluid
     >
-      <v-radio
+      <v-switch
         v-for="(option, index) in options"
+        v-model="selected"
         :key="index"
         :value="option"
         :color="radio_color"
@@ -55,8 +55,8 @@
             </v-card>
           </v-dialog>
         </template>
-      </v-radio>
-    </v-radio-group>
+      </v-switch>
+    </v-container>
   </v-card>
 </template>
 
@@ -82,5 +82,23 @@ export default {
 
 .percentage-help-dialog {
   width: 67% !important;
+}
+
+.percentage-selector{
+  border: solid 1px black!important;
+  background-color: #3a86ff28!important;
+}
+
+.percentage-selector{
+  margin-bottom: 0px;
+}
+
+.percentage-selector .v-input--selection-controls{
+  margin-top: 0px;
+  border-top: 0px;
+}
+
+.percentage-selector .v-input--selection-controls:first-child{
+  margin-top: 14px;
 }
 </style>
