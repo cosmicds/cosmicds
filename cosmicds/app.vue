@@ -715,7 +715,7 @@ textarea {
 .jp-Notebook-cell,
 .jp-mod-noInput,
 .jp-Cell-outputWrapper {
-  margin: 0;
+  margin: 0 !important;
   padding: 0;
 }
 
