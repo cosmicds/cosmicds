@@ -1,15 +1,15 @@
 <template>
   <v-card
     flat
-    variant="outlined"
-    class="statistics-selector"
+    outlined
+    class="statistics-selector px-2"
   >
-    <v-radio-group
-      v-model="selected"
-      column
+    <v-container
+      fluid
     >
-      <v-radio
+      <v-switch
         v-for="(stat, index) in statistics"
+        v-model="selected"
         :key="index"
         :value="stat"
         :color="color"
@@ -24,7 +24,7 @@
                 v-on="on"
                 v-bind="attrs"
               >
-                <v-icon small>mdi-help</v-icon>
+                <v-icon medium>mdi-help-circle-outline</v-icon>
               </v-btn>
             </template>
             <v-card
@@ -53,8 +53,8 @@
             </v-card>
           </v-dialog>
         </template>
-      </v-radio>
-    </v-radio-group>
+      </v-switch>
+    </v-container>
   </v-card>
 </template>
 
@@ -91,5 +91,23 @@ export default {
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: 2fr 1fr;
+}
+
+.statistics-selector{
+  border: solid 1px black!important;
+  background-color: #3a86ff28!important;
+}
+
+.statistics-selector{
+  margin-bottom: 0px;
+}
+
+.statistics-selector .v-input--selection-controls{
+  margin-top: 0px;
+  border-top: 0px;
+}
+
+.statistics-selector .v-input--selection-controls:first-child{
+  margin-top: 14px;
 }
 </style>
