@@ -36,7 +36,7 @@ module.exports = {
     },
     helpMessage: {
       type: String,
-      default: "Invalid format"
+      required: false
     },
     hint: {
       type: String,
@@ -68,6 +68,7 @@ module.exports = {
     return {
       response: "",
       initialized: false,
+      defaultHelpMessage: "Invalid format",
 
       allowedInput: {
         int: {
@@ -145,8 +146,9 @@ module.exports = {
         const pattern = new RegExp(`^[${allowed}]+$`);
 
         valid = pattern.test(input);
-        helpMessage = inputData.helpMessage;
+        helpMessage = this.helpMessage || inputData.helpMessage;
       }
+      helpMessage = helpMessage || this.defaultHelpMessage;
 
       if (this.rules.length > 0) {
         valid = this.rules.every(rule => rule(input));
