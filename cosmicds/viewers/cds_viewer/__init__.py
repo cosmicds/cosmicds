@@ -3,6 +3,8 @@
 from glue_jupyter.bqplot.scatter import BqplotScatterView
 from glue_jupyter.bqplot.histogram import BqplotHistogramView
 
+from numpy import spacing
+
 from .state import CDSHistogramViewerState, CDSScatterViewerState
 from .viewer import cds_viewer
 

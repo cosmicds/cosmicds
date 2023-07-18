@@ -23,6 +23,7 @@
                 icon
                 v-on="on"
                 v-bind="attrs"
+                @click="selected = option"
               >
                 <v-icon medium>mdi-help-circle-outline</v-icon>
               </v-btn>

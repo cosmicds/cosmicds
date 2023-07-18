@@ -4,7 +4,7 @@ from echo import add_callback, callback_property, delay_callback, CallbackProper
 from glue.core import Subset
 from glue.viewers.histogram.state import HistogramViewerState
 from glue.viewers.scatter.state import ScatterViewerState
-from numpy import linspace, inf, isfinite, isnan
+from numpy import linspace, inf, isfinite, isnan, spacing
 
 from cosmicds.utils import frexp10
 
@@ -194,8 +194,7 @@ class CDSHistogramViewerState(HistogramViewerState):
 
         with delay_callback(self, 'x_min', 'x_max'):
             self.x_min = min_value
-            self.x_max = max_value
-
+            self.x_max = max_value - spacing(self.x_max)
     
     def reset_limits(self, visible_only=True):
         if not visible_only:
