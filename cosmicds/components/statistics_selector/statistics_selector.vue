@@ -5,7 +5,7 @@
     class="statistics-selector px-2"
   >
     <v-container
-      fluid
+      class="py-0"
     >
       <v-switch
         v-for="(stat, index) in statistics"
@@ -97,10 +97,11 @@ export default {
 .statistics-selector{
   border: solid 1px black!important;
   background-color: #3a86ff28!important;
+  margin-bottom: 0px;
 }
 
-.statistics-selector{
-  margin-bottom: 0px;
+.statistics-selector .v-input__slot{
+  margin-bottom: 0px!important;
 }
 
 .statistics-selector .v-input--selection-controls{

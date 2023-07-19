@@ -5,7 +5,7 @@
     class="percentage-selector px-2"
   >
     <v-container
-      fluid
+      class="py-0"
     >
       <v-switch
         v-for="(option, index) in options"
@@ -88,10 +88,11 @@ export default {
 .percentage-selector{
   border: solid 1px black!important;
   background-color: #3a86ff28!important;
+  margin-bottom: 0px;
 }
 
-.percentage-selector{
-  margin-bottom: 0px;
+.percentage-selector .v-input__slot{
+  margin-bottom: 0px!important;
 }
 
 .percentage-selector .v-input--selection-controls{
