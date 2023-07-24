@@ -76,6 +76,21 @@ class PercentageSelector(VuetifyTemplate):
         index = next((idx for idx, x in enumerate(bins) if x >= value), 0)
         return bins[index - 1], bins[index]
 
+    def _rounded_bound(self, bound):
+        if self.resolution is None:
+            return bound
+        return round(bound, self.resolution)
+
+    def _bin_rounded_bound(self, bound, bins):
+        rounded_bound = self._rounded_bound(bound)
+        resolution = 10 ** (-self.resolution)
+        rounded_bin_bounds = self._bin_bounds(bound, bins)
+        if bound < rounded_bin_bounds[0]:
+            rounded_bound -= resolution
+        elif bound > rounded_bin_bounds[1]:
+            rounded_bound += resolution
+        return rounded_bound
+
     @observe('selected')
     def _update(self, change):
         if change["old"] is None:
@@ -120,26 +135,8 @@ class PercentageSelector(VuetifyTemplate):
             indices = [si for i, si in enumerate(sorted_indices) if i >= bottom_index and i <= top_index]
             state = ElementSubsetState(indices=indices)
             states.append(state)
-            if self.resolution is not None:
-                rounded_bottom = round(true_bottom, self.resolution)
-                rounded_top = round(true_top, self.resolution)
-            else:
-                rounded_bottom = true_bottom
-                rounded_top = true_top
-
-            if bins is not None:
-                resolution = 10 ** (-self.resolution)
-                bins_rounded_bottom = self._bin_bounds(rounded_bottom, bins)
-                if true_bottom < bins_rounded_bottom[0]:
-                    rounded_bottom -= resolution
-                elif true_bottom > bins_rounded_bottom[1]:
-                    rounded_bottom += resolution 
-
-                bins_rounded_top = self._bin_bounds(rounded_top, bins)
-                if true_top < bins_rounded_top[0]:
-                    rounded_top -= resolution
-                elif true_top > bins_rounded_top[1]:
-                    rounded_top += resolution
+            rounded_bottom = self._bin_rounded_bound(true_bottom, bins)
+            rounded_top = self._bin_rounded_bound(true_top, bins)
 
             bottom_str = "{:g}".format(rounded_bottom)
             top_str = "{:g}".format(rounded_top)
