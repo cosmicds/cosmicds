@@ -1,3 +1,4 @@
+from collections import Counter
 import json
 import os
 from math import ceil, floor, log10
@@ -322,3 +323,21 @@ def percent_around_center_indices(size, percent):
     bottom_index = percentile_index(size, bottom_percent, method=ceil)
     top_index = percentile_index(size, top_percent, method=floor)
     return bottom_index, top_index
+
+def mode(data, component_id, bins=None):
+    """
+    Compute the mode of a given dataset, using the component corresponding
+    to the given ID. If bins are given, the data values will be binned
+    before finding the modes. Bins should be specified as an integer (# bins)
+    or sequence of scalars.
+    """
+
+    values = data[component_id]
+    if bins is not None:
+        hist, hbins = np.histogram(values, bins=bins)
+        indices = np.flatnonzero(hist == np.amax(hist))
+        return [0.5 * (hbins[idx] + hbins[idx + 1]) for idx in indices]
+    else:
+        counter = Counter(data)
+        max_count = counter.most_common(1)[0][1]
+        return [k for k, v in counter.items() if v == max_count]

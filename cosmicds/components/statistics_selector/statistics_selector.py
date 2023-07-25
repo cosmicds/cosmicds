@@ -1,9 +1,7 @@
-from collections import Counter
 from ipyvuetify import VuetifyTemplate
-from numpy import amax, flatnonzero, histogram
 from traitlets import Dict, List, Unicode, observe
 
-from ...utils import load_template, vertical_line_mark
+from ...utils import load_template, mode, vertical_line_mark
 
 class StatisticsSelector(VuetifyTemplate):
 
@@ -40,24 +38,12 @@ class StatisticsSelector(VuetifyTemplate):
         for viewer in self.viewers:
             viewer.figure.observe(self._on_marks_updated, names=["marks"])
 
-    def _mode(self, viewer, data, bins):
-        component_id = viewer.state.x_att
-        values = data[component_id]
-        if bins is not None:
-            hist, hbins = histogram(values, bins=bins)
-            indices = flatnonzero(hist == amax(hist)) 
-            return [0.5 * (hbins[idx] + hbins[idx + 1]) for idx in indices]
-        else:
-            counter = Counter(data)
-            max_count = counter.most_common(1)[0][1]
-            return [k for k, v in counter.items() if v == max_count]
-
     # glue doesn't implement a mode statistic, so we roll our own
     # Since there can be multiple modes, mode can be a list
     # and so we return a list for every statistic to make things simpler
     def _find_statistic(self, stat, viewer, data, bins):
         if stat == 'mode':
-            return self._mode(viewer, data, bins)
+            return mode(viewer, data, bins)
         else:
             return [data.compute_statistic(stat, viewer.state.x_att)]
 
