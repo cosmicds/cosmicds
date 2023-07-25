@@ -1,12 +1,9 @@
 import json
 import os
-from math import log10
+from math import ceil, floor, log10
 
 from astropy.modeling import models, fitting
 from bqplot.marks import Lines
-from bqplot.scales import LinearScale
-from glue.viewers.common.viewer import LayerArtist
-from glue_jupyter.bqplot.common import BqplotBaseView
 from glue_jupyter.bqplot.histogram import BqplotHistogramLayerArtist
 from glue_jupyter.bqplot.scatter import BqplotScatterLayerArtist
 from glue.core.state_objects import State
@@ -309,3 +306,19 @@ def frexp10(x, normed=False):
     exp = int(log10(x)) + int(normed)
     mantissa = x / (10 ** exp)
     return mantissa, exp
+
+def percentile_index(size, percent, method=round):
+    return min(method(size * percent / 100), size - 1)
+
+def percent_around_center_indices(size, percent):
+    """
+    Compute the indices of the given percent around the center.
+    """
+
+    around_median = percent / 2
+    bottom_percent = 50 - around_median
+    top_percent = 50 + around_median
+
+    bottom_index = percentile_index(size, bottom_percent, method=ceil)
+    top_index = percentile_index(size, top_percent, method=floor)
+    return bottom_index, top_index

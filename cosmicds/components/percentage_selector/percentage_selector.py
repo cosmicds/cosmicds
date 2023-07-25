@@ -6,7 +6,7 @@ from traitlets import Int, List, Unicode, observe
 
 from glue.core.subset import ElementSubsetState
 
-from ...utils import load_template
+from ...utils import load_template, percent_around_center_indices
 
 class PercentageSelector(VuetifyTemplate):
     
@@ -43,9 +43,6 @@ class PercentageSelector(VuetifyTemplate):
         if self._bins is not None:
             return self._bins
         return [getattr(viewer.state, "bins", None) for viewer in self.viewers]
-
-    def percentile_index(self, size, percent, method=round):
-        return min(method(size * percent / 100), size - 1)
 
     def _update_subsets(self, states):
         if not self.subsets:
@@ -109,18 +106,13 @@ class PercentageSelector(VuetifyTemplate):
             self._update_subsets(states)
             return
 
-        around_median = selected / 2
-        bottom_percent = 50 - around_median
-        top_percent = 50 + around_median
-
         states = []
         for index, (viewer, bins) in enumerate(zip(self.viewers, self.bins)):
             component_id = viewer.state.x_att
             data = self.glue_data[index][component_id]
             layer = self.layers[index]
             layer.state.color = self._deselected_color
-            bottom_index = self.percentile_index(data.size, bottom_percent, method=ceil)
-            top_index = self.percentile_index(data.size, top_percent, method=floor)
+            bottom_index, top_index = percent_around_center_indices(data.size, selected)
             sorted_indices = argsort(data)
             true_bottom = data[sorted_indices[bottom_index]]
             true_top = data[sorted_indices[top_index]]
