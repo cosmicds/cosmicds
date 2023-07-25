@@ -1,5 +1,3 @@
-from math import ceil, floor
-
 from ipyvuetify import VuetifyTemplate
 from numpy import argsort, array
 from traitlets import Int, List, Unicode, observe
