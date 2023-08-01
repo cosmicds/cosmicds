@@ -111,9 +111,22 @@ class PercentageSelector(VuetifyTemplate):
             layer = self.layers[index]
             layer.state.color = self._deselected_color
             bottom_index, top_index = percent_around_center_indices(data.size, selected)
+    
             sorted_indices = argsort(data)
             true_bottom = data[sorted_indices[bottom_index]]
             true_top = data[sorted_indices[top_index]]
+            expected_count = round(selected * data.size)
+            actual_count = top_index - bottom_index + 1
+            if expected_count != actual_count:
+                median = data.compute_statistic('median', viewer.state.x_att)
+                dist_bottom = abs(median - true_bottom)
+                dist_top = abs(median - true_top)
+                if dist_bottom > dist_top:
+                    bottom_index += 1
+                    true_bottom = data[sorted_indices[bottom_index]]
+                else:
+                    top_index -= 1
+                    true_top = data[sorted_indices[top_index]]
 
             # Ideally we could use something like a RangeSubsetState
             # but this can be problematic for our case when there are a small number
