@@ -118,14 +118,25 @@ class PercentageSelector(VuetifyTemplate):
             expected_count = round(selected * data.size)
             actual_count = top_index - bottom_index + 1
             if expected_count != actual_count:
-                median = data.compute_statistic('median', viewer.state.x_att)
-                dist_bottom = abs(median - true_bottom)
-                dist_top = abs(median - true_top)
+                median = self.glue_data[index].compute_statistic('median', viewer.state.x_att)
+                if expected_count > actual_count:
+                    dist_bottom = abs(median - true_bottom)
+                    dist_top = abs(median - true_top)
+                    new_bottom_index = bottom_index + 1
+                    new_top_index = top_index - 1
+                else:
+                    new_bottom_index = max(0, bottom_index - 1)
+                    new_bottom = data[sorted_indices[new_bottom_index]]
+                    new_top_index = min(top_index + 1, data.size - 1)
+                    new_bottom = data[sorted_indices[new_top_index]]
+                    dist_bottom = abs(median - new_bottom)
+                    dist_top = abs(median - new_bottom)
+
                 if dist_bottom > dist_top:
-                    bottom_index += 1
+                    bottom_index = new_bottom_index
                     true_bottom = data[sorted_indices[bottom_index]]
                 else:
-                    top_index -= 1
+                    top_index = new_top_index
                     true_top = data[sorted_indices[top_index]]
 
             # Ideally we could use something like a RangeSubsetState
