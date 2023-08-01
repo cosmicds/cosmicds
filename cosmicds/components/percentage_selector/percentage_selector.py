@@ -115,15 +115,22 @@ class PercentageSelector(VuetifyTemplate):
             sorted_indices = argsort(data)
             true_bottom = data[sorted_indices[bottom_index]]
             true_top = data[sorted_indices[top_index]]
-            expected_count = round(selected * data.size)
+            expected_count = round(selected * data.size / 100)
             actual_count = top_index - bottom_index + 1
             if expected_count != actual_count:
                 median = self.glue_data[index].compute_statistic('median', viewer.state.x_att)
-                if expected_count > actual_count:
+                if expected_count < actual_count:
                     dist_bottom = abs(median - true_bottom)
                     dist_top = abs(median - true_top)
                     new_bottom_index = bottom_index + 1
                     new_top_index = top_index - 1
+
+                    if dist_bottom > dist_top:
+                        bottom_index = new_bottom_index
+                        true_bottom = data[sorted_indices[bottom_index]]
+                    else:
+                        top_index = new_top_index
+                        true_top = data[sorted_indices[top_index]]
                 else:
                     new_bottom_index = max(0, bottom_index - 1)
                     new_bottom = data[sorted_indices[new_bottom_index]]
@@ -132,12 +139,12 @@ class PercentageSelector(VuetifyTemplate):
                     dist_bottom = abs(median - new_bottom)
                     dist_top = abs(median - new_bottom)
 
-                if dist_bottom > dist_top:
-                    bottom_index = new_bottom_index
-                    true_bottom = data[sorted_indices[bottom_index]]
-                else:
-                    top_index = new_top_index
-                    true_top = data[sorted_indices[top_index]]
+                    if dist_bottom < dist_top or new_top_index == data.size - 1:
+                        bottom_index = new_bottom_index
+                        true_bottom = data[sorted_indices[bottom_index]]
+                    else:
+                        top_index = new_top_index
+                        true_top = data[sorted_indices[top_index]]
 
             # Ideally we could use something like a RangeSubsetState
             # but this can be problematic for our case when there are a small number
