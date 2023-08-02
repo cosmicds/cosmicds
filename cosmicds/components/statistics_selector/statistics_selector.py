@@ -43,7 +43,7 @@ class StatisticsSelector(VuetifyTemplate):
     # and so we return a list for every statistic to make things simpler
     def _find_statistic(self, stat, viewer, data, bins):
         if stat == 'mode':
-            return mode(viewer, data, bins)
+            return mode(data, viewer.state.x_att, bins)
         else:
             return [data.compute_statistic(stat, viewer.state.x_att)]
 
