@@ -309,7 +309,7 @@ def frexp10(x, normed=False):
     return mantissa, exp
 
 def percentile_index(size, percent, method=round):
-    return min(method(size * percent / 100), size - 1)
+    return min(method((size - 1) * percent / 100), size - 1)
 
 def percent_around_center_indices(size, percent):
     """
