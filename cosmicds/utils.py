@@ -320,8 +320,8 @@ def percent_around_center_indices(size, percent):
     bottom_percent = 50 - around_median
     top_percent = 50 + around_median
 
-    bottom_index = percentile_index(size, bottom_percent, method=ceil)
-    top_index = percentile_index(size, top_percent, method=floor)
+    bottom_index = percentile_index(size, bottom_percent)
+    top_index = percentile_index(size, top_percent)
     return bottom_index, top_index
 
 def mode(data, component_id, bins=None):
