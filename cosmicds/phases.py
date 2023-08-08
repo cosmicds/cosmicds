@@ -5,7 +5,7 @@ from cosmicds.components.viewer_layout import ViewerLayout
 from cosmicds.events import WriteToDatabaseMessage
 
 from cosmicds.mixins import TemplateMixin, HubMixin
-from cosmicds.utils import debounce
+from cosmicds.utils import debounce, request_session
 from glue.core import Data
 from glue.core.state_objects import State
 from echo import DictCallbackProperty, CallbackProperty, add_callback
@@ -53,6 +53,7 @@ class Story(CDSState, HubMixin):
         super().__init__(*args, **kwargs)
 
         self._session = session
+        self._request_session = request_session()
         self.viewers = {}
 
         # When the step index or completion status changes, store that change
@@ -139,6 +140,7 @@ class Stage(TemplateMixin):
         self.story_state = story_state
         self.app_state = app_state
         self.index = index
+        self.request_session = request_session()
 
         self.stage_state = kwargs.get('stage_state', self._state_cls())
 
