@@ -140,7 +140,7 @@ class Stage(TemplateMixin):
         self.story_state = story_state
         self.app_state = app_state
         self.index = index
-        self.request_session = request_session()
+        self._request_session = request_session()
 
         self.stage_state = kwargs.get('stage_state', self._state_cls())
 
