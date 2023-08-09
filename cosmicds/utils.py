@@ -353,6 +353,11 @@ def mode(data, component_id, bins=None):
 
 
 def request_session():
+    """
+    Returns a `requests.Session` object that has the relevant authorization parameters
+    to interface with the CosmicDS API server (provided that environment variables
+    are set correctly).
+    """
     session = Session()
     session.headers.update({"Authorization": os.getenv("CDS_API_KEY")})
     return session
