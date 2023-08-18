@@ -14,6 +14,7 @@ class ViewerLayout(VuetifyTemplate):
     css_style = Dict().tag(sync=True)
     show_toolbar = Bool(True).tag(sync=True)
     title = Unicode().tag(sync=True)
+    subtitle = Unicode().tag(sync=True)
     classes = List().tag(sync=True)
     viewer_width = Int().tag(sync=True)
     viewer_height = Int().tag(sync=True)

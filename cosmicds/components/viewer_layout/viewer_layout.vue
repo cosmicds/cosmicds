@@ -19,6 +19,13 @@
         <jupyter-widget :widget="controls.toolbar_selection_tools"></jupyter-widget>
       </v-toolbar-items>
     </v-toolbar>
+    <v-expand-transition>
+      <div
+        class="subtitle"
+      >
+        {{ subtitle }}
+      </div>
+    </v-expand-transition>
     <jupyter-widget :style="css_style" :widget="figure"></jupyter-widget>
   </v-card>
 </template>
@@ -57,3 +64,12 @@ module.exports = {
   }
 }
 </script>
+
+<style scoped>
+.subtitle {
+  padding: 0px !important;
+  color: black;
+  font-size: 1rem;
+  text-align: center;
+}
+</style>
