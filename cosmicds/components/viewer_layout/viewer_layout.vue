@@ -19,13 +19,13 @@
         <jupyter-widget :widget="controls.toolbar_selection_tools"></jupyter-widget>
       </v-toolbar-items>
     </v-toolbar>
-    <v-expand-transition>
-      <div
-        class="subtitle"
-      >
-        {{ subtitle }}
-      </div>
-    </v-expand-transition>
+    <v-card-text
+      class="subtitle"
+    >
+      <v-expand-transition>
+        <div v-show="show_subtitle">{{ subtitle }}</div>
+      </v-expand-transition>
+    </v-card-text>
     <jupyter-widget :style="css_style" :widget="figure"></jupyter-widget>
   </v-card>
 </template>

@@ -88,7 +88,7 @@ class PercentageSelector(VuetifyTemplate):
             for (index, viewer) in enumerate(self.viewers):
                 if self.layers[index] is not None:
                     self.layers[index].state.color = self._original_colors[index]
-                    self.viewer_layouts[index].subtitle = ""
+                    self.viewer_layouts[index].set_subtitle(None)
                 state = array([False for _ in range(self.glue_data[index].size)])
                 states.append(state)
             self._update_subsets(states)
@@ -148,7 +148,7 @@ class PercentageSelector(VuetifyTemplate):
             else:
                 unit_str = ""
             label_text = f"{selected}%: {bottom_str} - {top_str}{unit_str}"
-            self.viewer_layouts[index].subtitle = label_text
+            self.viewer_layouts[index].set_subtitle(label_text)
 
         self._update_subsets(states)
 
