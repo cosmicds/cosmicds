@@ -3,7 +3,7 @@ from ipyvuetify import VuetifyTemplate
 from glue.core.state_objects import State
 import requests
 
-from cosmicds.utils import API_URL
+from cosmicds.utils import API_URL, request_session
 
 __all__ = ['stage_registry']
 
@@ -60,7 +60,8 @@ class StoryRegistry(UniqueDictRegistry):
         story_state = story_entry['cls'](session)
         story_state.name = name
 
-        response = requests.get(f"{API_URL}/story-state/{app_state.student['id']}/{name}")
+        # This should only get run once per story - using a one-off session is fine for now
+        response = request_session().get(f"{API_URL}/story-state/{app_state.student['id']}/{name}")
         data = response.json()
         state = data["state"]
 

@@ -3,7 +3,6 @@ import os
 from os import getenv
 
 import ipyvuetify as v
-import requests
 from cosmicds.utils import API_URL
 from echo import add_callback, CallbackProperty
 from glue.core import HubListener
@@ -16,7 +15,7 @@ from traitlets import Dict, Bool, Int
 
 from .events import WriteToDatabaseMessage
 from .registries import story_registry
-from .utils import CDSJSONEncoder, debounce, load_template
+from .utils import CDSJSONEncoder, debounce, load_template, request_session
 
 v.theme.dark = True
 
@@ -59,6 +58,8 @@ class Application(VuetifyTemplate, HubListener):
 
         self.app_state.allow_advancing = kwargs.get("allow_advancing", False)
 
+        self.request_session = request_session()
+
         # NOTE: This procedure is only valid when using ContainDS
         if "JUPYTERHUB_USER" in os.environ:
             self.observe(lambda x: self._setup(story, **kwargs), 'hub_user_info')
@@ -71,7 +72,7 @@ class Application(VuetifyTemplate, HubListener):
         create_new = kwargs.get("create_new_student", False)
 
         if create_new:
-            response = requests.get(f"{API_URL}/new-dummy-student").json()
+            response = self.request_session.get(f"{API_URL}/new-dummy-student").json()
             self.app_state.student = response["student"]
             self.app_state.classroom["id"] = 0
             self.student_id = self.app_state.student["id"]
@@ -80,7 +81,7 @@ class Application(VuetifyTemplate, HubListener):
             username = self.hub_user_info.get('name', getenv("JUPYTERHUB_USER"))
 
             if username is not None:
-                r = requests.get(f"{API_URL}/student/{username}")
+                r = self.request_session.get(f"{API_URL}/student/{username}")
                 student = r.json()["student"]
                 if student is not None:
                     self.app_state.student = student
@@ -91,7 +92,7 @@ class Application(VuetifyTemplate, HubListener):
                 self.app_state.student["id"] = sid
                 self.student_id = sid
             
-        class_response = requests.get(f"{API_URL}/class-for-student-story/{self.student_id}/{story}")
+        class_response = self.request_session.get(f"{API_URL}/class-for-student-story/{self.student_id}/{story}")
         class_json = class_response.json()
         cls = class_json["class"]
         size = class_json["size"]
@@ -102,8 +103,7 @@ class Application(VuetifyTemplate, HubListener):
         # print(f"Class ID: {self.app_state.classroom['id']}")
 
         self._application_handler = JupyterApplication()
-        self.story_state = story_registry.setup_story(story, self.session,
-                                                      self.app_state)
+        self.story_state = story_registry.setup_story(story, self.session, self.app_state)
 
         self._get_student_options()
 
@@ -164,7 +164,7 @@ class Application(VuetifyTemplate, HubListener):
             # User information for a JupyterHub notebook session is stored in an
             # environment variable
             # user = os.environ['JUPYTERHUB_USER']
-            response = requests.get(self.story_state_endpoint)
+            response = self.request_session.get(self.story_state_endpoint)
             data = response.json()
             state = data["state"]
             if state is not None:
@@ -175,7 +175,7 @@ class Application(VuetifyTemplate, HubListener):
     def _get_student_options(self):
         # Get any persistent student options
         try:
-            response = requests.get(self.student_options_endpoint)
+            response = self.request_session.get(self.student_options_endpoint)
             data = response.json()
             if data is not None:
                 data.pop("student_id", 0)
@@ -194,7 +194,7 @@ class Application(VuetifyTemplate, HubListener):
         data = json.loads(
             json.dumps(self.story_state.as_dict(), cls=CDSJSONEncoder))
         if data:
-            requests.put(self.story_state_endpoint, json=data)
+            self.request_session.put(self.story_state_endpoint, json=data)
 
     def vue_write_to_database(self, _args=None):
         self._on_write_to_database(None)
@@ -227,7 +227,7 @@ class Application(VuetifyTemplate, HubListener):
 
     def _student_option_changed(self, option, value):
         url = self.student_options_endpoint
-        requests.put(url, json={
+        self.request_session.put(url, json={
             "option": option,
             "value": value
         })
