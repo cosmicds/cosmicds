@@ -1,5 +1,6 @@
 <template>
   <v-textarea
+    ref="textarea"
     v-model="response"
     :outlined="outlined"
     :auto-grow="autoGrow"
@@ -7,6 +8,8 @@
     :color="color"
     :rows="rows"
     :hint="hint"
+    :icon="icon"
+    :rules="[isValid]"
     @blur="onBlur"
     v-intersect="dispatchInitializeEvent"
     class="cds-free-response"
@@ -31,20 +34,56 @@ module.exports = {
       type: String,
       default: "amber"
     },
+    helpMessage: {
+      type: String,
+      required: false
+    },
     hint: {
       type: String,
-      default: "Type your response here"
+      required: false
+    },
+    icon: {
+      type: String,
+      required: false
     },
     rows: {
       type: Number,
       default: 1
     },
-    tag: String
+    allowEmpty: {
+      type: Boolean,
+      default: false
+    },
+    rules: {
+      type: Array, // Should be an array of functions with signature (string) => bool
+      default: []
+    },
+    tag: String,
+    type: {
+      type: String,
+      required: false
+    }
   },
   data: function () {
     return {
       response: "",
-      initialized: false
+      initialized: false,
+      defaultHelpMessage: "Invalid format",
+
+      allowedInput: {
+        int: {
+          characters: "-01233456789",
+          helpMessage: "Please input an integer"
+        },
+        uint: {
+          characters: "0123456789",
+          helpMessage: "Please input a non-negative integer"
+        },
+        float: {
+          characters: "-0123456789.",
+          helpMessage: "Please input a number"
+        }
+      }
     };
   },
 
@@ -91,8 +130,34 @@ module.exports = {
       }
       this.initialized = true;
       document.removeEventListener("fr-initialize-response", this.onInitResponse);
+    },
+
+    isValid(input) {
+      let valid = true;
+
+      if (!this.allowEmpty && !input) {
+        return "";
+      }
+
+      let helpMessage = this.helpMessage;
+      if (this.type in this.allowedInput) {
+        const inputData = this.allowedInput[this.type];
+        const allowed = inputData.characters;
+        const pattern = new RegExp(`^[${allowed}]+$`);
+
+        valid = pattern.test(input);
+        helpMessage = this.helpMessage || inputData.helpMessage;
+      }
+      helpMessage = helpMessage || this.defaultHelpMessage;
+
+      if (this.rules.length > 0) {
+        valid = this.rules.every(rule => rule(input));
+      }
+
+      return valid || helpMessage;
     }
   }
+
 };
 </script>
 
