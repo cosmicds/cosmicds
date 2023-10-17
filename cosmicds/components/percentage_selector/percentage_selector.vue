@@ -85,10 +85,24 @@ export default {
   width: 67% !important;
 }
 
-.percentage-selector{
-  border: solid 1px black!important;
-  background-color: #3a86ff28!important;
+.percentage-selector.theme--light.v-card.v-card--outlined {
+  border: solid 1px grey!important;
+  background-color: #e0e9fc!important;
   margin-bottom: 0px;
+}
+
+.percentage-selector.vuetify-styles .theme--light.v-label {
+    color: black !important;
+}
+
+.percentage-selector.theme--dark.v-card.v-card--outlined {
+  border: solid 1px grey!important;
+  background-color: #233149!important;
+  margin-bottom: 0px;
+}
+
+.percentage-selector.vuetify-styles .theme--dark.v-label {
+    color: white !important;
 }
 
 .percentage-selector .v-input__slot{
