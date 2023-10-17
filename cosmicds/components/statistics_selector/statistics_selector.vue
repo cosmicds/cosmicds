@@ -94,10 +94,24 @@ export default {
   grid-template-columns: 2fr 1fr;
 }
 
-.statistics-selector{
-  border: solid 1px black!important;
-  background-color: #3a86ff28!important;
+.statistics-selector.theme--light.v-card.v-card--outlined {
+  border: solid 1px grey!important;
+  background-color: #e0e9fc!important;
   margin-bottom: 0px;
+}
+
+.statistics-selector .theme--light.v-label {
+    color: black !important;
+}
+
+.statistics-selector.theme--dark.v-card.v-card--outlined {
+  border: solid 1px grey!important;
+  background-color: #233149!important;
+  margin-bottom: 0px;
+}
+
+.statistics-selector .theme--dark.v-label {
+    color: white !important;
 }
 
 .statistics-selector .v-input__slot{

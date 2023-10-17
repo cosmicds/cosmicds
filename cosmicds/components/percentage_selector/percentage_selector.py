@@ -21,9 +21,10 @@ class PercentageSelector(VuetifyTemplate):
     # to deal with cases where, for either setup or story reasons,
     # the layer doesn't exist in the viewer when we have to create
     # this component (which will be in the stage initializer)
-    def __init__(self, viewers, data, *args, **kwargs):
+    def __init__(self, viewer_layouts, data, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.viewers = viewers
+        self.viewer_layouts = viewer_layouts
+        self.viewers = [layout.viewer for layout in viewer_layouts]
         self.glue_data = data
         self._original_colors = []
         self.resolution = kwargs.get("resolution", None)  # Number of decimal places for reporting bounds
@@ -97,8 +98,7 @@ class PercentageSelector(VuetifyTemplate):
             for (index, viewer) in enumerate(self.viewers):
                 if self.layers[index] is not None:
                     self.layers[index].state.color = self._original_colors[index]
-                    viewer.figure.title = ""
-                    viewer.figure.title_style = {}
+                    self.viewer_layouts[index].set_subtitle(None)
                 state = array([False for _ in range(self.glue_data[index].size)])
                 states.append(state)
             self._update_subsets(states)
@@ -165,13 +165,8 @@ class PercentageSelector(VuetifyTemplate):
                 unit_str = f" {self.units[index]}"
             else:
                 unit_str = ""
-            label_text = f"{selected}%: {bottom_str} - {top_str}{unit_str}"
-            viewer.figure.title = label_text
-            viewer.figure.title_style = {
-                "font-size": '1rem',
-                "fill": "black",  # Since this is all happening in svg-land, use fill to set the text color
-                "transform": "translate(-25%, 5px)"
-            }
+            label_text = f"{selected}% range: {bottom_str} \u2013 {top_str}{unit_str}"
+            self.viewer_layouts[index].set_subtitle(label_text)
 
         self._update_subsets(states)
 

@@ -14,6 +14,8 @@ class ViewerLayout(VuetifyTemplate):
     css_style = Dict().tag(sync=True)
     show_toolbar = Bool(True).tag(sync=True)
     title = Unicode().tag(sync=True)
+    show_subtitle = Bool(False).tag(sync=True)
+    subtitle = Unicode().tag(sync=True)
     classes = List().tag(sync=True)
     viewer_width = Int().tag(sync=True)
     viewer_height = Int().tag(sync=True)
@@ -41,3 +43,12 @@ class ViewerLayout(VuetifyTemplate):
     @observe("viewer_height")
     def _on_height_change(self, change):
         self.viewer.state.viewer_height = change["new"]
+
+    def set_subtitle(self, text):
+        if text:
+            self.subtitle = text
+            self.show_subtitle = True
+        else:
+            self.show_subtitle = False
+            self.subtitle = " "
+    

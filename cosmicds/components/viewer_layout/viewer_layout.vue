@@ -19,6 +19,14 @@
         <jupyter-widget :widget="controls.toolbar_selection_tools"></jupyter-widget>
       </v-toolbar-items>
     </v-toolbar>
+    <v-expand-transition>
+      <v-card-text
+        v-show="show_subtitle"
+        class="subtitle"
+      >
+        {{ subtitle }}
+      </v-card-text>
+    </v-expand-transition>
     <jupyter-widget :style="css_style" :widget="figure"></jupyter-widget>
   </v-card>
 </template>
@@ -57,3 +65,20 @@ module.exports = {
   }
 }
 </script>
+
+<style scoped>
+.subtitle {
+  padding: 0px !important;
+  font-size: 1rem;
+  text-align: left;
+  margin-left: 1rem;
+}
+
+.vuetify-styles .theme--dark.v-card>.v-card__text {
+  color: white !important;
+}
+
+.vuetify-styles .theme--light.v-card>.v-card__text {
+  color: black !important;
+}
+</style>
