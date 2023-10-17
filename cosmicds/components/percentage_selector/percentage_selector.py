@@ -165,7 +165,7 @@ class PercentageSelector(VuetifyTemplate):
                 unit_str = f" {self.units[index]}"
             else:
                 unit_str = ""
-            label_text = f"{selected}%: {bottom_str} - {top_str}{unit_str}"
+            label_text = f"{selected}% range: {bottom_str} \u2013 {top_str}{unit_str}"
             self.viewer_layouts[index].set_subtitle(label_text)
 
         self._update_subsets(states)
