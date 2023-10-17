@@ -69,8 +69,16 @@ module.exports = {
 <style scoped>
 .subtitle {
   padding: 0px !important;
-  color: black;
   font-size: 1rem;
-  text-align: center;
+  text-align: left;
+  margin-left: 1rem;
+}
+
+.vuetify-styles .theme--dark.v-card>.v-card__text {
+  color: white !important;
+}
+
+.vuetify-styles .theme--light.v-card>.v-card__text {
+  color: black !important;
 }
 </style>
