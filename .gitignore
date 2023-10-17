@@ -18,6 +18,9 @@ MANIFEST
 .ipynb_checkpoints
 notebooks/*.fits
 
+# Environment variable definitions
+.env
+
 # Sphinx
 docs/api
 docs/_build

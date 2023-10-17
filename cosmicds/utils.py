@@ -1,12 +1,11 @@
+from collections import Counter
 import json
 import os
-from math import log10
+from math import ceil, floor, log10
+from requests import Session
 
 from astropy.modeling import models, fitting
 from bqplot.marks import Lines
-from bqplot.scales import LinearScale
-from glue.viewers.common.viewer import LayerArtist
-from glue_jupyter.bqplot.common import BqplotBaseView
 from glue_jupyter.bqplot.histogram import BqplotHistogramLayerArtist
 from glue_jupyter.bqplot.scatter import BqplotScatterLayerArtist
 from glue.core.state_objects import State
@@ -217,11 +216,13 @@ def convert_material_color(color_string):
         result = result[part]
     return result
 
+
 def fit_line(x, y):
     fit = fitting.LinearLSQFitter()
     line_init = models.Linear1D(intercept=0, fixed={'intercept':True})
     fitted_line = fit(line_init, x, y)
     return fitted_line
+
 
 def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None, label_visibility=None):
     """
@@ -254,6 +255,7 @@ def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None, label_vi
                  display_legend=label is not None,
                  labels_visibility=label_visibility or "label")
 
+
 def vertical_line_mark(layer, x, color, label=None, label_visibility=None):
     """
     A specialization of `line_mark` specifically for vertical lines.
@@ -269,6 +271,7 @@ def vertical_line_mark(layer, x, color, label=None, label_visibility=None):
     viewer_state = layer.state.viewer_state
     return line_mark(layer, x, viewer_state.y_min, x, viewer_state.y_max, 
                      color, label=label, label_visibility=label_visibility)
+
 
 # Taken from https://jonlabelle.com/snippets/view/python/python-debounce-decorator-function
 def debounce(wait):
@@ -295,6 +298,7 @@ def debounce(wait):
 
     return decorator
 
+
 def frexp10(x, normed=False):
     """
     Find the mantissa and exponent of a value in base 10.
@@ -309,3 +313,51 @@ def frexp10(x, normed=False):
     exp = int(log10(x)) + int(normed)
     mantissa = x / (10 ** exp)
     return mantissa, exp
+
+
+def percentile_index(size, percent, method=round):
+    return min(method((size - 1) * percent / 100), size - 1)
+
+
+def percent_around_center_indices(size, percent):
+    """
+    Compute the indices of the given percent around the center.
+    """
+
+    around_median = percent / 2
+    bottom_percent = 50 - around_median
+    top_percent = 50 + around_median
+
+    bottom_index = percentile_index(size, bottom_percent)
+    top_index = percentile_index(size, top_percent)
+    return bottom_index, top_index
+
+
+def mode(data, component_id, bins=None):
+    """
+    Compute the mode of a given dataset, using the component corresponding
+    to the given ID. If bins are given, the data values will be binned
+    before finding the modes. Bins should be specified as an integer (# bins)
+    or sequence of scalars.
+    """
+
+    values = data[component_id]
+    if bins is not None:
+        hist, hbins = np.histogram(values, bins=bins)
+        indices = np.flatnonzero(hist == np.amax(hist))
+        return [0.5 * (hbins[idx] + hbins[idx + 1]) for idx in indices]
+    else:
+        counter = Counter(data)
+        max_count = counter.most_common(1)[0][1]
+        return [k for k, v in counter.items() if v == max_count]
+
+
+def request_session():
+    """
+    Returns a `requests.Session` object that has the relevant authorization parameters
+    to interface with the CosmicDS API server (provided that environment variables
+    are set correctly).
+    """
+    session = Session()
+    session.headers.update({"Authorization": os.getenv("CDS_API_KEY")})
+    return session

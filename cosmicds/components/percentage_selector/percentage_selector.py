@@ -1,12 +1,10 @@
-from math import ceil, floor
-
 from ipyvuetify import VuetifyTemplate
 from numpy import argsort, array
 from traitlets import Int, List, Unicode, observe
 
 from glue.core.subset import ElementSubsetState
 
-from ...utils import load_template
+from ...utils import load_template, percent_around_center_indices
 
 class PercentageSelector(VuetifyTemplate):
     
@@ -45,9 +43,6 @@ class PercentageSelector(VuetifyTemplate):
             return self._bins
         return [getattr(viewer.state, "bins", None) for viewer in self.viewers]
 
-    def percentile_index(self, size, percent, method=round):
-        return min(method(size * percent / 100), size - 1)
-
     def _update_subsets(self, states):
         if not self.subsets:
             kwargs = { "alpha": 1 }
@@ -77,6 +72,21 @@ class PercentageSelector(VuetifyTemplate):
         index = next((idx for idx, x in enumerate(bins) if x >= value), 0)
         return bins[index - 1], bins[index]
 
+    def _rounded_bound(self, bound):
+        if self.resolution is None:
+            return bound
+        return round(bound, self.resolution)
+
+    def _bin_rounded_bound(self, bound, bins):
+        rounded_bound = self._rounded_bound(bound)
+        resolution = 10 ** (-self.resolution)
+        rounded_bin_bounds = self._bin_bounds(bound, bins)
+        if bound < rounded_bin_bounds[0]:
+            rounded_bound -= resolution
+        elif bound > rounded_bin_bounds[1]:
+            rounded_bound += resolution
+        return rounded_bound
+
     @observe('selected')
     def _update(self, change):
         if change["old"] is None:
@@ -94,21 +104,47 @@ class PercentageSelector(VuetifyTemplate):
             self._update_subsets(states)
             return
 
-        around_median = selected / 2
-        bottom_percent = 50 - around_median
-        top_percent = 50 + around_median
-
         states = []
         for index, (viewer, bins) in enumerate(zip(self.viewers, self.bins)):
             component_id = viewer.state.x_att
             data = self.glue_data[index][component_id]
             layer = self.layers[index]
             layer.state.color = self._deselected_color
-            bottom_index = self.percentile_index(data.size, bottom_percent, method=ceil)
-            top_index = self.percentile_index(data.size, top_percent, method=floor)
+            bottom_index, top_index = percent_around_center_indices(data.size, selected)
+    
             sorted_indices = argsort(data)
             true_bottom = data[sorted_indices[bottom_index]]
             true_top = data[sorted_indices[top_index]]
+            expected_count = round(selected * data.size / 100)
+            actual_count = top_index - bottom_index + 1
+            if expected_count != actual_count:
+                median = self.glue_data[index].compute_statistic('median', viewer.state.x_att)
+                if expected_count < actual_count:
+                    dist_bottom = abs(median - true_bottom)
+                    dist_top = abs(median - true_top)
+                    new_bottom_index = bottom_index + 1
+                    new_top_index = top_index - 1
+
+                    if dist_bottom > dist_top:
+                        bottom_index = new_bottom_index
+                        true_bottom = data[sorted_indices[bottom_index]]
+                    else:
+                        top_index = new_top_index
+                        true_top = data[sorted_indices[top_index]]
+                else:
+                    new_bottom_index = max(0, bottom_index - 1)
+                    new_bottom = data[sorted_indices[new_bottom_index]]
+                    new_top_index = min(top_index + 1, data.size - 1)
+                    new_bottom = data[sorted_indices[new_top_index]]
+                    dist_bottom = abs(median - new_bottom)
+                    dist_top = abs(median - new_bottom)
+
+                    if dist_bottom < dist_top or new_top_index == data.size - 1:
+                        bottom_index = new_bottom_index
+                        true_bottom = data[sorted_indices[bottom_index]]
+                    else:
+                        top_index = new_top_index
+                        true_top = data[sorted_indices[top_index]]
 
             # Ideally we could use something like a RangeSubsetState
             # but this can be problematic for our case when there are a small number
@@ -120,26 +156,8 @@ class PercentageSelector(VuetifyTemplate):
             indices = [si for i, si in enumerate(sorted_indices) if i >= bottom_index and i <= top_index]
             state = ElementSubsetState(indices=indices)
             states.append(state)
-            if self.resolution is not None:
-                rounded_bottom = round(true_bottom, self.resolution)
-                rounded_top = round(true_top, self.resolution)
-            else:
-                rounded_bottom = true_bottom
-                rounded_top = true_top
-
-            if bins is not None:
-                resolution = 10 ** (-self.resolution)
-                bins_rounded_bottom = self._bin_bounds(rounded_bottom, bins)
-                if true_bottom < bins_rounded_bottom[0]:
-                    rounded_bottom -= resolution
-                elif true_bottom > bins_rounded_bottom[1]:
-                    rounded_bottom += resolution 
-
-                bins_rounded_top = self._bin_bounds(rounded_top, bins)
-                if true_top < bins_rounded_top[0]:
-                    rounded_top -= resolution
-                elif true_top > bins_rounded_top[1]:
-                    rounded_top += resolution
+            rounded_bottom = self._bin_rounded_bound(true_bottom, bins)
+            rounded_top = self._bin_rounded_bound(true_top, bins)
 
             bottom_str = "{:g}".format(rounded_bottom)
             top_str = "{:g}".format(rounded_top)
