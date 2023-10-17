@@ -100,7 +100,7 @@ export default {
   margin-bottom: 0px;
 }
 
-.statistics-selector.vuetify-styles .theme--light.v-label {
+.statistics-selector .theme--light.v-label {
     color: black !important;
 }
 
@@ -110,7 +110,7 @@ export default {
   margin-bottom: 0px;
 }
 
-.statistics-selector.vuetify-styles .theme--dark.v-label {
+.statistics-selector .theme--dark.v-label {
     color: white !important;
 }
 

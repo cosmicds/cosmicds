@@ -91,7 +91,7 @@ export default {
   margin-bottom: 0px;
 }
 
-.percentage-selector.vuetify-styles .theme--light.v-label {
+.percentage-selector .theme--light.v-label {
     color: black !important;
 }
 
@@ -101,7 +101,7 @@ export default {
   margin-bottom: 0px;
 }
 
-.percentage-selector.vuetify-styles .theme--dark.v-label {
+.percentage-selector .theme--dark.v-label {
     color: white !important;
 }
 
