@@ -76,7 +76,7 @@ module.exports = {
     points: {
       type: [Array, Function],
       default(_rawProps) {
-        return function(ntries) { return Math.max(12 - 2 * ntries, 0); };
+        return function(nwrong) { return Math.max(10 - 2 * nwrong, 0); };
       }
     },
     radioOptions: Array,
@@ -112,29 +112,35 @@ module.exports = {
       iconWrong: 'mdi-alert-circle-outline',
       complete: false,
       tries: 0,
-      score: null
+      score: null,
+      wrongAttempts: 0
     };
   },
   methods: {
-    selectChoice: function(index, send=true) {
+    selectChoice: function(index, forInitialization=false) {
       this.column = index;
       const correct = this.correctAnswers.includes(index);
       const neutral = this.neutralAnswers.includes(index);
-      if (!neutral) {
+      const wrong = !(correct || neutral);
+      if (!forInitialization) {
         this.tries += 1;
+        if (wrong) {
+          this.wrongAttempts += 1;
+        }
       }
       this.complete = correct || (this.correctAnswers.length === 0 && neutral);
       if (this.scoring && this.complete) {
-        this.score = correct ? this.getScore(this.tries) : 0;
+        this.score = correct ? this.getScore(this.wrongAttempts) : 0;
       }
-      if (this.scoreTag !== undefined && send) {
+      if (this.scoreTag !== undefined && !forInitialization) {
         document.dispatchEvent(
           new CustomEvent("mc-score", {
             detail: {
               tag: this.scoreTag,
               score: this.score,
               choice: this.column,
-              tries: this.tries
+              tries: this.tries,
+              wrong_attempts: this.wrongAttempts
             }
           })
         );
@@ -164,19 +170,20 @@ module.exports = {
         return this.iconWrong;
       }
     },
-    getScore: function(ntries) {
+    getScore: function(nwrong) {
       if (Array.isArray(this.points)) {
-        return ntries <= this.points.length ? this.points[ntries-1] : 0;
+        return nwrong <= this.points.length ? this.points[nwrong-1] : 0;
       } else {
-        return this.points(ntries);
+        return this.points(nwrong);
       }
     },
     onInitResponse(event) {
       const data = event.detail;
       if (data.tag !== this.scoreTag) { return; }
       if (data.found) {
-        this.tries = data.tries - 1; // selectChoice adds a try
-        this.selectChoice(data.choice, false); // no need to tell the state what it just told us
+        this.tries = data.tries;
+        this.wrongAttempts = data.wrong_attempts;
+        this.selectChoice(data.choice, true);  // No need to update counts and send message for initialization
       }
       document.removeEventListener("mc-initialize-response", this.onInitResponse);
     }
