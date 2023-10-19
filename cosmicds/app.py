@@ -212,7 +212,8 @@ class Application(VuetifyTemplate, HubListener):
         self.story_state.mc_scoring[key][args["tag"]] = {
             "score": args["score"],
             "choice": args["choice"],
-            "tries": args["tries"]
+            "tries": args["tries"],
+            "wrong_attempts": args["wrong_attempts"]
         }
 
     def vue_update_free_response(self, args):
