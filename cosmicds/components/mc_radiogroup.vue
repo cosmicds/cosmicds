@@ -130,7 +130,7 @@ module.exports = {
       }
       this.complete = correct || (this.correctAnswers.length === 0 && neutral);
       if (this.scoring && this.complete) {
-        this.score = correct ? this.getScore(this.wrongAttempts) : 0;
+        this.score = this.getScore(this.wrongAttempts);
       }
       if (this.scoreTag !== undefined && !forInitialization) {
         document.dispatchEvent(
