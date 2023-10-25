@@ -243,9 +243,7 @@ def line_mark(layer, start_x, start_y, end_x, end_y, color, label=None, label_vi
     color : str
         The desired color of the line, represented as a hex string.
     """
-    if isinstance(layer, BqplotScatterLayerArtist):
-        scales = layer.image.scales
-    elif isinstance(layer, BqplotHistogramLayerArtist):
+    if isinstance(layer, (BqplotHistogramLayerArtist, BqplotScatterLayerArtist)):
         scales = layer.view.scales
     return Lines(x=[start_x, end_x],
                  y=[start_y, end_y],
