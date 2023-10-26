@@ -345,7 +345,7 @@ def mode(data, component_id, bins=None):
         indices = np.flatnonzero(hist == np.amax(hist))
         return [0.5 * (hbins[idx] + hbins[idx + 1]) for idx in indices]
     else:
-        counter = Counter(data)
+        counter = Counter(values)
         max_count = counter.most_common(1)[0][1]
         return [k for k, v in counter.items() if v == max_count]
 
