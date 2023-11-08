@@ -331,7 +331,7 @@ def percent_around_center_indices(size, percent):
     return bottom_index, top_index
 
 
-def mode(data, component_id, bins=None):
+def mode(data, component_id, bins=None, range=None):
     """
     Compute the mode of a given dataset, using the component corresponding
     to the given ID. If bins are given, the data values will be binned
@@ -339,12 +339,12 @@ def mode(data, component_id, bins=None):
     or sequence of scalars.
     """
 
-    values = data[component_id]
     if bins is not None:
-        hist, hbins = np.histogram(values, bins=bins)
+        hist = data.compute_histogram([component_id], range=[range], bins=[len(bins)-1])
         indices = np.flatnonzero(hist == np.amax(hist))
-        return [0.5 * (hbins[idx] + hbins[idx + 1]) for idx in indices]
+        return [0.5 * (bins[idx] + bins[idx + 1]) for idx in indices]
     else:
+        values = data[component_id]
         counter = Counter(values)
         max_count = counter.most_common(1)[0][1]
         return [k for k, v in counter.items() if v == max_count]
