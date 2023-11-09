@@ -790,8 +790,8 @@ mjx-assistive-mml cds-input {
   margin: 2px;
 }
 
-#inspire{
-  contain:layout;
+#notebook-container div#inspire {
+  contain: layout;
 }
 
 /* This is not responding to window size, so just leave off for now.
