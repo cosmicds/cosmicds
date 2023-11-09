@@ -194,7 +194,7 @@ class CDSHistogramViewerState(HistogramViewerState):
 
         with delay_callback(self, 'x_min', 'x_max'):
             self.x_min = min_value
-            self.x_max = max_value - spacing(self.x_max)
+            self.x_max = max_value - spacing(max_value)
     
     def reset_limits(self, visible_only=True):
         if not visible_only:
