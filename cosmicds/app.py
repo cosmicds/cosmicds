@@ -63,7 +63,7 @@ class Application(VuetifyTemplate, HubListener):
         self.request_session = self.add_logging(request_session())
         
         # comment to display the UI message in the console
-        self.observe(lambda change: log_to_console(change['new'], css="color:pink;"), 'loading_status_message')
+        # self.observe(lambda change: log_to_console(change['new'], css="color:pink;"), 'loading_status_message')
 
         # NOTE: This procedure is only valid when using ContainDS
         if "JUPYTERHUB_USER" in os.environ:
