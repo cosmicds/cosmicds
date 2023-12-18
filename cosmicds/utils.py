@@ -2,7 +2,9 @@ from collections import Counter
 import json
 import os
 from math import ceil, floor, log10
-from requests import Session
+from requests import Session, adapters
+import random
+
 
 from astropy.modeling import models, fitting
 from bqplot.marks import Lines
@@ -359,3 +361,41 @@ def request_session():
     session = Session()
     session.headers.update({"Authorization": os.getenv("CDS_API_KEY")})
     return session
+
+
+def combine_css(**kwargs):
+    # append other args to the css string
+    other = [f"{key.replace('_','-')}:{value}" for key, value in kwargs.items()]
+    css = ";".join( other)
+    return css
+
+def log_to_console(msg, css="color:white;"):
+    display(Javascript(f'console.log("%c{msg}", "{css}");'))
+    
+class LoggingAdapter(adapters.HTTPAdapter):
+    # https://requests.readthedocs.io/en/latest/user/advanced.html?#transport-adapters
+    # https://requests.readthedocs.io/en/latest/user/advanced.html?#event-hooks
+    def __init__(self, log_prefix=None, *args, **kwargs):
+        self._log_prefix = log_prefix or str(random.randint(100, 999))
+        super().__init__(*args, **kwargs)
+    
+    def set_prefix(self, prefix):
+        self._log_prefix = prefix
+                                
+    def send(self, request, *args,  **kwargs):
+        method = request.method
+        url = request.url.replace(API_URL, "")
+        msg = f"Request: {method} {url}"
+        if self._log_prefix:
+            msg = f"({self._log_prefix}) {msg}"
+        css = combine_css(color="royalblue")
+        log_to_console(msg, css=css)
+        self.on_send(request)
+        return super().send(request, *args, **kwargs)
+    
+    @staticmethod
+    def on_send(request):
+        # needs to be given an implementation
+        pass
+
+    

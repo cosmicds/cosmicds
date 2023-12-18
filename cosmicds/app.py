@@ -1,6 +1,7 @@
 import json
 import os
 from os import getenv
+from requests.adapters import HTTPAdapter
 
 import ipyvuetify as v
 from cosmicds.utils import API_URL
@@ -11,11 +12,11 @@ from glue_jupyter.app import JupyterApplication
 from glue_jupyter.state_traitlets_helpers import GlueState
 from ipyvuetify import VuetifyTemplate
 from ipywidgets import widget_serialization
-from traitlets import Dict, Bool, Int
+from traitlets import Dict, Bool, Int, Unicode
 
 from .events import WriteToDatabaseMessage
 from .registries import story_registry
-from .utils import CDSJSONEncoder, debounce, load_template, request_session
+from .utils import CDSJSONEncoder, debounce, load_template, request_session, log_to_console, combine_css, LoggingAdapter
 
 v.theme.dark = True
 
@@ -46,6 +47,7 @@ class Application(VuetifyTemplate, HubListener):
     show_snackbar = Bool(False).tag(sync=True)
     hub_user_info = Dict().tag(sync=True)
     hub_user_loaded = Bool(False).tag(sync=True)
+    loading_status_message = Unicode("No message").tag(sync=True)
 
     def __init__(self, story, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -58,7 +60,10 @@ class Application(VuetifyTemplate, HubListener):
 
         self.app_state.allow_advancing = kwargs.get("allow_advancing", False)
 
-        self.request_session = request_session()
+        self.request_session = self.add_logging(request_session())
+        
+        # comment to display the UI message in the console
+        self.observe(lambda change: log_to_console(change['new'], css="color:pink;"), 'loading_status_message')
 
         # NOTE: This procedure is only valid when using ContainDS
         if "JUPYTERHUB_USER" in os.environ:
@@ -72,6 +77,7 @@ class Application(VuetifyTemplate, HubListener):
         create_new = kwargs.get("create_new_student", False)
 
         if create_new:
+            self.loading_status_message = "Creating new dummy student..."
             response = self.request_session.get(f"{API_URL}/new-dummy-student").json()
             self.app_state.student = response["student"]
             self.app_state.classroom["id"] = 0
@@ -79,6 +85,8 @@ class Application(VuetifyTemplate, HubListener):
             db_init = True
         else:
             username = self.hub_user_info.get('name', getenv("JUPYTERHUB_USER"))
+            
+            self.loading_status_message = f"Loading student information for {username}..."
 
             if username is not None:
                 r = self.request_session.get(f"{API_URL}/student/{username}")
@@ -86,12 +94,17 @@ class Application(VuetifyTemplate, HubListener):
                 if student is not None:
                     self.app_state.student = student
                     self.student_id = student["id"]
+                else:
+                    self.loading_status_message = "Student not found for username"
+            else:
+                self.loading_status_message = "Username was None"
 
             if not self.app_state.student:
                 sid = kwargs.get("student_id", 0)
                 self.app_state.student["id"] = sid
                 self.student_id = sid
-            
+        
+        self.loading_status_message = f"Loading class information for student {self.student_id}..."
         class_response = self.request_session.get(f"{API_URL}/class-for-student-story/{self.student_id}/{story}")
         class_json = class_response.json()
         cls = class_json["class"]
@@ -99,12 +112,13 @@ class Application(VuetifyTemplate, HubListener):
         self.app_state.classroom = cls or { "id": 0 }
         self.app_state.classroom["size"] = size
 
+        self.loading_status_message = "Loading story..."
         # print(f"Student ID: {self.student_id}")
         # print(f"Class ID: {self.app_state.classroom['id']}")
-
         self._application_handler = JupyterApplication()
         self.story_state = story_registry.setup_story(story, self.session, self.app_state)
-
+        
+        self.loading_status_message = "Loading student options..."
         self._get_student_options()
 
         # Initialize from database
@@ -120,7 +134,8 @@ class Application(VuetifyTemplate, HubListener):
         add_callback(self.app_state, 'speech_pitch', self._speech_pitch_changed)
         add_callback(self.app_state, 'speech_autoread', self._speech_autoread_changed)
         add_callback(self.app_state, 'speech_voice', self._speech_voice_changed)
-
+        
+        self.loading_status_message = "Loading complete."
         self.hub_user_loaded = True
         self.show_snackbar = True
 
@@ -248,3 +263,69 @@ class Application(VuetifyTemplate, HubListener):
     @debounce(1)
     def _speech_voice_changed(self, voice):
         self._student_option_changed('speech_voice', voice)
+    
+        
+    def add_logging(self, session):
+        """
+        Log the request and response to the console
+        """
+        
+        # grab the existing adapter for the api url
+        adapter = session.adapters.get(API_URL)
+        
+        # if we aren't logging, start
+        if adapter is None:
+            adapter = LoggingAdapter()
+            session.mount(API_URL, adapter)
+        
+        # we also want to display this in the UI
+        def request_to_message(request, *args, **kwargs):
+            method = request.method
+            url = request.url.replace(API_URL, "")
+            self.loading_status_message = f"Request: {method} {url}"
+        
+        adapter.on_send = request_to_message
+        # make this session identifiable in the console logs
+        adapter.set_prefix("Main App")
+        
+        # use our own hooks to log the response
+        session.hooks = {'response': [self.log_response, self.display_response]}
+        return session
+    
+    def log_response(self, response, *args, **kwargs):
+        """
+        Log the response to the console and set the "loading_status_message"
+        """
+        method = response.request.method
+        url = response.request.url.replace(API_URL, "")
+        status = response.status_code
+        reason = response.reason
+        msg = f"(Main App) Response: {method} {url} {status} {reason}"
+        if status >= 400:
+            color = "red"
+        elif status >= 300:
+            color = "orange"
+        else:
+            color = "green"
+        
+        css = combine_css(
+            color = color, 
+            font_weight=("bold" if status >= 400 else "normal")
+            )
+
+        log_to_console(msg, css=css)
+
+
+        
+    def display_response(self, response, *args, **kwargs):
+        """
+        Log the response to the console and set the "loading_status_message"
+        """
+        method = response.request.method
+        url = response.request.url.replace(API_URL, "")
+        reason = response.reason
+        msg = f"Response: {method} {url} {reason}"
+        self.loading_status_message = msg
+
+
+    
