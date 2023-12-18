@@ -5,6 +5,7 @@ from math import ceil, floor, log10
 from requests import Session, adapters
 import random
 
+from IPython.display import Javascript, display
 
 from astropy.modeling import models, fitting
 from bqplot.marks import Lines
@@ -359,6 +360,9 @@ def request_session():
     are set correctly).
     """
     session = Session()
+    session.mount(API_URL, LoggingAdapter())
+    hook = {"response": [log_response]}
+    session.hooks.update(hook)
     session.headers.update({"Authorization": os.getenv("CDS_API_KEY")})
     return session
 
@@ -399,3 +403,29 @@ class LoggingAdapter(adapters.HTTPAdapter):
         pass
 
     
+def log_response(response, *args, **kwargs):
+    """
+    Log the response to the console and set the "loading_status_message"
+    """
+    method = response.request.method
+    url = response.request.url.replace(API_URL, "")
+    # allso replace all between http*.com with ...
+    if "://" in url:
+        url = '/'.join(url.split('/')[3:])
+    status = response.status_code
+    reason = response.reason
+    msg = f"Response: {method} {url} {status} {reason}"
+    if status >= 400:
+        color = "red"
+    elif status >= 300:
+        color = "orange"
+    else:
+        color = "green"
+    
+    css = combine_css(
+        color = color, 
+        font_weight=("bold" if status >= 400 else "normal")
+        )
+
+    log_to_console(msg, css=css)
+
