@@ -63,7 +63,7 @@ class Application(VuetifyTemplate, HubListener):
         self.request_session = self.add_logging(request_session())
         
         # comment to display the UI message in the console
-        # self.observe(lambda change: log_to_console(change['new'], css="color:pink;"), 'loading_status_message')
+        self.observe(lambda change: log_to_console(change['new'], css="color:pink;"), 'loading_status_message')
 
         # NOTE: This procedure is only valid when using ContainDS
         if "JUPYTERHUB_USER" in os.environ:
@@ -284,48 +284,16 @@ class Application(VuetifyTemplate, HubListener):
             url = request.url.replace(API_URL, "")
             self.loading_status_message = f"Request: {method} {url}"
         
+        def response_to_message(response, *args, **kwargs):
+            method = response.request.method
+            url = response.request.url.replace(API_URL, "")
+            status = response.status_code
+            reason = response.reason
+            self.loading_status_message = f"Response: {method} {url} {status} {reason}"
+        
         adapter.on_send = request_to_message
+        adapter.on_response = response_to_message
         # make this session identifiable in the console logs
         adapter.set_prefix("Main App")
         
-        # use our own hooks to log the response
-        session.hooks = {'response': [self.log_response, self.display_response]}
         return session
-    
-    def log_response(self, response, *args, **kwargs):
-        """
-        Log the response to the console and set the "loading_status_message"
-        """
-        method = response.request.method
-        url = response.request.url.replace(API_URL, "")
-        status = response.status_code
-        reason = response.reason
-        msg = f"(Main App) Response: {method} {url} {status} {reason}"
-        if status >= 400:
-            color = "red"
-        elif status >= 300:
-            color = "orange"
-        else:
-            color = "green"
-        
-        css = combine_css(
-            color = color, 
-            font_weight=("bold" if status >= 400 else "normal")
-            )
-
-        log_to_console(msg, css=css)
-
-
-        
-    def display_response(self, response, *args, **kwargs):
-        """
-        Log the response to the console and set the "loading_status_message"
-        """
-        method = response.request.method
-        url = response.request.url.replace(API_URL, "")
-        reason = response.reason
-        msg = f"Response: {method} {url} {reason}"
-        self.loading_status_message = msg
-
-
-    

@@ -361,8 +361,8 @@ def request_session():
     """
     session = Session()
     session.mount(API_URL, LoggingAdapter())
-    hook = {"response": [log_response]}
-    session.hooks.update(hook)
+    # hook = {"response": [log_response]}
+    # session.hooks.update(hook)
     session.headers.update({"Authorization": os.getenv("CDS_API_KEY")})
     return session
 
@@ -385,47 +385,57 @@ class LoggingAdapter(adapters.HTTPAdapter):
     
     def set_prefix(self, prefix):
         self._log_prefix = prefix
+    
+    @staticmethod
+    def clean_url(url):
+        url = url.replace(API_URL, "")
+        if "://" in url:
+            url = '/'.join(url.split('/')[3:])
+        return url
+        
                                 
     def send(self, request, *args,  **kwargs):
+        
         method = request.method
-        url = request.url.replace(API_URL, "")
+        url = self.clean_url(request.url)
         msg = f"Request: {method} {url}"
+        
         if self._log_prefix:
             msg = f"({self._log_prefix}) {msg}"
+        
         css = combine_css(color="royalblue")
-        log_to_console(msg, css=css)
+        
         self.on_send(request)
+        log_to_console(msg, css=css)
         return super().send(request, *args, **kwargs)
+    
+    def build_response(self, req, resp):
+        response = super().build_response(req, resp)
+        request = response.request
+        method = request.method
+        url = self.clean_url(request.url)
+        status = response.status_code
+        reason = response.reason
+        
+        msg = f"Response: {method} {url} {status} {reason}"
+        if self._log_prefix:
+            msg = f"({self._log_prefix}) {msg}"
+        
+        css = combine_css(
+            color = "green" if status < 400 else "red",
+            font_weight=("bold" if status >= 400 else "normal")
+            )
+        
+        self.on_response(response)
+        log_to_console(msg, css=css)
+        return response
     
     @staticmethod
     def on_send(request):
         # needs to be given an implementation
         pass
-
     
-def log_response(response, *args, **kwargs):
-    """
-    Log the response to the console and set the "loading_status_message"
-    """
-    method = response.request.method
-    url = response.request.url.replace(API_URL, "")
-    # allso replace all between http*.com with ...
-    if "://" in url:
-        url = '/'.join(url.split('/')[3:])
-    status = response.status_code
-    reason = response.reason
-    msg = f"Response: {method} {url} {status} {reason}"
-    if status >= 400:
-        color = "red"
-    elif status >= 300:
-        color = "orange"
-    else:
-        color = "green"
-    
-    css = combine_css(
-        color = color, 
-        font_weight=("bold" if status >= 400 else "normal")
-        )
-
-    log_to_console(msg, css=css)
-
+    @staticmethod
+    def on_response(response):
+        # needs to be given an implementation
+        pass
