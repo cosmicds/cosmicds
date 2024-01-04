@@ -3,7 +3,7 @@ from ipyvuetify import VuetifyTemplate
 from glue.core.state_objects import State
 import requests
 
-from cosmicds.utils import API_URL, request_session
+from cosmicds.utils import API_URL, request_session, log_to_console
 
 __all__ = ['stage_registry']
 
@@ -74,6 +74,7 @@ class StoryRegistry(UniqueDictRegistry):
         for k, v in sorted(story_entry['stages'].items()):
             stage_cls = v['cls']
             stage_state = stage_cls._state_cls()
+            log_to_console(f"Setting up stage {k}")
             if state is not None and k in state["stages"] and "state" in state["stages"][k]:
                 stage_state.update_from_dict(state["stages"][k]["state"])
             stage = stage_cls(session, story_state, app_state, index=k, stage_state=stage_state)

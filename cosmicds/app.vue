@@ -7,7 +7,8 @@
       indeterminate
       color="primary"
       ></v-progress-circular>
-      Loading User Data...
+      <p>Loading User Data...</p>
+      <p> {{ loading_status_message }} </p>
     </v-overlay>
     <v-app-bar
       app
