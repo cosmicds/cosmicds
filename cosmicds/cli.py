@@ -41,7 +41,7 @@ def main(data_story):
         logging.getLogger('tornado.access').disabled = True
         Voila.notebook_path = filepath
         # Voila.tornado_settings = {'headers':{'Content-Security-Policy': 'frame-ancestors self *'}}
-        VoilaConfiguration.template = 'cosmicds-default'
+        # VoilaConfiguration.template = 'cosmicds-default'
         VoilaConfiguration.enable_nbextensions = True
         VoilaConfiguration.file_whitelist = ['.*']
         VoilaConfiguration.show_tracebacks = True
