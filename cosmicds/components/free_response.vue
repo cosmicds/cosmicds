@@ -73,15 +73,15 @@ module.exports = {
       allowedInput: {
         int: {
           characters: "-01233456789",
-          helpMessage: "Please input an integer"
+          helpMessage: "Please input an integer. (Be sure there are no spaces.)"
         },
         uint: {
           characters: "0123456789",
-          helpMessage: "Please input a non-negative integer"
+          helpMessage: "Please input a non-negative integer. (Be sure there are no spaces.)"
         },
         float: {
           characters: "-0123456789.",
-          helpMessage: "Please input a number"
+          helpMessage: "Please input a number. (Be sure there are no spaces.)"
         }
       }
     };
