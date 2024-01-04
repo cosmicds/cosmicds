@@ -65,7 +65,13 @@ class Application(VuetifyTemplate, HubListener):
         # comment to display the UI message in the console
         self.observe(lambda change: log_to_console(change['new'], css="color:pink;"), 'loading_status_message')
 
-        self._setup(story, **kwargs)
+        # NOTE: This procedure is only valid when using ContainDS
+        if "JUPYTERHUB_USER" in os.environ:
+            self.observe(lambda x: self._setup(story, **kwargs), 'hub_user_info')
+        else:
+            self._setup(story, **kwargs)
+
+        # self._setup(story, **kwargs)
 
     def _setup(self, story, **kwargs):
         db_init = False
