@@ -314,6 +314,23 @@
 <script>
 export default {
   async mounted() {
+    // NOTE: THIS IS ONLY VALID FOR CONTAINDS USAGE
+    // The environment does not always reflect the actual user account that's
+    // using the app, so fetch the current user info
+    var vm = this;
+    fetch(
+        '/hub/dashboards-api/hub-info/user',
+        {
+            mode: 'no-cors',
+            credentials: 'same-origin',
+            headers: new Headers({'Access-Control-Allow-Origin':'*'})
+        }
+    ).then(response=>response.json())
+    .then(data=>{
+        console.log(data);
+        vm.hub_user_info = data;
+    });
+
     // We ultimately don't want to expose this
     // It's just for testing purposes
     window.cdsApp = this;
