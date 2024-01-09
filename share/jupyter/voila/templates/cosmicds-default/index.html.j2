@@ -1,0 +1,26 @@
+{%- extends 'nbconvert/templates/cosmicds-default/index.html.j2' -%}
+
+{%- block html_head_css -%}
+{{ super() }}
+<style>
+  /* unhide the icon */
+  #kernel-status-icon {
+    display: unset;
+  }
+
+  /* Workaround for the Select/Dropdown widgets to be visible: */
+  select {
+    display: block;
+  }
+
+  /* Workaround for the RadioButtons widgets to be visible: */
+  [type="radio"]:not(:checked), [type="radio"]:checked {
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>
+
+{%- endblock html_head_css -%}
+
+

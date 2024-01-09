@@ -1,96 +1,69 @@
-{%- extends 'base.html.j2' -%}
-{% from 'mathjax.html.j2' import mathjax %}
-{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+{%- extends 'lab/index.html.j2' -%}
 
-{%- block header -%}
-<!DOCTYPE html>
-<html>
-<head>
-{%- block html_head -%}
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-{% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
-<title>{{nb_title}}</title>
+{# this overrides the default behavior of directly starting the kernel and executing the notebook #}
+{% block notebook_execute %}
+{% endblock notebook_execute %}
 
-{%- block html_head_js -%}
-{%- block html_head_js_requirejs -%}
-<script src="{{ resources.require_js_url }}"></script>
-{%- endblock html_head_js_requirejs -%}
-{%- endblock html_head_js -%}
-
-{% block jupyter_widgets %}
-  {%- if "widgets" in nb.metadata -%}
-    {{ jupyter_widgets(resources.jupyter_widgets_base_url, resources.html_manager_semver_range) }}
-  {%- endif -%}
-{% endblock jupyter_widgets %}
-
-{% block extra_css %}
-{% endblock extra_css %}
-
-{% for css in resources.inlining.css -%}
-  <style type="text/css">
-    {{ css }}
-  </style>
-{% endfor %}
-
-{% block notebook_css %}
-{{ resources.include_css("static/index.css") }}
+{%- block html_head_css -%}
+{{ super() }}
 {% if resources.theme == 'dark' %}
-    {{ resources.include_css("static/theme-dark.css") }}
+{% set bar_color = '#555454' %}
 {% else %}
-    {{ resources.include_css("static/theme-light.css") }}
+{% set bar_color = '#5cbcaf' %}
 {% endif %}
+
 <style type="text/css">
+  body {
+    background-color: var(--jp-layout-color0);
+  }
+
+  /* Overwrite default value */
+  .jp-Notebook {
+    padding: 0px !important;
+  }
+
+  div#rendered_cells {
+    padding: 0px; !important
+  }
+
+</style>
+
+<style>
 a.anchor-link {
-   display: none;
+  display: none;
 }
 .highlight  {
-    margin: 0.4em;
+  margin: 0.4em;
 }
-
-/* Input area styling */
-.jp-InputArea {
-    overflow: hidden;
-}
-
-.jp-InputArea-editor {
-    overflow: hidden;
-}
-
-@media print {
-  body {
-    margin: 0;
-  }
+/* we keep the DOM for nbconvert the same as for voila, but hide the status icon */
+#kernel-status-icon {
+  display: none;
 }
 </style>
 
-{% endblock notebook_css %}
-
-{{ mathjax() }}
-
-{%- block html_head_css -%}
 {%- endblock html_head_css -%}
 
-{%- endblock html_head -%}
-</head>
-{%- endblock header -%}
-
+{%- block body -%}
 {%- block body_header -%}
-{% if resources.theme == 'dark' %}
-<body class="jp-Notebook" data-jp-theme-light="false" data-jp-theme-name="JupyterLab Dark">
-{% else %}
-<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-{% endif %}
+  {{ super() }}
+  <main>
+    
 {%- endblock body_header -%}
 
-{% block body_footer %}
-</body>
-{% endblock body_footer %}
+{%- block body_loop -%}
+          {% if resources.theme == 'dark' %}
+          <div class="jp-Notebook theme-dark">
+          {% else %}
+          <div class="jp-Notebook theme-light">
+          {% endif %}
+            {{ super() }}
+          </div>
+{%- endblock body_loop -%}
 
-{% block footer %}
-{% block footer_js %}
-{% endblock footer_js %}
-{{ super() }}
-</html>
-{% endblock footer %}
+{%- block body_footer -%}
+  </main>
+  {{ super() }}
+  {{ resources.include_js("static/require.js") }}
+{%- endblock body_footer -%}
 
+{%- endblock body -%}
