@@ -228,24 +228,22 @@
       </v-list>
     </v-navigation-drawer>
     -->
-    
-    <v-main>
-      <v-content>
-        <v-container fluid>
-          <v-tabs-items v-model="story_state.stage_index">
-            <v-tab-item
-              v-for="(stage, key, index) in story_state.stages"
-              :key="index"
-            >
-              <v-card flat>
-                <v-card-title style="display: none;">{{ stage.title }}</v-card-title>
-                <jupyter-widget :widget="stage.model_id"/>
-              </v-card>
-            </v-tab-item>
-          </v-tabs-items>
-        </v-container>
-      </v-content>
-    </v-main>
+
+    <v-content>
+      <v-container fluid style="height: calc(100vh - 96px); overflow-y: auto;">
+        <v-tabs-items v-model="story_state.stage_index">
+          <v-tab-item
+            v-for="(stage, key, index) in story_state.stages"
+            :key="index"
+          >
+            <v-card flat>
+              <v-card-title style="display: none;">{{ stage.title }}</v-card-title>
+              <jupyter-widget :widget="stage.model_id"/>
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
+      </v-container>
+    </v-content>
 
     <v-footer
       app
