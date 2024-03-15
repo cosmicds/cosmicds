@@ -57,19 +57,26 @@ def Layout(children=[]):
                                         children=f"{route.label if route.path != '/' else 'Introduction'}"
                                     )
 
-        with rv.Content():
-            with rv.Container(children=children, style_="max-width: 1264px"):
-
-                solara.Text(f"{level} / {route_current.path}")
+        with rv.Content(style_="height: 100%;"):
+            with rv.Container(
+                children=children,
+                style_="max-width: 1264px; overflow-y: auto; height: 100%",
+                fluid=True,
+            ):
                 pass
 
-        with rv.Footer(class_="text-center", padless=True, app=True, inset=True):
+        with rv.Footer(
+            class_="text-center",
+            padless=True,
+            app=True,
+            inset=True,
+        ):
             with rv.Card(flat=True, tile=True, style_="width: 100%"):
                 rv.Divider()
 
                 with rv.CardText():
                     solara.HTML(
-                        tag="p",
+                        tag="span",
                         unsafe_innerHTML=rf"""
                     The material contained on this website is based upon 
                     work supported by NASA under award No. 80NSSC21M0002. 
@@ -80,3 +87,5 @@ def Layout(children=[]):
                     <br />{datetime.date.today().year} - <strong>CosmicDS</strong>
                     """,
                     )
+
+    return main
