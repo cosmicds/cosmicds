@@ -14,7 +14,8 @@ def Layout(children=[]):
     route_current, routes_current_level = solara.use_route()
     selected_link, on_selected_link = solara.use_state(0)
 
-    with rv.App() as main:
+    with rv.App(style_="height: 100vh") as main:
+        # with rv.Html(tag="div", style_="height: 100vh") as main:
         solara.Title("Cosmic Data Stories")
 
         with rv.AppBar(elevate_on_scroll=False, app=True, flat=True):
@@ -57,13 +58,16 @@ def Layout(children=[]):
                                         children=f"{route.label if route.path != '/' else 'Introduction'}"
                                     )
 
-        with rv.Content(style_="height: 100%;"):
+        with rv.Content(class_="solara-content-main", style_="height: 100%"):
             with rv.Container(
-                children=children,
-                style_="max-width: 1264px; overflow-y: auto; height: 100%",
+                # children=children,
+                class_="solara-container-main",
+                style_="height: 100%; width: 100%; overflow: auto;",
                 fluid=True,
             ):
-                pass
+                rv.Container(
+                    children=children, style_="height: 100%; width: 100%", fluid=False
+                )
 
         with rv.Footer(
             class_="text-center",
