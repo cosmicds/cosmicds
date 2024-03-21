@@ -42,13 +42,13 @@
           v-else
           class="mx-2 shrink"
         >
-          <speech-synthesizer/>
+<!--          <speech-synthesizer/>-->
         </v-col>
         <v-col
           v-if="allowBack"
           class="mx-2 shrink"
         >
-          <speech-synthesizer/>
+<!--          <speech-synthesizer/>-->
         </v-col>
         <v-col
           v-else
