@@ -12,6 +12,7 @@ def ScaffoldAlert(
     disableNext=False,
     frListener=None,
     state_view=None,
+    event_force_transition=lambda: None,
 ):
     if not show:
         return
@@ -26,6 +27,7 @@ def ScaffoldAlert(
         disableNext,
         frListener,
         state_view,
+        event_force_transition,
     ):
         pass
 
@@ -38,4 +40,5 @@ def ScaffoldAlert(
         disableNext=disableNext,
         frListener=frListener,
         state_view=state_view,
+        event_force_transition=event_force_transition,
     )

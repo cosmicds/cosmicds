@@ -184,7 +184,7 @@ module.exports = {
   },
   computed: {
     advance() {
-      return !this.canAdvance;
+      return this.canAdvance;
     },
     header() {
       if (this.headerText instanceof Function) {

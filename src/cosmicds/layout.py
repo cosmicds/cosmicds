@@ -7,6 +7,8 @@ from reacton import ipyvuetify as rv
 import datetime
 from solara_enterprise import auth
 
+from .components import MathJaxSupport
+
 
 @solara.component
 def Layout(children=[]):
@@ -34,6 +36,9 @@ def Layout(children=[]):
                     solara.Text("1")
 
                 solara.Text("Points")
+
+            # Mount external javascript libraries
+            # MathJaxSupport()
 
         with rv.NavigationDrawer(app=True):  # , width=300):
             with rv.ListItem():
