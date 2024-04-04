@@ -3,16 +3,16 @@ import solara
 
 def ScaffoldAlert(
     vue_path: str,
-    event_back_callback=lambda: False,
-    event_next_callback=lambda: False,
+    event_back_callback=lambda *args: True,
+    event_next_callback=lambda *args: True,
     show=False,
     can_advance=False,
-    frObserver=None,
-    freeResponses=[],
-    disableNext=False,
-    frListener=None,
+    fr_observer=None,
+    free_responses=[],
+    disable_next=False,
+    fr_listener=None,
     state_view=None,
-    event_force_transition=lambda: None,
+    event_force_transition=lambda *args: None,
 ):
     if not show:
         return
@@ -35,10 +35,10 @@ def ScaffoldAlert(
         event_back_callback=event_back_callback,
         event_next_callback=event_next_callback,
         can_advance=can_advance,
-        frObserver=frObserver,
-        freeResponses=freeResponses,
-        disableNext=disableNext,
-        frListener=frListener,
+        frObserver=fr_observer,
+        freeResponses=free_responses,
+        disableNext=disable_next,
+        frListener=fr_listener,
         state_view=state_view,
         event_force_transition=event_force_transition,
     )
