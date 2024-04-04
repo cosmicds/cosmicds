@@ -20,6 +20,9 @@ def Layout(children=[]):
         # with rv.Html(tag="div", style_="height: 100vh") as main:
         solara.Title("Cosmic Data Stories")
 
+        # Mount external javascript libraries
+        MathJaxSupport()
+
         with rv.AppBar(elevate_on_scroll=False, app=True, flat=True):
             rv.ToolbarTitle(children=["CosmicDS"])
 
@@ -36,9 +39,6 @@ def Layout(children=[]):
                     solara.Text("1")
 
                 solara.Text("Points")
-
-            # Mount external javascript libraries
-            # MathJaxSupport()
 
         with rv.NavigationDrawer(app=True):  # , width=300):
             with rv.ListItem():
