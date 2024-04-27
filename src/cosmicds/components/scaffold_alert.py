@@ -1,4 +1,5 @@
 import solara
+import inspect
 
 
 def ScaffoldAlert(
@@ -13,11 +14,11 @@ def ScaffoldAlert(
     fr_listener=None,
     state_view=None,
     event_force_transition=lambda *args: None,
+    **kwargs
 ):
     if not show:
         return
 
-    @solara.component_vue(vue_path)
     def _ScaffoldAlert(
         event_back_callback,
         event_next_callback,
@@ -31,6 +32,18 @@ def ScaffoldAlert(
     ):
         pass
 
+    signature = inspect.signature(_ScaffoldAlert)
+    parameters = list(signature.parameters.values()) + [
+        inspect.Parameter(
+            name=k,
+            kind=inspect.Parameter.KEYWORD_ONLY,
+        )
+        for k in kwargs.keys()
+    ]
+    _ScaffoldAlert.__signature__ = signature.replace(parameters=parameters)
+
+    _ScaffoldAlert = solara.component_vue(vue_path)(_ScaffoldAlert)
+
     return _ScaffoldAlert(
         event_back_callback=event_back_callback,
         event_next_callback=event_next_callback,
@@ -41,4 +54,5 @@ def ScaffoldAlert(
         frListener=fr_listener,
         state_view=state_view,
         event_force_transition=event_force_transition,
+        **kwargs
     )
