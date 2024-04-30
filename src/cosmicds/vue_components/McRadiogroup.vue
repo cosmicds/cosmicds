@@ -59,11 +59,16 @@
 
 <script>
 module.exports = {
+  
   props: {
+    initialization: {
+      type: Object,
+      default: () => undefined
+    },
     feedbacks: Array,
     correctAnswers: {
       type: Array,
-      default: []
+      default: () => []
     },
     scoring: {
       type: Boolean,
@@ -71,7 +76,7 @@ module.exports = {
     },
     neutralAnswers: {
       type: Array,
-      default: []
+      default: () => []
     },
     points: {
       type: [Array, Function],
@@ -88,18 +93,23 @@ module.exports = {
              typeof status.correct === 'boolean' &&
              typeof status.neutral === 'boolean' &&
              typeof status.tries === 'number';
-    }
+    },
   },
   created() {
     if (!this.scoreTag) { return; }
-    document.addEventListener("mc-initialize-response", this.onInitResponse);
-    document.dispatchEvent(
-      new CustomEvent("mc-initialize", {
-        detail: {
-          tag: this.scoreTag
-        }
-      })
-    );
+    this.$emit('mc-initialize-response', this.scoreTag);
+  },
+  
+  mounted() {    
+    
+    if (this.initialization) {
+      if (this.initialization.tag !== this.scoreTag) { return; }
+      this.tries = this.initialization.tries ?? this.tries;
+      this.wrongAttempts = this.initialization.wrong_attempts ?? this.wrongAttempts;
+      if (this.initialization.choice !== undefined) {
+        this.selectChoice(this.initialization.choice, true);  // No need to update counts and send message for initialization
+      }
+    }
   },
   data: function () {
     return {
@@ -133,18 +143,15 @@ module.exports = {
         this.score = this.getScore(this.wrongAttempts);
       }
       if (this.scoreTag !== undefined && !forInitialization) {
-        document.dispatchEvent(
-          new CustomEvent("mc-score", {
-            detail: {
-              tag: this.scoreTag,
-              score: this.score,
-              choice: this.column,
-              tries: this.tries,
-              wrong_attempts: this.wrongAttempts
-            }
-          })
-        );
+        this.$emit("mc-score", {
+          tag: this.scoreTag,
+          score: this.score,
+          choice: this.column,
+          tries: this.tries,
+          wrong_attempts: this.wrongAttempts
+        });
       }
+      
       this.$emit('select', {
         index: index,
         correct: correct,
@@ -177,16 +184,6 @@ module.exports = {
         return this.points(nwrong);
       }
     },
-    onInitResponse(event) {
-      const data = event.detail;
-      if (data.tag !== this.scoreTag) { return; }
-      if (data.found) {
-        this.tries = data.tries;
-        this.wrongAttempts = data.wrong_attempts;
-        this.selectChoice(data.choice, true);  // No need to update counts and send message for initialization
-      }
-      document.removeEventListener("mc-initialize-response", this.onInitResponse);
-    }
   }
 };
 </script>
