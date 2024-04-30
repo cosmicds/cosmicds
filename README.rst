@@ -1,69 +1,49 @@
-Cosmic Data Stories
--------------------
+.. These are examples of badges you might want to add to your README:
+   please update the URLs accordingly
 
-The CosmicDS team, led by Principal Investigator Alyssa Goodman and Science PI 
-Patricia Udomprasert, will facilitate connections between astronomers who want 
-to tell the story of a discovery and inspire learners by letting them 
-interrogate the data behind the story on their own, using easy-to-use but 
-powerful data science and visualization techniques.
+    .. image:: https://api.cirrus-ci.com/github/<USER>/cosmicds.svg?branch=main
+        :alt: Built Status
+        :target: https://cirrus-ci.com/github/<USER>/cosmicds
+    .. image:: https://readthedocs.org/projects/cosmicds/badge/?version=latest
+        :alt: ReadTheDocs
+        :target: https://cosmicds.readthedocs.io/en/stable/
+    .. image:: https://img.shields.io/coveralls/github/<USER>/cosmicds/main.svg
+        :alt: Coveralls
+        :target: https://coveralls.io/r/<USER>/cosmicds
+    .. image:: https://img.shields.io/pypi/v/cosmicds.svg
+        :alt: PyPI-Server
+        :target: https://pypi.org/project/cosmicds/
+    .. image:: https://img.shields.io/conda/vn/conda-forge/cosmicds.svg
+        :alt: Conda-Forge
+        :target: https://anaconda.org/conda-forge/cosmicds
+    .. image:: https://pepy.tech/badge/cosmicds/month
+        :alt: Monthly Downloads
+        :target: https://pepy.tech/project/cosmicds
+    .. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Twitter
+        :alt: Twitter
+        :target: https://twitter.com/cosmicds
 
-Installation
-------------
+.. image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
+    :alt: Project generated with PyScaffold
+    :target: https://pyscaffold.org/
 
-Install the latest version of the package through `pip` in a local python
-environment:
+|
 
-   $ pip install git+https://github.com/cosmicds/cosmicds
-
-Load a data story using the command line::
-
-   $ cosmicds hubble
-
-Development
------------
-
-To reload app.vue within Jupyter notebook using app.reload(), use "-e" flag during installation using the files in your local cosmicds directory:
-
-    $ pip install -e .
-
-License
--------
-
-This project is Copyright (c) CosmicDS Developers and licensed under
-the terms of the GNU GPL v3+ license. This package is based upon
-the `Openastronomy packaging guide <https://github.com/OpenAstronomy/packaging-guide>`_
-which is licensed under the BSD 3-clause licence. See the licenses folder for
-more information.
+========
+cosmicds
+========
 
 
-Contributing
-------------
+    Add a short description here!
 
-We love contributions! cosmicds is open source,
-built on open source, and we'd love to have you hang out in our community.
 
-**Imposter syndrome disclaimer**: We want your help. No, really.
+A longer description of your project goes here...
 
-There may be a little voice inside your head that is telling you that you're not
-ready to be an open source contributor; that your skills aren't nearly good
-enough to contribute. What could you possibly offer a project like this one?
 
-We assure you - the little voice in your head is wrong. If you can write code at
-all, you can contribute code to open source. Contributing to open source
-projects is a fantastic way to advance one's coding skills. Writing perfect code
-isn't the measure of a good developer (that would disqualify all of us!); it's
-trying to create something, making mistakes, and learning from those
-mistakes. That's how we all improve, and we are happy to help others learn.
+.. _pyscaffold-notes:
 
-Being an open source contributor doesn't just mean writing code, either. You can
-help out by writing documentation, tests, or even giving feedback about the
-project (and yes - that includes giving feedback about the contribution
-process). Some of these contributions may be the most valuable to the project as
-a whole, because you're coming to the project with fresh eyes, so you can see
-the errors and assumptions that seasoned contributors have glossed over.
+Note
+====
 
-Note: This disclaimer was originally written by
-`Adrienne Lowe <https://github.com/adriennefriend>`_ for a
-`PyCon talk <https://www.youtube.com/watch?v=6Uj746j9Heo>`_, and was adapted by
-cosmicds based on its use in the README file for the
-`MetPy project <https://github.com/Unidata/MetPy>`_.
+This project has been set up using PyScaffold 4.5. For details and usage
+information on PyScaffold see https://pyscaffold.org/.

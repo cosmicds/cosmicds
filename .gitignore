@@ -1,73 +1,54 @@
-# Compiled files
-*.py[cod]
-*.a
-*.o
-*.so
-__pycache__
-
-# Ignore .c files by default to avoid including generated code. If you want to
-# add a non-generated .c extension, use `git add -f filename.c`.
-*.c
-
-# Other generated files
-*/version.py
-*/cython_version.py
-htmlcov
-.coverage
-MANIFEST
-.ipynb_checkpoints
-notebooks/*.fits
-
-# Environment variable definitions
-.env
-
-# Sphinx
-docs/api
-docs/_build
-
-# Eclipse editor project files
-.project
-.pydevproject
-.settings
-
-# Pycharm editor project files
-.idea
-
-# Floobits project files
-.floo
-.flooignore
-
-# Packages/installer info
-*.egg
-*.egg-info
-dist
-build
-eggs
-parts
-bin
-var
-sdist
-develop-eggs
-.installed.cfg
-distribute-*.tar.gz
-
-# Other
-.cache
-.tox
-.*.sw[op]
+# Temporary and binary files
 *~
-.project
-.pydevproject
-.settings
-pip-wheel-metadata
-.vscode
-.pytest_cache
-.tmp
-.eggs
-.python-version
-
-# Mac OSX
+*.py[cod]
+*.so
+*.cfg
+!.isort.cfg
+!setup.cfg
+*.orig
+*.log
+*.pot
+__pycache__/*
+.cache/*
+.*.swp
+*/.ipynb_checkpoints/*
 .DS_Store
 
-# Environments
-/env*
+# Project files
+.ropeproject
+.project
+.pydevproject
+.settings
+.idea
+.vscode
+tags
+
+# Package files
+*.egg
+*.eggs/
+.installed.cfg
+*.egg-info
+
+# Unittest and coverage
+htmlcov/*
+.coverage
+.coverage.*
+.tox
+junit*.xml
+coverage.xml
+.pytest_cache/
+
+# Build and docs folder/files
+build/*
+dist/*
+sdist/*
+docs/api/*
+docs/_rst/*
+docs/_build/*
+cover/*
+MANIFEST
+
+# Per-project virtualenvs
+.venv*/
+.conda*/
+.python-version
