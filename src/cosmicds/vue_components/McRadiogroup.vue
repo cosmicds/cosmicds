@@ -97,7 +97,7 @@ module.exports = {
   },
   created() {
     if (!this.scoreTag) { return; }
-    this.$emit('mc-initialize-response', this.scoreTag);
+    this.$emit("mc-emit",['mc-initialize-response', this.scoreTag]);
   },
   
   mounted() {    
@@ -143,13 +143,13 @@ module.exports = {
         this.score = this.getScore(this.wrongAttempts);
       }
       if (this.scoreTag !== undefined && !forInitialization) {
-        this.$emit("mc-score", {
+        this.$emit("mc-emit", ["mc-score", {
           tag: this.scoreTag,
           score: this.score,
           choice: this.column,
           tries: this.tries,
           wrong_attempts: this.wrongAttempts
-        });
+        }]);
       }
       
       this.$emit('select', {
