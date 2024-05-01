@@ -2,7 +2,7 @@ import os
 
 from cosmicds.utils import load_template
 from ipyvuetify import VuetifyTemplate
-from traitlets import HasTraits, Dict, Instance, Unicode, Any, observe
+from traitlets import HasTraits, Dict, Instance, Any, observe
 from glue.viewers.common.tool import Tool, CheckableTool
 
 class Toolbar(VuetifyTemplate):
