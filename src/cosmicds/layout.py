@@ -6,9 +6,9 @@ from reacton import ipyvuetify as rv
 
 import datetime
 from solara_enterprise import auth
+from solara.lab import theme as theme
 
 from .components import MathJaxSupport
-
 
 @solara.component
 def Layout(children=[]):
@@ -31,8 +31,7 @@ def Layout(children=[]):
             with rv.Btn(icon=True):
                 rv.Icon(children=["mdi-tune-vertical"])
 
-            with rv.Btn(icon=True):
-                rv.Icon(children=["mdi-brightness-4"])
+            solara.lab.ThemeToggle(on_icon ="mdi-brightness-4", off_icon ="mdi-brightness-4", enable_auto = False)
 
             with rv.Chip(class_="ma-2"):
                 with rv.Avatar(left=True, class_="darken-4"):
