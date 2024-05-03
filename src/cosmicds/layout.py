@@ -75,26 +75,39 @@ def Layout(children=[]):
                 )
 
         with rv.Footer(
-            class_="text-center",
+            class_="text-center align-items",
             padless=True,
             app=True,
             inset=True,
         ):
-            with rv.Card(flat=True, tile=True, style_="width: 100%"):
+            with rv.Card(flat=True, tile=True, class_="cosmicds-footer", style_="width: 100%;"):
                 rv.Divider()
 
-                with rv.CardText():
-                    solara.HTML(
-                        tag="span",
-                        unsafe_innerHTML=rf"""
-                    The material contained on this website is based upon 
-                    work supported by NASA under award No. 80NSSC21M0002. 
-                    Any opinions, findings, and conclusions or 
-                    recommendations expressed in this material are those of 
-                    the author(s) and do not necessarily reflect the views 
-                    of the National Aeronautics and Space Administration.
-                    <br />{datetime.date.today().year} - <strong>CosmicDS</strong>
-                    """,
-                    )
+                with solara.Columns([2,10]):
+                    with solara.Column(classes=["cosmicds-footer"]):
+                        with rv.CardText():
+                            solara.HTML(
+                                unsafe_innerHTML=
+                                rf"""
+                                {datetime.date.today().year} - <b>CosmicDS</b>
+                                """,
+                                style="font-size: 18px;"
+                            )
+
+                    with solara.Column(classes=["cosmicds-footer"]):
+                        with rv.CardText():
+                            solara.HTML(
+                                tag="span",
+                                unsafe_innerHTML=
+                            """
+                            The material contained on this website is based upon 
+                            work supported by NASA under award No. 80NSSC21M0002. 
+                            Any opinions, findings, and conclusions or 
+                            recommendations expressed in this material are those of 
+                            the author(s) and do not necessarily reflect the views 
+                            of the National Aeronautics and Space Administration.
+                            """,
+                                style="font-size: 12px; line-height: 12px",
+                            )
 
     return main
