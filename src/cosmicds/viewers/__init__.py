@@ -8,6 +8,8 @@ from numpy import spacing
 from .state import CDSHistogramViewerState, CDSScatterViewerState
 from .viewer import cds_viewer
 
+from .dotplot import PlotlyDotPlotView
+
 CDSScatterView = cds_viewer(
     PlotlyScatterView,
     state_cls=CDSScatterViewerState,
@@ -30,4 +32,14 @@ CDSHistogramView = cds_viewer(
         'plotly:xrange'
     ],
     label='Histogram'
+)
+
+CDSDotPlotView = cds_viewer(
+    PlotlyDotPlotView,
+    state_cls=CDSHistogramViewerState,
+    name='CDSDotPlotView',
+    viewer_tools=[
+        'plotly:home'
+    ],
+    label="Dot Plot"
 )
