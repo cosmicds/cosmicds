@@ -13,6 +13,8 @@ from traitlets import Unicode, HasTraits
 
 from cosmicds.utils import fit_line, line_mark
 
+
+
 @viewer_tool
 class LineFitTool(Tool, HubListener, HasTraits):
 
@@ -93,7 +95,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def _on_data_collection_deleted(self, msg):
         remove = [layer for layer in self.lines.keys() if layer.state.layer == msg.data]
         lines = [self.lines[x] for x in remove]
-        self.figure.marks = [mark for mark in self.figure.marks if mark not in lines]
+        self.figure.data = [mark for mark in self.figure.data if mark not in lines]
         for layer in remove:
             self._remove_line(layer)
 
@@ -209,7 +211,13 @@ class LineFitTool(Tool, HubListener, HasTraits):
         slope = fit.slope.value
         label = self.label(layer, fit) if self.show_labels else None
         color = layer.state.color if layer.state.color != '0.35' else 'black'
-        line = line_mark(layer, start_x, start_y, end_x, end_y, color, label)
+        try:
+            color = float(color)
+            h = f"{int(color * 255):02x}"
+            color = f"#{h}{h}{h}"
+        except ValueError:
+            pass
+        line = line_mark(start_x, start_y, end_x, end_y, color, label)
         return line, slope
 
     def _update_fit_line(self, layer):
@@ -238,22 +246,21 @@ class LineFitTool(Tool, HubListener, HasTraits):
             if line is None:
                 return
             data = layer.state.layer
+            if add_marks:
+                line = self.figure.add_trace(line).data[-1]
             self.lines[data] = line
             self.slopes[data] = slope
         except (IncompatibleAttribute, LinAlgError, SystemError) as e:
             pass
 
-        if add_marks:
-            self.figure.marks = self.figure.marks + [line]
+        
 
     def _fit_to_layers(self):
 
         self._clear_lines()
         for layer in self.visible_layers:
             if not any(condition(layer) for condition in self._ignore_conditions):
-                self._fit_to_layer(layer, add_marks=False)
-
-        self.figure.marks = self.figure.marks + list(self.line_marks)
+                self._fit_to_layer(layer, add_marks=True)
 
     def _update_fit_line_for_data(self, data):
         for layer in self.visible_layers:
@@ -266,10 +273,10 @@ class LineFitTool(Tool, HubListener, HasTraits):
         line = self.lines.get(data, None)
         self.lines.pop(data, None)
         self.slopes.pop(data, None)
-        self.figure.marks = [mark for mark in self.figure.marks if mark != line]
+        self.figure.data = [mark for mark in self.figure.data if mark != line]
 
     def _clear_lines(self):
-        self.figure.marks = [mark for mark in self.figure.marks if mark not in self.line_marks]
+        self.figure.data = [mark for mark in self.figure.data if mark not in self.line_marks]
         self.lines = {}
         self.slopes = {}
 
