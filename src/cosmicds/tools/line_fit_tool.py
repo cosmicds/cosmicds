@@ -66,7 +66,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     def label(self, layer, line):
         slope = line.slope.value
-        return f"Slope: f{slope}" if not isnan(slope) else None
+        return f"Slope: {slope}" if not isnan(slope) else None
 
 
     # Message filters
