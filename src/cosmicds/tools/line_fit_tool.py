@@ -130,9 +130,9 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
         # Update the color
         # If we have other properties to update in the future, we can do so here
-        color = layer.state.color if layer.state.color != '0.35' else 'black'
-        if mark.colors[0] != color:
-            mark.colors = [color]
+        color = self._get_layer_color(layer)
+        if mark.color != color:
+            mark.color = color
 
 
     # Properties
