@@ -185,6 +185,18 @@ class LineFitTool(Tool, HubListener, HasTraits):
     def remove_ignore_condition(self, condition):
         self._ignore_conditions.remove(condition)
         self._refresh_if_active()
+    
+    @staticmethod
+    def _get_layer_color(layer):
+        color = layer.state.color if layer.state.color != '0.35' else 'black'
+        try:
+            # convert to hex for Plotly
+            color = float(color)
+            h = f"{int(color * 255):02x}"
+            color = f"#{h}{h}{h}"
+        except ValueError:
+            pass
+        return color
 
 
     # Methods for fitting lines
@@ -210,13 +222,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
         start_y, end_y = y
         slope = fit.slope.value
         label = self.label(layer, fit) if self.show_labels else None
-        color = layer.state.color if layer.state.color != '0.35' else 'black'
-        try:
-            color = float(color)
-            h = f"{int(color * 255):02x}"
-            color = f"#{h}{h}{h}"
-        except ValueError:
-            pass
+        color = self._get_layer_color(layer)
         line = line_mark(start_x, start_y, end_x, end_y, color, label)
         return line, slope
 
@@ -233,9 +239,9 @@ class LineFitTool(Tool, HubListener, HasTraits):
             self.slopes[data] = slope
             label = self.label(layer, fit) if self.show_labels else None
             is_label = label is not None
-            mark.colors = [layer.state.color if layer.state.color != '0.35' else 'black']
-            mark.display_legend = is_label
-            mark.labels = [label] if is_label else []
+            mark.marker['color'] = self._get_layer_color(layer)
+            mark.showlegend = is_label
+            mark.name = label if is_label else ''
         else:
             self._fit_to_layer(layer)
 
