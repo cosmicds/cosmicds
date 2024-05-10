@@ -31,6 +31,7 @@ def ScaffoldAlert(
             - If False, display whatever is in the before-next template in place of the "next" button. 
             - If True, display "next" button (or whatever text you specified for the button in "nextText" instead of "next.")
             - If you don't want to display a next button at all, you can set this to False and leave the before-next template blank. 
+
         fr_observer=None,
             ? TBD depending on how we connect this to the state. (The original usage of this in the voila version was to observe if new free response boxes were being added as the student progressed through the guideline, as in the case of the multi-step, expanding guidelines).
         free_responses=[],
