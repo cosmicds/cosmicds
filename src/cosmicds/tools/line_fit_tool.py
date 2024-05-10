@@ -93,11 +93,11 @@ class LineFitTool(Tool, HubListener, HasTraits):
     # Message handlers
 
     def _on_data_collection_deleted(self, msg):
-        remove = [layer for layer in self.lines.keys() if layer.state.layer == msg.data]
+        remove = [data for data in self.lines.keys() if data == msg.data]
         lines = [self.lines[x] for x in remove]
         self.figure.data = [mark for mark in self.figure.data if mark not in lines]
-        for layer in remove:
-            self._remove_line(layer)
+        for state in remove:
+            self._remove_line(state)
 
     def _refresh_if_active(self):
         if self.active:
@@ -115,11 +115,12 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     def _on_layer_visibility_updated(self, msg):
         layer = msg.layer_artist
-        visible = layer.state.visible
+        state = layer.state
+        visible = state.visible
         if visible:
-            self._update_fit_line(layer)
+            self._update_fit_line(state)
         else:
-            self._remove_line(layer)
+            self._remove_line(state)
 
     def _on_layer_artist_updated(self, msg):
         layer = msg.layer_artist
@@ -130,7 +131,7 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
         # Update the color
         # If we have other properties to update in the future, we can do so here
-        color = self._get_layer_color(layer)
+        color = self._get_layer_color(layer.state)
         if mark.color != color:
             mark.color = color
 
@@ -147,11 +148,11 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     @property
     def visible_layers(self):
-        return filter(lambda layer: layer.state.visible, self.viewer.layers)
+        return filter(lambda state: state.visible, self.viewer.state.layers)
 
     @property
     def layer_labels(self):
-        return [x.state.layer.label for x in self.viewer.layers]
+        return [state.layer.label for state in self.viewer.state.layers]
 
     @property
     def hub(self):
@@ -187,8 +188,8 @@ class LineFitTool(Tool, HubListener, HasTraits):
         self._refresh_if_active()
     
     @staticmethod
-    def _get_layer_color(layer):
-        color = layer.state.color if layer.state.color != '0.35' else 'black'
+    def _get_layer_color(state):
+        color = state.color if state.color != '0.35' else 'black'
         try:
             # convert to hex for Plotly
             color = float(color)
@@ -201,16 +202,16 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     # Methods for fitting lines
 
-    def _fit_line(self, layer):
-        data = layer.state.layer
+    def _fit_line(self, state):
+        data = state.layer
         x = data[self.viewer.state.x_att]
         y = data[self.viewer.state.y_att]
         return fit_line(x, y)
 
-    def _create_fit_line(self, layer):
+    def _create_fit_line(self, state):
 
         # Do the fit
-        fit = self._fit_line(layer)
+        fit = self._fit_line(state)
         if fit is None:
             return None, None
     
@@ -221,15 +222,15 @@ class LineFitTool(Tool, HubListener, HasTraits):
         start_x, end_x = self.x_range
         start_y, end_y = y
         slope = fit.slope.value
-        label = self.label(layer, fit) if self.show_labels else None
-        color = self._get_layer_color(layer)
+        label = self.label(state, fit) if self.show_labels else None
+        color = self._get_layer_color(state)
         line = line_mark(start_x, start_y, end_x, end_y, color, label)
         return line, slope
 
-    def _update_fit_line(self, layer):
-        data = layer.state.layer
+    def _update_fit_line(self, state):
+        data = state.layer
         if data in self.lines.keys():
-            fit = self._fit_line(layer)
+            fit = self._fit_line(state)
             if fit is None:
                 return
             mark = self.lines[data]
@@ -237,21 +238,21 @@ class LineFitTool(Tool, HubListener, HasTraits):
             mark.y = fit(self.x_range)
             slope = fit.slope.value
             self.slopes[data] = slope
-            label = self.label(layer, fit) if self.show_labels else None
+            label = self.label(state, fit) if self.show_labels else None
             is_label = label is not None
-            mark.marker['color'] = self._get_layer_color(layer)
+            mark.marker['color'] = self._get_layer_color(state)
             mark.showlegend = is_label
             mark.name = label if is_label else ''
         else:
-            self._fit_to_layer(layer)
+            self._fit_to_layer(state)
 
 
-    def _fit_to_layer(self, layer, add_marks=True):
+    def _fit_to_layer(self, state, add_marks=True):
         try:
-            line, slope = self._create_fit_line(layer)
+            line, slope = self._create_fit_line(state)
             if line is None:
                 return
-            data = layer.state.layer
+            data = state.layer
             if add_marks:
                 line = self.figure.add_trace(line).data[-1]
             self.lines[data] = line
@@ -262,20 +263,19 @@ class LineFitTool(Tool, HubListener, HasTraits):
         
 
     def _fit_to_layers(self):
-
         self._clear_lines()
-        for layer in self.visible_layers:
-            if not any(condition(layer) for condition in self._ignore_conditions):
-                self._fit_to_layer(layer, add_marks=True)
+        for state in self.visible_layers:
+            if not any(condition(state) for condition in self._ignore_conditions):
+                self._fit_to_layer(state, add_marks=True)
 
     def _update_fit_line_for_data(self, data):
-        for layer in self.visible_layers:
-            if layer.state.layer == data:
-                self._update_fit_line(layer)
+        for state in self.visible_layers:
+            if state.layer == data:
+                self._update_fit_line(state)
                 return
 
-    def _remove_line(self, layer):
-        data = layer.state.layer
+    def _remove_line(self, state):
+        data = state.layer
         line = self.lines.get(data, None)
         self.lines.pop(data, None)
         self.slopes.pop(data, None)
