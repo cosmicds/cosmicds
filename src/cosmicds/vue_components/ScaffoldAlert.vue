@@ -73,6 +73,7 @@
             style="font-size: 16px;"
           >
             <v-btn
+              v-if="!hideNext"
               class="black--text"
               color="accent"
               elevation="2"
@@ -172,7 +173,12 @@ module.exports = {
     requireFr: {
       type: Boolean,
       default: true
-    }
+    },
+    hideNext: {
+      type: Boolean,
+      default: false
+    },
+
   },
   data() {
     return {
