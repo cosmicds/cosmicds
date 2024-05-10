@@ -56,7 +56,7 @@ class _LayerToggle(VuetifyTemplate):
 
     def watched_layer_states(self, layers=None):
         layers = layers or self.viewer.state.layers
-        return sorted([state for state in layers if not self._ignore_layer(state)], key=self.sort)
+        return sorted([state for state in layers if not self._ignore_layer(state)], key=lambda state: state.zorder)
 
     def add_ignore_condition(self, condition):
         self._ignore_conditions.append(condition)
