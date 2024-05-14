@@ -8,7 +8,7 @@ import os
 
 class _LayerToggle(VuetifyTemplate):
     # absolute path for __file__ /.. / .. / "vue_components" / "layer_toggle.vue"
-    template_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "vue_components", "layer_toggle.vue"))
+    template_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "layer_toggle.vue"))
     layers = List().tag(sync=True)
     selected = List().tag(sync=True)
 
