@@ -16,7 +16,12 @@ class _LayerToggle(VuetifyTemplate):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.name_transform = self._create_name_transform(names)
-        self.default_sort = lambda state: self._layer_index(self._layer_states(), state)
+        def default_sort(state):
+            #print("default_sort")
+            #print('zorder', state.zorder)
+            #print('index', self._layer_index(self._layer_states(), state))
+            return self._layer_index(self._layer_states(), state)
+        self.default_sort = default_sort
         self.sort = sort or self.default_sort
 
         self._ignore_conditions = CallbackContainer()
