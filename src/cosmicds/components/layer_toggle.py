@@ -17,9 +17,9 @@ class _LayerToggle(VuetifyTemplate):
         self.viewer = viewer
         self.name_transform = self._create_name_transform(names)
         def default_sort(state):
-            #print("default_sort")
-            #print('zorder', state.zorder)
-            #print('index', self._layer_index(self._layer_states(), state))
+            print("default_sort for", state.layer.label)
+            print('zorder', state.zorder)
+            print('index', self._layer_index(self._layer_states(), state))
             return self._layer_index(self._layer_states(), state)
         self.default_sort = default_sort
         self.sort = sort or self.default_sort
@@ -64,6 +64,7 @@ class _LayerToggle(VuetifyTemplate):
         self._update_from_viewer()  
 
     def watched_layer_states(self, layers=None):
+        print('running watched_layer_states')
         layers = layers or self.viewer.state.layers
         return sorted([state for state in layers if not self._ignore_layer(state)], key=self.sort or self.default_sort)
 
@@ -76,6 +77,7 @@ class _LayerToggle(VuetifyTemplate):
         self._update_from_viewer()
 
     def _update_from_viewer(self, layers=None):
+        print('running _update_from_viewer')
         watched = self.watched_layer_states(layers)
         self.layers = [self._layer_data(state) for state in watched]
         self.selected = [index for index, state in enumerate(watched) if state.visible]
