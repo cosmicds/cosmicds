@@ -16,7 +16,8 @@ class _LayerToggle(VuetifyTemplate):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.name_transform = self._create_name_transform(names)
-        self.sort = sort or (lambda state: state.zorder)
+        self.default_sort = lambda state: self._layer_index(self._layer_states(), state)
+        self.sort = sort or self.default_sort
 
         self._ignore_conditions = CallbackContainer()
 
@@ -28,6 +29,9 @@ class _LayerToggle(VuetifyTemplate):
             if cb(layer):
                 return True
         return False
+    
+    def _layer_states(self):
+        return [layer.state if isinstance(layer, LayerArtist) else layer for layer in self.layers]
 
     def _layer_data(self, state):
         return {
@@ -51,12 +55,12 @@ class _LayerToggle(VuetifyTemplate):
         self.sort_by(sort_key)
 
     def sort_by(self, sort):
-        self.sort = sort
+        self.sort = sort or self.default_sort
         self._update_from_viewer()  
 
     def watched_layer_states(self, layers=None):
         layers = layers or self.viewer.state.layers
-        return sorted([state for state in layers if not self._ignore_layer(state)], key=lambda state: state.zorder)
+        return sorted([state for state in layers if not self._ignore_layer(state)], key=self.sort or self.default_sort)
 
     def add_ignore_condition(self, condition):
         self._ignore_conditions.append(condition)
