@@ -8,9 +8,8 @@ import random
 from IPython.display import Javascript, display
 
 from astropy.modeling import models, fitting
-from bqplot.marks import Lines
-from glue_jupyter.bqplot.histogram import BqplotHistogramLayerArtist
-from glue_jupyter.bqplot.scatter import BqplotScatterLayerArtist
+from plotly.graph_objects import Scatter
+
 from glue.core.state_objects import State
 import numpy as np
 from threading import Timer
@@ -239,16 +238,11 @@ def fit_line(x, y):
     return fitted_line
 
 
-def line_mark(
-    layer, start_x, start_y, end_x, end_y, color, label=None, label_visibility=None
-):
+def line_mark(start_x, start_y, end_x, end_y, color, label=None):
     """
-    Creates a Lines mark between the given start and end points
-    using the scales of the given layer.
+    Creates a line between the given start and end points using Plotly's graphics objects.
     Parameters
     ----------
-    layer : `glue.viewers.common.layer_artist.LayerArtist`
-        The layer used to determine the line's scales.
     start_x : int or float
         The x-coordinate of the line's starting point.
     start_y : int or float
@@ -259,18 +253,19 @@ def line_mark(
         The y-coordinate of the line's endpoint.
     color : str
         The desired color of the line, represented as a hex string.
+    label : str, optional
+        The label for the line. If provided, the line will be added to the legend.
     """
-    if isinstance(layer, (BqplotHistogramLayerArtist, BqplotScatterLayerArtist)):
-        scales = layer.view.scales
-    return Lines(
+    line = Scatter(
         x=[start_x, end_x],
         y=[start_y, end_y],
-        scales=scales,
-        colors=[color],
-        labels=[label] if label is not None else [],
-        display_legend=label is not None,
-        labels_visibility=label_visibility or "label",
+        mode='lines',
+        line=dict(color=color),
+        name=label,
+        showlegend=label is not None
     )
+    
+    return line
 
 
 def vertical_line_mark(layer, x, color, label=None, label_visibility=None):
