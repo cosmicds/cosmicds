@@ -47,14 +47,31 @@ def FieldList(component_state):
 @solara.component
 def StateEditor(markers, component_state):
     show_dialog, set_show_dialog = solara.use_state(False)
-    with solara.Row():
-        MarkerSelector(markers, getattr(component_state, 'current_step', Reactive))
-        solara.Button(
-            children="Edit State",
-            on_click=lambda: set_show_dialog(not show_dialog)
+    with solara.Card(style="border-radius: 5px; border: 2px solid #EC407A; max-width: 400px"):
+        with solara.Row():
+            MarkerSelector(markers, getattr(component_state, 'current_step', Reactive))
+            solara.Button(
+                children="Edit State",
+                on_click=lambda: set_show_dialog(not show_dialog)
+            )
+            with rv.Dialog(v_model=show_dialog, on_v_model=set_show_dialog, max_width="500px"):
+                with solara.Card():
+                    with solara.Column():
+                        FieldList(component_state)
+        with solara.Row():
+            solara.Markdown(
+                f"Current step: {component_state.current_step.value.value}. {component_state.current_step.value}"
         )
-        solara.Markdown(f"{show_dialog}")
-        with rv.Dialog(v_model=show_dialog, on_v_model=set_show_dialog, max_width="500px"):
-            with solara.Card():
-                with solara.Column():
-                    FieldList(component_state)
+
+        if (component_state.current_step.value is not markers.last()):
+            solara.Markdown(
+                f"Next step: {component_state.current_step.value.value + 1}. {markers(component_state.current_step.value.value + 1)}"
+            )
+            solara.Markdown(
+                f"Can advance: {component_state.can_transition(next=True)}"
+            )
+
+        else:
+            solara.Markdown(
+                "End of Stage"
+            )
