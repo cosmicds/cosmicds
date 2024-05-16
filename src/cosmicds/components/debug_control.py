@@ -39,9 +39,11 @@ def FieldList(component_state):
             solara.InputInt(label=field['name'], value=field_attr)
         elif field_type == Reactive[float]:
             solara.InputFloat(label=field['name'], value=field_attr)
-        else:
+        elif isinstance(field_type, Reactive):
             # just print it out
             solara.Markdown(f"{field['name']}: {field_attr.value}")
+        else:
+             solara.Markdown(f"{field['name']}: {field_attr}")
 
 
 @solara.component
