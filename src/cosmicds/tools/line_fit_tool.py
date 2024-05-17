@@ -11,7 +11,7 @@ from numpy import isnan
 from numpy.linalg import LinAlgError
 from traitlets import Unicode, HasTraits
 
-from . import register_tool
+from cosmicds.config import register_tool
 from cosmicds.utils import fit_line, line_mark
 
 
