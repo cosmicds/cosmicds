@@ -39,7 +39,7 @@
         :label="Math.pow(10,contrast).toFixed(2)"
         hide-details=true
         style="margin:auto;width:75%;"
-        @change="update_style"
+        @change="updateStyle"
         @end="(val) => $emit('change-contrast', contrast2Per(val))"
         >
         <!-- add tooltip to prepend slot -->
@@ -107,19 +107,6 @@ module.exports = {
     }
   },
   
-  computed: {
-    updateStyle() {
-      // console.log('contrast', Math.pow(10, this.contrast) * 100)
-      // console.log('brightness', this.brightness)
-      // console.log('**************')
-      const brightness = this.brightness2Per(this.brightness);  // brightness in percent
-      const contrast = this.contrast2Per(this.contrast);  // contrast in percent
-      const newStyle = { filter: `brightness(${brightness}%) contrast(${contrast}%)` };
-      // sent this style to the parent. access using @newstyle="newstyle => { this.style = newstyle }"
-      this.$emit('change-style', newStyle);
-    },
-  },
-
   watch: {
     // watch for incoming signal to reset sliders
     reset(value) {
@@ -146,6 +133,16 @@ module.exports = {
     },
     contrast2Per(contrast) {
       return Math.pow(10, contrast).toFixed(2) * 100;
+    },
+    updateStyle() {
+      // console.log('contrast', Math.pow(10, this.contrast) * 100)
+      // console.log('brightness', this.brightness)
+      // console.log('**************')
+      const brightness = this.brightness2Per(this.brightness);  // brightness in percent
+      const contrast = this.contrast2Per(this.contrast);  // contrast in percent
+      const newStyle = { filter: `brightness(${brightness}%) contrast(${contrast}%)` };
+      // sent this style to the parent. access using @newstyle="newstyle => { this.style = newstyle }"
+      this.$emit('change-style', newStyle);
     },
   },
   
