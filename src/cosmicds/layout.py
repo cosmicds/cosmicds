@@ -10,6 +10,7 @@ from solara.lab import theme as theme
 
 from .components import MathJaxSupport, PlotlySupport
 
+
 @solara.component
 def Layout(children=[]):
     level = solara.use_route_level()  # returns 0
@@ -32,7 +33,11 @@ def Layout(children=[]):
             with rv.Btn(icon=True):
                 rv.Icon(children=["mdi-tune-vertical"])
 
-            solara.lab.ThemeToggle(on_icon ="mdi-brightness-4", off_icon ="mdi-brightness-4", enable_auto = False)
+            solara.lab.ThemeToggle(
+                on_icon="mdi-brightness-4",
+                off_icon="mdi-brightness-4",
+                enable_auto=False,
+            )
 
             with rv.Chip(class_="ma-2"):
                 with rv.Avatar(left=True, class_="darken-4"):
@@ -80,26 +85,26 @@ def Layout(children=[]):
             app=True,
             inset=True,
         ):
-            with rv.Card(flat=True, tile=True, class_="cosmicds-footer", style_="width: 100%;"):
+            with rv.Card(
+                flat=True, tile=True, class_="cosmicds-footer", style_="width: 100%;"
+            ):
                 rv.Divider()
 
-                with solara.Columns([2,10]):
+                with solara.Columns([2, 10]):
                     with solara.Column(classes=["cosmicds-footer"]):
                         with rv.CardText():
                             solara.HTML(
-                                unsafe_innerHTML=
-                                rf"""
+                                unsafe_innerHTML=rf"""
                                 {datetime.date.today().year} - <b>CosmicDS</b>
                                 """,
-                                style="font-size: 18px;"
+                                style="font-size: 18px;",
                             )
 
                     with solara.Column(classes=["cosmicds-footer"]):
                         with rv.CardText():
                             solara.HTML(
                                 tag="span",
-                                unsafe_innerHTML=
-                            """
+                                unsafe_innerHTML="""
                             The material contained on this website is based upon 
                             work supported by NASA under award No. 80NSSC21M0002. 
                             Any opinions, findings, and conclusions or 
