@@ -15,7 +15,7 @@ dependencies = [
     "echo",
     "glue-core",
     "glue-jupyter",
-    "glue-plotly",
+    "glue-plotly>=0.7.2",
     "httpx",
     "ipyvuetify",
     "numpy",
