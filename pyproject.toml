@@ -5,8 +5,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cosmicds"
+authors = [{name = "CosmicDS Developers", email = "pudomprasert@cfa.harvard.edu"}]
 license = {text = "MIT License"}
-description = "Cosmic Data Stories base Python package"
+description = "Core package for Cosmic Data Stories"
 readme = "README.md"
 urls = {Homepage = "https://www.cosmicds.cfa.harvard.edu/"}
 requires-python = ">=3.11"
@@ -23,10 +24,13 @@ dependencies = [
     "solara-enterprise",
     "traitlets",
 ]
+dynamic = ["version"]
 
 [project.optional-dependencies]
 test = [
+    "setuptools",
     "pytest",
+    "pytest-cov",
 ]
 
 [tool.setuptools_scm]
