@@ -8,7 +8,7 @@ name = "cosmicds"
 license = {text = "MIT License"}
 description = "Cosmic Data Stories base Python package"
 readme = "README.md"
-urls = {Homepaage = "https://www.cosmicds.cfa.harvard.edu/"}
+urls = {Homepage = "https://www.cosmicds.cfa.harvard.edu/"}
 requires-python = ">=3.11"
 dependencies = [
     "echo",
