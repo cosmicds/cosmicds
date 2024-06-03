@@ -3,6 +3,32 @@
 requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=5"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "cosmicds"
+license = {text = "MIT License"}
+description = "Cosmic Data Stories base Python package"
+readme = "README.md"
+urls = {Homepaage = "https://www.cosmicds.cfa.harvard.edu/"}
+requires-python = ">=3.11"
+dependencies = [
+    "echo",
+    "glue-core",
+    "glue-jupyter",
+    "glue-plotly",
+    "httpx",
+    "ipyvuetify",
+    "numpy",
+    "reacton",
+    "solara",
+    "solara-enterprise",
+    "traitlets",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]
+
 [tool.setuptools_scm]
 # For smarter version schemes and other configuration options,
 # check out https://github.com/pypa/setuptools_scm
