@@ -1,3 +1,5 @@
+import os
+import hashlib
 import solara
 import dataclasses
 from typing import Optional, cast, Dict, Union
@@ -8,7 +10,7 @@ from solara_enterprise import auth
 from glue_jupyter.app import JupyterApplication
 from glue.core.data_collection import DataCollection
 from glue.core.session import Session
-from .utils import request_session
+from .utils import request_session, API_URL
 
 
 class Singleton(type):
@@ -89,3 +91,52 @@ class GlobalState:
     @property
     def request_session(self):
         return self._request_session
+
+    @property
+    def hashed_user(self):
+        userinfo = auth.user.value["userinfo"]
+
+        if "email" in userinfo or "name" in userinfo:
+            user_ref = userinfo.get("email", userinfo["name"])
+        else:
+            # TODO: should be hidden on production
+            solara.Markdown(f"Failed to hash \n\n{userinfo}")
+            return
+
+        username = hashlib.sha1(
+            (user_ref + os.environ["SOLARA_SESSION_SECRET_KEY"]).encode()
+        ).hexdigest()
+
+        return username
+
+    def _setup_user(self, class_code):
+        # See if the user is actually in the database, otherwise create user
+        r = self.request_session.get(f"{API_URL}/student/{self.hashed_user}")
+        student = r.json()["student"]
+
+        if student is None:
+            print(
+                f"User '{self.hashed_user}' not found in database. Creating "
+                f"new user with class code '{class_code}'"
+            )
+
+            userinfo = auth.user.value["userinfo"]
+
+            # Create new user based on username and class code
+            r = self.request_session.post(
+                f"{API_URL}/student-sign-up",
+                json={
+                    "username": self.hashed_user,
+                    "password": "",
+                    "institution": "",
+                    "email": userinfo.get("email", ""),
+                    "age": 0,
+                    "gender": "undefined",
+                    "classroomCode": class_code,
+                },
+            )
+        else:
+            print(f"Found user '{self.hashed_user}' in database.")
+
+
+GLOBAL_STATE = GlobalState()

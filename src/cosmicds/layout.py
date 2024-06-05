@@ -9,24 +9,136 @@ from solara_enterprise import auth
 from solara.lab import theme as theme
 
 from .components import MathJaxSupport, PlotlySupport
+from .components import MathJaxSupport
+from .state import GLOBAL_STATE
+
+
+import hashlib
+import os
+from warnings import filterwarnings
+
+import solara
+from solara.alias import rv
+from solara.server import settings
+from solara_enterprise import auth
+
+filterwarnings(action="ignore", category=UserWarning)
+
+if "AWS_EBS_URL" in os.environ:
+    settings.main.base_url = os.environ["AWS_EBS_URL"]
+
+active = solara.reactive(False)
+user_info = solara.reactive({})
+class_code = solara.reactive("")
+update_db = solara.reactive(False)
+debug_mode = solara.reactive(False)
+
+
+def get_session_id() -> str:
+    """Returns the session id, which is stored using a browser cookie."""
+    import solara.server.kernel_context
+
+    context = solara.server.kernel_context.get_current_context()
+    return context.session_id
+
+
+def _load_from_cache():
+    cache = solara.cache.storage.get(f"cds-login-options-{get_session_id()}")
+
+    if cache is not None:
+        for key, state in [
+            ("class_code", class_code),
+            ("update_db", update_db),
+            ("debug_mode", debug_mode),
+        ]:
+            if key in cache:
+                state.set(cache[key])
+
+
+def _save_to_cache():
+    solara.cache.storage[f"cds-login-options-{get_session_id()}"] = {
+        "class_code": class_code.value,
+        "update_db": update_db.value,
+        "debug_mode": debug_mode.value,
+    }
 
 
 @solara.component
-def Layout(children=[]):
+def Login(**btn_kwargs):
+    with rv.Dialog(
+        v_model=active.value,
+        on_v_model=active.set,
+        max_width=600,
+        # fullscreen=True,
+        persistent=True,
+        overlay_color="grey darken-2",
+    ) as login:
+        with rv.Card():
+            with rv.CardText():
+                with rv.Container(
+                    class_="d-flex align-center flex-column justify-center"
+                ):
+                    solara.Image(
+                        "/static/public/cosmicds_logo_transparent_for_dark_backgrounds.png"
+                    )
+                    solara.Text(
+                        "Hubble's Law Data Story", classes=["display-1", "py-12"]
+                    )
+
+                    solara.InputText(
+                        label="Class Code", value=class_code, continuous_update=True
+                    )
+
+                    # TODO: hide these in production
+                    with solara.Row():
+                        solara.Checkbox(label="Update DB", value=update_db)
+                        solara.Checkbox(label="Debug Mode", value=debug_mode)
+
+                    solara.Button(
+                        "Sign in",
+                        href=auth.get_login_url(),
+                        disabled=not class_code.value,
+                        outlined=False,
+                        large=True,
+                        color="success",
+                        on_click=_save_to_cache,
+                    )
+
+    return login
+
+
+@solara.component
+def Layout(children=[], story_title="Cosmic Data Story"):
     level = solara.use_route_level()  # returns 0
     route_current, routes_current_level = solara.use_route()
     selected_link, on_selected_link = solara.use_state(0)
 
+    # Attempt to load saved setup state
+    _load_from_cache()
+
+    @solara.lab.computed
+    def display_info():
+        info = (auth.user.value or {}).get("userinfo")
+
+        if info is not None:
+            return info
+
+        return {"name": "Undefined", "email": "ERROR: No user"}
+
     with rv.App(style_="height: 100vh") as main:
         # with rv.Html(tag="div", style_="height: 100vh") as main:
-        solara.Title("Cosmic Data Stories")
+        solara.Title(f"{story_title}")
 
-        # Mount external javascript libraries
-        MathJaxSupport()
-        PlotlySupport()
+        # Setup login
+        login_dialog = Login()
+
+        if not auth.user.value:
+            active.set(True)
+        else:
+            GLOBAL_STATE._setup_user(class_code.value)
 
         with rv.AppBar(elevate_on_scroll=False, app=True, flat=True):
-            rv.ToolbarTitle(children=["CosmicDS"])
+            rv.ToolbarTitle(children=[f"{story_title}"])
 
             rv.Spacer()
 
@@ -48,8 +160,14 @@ def Layout(children=[]):
         with rv.NavigationDrawer(app=True):  # , width=300):
             with rv.ListItem():
                 with rv.ListItemContent():
-                    rv.ListItemTitle(class_="text-h6", children=["Nicholas Earl"])
-                    rv.ListItemSubtitle(children=["Epsilon Class"])
+                    rv.ListItemTitle(
+                        class_="text-h6", children=[f"{display_info.value['name']}"]
+                    )
+                    rv.ListItemSubtitle(children=[f"{display_info.value['email']}"])
+
+                with rv.ListItemAction():
+                    with rv.Btn(href=auth.get_logout_url(), icon=True):
+                        rv.Icon(children=["mdi-logout"])
 
             rv.Divider()
 
