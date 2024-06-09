@@ -108,7 +108,7 @@ def Login(**btn_kwargs):
 
 
 @solara.component
-def Layout(children=[], story_title="Cosmic Data Story"):
+def Layout(children=[], story_name=None, story_title="Cosmic Data Story"):
     level = solara.use_route_level()  # returns 0
     route_current, routes_current_level = solara.use_route()
     selected_link, on_selected_link = solara.use_state(0)
@@ -135,7 +135,7 @@ def Layout(children=[], story_title="Cosmic Data Story"):
         if not auth.user.value:
             active.set(True)
         else:
-            GLOBAL_STATE._setup_user(class_code.value)
+            GLOBAL_STATE._setup_user(story_name, class_code.value)
 
         with rv.AppBar(elevate_on_scroll=False, app=True, flat=True):
             rv.ToolbarTitle(children=[f"{story_title}"])
