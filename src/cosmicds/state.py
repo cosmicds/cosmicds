@@ -30,12 +30,11 @@ class HubUserInfo:
 @dataclasses.dataclass(frozen=True)
 class Student:
     id: Reactive[int] = dataclasses.field(default=Reactive(0))
-    size: Reactive[int] = dataclasses.field(default=Reactive(0))
 
 
 @dataclasses.dataclass(frozen=True)
 class Classroom:
-    id: Reactive[int] = dataclasses.field(default=Reactive(0))
+    class_: Reactive[dict] = dataclasses.field(default=Reactive({}))
     size: Reactive[int] = dataclasses.field(default=Reactive(0))
 
 
@@ -109,7 +108,7 @@ class GlobalState:
 
         return username
 
-    def _setup_user(self, class_code):
+    def _setup_user(self, story_name, class_code):
         # See if the user is actually in the database, otherwise create user
         r = self.request_session.get(f"{API_URL}/student/{self.hashed_user}")
         student = r.json()["student"]
@@ -135,8 +134,21 @@ class GlobalState:
                     "classroomCode": class_code,
                 },
             )
+
+            r = self.request_session.get(f"{API_URL}/student/{self.hashed_user}")
+            student = r.json()["student"]
         else:
             print(f"Found user '{self.hashed_user}' in database.")
+
+        self.student.id.set(student.get("id", 0))
+
+        r = self.request_session.get(
+            f"{API_URL}/class-for-student-story/{self.student.id.value}/{story_name}"
+        )
+        class_json = r.json()
+
+        self.classroom.class_.set(class_json["class"])
+        self.classroom.size.set(class_json["size"])
 
 
 GLOBAL_STATE = GlobalState()
