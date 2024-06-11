@@ -209,7 +209,7 @@ module.exports = {
       const frElements = this.$el.querySelectorAll(".cds-free-response");
       const frComponents = [...frElements].map(fr => fr.__vue__);
       for (let i = 0; i < frComponents.length; i++) {
-        if (frComponents[i].$vnode.tag.indexOf("free-response") < 0) {
+        if (frComponents[i].$vnode.tag.indexOf("FreeResponse") < 0) {
           frComponents[i] = frComponents[i].$parent;
         }
       }
