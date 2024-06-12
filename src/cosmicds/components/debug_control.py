@@ -23,7 +23,6 @@ def MarkerSelector(markers, current_step):
 
 @solara.component
 def FieldList(component_state):
-    print(component_state)
     field_names = [{'name':f.name, 'type':f.type, 'attr': getattr(component_state, f.name, Reactive)} for f in fields(component_state)]
             
     for field in field_names:
