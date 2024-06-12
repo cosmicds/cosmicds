@@ -8,7 +8,7 @@ import datetime
 from solara_enterprise import auth
 from solara.lab import theme as theme
 
-from .components import MathJaxSupport
+from .components import MathJaxSupport, PlotlySupport
 
 @solara.component
 def Layout(children=[]):
@@ -22,6 +22,7 @@ def Layout(children=[]):
 
         # Mount external javascript libraries
         MathJaxSupport()
+        PlotlySupport()
 
         with rv.AppBar(elevate_on_scroll=False, app=True, flat=True):
             rv.ToolbarTitle(children=["CosmicDS"])
