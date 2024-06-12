@@ -1,0 +1,13 @@
+include README.md
+include CHANGELOG.rst
+include setup.cfg
+include LICENSE.txt
+
+recursive-include src *.pyx *.c *.vue *.csv *.ipynb
+recursive-include docs *
+
+prune build
+prune docs/_build
+prune docs/api
+
+global-exclude *.pyc *.o
