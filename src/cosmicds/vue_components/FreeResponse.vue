@@ -119,7 +119,7 @@ module.exports = {
   methods: {
     dispatchEvent(eventType, detail) {
       console.log("dispatching event", eventType, detail);
-      this.$emit(eventType, detail);
+      this.$emit('fr-emit',[eventType, detail]);
     },
     
     dispatchUpdateEvent() {
