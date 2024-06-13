@@ -268,7 +268,7 @@ def line_mark(start_x, start_y, end_x, end_y, color, label=None):
     return line
 
 
-def vertical_line_mark(layer, x, color, label=None, label_visibility=None):
+def vertical_line_mark(layer, x, color, label=None):
     """
     A specialization of `line_mark` specifically for vertical lines.
     Parameters
@@ -282,14 +282,12 @@ def vertical_line_mark(layer, x, color, label=None, label_visibility=None):
     """
     viewer_state = layer.state.viewer_state
     return line_mark(
-        layer,
         x,
         viewer_state.y_min,
         x,
         viewer_state.y_max,
         color,
         label=label,
-        label_visibility=label_visibility,
     )
 
 
