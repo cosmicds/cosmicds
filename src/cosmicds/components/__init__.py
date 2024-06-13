@@ -5,3 +5,4 @@ from .viewer_layout import *
 from .debug_control import StateEditor
 from .layer_toggle import LayerToggle
 from .statistics_selector import StatisticsSelector
+from .percentage_selector import PercentageSelector

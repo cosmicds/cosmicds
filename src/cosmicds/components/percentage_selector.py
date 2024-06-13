@@ -1,5 +1,6 @@
 from numpy import argsort, array
 import solara
+import reacton.ipyvuetify as rv
 
 from glue.core.subset import ElementSubsetState
 
@@ -11,13 +12,15 @@ def PercentageSelector(viewers, glue_data, bins=None, **kwargs):
     
     radio_color = "#1e90ff"
     options = [50, 68, 95]
-    selected = None
-    resolution = kwargs.get("resolution", None)
+    selected = solara.use_reactive(None)
+    last_updated = None
+    resolution = kwargs.get("resolution", 0)
     subset_group = kwargs.get("subset_group", False)
     subset_labels = kwargs.get("subset_labels", [])
     bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
     subsets = []
     original_colors = []
+    units = kwargs.get("units", [])
 
     deselected_color = "#a9a9a9"
 
@@ -51,7 +54,7 @@ def PercentageSelector(viewers, glue_data, bins=None, **kwargs):
 
     def _bin_rounded_bound(bound, bins):
         rounded_bound = _rounded_bound(bound)
-        res = 10 ** (resolution)
+        res = 10 ** (-resolution)
         rounded_bin_bounds = _bin_bounds(bound, bins)
         if bound < rounded_bin_bounds[0]:
             rounded_bound -= res 
@@ -59,15 +62,19 @@ def PercentageSelector(viewers, glue_data, bins=None, **kwargs):
             rounded_bound += res 
         return rounded_bound
 
-    last_selected = None
-    def _update(selected):
-        nonlocal original_colors, last_selected
+    def _update():
+        nonlocal original_colors, last_updated
+
+        option = selected.value
+        if last_updated == option:
+            return option
+
         layers = [viewer.layer_artist_for_data(data)
                   for (data, viewer) in zip(glue_data, viewers)]
-        if last_selected:
+        if last_updated is None:
             original_colors = [layer.state.color for layer in layers]
 
-        if selected is None:
+        if option is None:
             states = []
             for (index, viewer) in enumerate(viewers):
                 if layers[index] is not None:
@@ -76,20 +83,20 @@ def PercentageSelector(viewers, glue_data, bins=None, **kwargs):
                 state = array([False for _ in range(glue_data[index].size)])
                 states.append(state)
             _update_subsets(states)
-            return
+            return option
 
         states = []
-        for index, (viewer, bins) in enumerate(zip(viewers, bins)):
+        for index, (viewer, viewer_bins) in enumerate(zip(viewers, bins)):
             component_id = viewer.state.x_att
             data = glue_data[index][component_id]
             layer = layers[index]
             layer.state.color = deselected_color
-            bottom_index, top_index = percent_around_center_indices(data.size, selected)
+            bottom_index, top_index = percent_around_center_indices(data.size, option)
     
             sorted_indices = argsort(data)
             true_bottom = data[sorted_indices[bottom_index]]
             true_top = data[sorted_indices[top_index]]
-            expected_count = round(selected * data.size / 100)
+            expected_count = round(option * data.size / 100)
             actual_count = top_index - bottom_index + 1
             if expected_count != actual_count:
                 median = glue_data[index].compute_statistic('median', viewer.state.x_att)
@@ -130,8 +137,8 @@ def PercentageSelector(viewers, glue_data, bins=None, **kwargs):
             indices = [si for i, si in enumerate(sorted_indices) if i >= bottom_index and i <= top_index]
             state = ElementSubsetState(indices=indices)
             states.append(state)
-            rounded_bottom = _bin_rounded_bound(true_bottom, bins)
-            rounded_top = _bin_rounded_bound(true_top, bins)
+            rounded_bottom = _bin_rounded_bound(true_bottom, viewer_bins)
+            rounded_top = _bin_rounded_bound(true_top, viewer_bins)
 
             bottom_str = "{:g}".format(rounded_bottom)
             top_str = "{:g}".format(rounded_top)
@@ -139,7 +146,28 @@ def PercentageSelector(viewers, glue_data, bins=None, **kwargs):
                 unit_str = f" {units[index]}"
             else:
                 unit_str = ""
-            label_text = f"{selected}% range: {bottom_str} \u2013 {top_str}{unit_str}"
+            label_text = f"{option}% range: {bottom_str} \u2013 {top_str}{unit_str}"
             # self.viewer_layouts[index].set_subtitle(label_text)
 
         _update_subsets(states)
+
+        return option
+
+    def _update_selected(option, value):
+        nonlocal last_updated
+        if value:
+            selected.set(option)
+        elif selected.value == option:
+            selected.set(None)
+        last_updated = _update()
+
+    def _model_factory(option):
+        return solara.lab.computed(lambda option=option: selected.value == option)
+
+    with rv.Card():
+        with rv.Container():
+            for option in options:
+                model = _model_factory(option)
+                solara.Switch(value=model,
+                              label=f"{option}%",
+                              on_value=lambda value, option=option: _update_selected(option, value))
