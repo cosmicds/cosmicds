@@ -22,6 +22,36 @@ class Singleton(type):
         return cls._instances[cls]
 
 
+class BaseState:
+    def as_dict(self):
+        def _inner_dict(sub_comp):
+            if dataclasses.is_dataclass(sub_comp):
+                return {
+                    f.name: _inner_dict(getattr(sub_comp, f.name))
+                    for f in dataclasses.fields(sub_comp)
+                }
+
+            return (
+                sub_comp.value
+                if isinstance(sub_comp, solara.toestand.Reactive)
+                else sub_comp
+            )
+
+        return _inner_dict(self)
+
+    def from_dict(self, d):
+        def _inner_dict(dd, parent):
+            for k, v in dd.items():
+                attr = getattr(parent, k)
+
+                if isinstance(attr, solara.toestand.Reactive):
+                    attr.set(v)
+                elif dataclasses.is_dataclass(attr):
+                    _inner_dict(v, attr)
+
+        _inner_dict(d, self)
+
+
 @dataclasses.dataclass(frozen=True)
 class HubUserInfo:
     name: Reactive[str] = dataclasses.field(default=Reactive("No message"))
@@ -49,7 +79,7 @@ class Speech:
 
 
 @dataclasses.dataclass()
-class GlobalState:
+class GlobalState(BaseState):
     drawer: Reactive[bool] = dataclasses.field(default=Reactive(False))
     speech_menu: Reactive[bool] = dataclasses.field(default=Reactive(False))
     loading_status_message: Reactive[str] = dataclasses.field(
@@ -98,8 +128,6 @@ class GlobalState:
         if "email" in userinfo or "name" in userinfo:
             user_ref = userinfo.get("email", userinfo["name"])
         else:
-            # TODO: should be hidden on production
-            solara.Markdown(f"Failed to hash \n\n{userinfo}")
             return
 
         username = hashlib.sha1(
@@ -149,6 +177,11 @@ class GlobalState:
 
         self.classroom.class_.set(class_json["class"])
         self.classroom.size.set(class_json["size"])
+
+    def _clear_user(self):
+        self.student.id.set(0)
+        self.classroom.class_.set({})
+        self.classroom.size.set(0)
 
 
 GLOBAL_STATE = GlobalState()
