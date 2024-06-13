@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from typing import List
 
-from ...utils import mode
+from ..utils import mode
 
 
 # glue doesn't implement a mode statistic, so we roll our own
