@@ -10,7 +10,7 @@ from solara_enterprise import auth
 from glue_jupyter.app import JupyterApplication
 from glue.core.data_collection import DataCollection
 from glue.core.session import Session
-from .utils import request_session, API_URL
+from .utils import request_session, API_URL, debounce
 
 
 class Singleton(type):
@@ -25,6 +25,13 @@ class Singleton(type):
 class BaseState:
     def as_dict(self):
         def _inner_dict(sub_comp):
+            if isinstance(sub_comp, solara.toestand.Reactive):
+                # TODO: we need to revisit the free response handling in the
+                #  Hubble data story. Not sure what's going on there, but
+                #  it's not clear why there's so many factories.
+                if sub_comp.value.__class__.__name__ == "FreeResponseDict":
+                    return {}
+
             if dataclasses.is_dataclass(sub_comp):
                 return {
                     f.name: _inner_dict(getattr(sub_comp, f.name))
@@ -50,6 +57,23 @@ class BaseState:
                     _inner_dict(v, attr)
 
         _inner_dict(d, self)
+
+    def _setup_database_write_listener(self, func):
+        @debounce(0.5)
+        def _callback():
+            func()
+
+        def _inner_dict(sub_comp):
+            if dataclasses.is_dataclass(sub_comp):
+                return {
+                    f.name: _inner_dict(getattr(sub_comp, f.name))
+                    for f in dataclasses.fields(sub_comp)
+                }
+
+            if isinstance(sub_comp, solara.toestand.Reactive):
+                sub_comp.subscribe_change(lambda *args: _callback())
+
+        _inner_dict(self)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -137,6 +161,9 @@ class GlobalState(BaseState):
         return username
 
     def _setup_user(self, story_name, class_code):
+        if not auth.user.value:
+            return
+
         # See if the user is actually in the database, otherwise create user
         r = self.request_session.get(f"{API_URL}/student/{self.hashed_user}")
         student = r.json()["student"]
