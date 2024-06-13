@@ -107,14 +107,19 @@ def Login(**btn_kwargs):
     return login
 
 
-@solara.component
-def Layout(children=[], story_name=None, story_title="Cosmic Data Story"):
-    level = solara.use_route_level()  # returns 0
-    route_current, routes_current_level = solara.use_route()
-    selected_link, on_selected_link = solara.use_state(0)
+selected_link = solara.reactive(0)
 
-    # Attempt to load saved setup state
-    _load_from_cache()
+
+@solara.component
+def BaseLayout(children=[], story_name=None, story_title="Cosmic Data Story"):
+    solara.Title(f"{story_title}")
+
+    route_current, routes_current_level = solara.use_route()
+
+    def _setup_user():
+        GLOBAL_STATE._setup_user(story_name, class_code.value)
+
+    solara.use_memo(_setup_user)
 
     @solara.lab.computed
     def display_info():
@@ -125,17 +130,16 @@ def Layout(children=[], story_name=None, story_title="Cosmic Data Story"):
 
         return {"name": "Undefined", "email": "ERROR: No user"}
 
-    with rv.App(style_="height: 100vh") as main:
-        # with rv.Html(tag="div", style_="height: 100vh") as main:
-        solara.Title(f"{story_title}")
+    with solara.Column(style={"height": "100vh"}) as main:
+        if not bool(auth.user.value):
+            GLOBAL_STATE._clear_user()
 
-        # Setup login
-        login_dialog = Login()
+            # Attempt to load saved setup state
+            _load_from_cache()
 
-        if not auth.user.value:
+            login_dialog = Login()
             active.set(True)
-        else:
-            GLOBAL_STATE._setup_user(story_name, class_code.value)
+            return main
 
         with rv.AppBar(elevate_on_scroll=False, app=True, flat=True):
             rv.ToolbarTitle(children=[f"{story_title}"])
@@ -173,7 +177,8 @@ def Layout(children=[], story_name=None, story_title="Cosmic Data Story"):
 
             with rv.List(nav=True):
                 with rv.ListItemGroup(
-                    v_model=selected_link, on_v_model=on_selected_link
+                    v_model=selected_link.value,
+                    on_v_model=lambda v: selected_link.set(v),
                 ):
                     for i, route in enumerate(routes_current_level):
                         with solara.Link(solara.resolve_path(route)):
