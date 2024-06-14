@@ -2,7 +2,7 @@ import solara
 from solara import Reactive
 import reacton.ipyvuetify as rv
 
-from dataclasses import fields
+from dataclasses import fields, is_dataclass
 
 from functools import partial
 
@@ -41,6 +41,16 @@ def FieldList(component_state):
         elif isinstance(field_type, Reactive):
             # just print it out
             solara.Markdown(f"{field['name']}: {field_attr.value}")
+        elif is_dataclass(field_type):
+            # recursively call this function
+            with solara.Card(style="border-radius: 5px; border: 2px solid #40ECB2; max-width: 400px"):
+                with solara.Details(summary=f"{field['name']}:"):
+                    FieldList(field_attr)
+        elif isinstance(field_type, Reactive) and is_dataclass(field_type.value):
+            # recursively call this function
+            with solara.Card(style="border-radius: 5px; border: 2px solid #40ECB2; max-width: 400px"):
+                with solara.Details(summary=f"{field['name']}:"):
+                    FieldList(field_attr.value)
         else:
              solara.Markdown(f"{field['name']}: {field_attr}")
 
