@@ -167,7 +167,15 @@ def PercentageSelector(viewers, glue_data, bins=None, **kwargs):
     with rv.Card():
         with rv.Container():
             for option in options:
-                model = _model_factory(option)
-                solara.Switch(value=model,
-                              label=f"{option}%",
-                              on_value=lambda value, option=option: _update_selected(option, value))
+                with rv.Row():
+                    model = _model_factory(option)
+                    solara.Switch(value=model,
+                                  label=f"{option}%",
+                                  on_value=lambda value, option=option: _update_selected(option, value))
+                    rv.Dialog(
+                        v_slots=[{"name": "activator",
+                                  "variable": "x",
+                                  "children": [solara.IconButton(v_on="x.on", icon_name="mdi-circle-help-outline")]
+                                }],
+                        children=[solara.Text("TEST")]
+                    )
