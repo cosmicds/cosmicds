@@ -31,6 +31,11 @@ def StatisticsSelector(viewers, glue_data, units, bins=None, statistics=["mean",
         "mean": "Description of the mean",
         "median": "Description of the median",
     }
+    help_images = {
+        "mode": "path to mode image",
+        "mean": "path to mean image",
+        "median": "path to median image"
+    }
 
     last_updated = None
     selected = solara.use_reactive(None)
@@ -96,7 +101,23 @@ def StatisticsSelector(viewers, glue_data, units, bins=None, statistics=["mean",
         with rv.Container():
             for stat in statistics:
                 model = _model_factory(stat)
-                # We need to bind the current value of `stat` to the lambda
                 solara.Switch(value=model,
                               label=stat.capitalize(),
                               on_value=lambda value, stat=stat: _update_selected(stat, value))
+                rv.Dialog(
+                        class_="percentage-help-dialog",
+                        v_slots=[{"name": "activator",
+                                  "variable": "x",
+                                  "children": [solara.IconButton(v_on="x.on",
+                                                                 icon_name="mdi-circle-help-outline")]
+                                }],
+                        children=[
+                            rv.Card(children=[
+                                rv.Toolbar(children=[
+                                    rv.ToolbarTitle(children=[stat.capitalize()]),
+                                    rv.Spacer(),
+                                ]),
+                                solara.Text(help_text[stat])
+                            ])
+                        ]
+                    )

@@ -173,9 +173,25 @@ def PercentageSelector(viewers, glue_data, bins=None, **kwargs):
                                   label=f"{option}%",
                                   on_value=lambda value, option=option: _update_selected(option, value))
                     rv.Dialog(
+                        class_="percentage-help-dialog",
                         v_slots=[{"name": "activator",
                                   "variable": "x",
-                                  "children": [solara.IconButton(v_on="x.on", icon_name="mdi-circle-help-outline")]
+                                  "children": [solara.IconButton(v_on="x.on",
+                                                                 icon_name="mdi-circle-help-outline")]
                                 }],
-                        children=[solara.Text("TEST")]
+                        children=[
+                            rv.Card(children=[
+                                rv.Toolbar(children=[
+                                    rv.ToolbarTitle(children=[f"Inner {option}% of the data"]),
+                                    rv.Spacer(),
+                                ]),
+                                solara.Text(f"""
+                                            The range of values shown are the inner {option}% of data points.
+                                            This means that the {(100-option)/2}% of the data points in the distribution
+                                            have values less than this range, and {(100-option)/2}% of the data points
+                                            have values greater than this range
+                                            """)
+                                              
+                            ])
+                        ]
                     )
