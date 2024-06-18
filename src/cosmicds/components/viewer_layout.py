@@ -1,3 +1,4 @@
+from cosmicds.utils import make_figure_autoresize
 import solara
 
 __all__ = ["ToolBar", "ViewerLayout"]
@@ -17,7 +18,7 @@ def ToolBar(viewer):
 
 @solara.component
 def ViewerLayout(viewer):
-    viewer.figure_widget.layout.height = 600
+    make_figure_autoresize(viewer.figure_widget, 400)
     layout = solara.Column(
         children=[
             ToolBar(viewer),

@@ -1,0 +1,146 @@
+from cosmicds.utils import vertical_line_mark
+from itertools import chain
+import solara
+from solara import Reactive
+import reacton.ipyvuetify as rv
+from uuid import uuid4
+
+from glue.core import Data
+from glue.viewers.common.viewer import Viewer
+from glue_plotly.viewers.common import PlotlyBaseView
+from plotly.graph_objects import Scatter
+from numbers import Number
+from typing import Callable, Iterable, List 
+
+from ..utils import mode
+
+
+# glue doesn't implement a mode statistic, so we roll our own
+# Since there can be multiple modes, mode can be a list
+# and so we return a list for every statistic to make things simpler
+def find_statistic(stat: str, viewer: Viewer, data: Data, bins: Iterable[int | float] | None):
+    if stat == "mode":
+        return mode(data, viewer.state.x_att, bins=bins, range=[viewer.state.hist_x_min, viewer.state.hist_x_max])
+    else:
+        return [data.compute_statistic(stat, viewer.state.x_att)]
+
+
+@solara.component
+def StatisticsSelector(viewers: List[PlotlyBaseView],
+                       glue_data: List[Data],
+                       units: List[str],
+                       selected: Reactive[str | None],
+                       bins: None | List[None | Iterable[Number]]=None,
+                       statistics: List[str]=["mean", "median", "mode"],
+                       transform: Callable[[Number], Number] | None=None,
+                       **kwargs):
+
+    color = kwargs.get("color", "#000000")
+    bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
+
+    help_text = {
+        "mode": "Description of the mode",
+        "mean": "Description of the mean",
+        "median": "Description of the median",
+    }
+    help_images = {
+        "mode": "path to mode image",
+        "mean": "path to mean image",
+        "median": "path to median image"
+    }
+
+    last_updated = selected.value 
+
+    def _line_ids_for_viewer(viewer: PlotlyBaseView):
+        line_ids = []
+        traces = list(chain(l.traces() for l in viewer.layers))
+        for trace in viewer.figure.data:
+            if trace not in traces and isinstance(trace, Scatter) and getattr(trace, "meta", None):
+                line_ids.append(trace.meta)
+
+        return line_ids
+
+    line_ids = [_line_ids_for_viewer(viewer) for viewer in viewers]
+
+    def _remove_lines():
+        for (viewer, viewer_line_ids) in zip(viewers, line_ids):
+            lines = list(viewer.figure.select_traces(lambda t: t.meta in viewer_line_ids))
+            viewer.figure.data = [t for t in viewer.figure.data if t not in lines]
+            
+    def _update_lines():
+        stat = selected.value
+        if last_updated == stat:
+            return stat
+
+        if last_updated is not None:
+            _remove_lines()
+
+        if stat is None:
+            return None
+
+        line_ids.clear()
+        for viewer, d, bin, unit in zip(viewers, glue_data, bins, units):
+            viewer_lines = []
+            viewer_line_ids = []
+            try:
+                capitalized = stat.capitalize()
+                values = find_statistic(stat, viewer, d, bin)
+                if transform is not None:
+                    values = [transform(v) for v in values]
+                for value in values:
+                    label = f"{capitalized}: {value}"
+                    if unit:
+                        label += f" {unit}"
+                    line_id = str(uuid4())
+                    line = vertical_line_mark(viewer.layers[0], value, color, label=label)
+                    line["meta"] = line_id
+                    viewer_lines.append(line)
+                    viewer_line_ids.append(line_id)
+            except ValueError:
+                pass
+
+            # The Scatter traces that get added aren't the same instances
+            # as those we pass in. So we need to grab references to them
+            # AFTER they've been added
+            viewer.figure.add_traces(viewer_lines)
+            line_ids.append(viewer_line_ids)
+
+        return stat
+
+
+    def _update_selected(stat: str | None, value: bool):
+        nonlocal last_updated
+        if value:
+            selected.set(stat)
+        elif selected.value == stat:
+            selected.set(None)
+        last_updated = _update_lines()
+
+    def _model_factory(stat: str):
+        return solara.lab.computed(lambda stat=stat: selected.value == stat)
+
+    with rv.Card():
+        with rv.Container():
+            for stat in statistics:
+                model = _model_factory(stat)
+                with solara.Row(style={"align-items": "center"}):
+                    solara.Switch(value=model,
+                                  label=stat.capitalize(),
+                                  on_value=lambda value, stat=stat: _update_selected(stat, value))
+                    rv.Dialog(
+                            class_="statistics-help-dialog",
+                            v_slots=[{"name": "activator",
+                                      "variable": "x",
+                                      "children": [solara.IconButton(v_on="x.on",
+                                                                     icon_name="mdi-help-circle-outline")]
+                                    }],
+                            children=[
+                                rv.Card(children=[
+                                    rv.Toolbar(children=[
+                                        rv.ToolbarTitle(children=[stat.capitalize()]),
+                                        rv.Spacer(),
+                                    ]),
+                                    solara.Text(help_text[stat])
+                                ])
+                            ]
+                        )

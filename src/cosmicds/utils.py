@@ -372,6 +372,14 @@ def mode(data, component_id, bins=None, range=None):
         return [k for k, v in counter.items() if v == max_count]
 
 
+def make_figure_autoresize(figure, height=400):
+    # The auto-sizing in the Plotly widget only works if the height
+    # and width are undefined. First, unset the height and width,
+    # then enable auto-sizing.
+    figure.update_layout(height=None, width=None)
+    figure.update_layout(autosize=True, height=height)
+
+
 def request_session():
     """
     Returns a `requests.Session` object that has the relevant authorization parameters
