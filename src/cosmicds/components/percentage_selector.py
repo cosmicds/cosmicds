@@ -1,14 +1,22 @@
 from numpy import argsort, array
 import solara
+from solara import Reactive
 import reacton.ipyvuetify as rv
 
 from glue.core.subset import ElementSubsetState
 
 from ..utils import percent_around_center_indices
 
+from glue.viewers.common.viewer import Viewer
+from typing import Iterable, List
+
 
 @solara.component
-def PercentageSelector(viewers, glue_data, bins=None, **kwargs):
+def PercentageSelector(viewers: List[Viewer],
+                       glue_data: List[Viewer],
+                       selected: Reactive[str | None],
+                       bins: None | List[None | Iterable[None | int | float]]=None,
+                       **kwargs):
     
     radio_color = "#1e90ff"
     options = [50, 68, 95]

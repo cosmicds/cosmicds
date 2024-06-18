@@ -1,9 +1,12 @@
 from cosmicds.utils import vertical_line_mark
 import solara
+from solara import Reactive
 import reacton.ipyvuetify as rv
 from uuid import uuid4
 
-from typing import List
+from glue.core import Data
+from glue.viewers.common.viewer import Viewer
+from typing import Iterable, List 
 
 from ..utils import mode
 
@@ -11,7 +14,7 @@ from ..utils import mode
 # glue doesn't implement a mode statistic, so we roll our own
 # Since there can be multiple modes, mode can be a list
 # and so we return a list for every statistic to make things simpler
-def find_statistic(stat, viewer, data, bins):
+def find_statistic(stat: str, viewer: Viewer, data: Data, bins: Iterable[int | float] | None):
     if stat == "mode":
         return mode(data, viewer.state.x_att, bins=bins, range=[viewer.state.hist_x_min, viewer.state.hist_x_max])
     else:
@@ -19,7 +22,13 @@ def find_statistic(stat, viewer, data, bins):
 
 
 @solara.component
-def StatisticsSelector(viewers, glue_data, units, bins=None, statistics=["mean", "median", "mode"], **kwargs):
+def StatisticsSelector(viewers: List[Viewer],
+                       glue_data: List[Data],
+                       units: List[str],
+                       selected: Reactive[str | None],
+                       bins: None | List[None | Iterable[int | float]]=None,
+                       statistics: List[str]=["mean", "median", "mode"],
+                       **kwargs):
 
     transform = kwargs.get("transform", None)
     color = kwargs.get("color", "#000000")
@@ -38,7 +47,6 @@ def StatisticsSelector(viewers, glue_data, units, bins=None, statistics=["mean",
     }
 
     last_updated = None
-    selected = solara.use_reactive(None)
 
     def _remove_lines():
         for (viewer, viewer_line_ids) in zip(viewers, line_ids):
