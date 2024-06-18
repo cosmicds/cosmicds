@@ -21,7 +21,6 @@ def PercentageSelector(viewers: List[Viewer],
     
     radio_color = "#1e90ff"
     options = [50, 68, 95]
-    selected = solara.use_reactive(None)
     last_updated = None
     resolution = kwargs.get("resolution", 0)
     subset_group = kwargs.get("subset_group", False)
