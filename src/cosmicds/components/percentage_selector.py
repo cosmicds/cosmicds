@@ -3,10 +3,11 @@ import solara
 from solara import Reactive
 import reacton.ipyvuetify as rv
 
-from glue.core.subset import ElementSubsetState
+from glue.core.subset import ElementSubsetState, SubsetState
 
 from ..utils import percent_around_center_indices
 
+from glue.core import Data, Session
 from glue.viewers.common.viewer import Viewer
 from numbers import Number
 from typing import Iterable, List
@@ -14,42 +15,73 @@ from typing import Iterable, List
 
 @solara.component
 def PercentageSelector(viewers: List[Viewer],
-                       glue_data: List[Viewer],
+                       glue_data: List[Data],
                        selected: Reactive[str | None],
                        bins: None | List[None | Iterable[None | Number]]=None,
                        **kwargs):
     
     radio_color = "#1e90ff"
     options = [50, 68, 95]
-    last_updated = None
+    last_updated = selected.value 
     resolution = kwargs.get("resolution", 0)
     subset_group = kwargs.get("subset_group", False)
     subset_labels = kwargs.get("subset_labels", [])
     bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
-    subsets = []
-    original_colors = []
     units = kwargs.get("units", [])
-
     deselected_color = "#a9a9a9"
 
+    # When this component is 
+    subsets = []
+    for data in glue_data:
+        found = False
+        for subset in data.subsets:
+            if getattr(subset, '_percentage_selector', False):
+                subsets.append(subset)
+                found = True
+                break
+        if not found:
+            subsets.append(None)
+
+    # This should never come up 
+    if all(t is None for t in subsets):
+        subsets = []
+
+    layers = [viewer.layer_artist_for_data(data) for (data, viewer) in zip(glue_data, viewers)]
+    if subsets:
+        subset_layers = [viewer.layer_artist_for_data(subset) for viewer, subset in zip(viewers, subsets)]
+        original_colors = [layer.state.color for layer in subset_layers]
+    else:
+        original_colors = [layer.state.color for layer in layers]
+
+    def _create_subset(data: Data, state: SubsetState, index: int, session: Session):
+        kwargs = { "alpha": 1, "color": original_colors[index] }
+        if subset_labels:
+            kwargs["label"] = subset_labels[index]
+
+        if subset_group:
+            subset = session.data_collection.new_subset_group(state, **kwargs)
+        else:
+            subset = data.new_subset(state, **kwargs)
+        subset._percentage_selector = True 
+
+        return subset
+
     def _update_subsets(states):
+        session = viewers[0].session
         if not subsets:
-            kwargs = { "alpha": 1 }
-            session = viewers[0].session
             for index in range(len(viewers)):
-                data = glue_data[index]
-                state = states[index]
-                if subset_labels:
-                    kwargs["label"] = subset_labels[index]
-                if subset_group:
-                    subset = session.data_collection.new_subset_group(state, **kwargs)
-                else:
-                    subset = data.new_subset(state, **kwargs)
+                subset = _create_subset(glue_data[index], states[index], index, session)
+                if not subset_group:
                     viewers[index].add_subset(subset)
                 subsets.append(subset)
         else:
-            for subset, state in zip(subsets, states):
-                subset.subset_state = state
+            for index in range(len(subsets)):
+                if subsets[index] is None:
+                    subsets[index] = _create_subset(glue_data[index], states[index], index, session)
+                    if not subset_group:
+                        viewers[index].add_subset(subsets[index])
+                else:
+                    subsets[index].subset_state = states[index]
 
     def _bin_bounds(value, bins):
         index = next((idx for idx, x in enumerate(bins) if x >= value), 0)
@@ -71,16 +103,11 @@ def PercentageSelector(viewers: List[Viewer],
         return rounded_bound
 
     def _update():
-        nonlocal original_colors, last_updated
+        nonlocal last_updated
 
         option = selected.value
         if last_updated == option:
             return option
-
-        layers = [viewer.layer_artist_for_data(data)
-                  for (data, viewer) in zip(glue_data, viewers)]
-        if last_updated is None:
-            original_colors = [layer.state.color for layer in layers]
 
         if option is None:
             states = []
