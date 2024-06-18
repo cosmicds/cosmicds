@@ -1,4 +1,5 @@
 from cosmicds.utils import vertical_line_mark
+from itertools import chain
 import solara
 from solara import Reactive
 import reacton.ipyvuetify as rv
@@ -6,6 +7,8 @@ from uuid import uuid4
 
 from glue.core import Data
 from glue.viewers.common.viewer import Viewer
+from glue_plotly.viewers.common import PlotlyBaseView
+from plotly.graph_objects import Scatter
 from numbers import Number
 from typing import Callable, Iterable, List 
 
@@ -23,7 +26,7 @@ def find_statistic(stat: str, viewer: Viewer, data: Data, bins: Iterable[int | f
 
 
 @solara.component
-def StatisticsSelector(viewers: List[Viewer],
+def StatisticsSelector(viewers: List[PlotlyBaseView],
                        glue_data: List[Data],
                        units: List[str],
                        selected: Reactive[str | None],
@@ -33,7 +36,6 @@ def StatisticsSelector(viewers: List[Viewer],
                        **kwargs):
 
     color = kwargs.get("color", "#000000")
-    line_ids = []
     bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
 
     help_text = {
@@ -47,7 +49,18 @@ def StatisticsSelector(viewers: List[Viewer],
         "median": "path to median image"
     }
 
-    last_updated = None
+    last_updated = selected.value 
+
+    def _line_ids_for_viewer(viewer: PlotlyBaseView):
+        line_ids = []
+        traces = list(chain(l.traces() for l in viewer.layers))
+        for trace in viewer.figure.data:
+            if trace not in traces and isinstance(trace, Scatter) and getattr(trace, "meta", None):
+                line_ids.append(trace.meta)
+
+        return line_ids
+
+    line_ids = [_line_ids_for_viewer(viewer) for viewer in viewers]
 
     def _remove_lines():
         for (viewer, viewer_line_ids) in zip(viewers, line_ids):
@@ -95,7 +108,7 @@ def StatisticsSelector(viewers: List[Viewer],
         return stat
 
 
-    def _update_selected(stat, value):
+    def _update_selected(stat: str | None, value: bool):
         nonlocal last_updated
         if value:
             selected.set(stat)
@@ -103,7 +116,7 @@ def StatisticsSelector(viewers: List[Viewer],
             selected.set(None)
         last_updated = _update_lines()
 
-    def _model_factory(stat):
+    def _model_factory(stat: str):
         return solara.lab.computed(lambda stat=stat: selected.value == stat)
 
     with rv.Card():
