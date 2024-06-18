@@ -8,6 +8,7 @@ from glue.core.subset import ElementSubsetState
 from ..utils import percent_around_center_indices
 
 from glue.viewers.common.viewer import Viewer
+from numbers import Number
 from typing import Iterable, List
 
 
@@ -15,7 +16,7 @@ from typing import Iterable, List
 def PercentageSelector(viewers: List[Viewer],
                        glue_data: List[Viewer],
                        selected: Reactive[str | None],
-                       bins: None | List[None | Iterable[None | int | float]]=None,
+                       bins: None | List[None | Iterable[None | Number]]=None,
                        **kwargs):
     
     radio_color = "#1e90ff"

@@ -6,7 +6,8 @@ from uuid import uuid4
 
 from glue.core import Data
 from glue.viewers.common.viewer import Viewer
-from typing import Iterable, List 
+from numbers import Number
+from typing import Callable, Iterable, List 
 
 from ..utils import mode
 
@@ -26,11 +27,11 @@ def StatisticsSelector(viewers: List[Viewer],
                        glue_data: List[Data],
                        units: List[str],
                        selected: Reactive[str | None],
-                       bins: None | List[None | Iterable[int | float]]=None,
+                       bins: None | List[None | Iterable[Number]]=None,
                        statistics: List[str]=["mean", "median", "mode"],
+                       transform: Callable[[Number], Number] | None=None,
                        **kwargs):
 
-    transform = kwargs.get("transform", None)
     color = kwargs.get("color", "#000000")
     line_ids = []
     bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
