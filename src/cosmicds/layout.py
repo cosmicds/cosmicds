@@ -8,8 +8,6 @@ from solara.lab import theme as theme
 from solara.server import settings
 from solara_enterprise import auth
 
-from .state import GLOBAL_STATE
-
 filterwarnings(action="ignore", category=UserWarning)
 
 if "AWS_EBS_URL" in os.environ:
@@ -99,13 +97,15 @@ selected_link = solara.reactive(0)
 
 
 @solara.component
-def BaseLayout(children=[], story_name=None, story_title="Cosmic Data Story"):
+def BaseLayout(
+    children=[], global_state=None, story_name=None, story_title="Cosmic Data Story"
+):
     solara.Title(f"{story_title}")
 
     route_current, routes_current_level = solara.use_route()
 
     def _setup_user():
-        GLOBAL_STATE._setup_user(story_name, class_code.value)
+        global_state._setup_user(story_name, class_code.value)
 
     solara.use_memo(_setup_user)
 
@@ -120,7 +120,7 @@ def BaseLayout(children=[], story_name=None, story_title="Cosmic Data Story"):
 
     with solara.Column(style={"height": "100vh"}) as main:
         if not bool(auth.user.value):
-            GLOBAL_STATE._clear_user()
+            global_state._clear_user()
 
             # Attempt to load saved setup state
             _load_from_cache()
