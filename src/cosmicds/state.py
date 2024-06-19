@@ -183,7 +183,7 @@ class GlobalState(BaseState):
                     "username": self.hashed_user,
                     "password": "",
                     "institution": "",
-                    "email": userinfo.get("email", ""),
+                    "email": "",
                     "age": 0,
                     "gender": "undefined",
                     "classroomCode": class_code,
