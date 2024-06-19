@@ -59,7 +59,6 @@ class BaseState:
         _inner_dict(d, self)
 
     def _setup_database_write_listener(self, func):
-        @debounce(0.5)
         def _callback():
             func()
 

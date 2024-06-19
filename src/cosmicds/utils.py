@@ -12,7 +12,8 @@ from plotly.graph_objects import Scatter
 
 from glue.core.state_objects import State
 import numpy as np
-from threading import Timer
+from threading import Timer, Event
+from functools import wraps
 from traitlets import Unicode
 from zmq.eventloop.ioloop import IOLoop
 
@@ -259,12 +260,12 @@ def line_mark(start_x, start_y, end_x, end_y, color, label=None):
     line = Scatter(
         x=[start_x, end_x],
         y=[start_y, end_y],
-        mode='lines',
+        mode="lines",
         line=dict(color=color),
         name=label,
-        showlegend=label is not None
+        showlegend=label is not None,
     )
-    
+
     return line
 
 
@@ -291,26 +292,51 @@ def vertical_line_mark(layer, x, color, label=None):
     )
 
 
-# Taken from https://jonlabelle.com/snippets/view/python/python-debounce-decorator-function
 def debounce(wait):
-    """Postpone a functions execution until after some time has elapsed
-
-    :type wait: int
-    :param wait: The amount of Seconds to wait before the next call can execute.
+    """
+    Decorator that will postpone a function's execution until after `wait` seconds have elapsed
+    since the last time it was invoked.
     """
 
-    def decorator(fun):
+    def decorator(fn):
         def debounced(*args, **kwargs):
             def call_it():
-                fun(*args, **kwargs)
+                return fn(*args, **kwargs)
 
-            try:
-                debounced.t.cancel()
-            except AttributeError:
-                pass
+            if hasattr(debounced, "_timer"):
+                debounced._timer.cancel()
 
-            debounced.t = Timer(wait, call_it)
-            debounced.t.start()
+            debounced._timer = Timer(wait, call_it)
+            debounced._timer.start()
+
+        return debounced
+
+    return decorator
+
+
+def _debounce(wait):
+    """
+    Decorator that will postpone a function's execution until after `wait` seconds have elapsed
+    since the last time it was invoked, and return the result of the function.
+    """
+
+    def decorator(fn):
+        @wraps(fn)
+        def debounced(*args, **kwargs):
+            def call_it():
+                debounced._result = fn(*args, **kwargs)
+                debounced._called.set()
+
+            if hasattr(debounced, "_timer"):
+                debounced._timer.cancel()
+
+            debounced._timer = Timer(wait, call_it)
+            debounced._timer.start()
+
+            debounced._called = Event()
+            debounced._called.wait()
+
+            return getattr(debounced, "_result", None)
 
         return debounced
 
