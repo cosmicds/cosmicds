@@ -208,6 +208,3 @@ class GlobalState(BaseState):
         self.student.id.set(0)
         self.classroom.class_.set({})
         self.classroom.size.set(0)
-
-
-GLOBAL_STATE = GlobalState()

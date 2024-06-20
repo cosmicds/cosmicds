@@ -117,7 +117,11 @@ def BaseLayout(
         if info is not None:
             return info
 
-        return {"name": "Undefined", "email": "ERROR: No user"}
+        return {
+            "name": "Undefined",
+            "email": "ERROR: No user",
+            "id": global_state.student.id.value,
+        }
 
     with solara.Column(style={"height": "100vh"}) as main:
         if not bool(auth.user.value):
