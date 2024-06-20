@@ -17,35 +17,73 @@ def ScaffoldAlert(
     **kwargs
 ):
     """
-    This works indirectly with the ScaffoldAlert.vue component. (We load the vue file for each specific guideline, which in turn uses the ScaffoldAlert.vue component as a template.)
+    Initializes and configures a ScaffoldAlert component.
 
-    vue_path: str,
-        vue file for the guideline
-    event_back_callback=lambda *args: True,
-        function you want the guideline to call when user clicks "back"
-    event_next_callback=lambda *args: True,
-        function you want the guideline to call when user clicks "next"
-    show=False,
-        Have the conditions needed to display this guideline been met? (Generally, "are you at the correct marker?")
-    can_advance=False,
-        - Have the conditions to advance to next guideline been met (i.e. have you unlocked the gate guarding the next guideline)?
-        - If False, display whatever is in the before-next template in place of the "next" button.
-        - If True, display "next" button (or whatever text you specified for the button in "nextText" instead of "next.")
-        - If you don't want to display a next button at all, you can set this to False and leave the before-next template blank.
+    This works indirectly with the ScaffoldAlert.vue component. (We load the
+    vue file for each specific guideline, which in turn uses the
+    `ScaffoldAlert.vue` component as a template.)
 
-    fr_observer=None,
-        ? TBD depending on how we connect this to the state. (The original usage of this in the voila version was to observe if new free response boxes were being added as the student progressed through the guideline, as in the case of the multi-step, expanding guidelines).
-    free_responses=[],
-        ? TBD depending on how we connect this to the state. (Could be a list of tags to assign to each free response entry).
-    disable_next=False,
-        Next button is disabled until free response questions have been answered. (Note to team - are there other cases where we disable the button?)
-    fr_listener=None,
-        ? TBD depending on how we connect this to the state. (The original usage of this in the voila version was to vet whether students had entered content into the box that passed the relevant validation checks).
-    state_view=None,
-        State components you want to pass to the guideline vue component. (Note that the vue component cannot change the state components directly. They should always be changed on the python side by a callback function.)
-    event_force_transition=lambda *args: None,
-        We don't use this anywhere yet, so update this as needed, but we could use this to specify a callback that transitions to somewhere other than the next/previous marker.
+    Parameters
+    ----------
+    vue_path : str
+        The path to the Vue component file.
+    event_back_callback : callable, optional
+        A callback function triggered when the "back" event occurs. Defaults
+        to a lambda that always returns True.
+    event_next_callback : callable, optional
+        A callback function triggered when the "next" event occurs. Defaults
+        to a lambda that always returns True.
+    show : bool, optional
+        Flag to determine if the alert is visible. Have the conditions needed
+        to display this guideline been met? (Generally, "are you at the
+        correct marker?".) Defaults to False.
+    can_advance : bool, optional
+        Flag to determine if advancing to the next step is allowed. Defaults
+        to False.
+
+        - Have the conditions to advance to next guideline been met (i.e. have
+        you unlocked the gate guarding the next guideline)?
+        - If False, display whatever is in the before-next template in place
+        of the "next" button.
+        - If True, display "next" button (or whatever text you specified for
+        the button in "nextText" instead of "next.")
+        - If you don't want to display a next button at all, you can set this
+        to False and leave the before-next template blank.
+    fr_observer : object, optional
+        An observer for free response events. TBD depending on how we connect
+        this to the state. (The original usage of this in the Voila version
+        was to observe if new free response boxes were being added as the
+        student progressed through the guideline, as in the case of the
+        multistep, expanding guidelines). Defaults to None.
+    free_responses : list, optional
+        A list of free response items. TBD depending on how we connect this to
+        the state. (Could be a list of tags to assign to each free response
+        entry). Defaults to an empty list.
+    disable_next : bool, optional
+        Flag to disable the "next" button. Next button is disabled until free
+        response questions have been answered. (Note to team - are there other
+        cases where we disable the button?) Defaults to False.
+    fr_listener : callable, optional
+        A listener for free response events. TBD depending on how we connect
+        this to the state. (The original usage of this in the Voila version
+        was to vet whether students had entered content into the box that
+        passed the relevant validation checks). Defaults to None.
+    state_view : dict, optional
+        The state view object for managing component state. (Note that the vue
+        component cannot change the state components directly. They should
+        always be changed on the python side by a callback function.)
+        Defaults to None.
+    event_force_transition : callable, optional
+        A callback function to force a state transition. We don't use this
+        anywhere yet, so update this as needed, but we could use this to
+        specify a callback that transitions to somewhere other than the
+        next/previous marker. Defaults to a lambda that does nothing.
     **kwargs
+        Additional keyword arguments for further customization.
+
+    Returns
+    -------
+    None
     """
     if not show:
         return
