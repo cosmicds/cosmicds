@@ -160,7 +160,7 @@ class GlobalState(BaseState):
         return username
 
     def _setup_user(self, story_name, class_code):
-        if not auth.user.value:
+        if not auth.user.value or self.student.id.value:
             return
 
         # See if the user is actually in the database, otherwise create user
@@ -182,7 +182,7 @@ class GlobalState(BaseState):
                     "username": self.hashed_user,
                     "password": "",
                     "institution": "",
-                    "email": "",
+                    "email": f"{self.hashed_user}",
                     "age": 0,
                     "gender": "undefined",
                     "classroomCode": class_code,
