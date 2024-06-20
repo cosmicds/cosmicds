@@ -104,11 +104,11 @@ def BaseLayout(
 
     route_current, routes_current_level = solara.use_route()
 
-    def _setup_user():
-        _load_from_cache()
-        global_state._setup_user(story_name, class_code.value)
-
-    solara.use_memo(_setup_user)
+    # def _setup_user():
+    #     _load_from_cache()
+    #     global_state._setup_user(story_name, class_code.value)
+    #
+    # solara.use_memo(_setup_user)
 
     @solara.lab.computed
     def display_info():
@@ -129,6 +129,9 @@ def BaseLayout(
             login_dialog = Login()
             active.set(True)
             return main
+        else:
+            _load_from_cache()
+            global_state._setup_user(story_name, class_code.value)
 
         with rv.AppBar(elevate_on_scroll=False, app=True, flat=True):
             rv.ToolbarTitle(children=[f"{story_title}"])
