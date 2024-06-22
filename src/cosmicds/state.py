@@ -31,6 +31,8 @@ class BaseState:
                 #  it's not clear why there's so many factories.
                 if sub_comp.value.__class__.__name__ == "FreeResponseDict":
                     return {}
+                elif sub_comp.value.__class__.__name__ == 'StudentData':
+                    return sub_comp.value.dict(exclude={"measurements": {"__all__": {"galaxy": {"spectrum"}}}})
 
             if dataclasses.is_dataclass(sub_comp):
                 return {
@@ -159,40 +161,14 @@ class GlobalState(BaseState):
 
         return username
 
-    def _setup_user(self, story_name, class_code):
-        if not auth.user.value or self.student.id.value:
-            return
+    @property
+    def user_exists(self):
+        r = self.request_session.get(f"{API_URL}/student/{self.hashed_user}")
+        return r.json()["student"] is not None
 
-        # See if the user is actually in the database, otherwise create user
+    def load_user_info(self, story_name):
         r = self.request_session.get(f"{API_URL}/student/{self.hashed_user}")
         student = r.json()["student"]
-
-        if student is None:
-            print(
-                f"User '{self.hashed_user}' not found in database. Creating "
-                f"new user with class code '{class_code}'"
-            )
-
-            userinfo = auth.user.value["userinfo"]
-
-            # Create new user based on username and class code
-            r = self.request_session.post(
-                f"{API_URL}/student-sign-up",
-                json={
-                    "username": self.hashed_user,
-                    "password": "",
-                    "institution": "",
-                    "email": f"{self.hashed_user}",
-                    "age": 0,
-                    "gender": "undefined",
-                    "classroomCode": class_code,
-                },
-            )
-
-            r = self.request_session.get(f"{API_URL}/student/{self.hashed_user}")
-            student = r.json()["student"]
-        else:
-            print(f"Found user '{self.hashed_user}' in database.")
 
         self.student.id.set(student.get("id", 0))
 
@@ -203,6 +179,36 @@ class GlobalState(BaseState):
 
         self.classroom.class_.set(class_json["class"])
         self.classroom.size.set(class_json["size"])
+
+    def create_new_user(self, story_name, class_code):
+        # See if the user is actually in the database, otherwise create user
+        r = self.request_session.get(f"{API_URL}/student/{self.hashed_user}")
+        student = r.json()["student"]
+
+        if student is not None:
+            print("Can't create user; they already exist!")
+            return
+
+        print(
+            f"User '{self.hashed_user}' not found in database. Creating "
+            f"new user with class code '{class_code}'"
+        )
+
+        # Create new user based on username and class code
+        r = self.request_session.post(
+            f"{API_URL}/student-sign-up",
+            json={
+                "username": self.hashed_user,
+                "password": "",
+                "institution": "",
+                "email": f"{self.hashed_user}",
+                "age": 0,
+                "gender": "undefined",
+                "classroomCode": class_code,
+            },
+        )
+
+        self.load_user_info(story_name)
 
     def _clear_user(self):
         self.student.id.set(0)
