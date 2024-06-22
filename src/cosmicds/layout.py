@@ -18,6 +18,9 @@ user_info = solara.reactive({})
 class_code = solara.reactive("")
 update_db = solara.reactive(False)
 debug_mode = solara.reactive(False)
+login_ready = solara.reactive(False)
+
+selected_link = solara.reactive(0)
 
 
 def get_session_id() -> str:
@@ -93,50 +96,62 @@ def Login(**btn_kwargs):
     return login
 
 
-selected_link = solara.reactive(0)
-
-
 @solara.component
 def BaseLayout(
     children=[], global_state=None, story_name=None, story_title="Cosmic Data Story"
 ):
     solara.Title(f"{story_title}")
 
-    route_current, routes_current_level = solara.use_route()
+    if bool(auth.user.value) and bool(global_state.student.id.value):
+        LayoutFrame(children, global_state, story_title)
+    else:
+        LoginLayout(global_state, story_name)
 
-    # def _setup_user():
-    #     _load_from_cache()
-    #     global_state._setup_user(story_name, class_code.value)
-    #
-    # solara.use_memo(_setup_user)
+
+@solara.component
+def LoginLayout(global_state, story_name):
+    with solara.Column(style={"height": "100vh"}) as main:
+        # Attempt to load saved setup state
+        _load_from_cache()
+
+        if bool(auth.user.value):
+            print("User has authenticated but is not logged in.")
+
+            if global_state.user_exists:
+                print("User exists.")
+                global_state.load_user_info(story_name)
+                login_ready.set(True)
+            elif bool(class_code.value):
+                global_state.create_new_user(story_name, class_code.value)
+                login_ready.set(True)
+            else:
+                solara.use_router().push(auth.get_logout_url())
+        else:
+            print("User has not authenticated.")
+            global_state._clear_user()
+
+            login_dialog = Login()
+            active.set(True)
+
+
+@solara.component
+def LayoutFrame(children=[], global_state=None, story_title="Cosmic Data Story"):
+    route_current, routes_current_level = solara.use_route()
 
     @solara.lab.computed
     def display_info():
         info = (auth.user.value or {}).get("userinfo")
 
         if info is not None:
-            return info
+            return {**info, "id": global_state.student.id.value}
 
         return {
             "name": "Undefined",
             "email": "ERROR: No user",
-            "id": global_state.student.id.value,
+            "id": "",
         }
 
     with solara.Column(style={"height": "100vh"}) as main:
-        if not bool(auth.user.value):
-            global_state._clear_user()
-
-            # Attempt to load saved setup state
-            _load_from_cache()
-
-            login_dialog = Login()
-            active.set(True)
-            return main
-        else:
-            _load_from_cache()
-            global_state._setup_user(story_name, class_code.value)
-
         with rv.AppBar(elevate_on_scroll=False, app=True, flat=True):
             rv.ToolbarTitle(children=[f"{story_title}"])
 
