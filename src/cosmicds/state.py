@@ -32,7 +32,8 @@ class BaseState:
                 if sub_comp.value.__class__.__name__ == "FreeResponseDict":
                     return {}
                 elif sub_comp.value.__class__.__name__ == 'StudentData':
-                    return sub_comp.value.dict(exclude={"measurements": {"__all__": {"galaxy": {"spectrum"}}}})
+                    # return sub_comp.value.dict(exclude={"measurements": {"__all__": {"galaxy": {"spectrum"}}}})
+                    return {}
 
             if dataclasses.is_dataclass(sub_comp):
                 return {
