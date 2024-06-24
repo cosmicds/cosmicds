@@ -3,6 +3,7 @@ from functools import cached_property
 from glue_jupyter import JupyterApplication
 from glue.core import DataCollection, Session
 import solara
+from glue.core import Data, DataCollection
 
 
 class BaseState(BaseModel):
@@ -51,6 +52,15 @@ class GlobalState(BaseState):
     @cached_property
     def glue_session(self) -> Session:
         return self._glue_app.session
+    
+    def add_or_update_data(self, data: Data):
+        if data.label in self.glue_data_collection:
+            existing = self.glue_data_collection[data.label]
+            existing.update_values_from_data(data)
+            return existing
+        else:
+            self.glue_data_collection.append(data)
+            return data
 
 
-GLOBAL_STATE = solara.reactive(GlobalState())
+GLOBAL_STATE = GlobalState()
