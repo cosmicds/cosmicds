@@ -20,8 +20,6 @@ update_db = solara.reactive(False)
 debug_mode = solara.reactive(False)
 login_ready = solara.reactive(False)
 
-selected_link = solara.reactive(0)
-
 
 def get_session_id() -> str:
     """Returns the session id, which is stored using a browser cookie."""
@@ -137,6 +135,9 @@ def LoginLayout(global_state, story_name):
 @solara.component
 def LayoutFrame(children=[], global_state=None, story_title="Cosmic Data Story"):
     route_current, routes_current_level = solara.use_route()
+    route_index = routes_current_level.index(route_current)
+
+    selected_link = solara.use_reactive(route_index)
 
     @solara.lab.computed
     def display_info():
@@ -189,7 +190,6 @@ def LayoutFrame(children=[], global_state=None, story_title="Cosmic Data Story")
             with rv.List(nav=True):
                 with rv.ListItemGroup(
                     v_model=selected_link.value,
-                    on_v_model=lambda v: selected_link.set(v),
                 ):
                     for i, route in enumerate(routes_current_level):
                         with solara.Link(solara.resolve_path(route)):
