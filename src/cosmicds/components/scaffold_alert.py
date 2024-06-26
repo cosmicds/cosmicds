@@ -1,19 +1,21 @@
 import solara
 import inspect
+from pathlib import Path
+from typing import Callable
 
 
 def ScaffoldAlert(
-    vue_path: str,
-    event_back_callback=lambda *args: True,
-    event_next_callback=lambda *args: True,
-    show=False,
-    can_advance=False,
+    vue_path: str | Path,
+    event_back_callback: Callable = lambda *args: True,
+    event_next_callback: Callable = lambda *args: True,
+    show: bool = False,
+    can_advance: bool = False,
     fr_observer=None,
-    free_responses=[],
-    disable_next=False,
+    free_responses: list = None,
+    disable_next: bool = False,
     fr_listener=None,
-    state_view=None,
-    event_force_transition=lambda *args: None,
+    state_view: dict = None,
+    event_force_transition: Callable = lambda *args: None,
     **kwargs
 ):
     """

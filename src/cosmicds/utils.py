@@ -35,6 +35,14 @@ __all__ = [
 API_URL = "https://api.cosmicds.cfa.harvard.edu"
 
 
+def get_session_id() -> str:
+    """Returns the session id, which is stored using a browser cookie."""
+    import solara.server.kernel_context
+
+    context = solara.server.kernel_context.get_current_context()
+    return context.session_id
+
+
 # JC: I got parts of this from https://stackoverflow.com/a/57915246
 class CDSJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -404,20 +412,6 @@ def make_figure_autoresize(figure, height=400):
     # then enable auto-sizing.
     figure.update_layout(height=None, width=None)
     figure.update_layout(autosize=True, height=height)
-
-
-def request_session():
-    """
-    Returns a `requests.Session` object that has the relevant authorization parameters
-    to interface with the CosmicDS API server (provided that environment variables
-    are set correctly).
-    """
-    session = Session()
-    session.mount(API_URL, LoggingAdapter())
-    # hook = {"response": [log_response]}
-    # session.hooks.update(hook)
-    session.headers.update({"Authorization": os.getenv("CDS_API_KEY")})
-    return session
 
 
 def combine_css(**kwargs):
