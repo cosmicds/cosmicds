@@ -63,4 +63,4 @@ class GlobalState(BaseState):
             return data
 
 
-GLOBAL_STATE = GlobalState()
+GLOBAL_STATE = solara.reactive(GlobalState())
