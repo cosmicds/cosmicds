@@ -15,12 +15,12 @@ from typing import Type
 def MarkerSelector(marker_cls: Type[Enum], component_state: Reactive[BaseState]):
     
     markers_list = [marker.name for marker in marker_cls]
-        
+
     with solara.Row():
         with solara.Column():   
             rv.Select(
                 label="Select Marker", 
-                v_model=component_state.value.current_step,
+                v_model=component_state.value.current_step.name,
                 on_v_model=lambda value: Ref(component_state.fields.current_step).set(marker_cls[value]),
                 items=markers_list
             )
@@ -89,10 +89,10 @@ def StateEditor(marker_cls: Type[Enum], component_state: Reactive[BaseState]):
                         FieldList(component_state)
         with solara.Row():
             solara.Markdown(
-                f"**Current step:** {component_state.value.current_step.value}. {component_state.value.current_step}"
+                f"**Current step:** {component_state.value.current_step.name}. {component_state.value.current_step.value}"
         )
 
-        if (component_state.current_step.value is not marker_cls.last()):
+        if (component_state.value.current_step is not marker_cls.last()):
             solara.Markdown(
                 f"**Next step:** {component_state.value.current_step.value + 1}. {marker_cls(component_state.value.current_step.value + 1)}"
             )
