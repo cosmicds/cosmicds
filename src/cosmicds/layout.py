@@ -5,7 +5,7 @@ from importlib.metadata import version
 
 import solara
 from solara.alias import rv
-from solara.lab import theme as theme, Ref
+from solara.lab import theme, Ref
 from solara.server import settings
 from solara_enterprise import auth
 from solara import Reactive
@@ -66,21 +66,26 @@ def BaseLayout(
 
     solara.use_memo(_load_from_cache)
 
-    if bool(auth.user.value):
-        if BASE_API.user_exists:
-            BASE_API.load_user_info(story_name, GLOBAL_STATE)
-        elif bool(class_code.value):
-            BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
-        else:
-            logger.error("User is authenticated, but does not exist.")
-            solara.use_router().push(auth.get_logout_url())
-    else:
-        logger.info("User has not authenticated.")
-        BASE_API.clear_user(GLOBAL_STATE)
+    # if bool(auth.user.value):
+    #     if BASE_API.user_exists:
+    #         BASE_API.load_user_info(story_name, GLOBAL_STATE)
+    #     elif bool(class_code.value):
+    #         BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
+    #     else:
+    #         logger.error("User is authenticated, but does not exist.")
+    #         solara.use_router().push(auth.get_logout_url())
+    # else:
+    #     logger.info("User has not authenticated.")
+    #     BASE_API.clear_user(GLOBAL_STATE)
 
-        login_dialog = Login(active, class_code, update_db, debug_mode)
-        active.set(True)
-        return
+    #     login_dialog = Login(active, class_code, update_db, debug_mode)
+    #     active.set(True)
+    #     return
+
+    # TODO: This is just for testing!
+    Ref(GLOBAL_STATE.fields.student.id).set(0)
+    Ref(GLOBAL_STATE.fields.classroom.class_info).set({"id": 0})
+    Ref(GLOBAL_STATE.fields.classroom.size).set(0)
 
     @solara.lab.computed
     def display_info():
