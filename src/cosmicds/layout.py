@@ -157,11 +157,13 @@ def BaseLayout(
                 enable_auto=False,
             )
 
-            with rv.Chip(class_="ma-2"):
-                with rv.Avatar(left=True, class_="darken-4"):
-                    solara.Text("1")
+            with rv.Chip(class_="ma-2 piggy-chip"):                    
+                    # check that this doesn't make solara render the whole app. if it does, move the chip into its own component.
+                solara.Text("6 Points")
 
-                solara.Text("Points")
+                rv.Icon(class_="ml-2",
+                    children=["mdi-piggy-bank"],
+                    color="var(--success-dark)")
 
         with rv.NavigationDrawer(
             app=True,
