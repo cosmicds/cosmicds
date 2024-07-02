@@ -1,138 +1,152 @@
 import datetime
 import os
 from warnings import filterwarnings
+from importlib.metadata import version
 
 import solara
 from solara.alias import rv
-from solara.lab import theme as theme
+from solara.lab import theme as theme, Ref
 from solara.server import settings
 from solara_enterprise import auth
+from solara import Reactive
 
 from .state import GLOBAL_STATE
+from .remote import BASE_API
+from cosmicds import load_custom_vue_components
+from cosmicds.utils import get_session_id
+from cosmicds.components.login import Login
+from cosmicds.logger import setup_logger
 
 filterwarnings(action="ignore", category=UserWarning)
 
 if "AWS_EBS_URL" in os.environ:
     settings.main.base_url = os.environ["AWS_EBS_URL"]
 
-active = solara.reactive(False)
-user_info = solara.reactive({})
-class_code = solara.reactive("")
-update_db = solara.reactive(False)
-debug_mode = solara.reactive(False)
-
-
-def get_session_id() -> str:
-    """Returns the session id, which is stored using a browser cookie."""
-    import solara.server.kernel_context
-
-    context = solara.server.kernel_context.get_current_context()
-    return context.session_id
-
-
-def _load_from_cache():
-    cache = solara.cache.storage.get(f"cds-login-options-{get_session_id()}")
-
-    if cache is not None:
-        for key, state in [
-            ("class_code", class_code),
-            ("update_db", update_db),
-            ("debug_mode", debug_mode),
-        ]:
-            if key in cache:
-                state.set(cache[key])
-
-
-def _save_to_cache():
-    solara.cache.storage[f"cds-login-options-{get_session_id()}"] = {
-        "class_code": class_code.value,
-        "update_db": update_db.value,
-        "debug_mode": debug_mode.value,
-    }
+logger = setup_logger("LAYOUT")
 
 
 @solara.component
-def Login(**btn_kwargs):
-    with rv.Dialog(
-        v_model=active.value,
-        on_v_model=active.set,
-        max_width=600,
-        # fullscreen=True,
-        persistent=True,
-        overlay_color="grey darken-2",
-    ) as login:
-        with rv.Card():
-            with rv.CardText():
-                with rv.Container(
-                    class_="d-flex align-center flex-column justify-center"
-                ):
-                    solara.Image(
-                        "/static/public/cosmicds_logo_transparent_for_dark_backgrounds.png"
-                    )
-                    solara.Text(
-                        "Hubble's Law Data Story", classes=["display-1", "py-12"]
-                    )
-
-                    solara.InputText(
-                        label="Class Code", value=class_code, continuous_update=True
-                    )
-
-                    # TODO: hide these in production
-                    with solara.Row():
-                        solara.Checkbox(label="Update DB", value=update_db)
-                        solara.Checkbox(label="Debug Mode", value=debug_mode)
-
-                    solara.Button(
-                        "Sign in",
-                        href=auth.get_login_url(),
-                        disabled=not class_code.value,
-                        outlined=False,
-                        large=True,
-                        color="success",
-                        on_click=_save_to_cache,
-                    )
-
-    return login
-
-
-selected_link = solara.reactive(0)
-
-
-@solara.component
-def BaseLayout(children=[], story_name=None, story_title="Cosmic Data Story"):
-    solara.Title(f"{story_title}")
-
+def BaseLayout(
+    children: list = [],
+    story_name: str = "",
+    story_title: str = "Cosmic Data Story",
+):
     route_current, routes_current_level = solara.use_route()
+    route_index = routes_current_level.index(route_current)
 
-    def _setup_user():
-        GLOBAL_STATE._setup_user(story_name, class_code.value)
+    selected_link = solara.use_reactive(route_index)
 
-    solara.use_memo(_setup_user)
+    active = solara.use_reactive(False)
+    class_code = solara.use_reactive("")
+    update_db = solara.use_reactive(False)
+    debug_mode = solara.use_reactive(True)
+
+    debug_menu = solara.use_reactive(False)
+
+    def _component_setup():
+        # Custom vue-only components have to be registered in the Page element
+        #  currently, otherwise they will not be available in the front-end
+        logger.info("Loaded custom vue files.")
+        load_custom_vue_components()
+
+    solara.use_memo(_component_setup)
+
+    # Attempt to load saved setup state
+    def _load_from_cache():
+        cache = solara.cache.storage.get(f"cds-login-options-{get_session_id()}")
+
+        if cache is not None:
+            for key, state in [
+                ("class_code", class_code),
+                ("update_db", update_db),
+                ("debug_mode", debug_mode),
+            ]:
+                if key in cache:
+                    state.set(cache[key])
+
+    solara.use_memo(_load_from_cache)
+
+    if bool(auth.user.value):
+        if BASE_API.user_exists:
+            BASE_API.load_user_info(story_name, GLOBAL_STATE)
+        elif bool(class_code.value):
+            BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
+        else:
+            logger.error("User is authenticated, but does not exist.")
+            solara.use_router().push(auth.get_logout_url())
+    else:
+        logger.info("User has not authenticated.")
+        BASE_API.clear_user(GLOBAL_STATE)
+
+        login_dialog = Login(active, class_code, update_db, debug_mode)
+        active.set(True)
+        return
 
     @solara.lab.computed
     def display_info():
         info = (auth.user.value or {}).get("userinfo")
 
         if info is not None:
-            return info
+            return {**info, "id": GLOBAL_STATE.value.student.id}
 
-        return {"name": "Undefined", "email": "ERROR: No user"}
+        return {
+            "name": "Undefined",
+            "email": "ERROR: No user",
+            "id": "",
+        }
 
     with solara.Column(style={"height": "100vh"}) as main:
-        if not bool(auth.user.value):
-            GLOBAL_STATE._clear_user()
-
-            # Attempt to load saved setup state
-            _load_from_cache()
-
-            login_dialog = Login()
-            active.set(True)
-            return main
-
         with rv.AppBar(elevate_on_scroll=False, app=True, flat=True):
             rv.ToolbarTitle(children=[f"{story_title}"])
 
             rv.Spacer()
+
+            with rv.Menu(
+                v_model=debug_menu.value,
+                offset_y=True,
+                close_on_content_click=False,
+                v_slots=[
+                    {
+                        "name": "activator",
+                        "variable": "menu",
+                        "children": rv.Btn(
+                            v_on="menu.on",
+                            icon=True,
+                            children=[rv.Icon(children=["mdi-bug"])],
+                        ),
+                    }
+                ],
+            ):
+                with rv.Card(width=250):
+                    with rv.CardText():
+                        rv.TextField(
+                            value=f"{version('cosmicds')}",
+                            label="CosmicDS Version",
+                            readonly=True,
+                            outlined=True,
+                            dense=True,
+                        )
+                        rv.TextField(
+                            value=f"{version('hubbleds')}",
+                            label="HubbeDS Version",
+                            readonly=True,
+                            outlined=True,
+                            dense=True,
+                        )
+                        rv.TextField(
+                            value=f"{GLOBAL_STATE.value.student.id}",
+                            label="Student ID",
+                            readonly=True,
+                            outlined=True,
+                            dense=True,
+                        )
+                        rv.TextField(
+                            value=f"{BASE_API.hashed_user}",
+                            label="Student Hash",
+                            readonly=True,
+                            outlined=True,
+                            dense=True,
+                        )
 
             with rv.Btn(icon=True):
                 rv.Icon(children=["mdi-tune-vertical"])
@@ -149,7 +163,9 @@ def BaseLayout(children=[], story_name=None, story_title="Cosmic Data Story"):
 
                 solara.Text("Points")
 
-        with rv.NavigationDrawer(app=True):  # , width=300):
+        with rv.NavigationDrawer(
+            app=True,
+        ):
             with rv.ListItem():
                 with rv.ListItemContent():
                     rv.ListItemTitle(
@@ -166,7 +182,6 @@ def BaseLayout(children=[], story_name=None, story_title="Cosmic Data Story"):
             with rv.List(nav=True):
                 with rv.ListItemGroup(
                     v_model=selected_link.value,
-                    on_v_model=lambda v: selected_link.set(v),
                 ):
                     for i, route in enumerate(routes_current_level):
                         with solara.Link(solara.resolve_path(route)):
@@ -225,5 +240,3 @@ def BaseLayout(children=[], story_name=None, story_title="Cosmic Data Story"):
                             """,
                                 style="font-size: 12px; line-height: 12px",
                             )
-
-    return main

@@ -1,11 +1,6 @@
 <script>
 export default {
-  // mounted: () => {
-  //   console.log("MOUNTED Doppler Calc 4");
-  // },
   async mounted() {
-    console.log("MathJax support component loaded.");
-
     if (!window.customElements.get("cds-input")) {
 
       class CustomInput extends HTMLElement {
@@ -126,9 +121,10 @@ export default {
     // Grab MathJax itself
     // We want to wait for it to finish loading, in case there are
     // any elements that need to be typeset on the initial screen
+    console.log("Attempting load of mathjax.")
     await new Promise((resolve, reject) => {
       const mathJaxScript = document.createElement('script');
-      mathJaxScript.async = false;
+      mathJaxScript.async = true;
       mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
       document.head.appendChild(mathJaxScript);
       mathJaxScript.onload = (_e) => resolve();
@@ -173,27 +169,6 @@ export default {
     const options = {childList: true, subtree: true};
     observer.observe(this.$el, options);
   },
-  methods: {
-    getValue(inputID) {
-      const input = document.getElementById(inputID);
-      if (!input) {
-        return null;
-      }
-      return input.value;
-    },
-
-    parseAnswer(inputID) {
-      return parseFloat(this.getValue(inputID).replace(/,/g, ''));
-    },
-
-    validateAnswersJS(inputIDs, expectedAnswers) {
-      return inputIDs.every((id, index) => {
-        const value = this.parseAnswer(id);
-        this.state_view.failed_validation_4 = (value && value === expectedAnswers[index]) ? false : true;
-        return value && value === expectedAnswers[index];
-      });
-    }
-  }
 }
 </script>
 
