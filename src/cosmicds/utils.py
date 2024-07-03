@@ -412,7 +412,7 @@ def mode(data, component_id, bins=None, range=None):
         return [k for k, v in counter.items() if v == max_count]
 
 
-def empty_data_from_model_class(cls: Type[BaseModel]):
+def empty_data_from_model_class(cls: Type[BaseModel], label: str | None=None):
     data_dict = {}
     for field, info in cls.model_fields.items():
         if info.annotation is None:
@@ -425,6 +425,8 @@ def empty_data_from_model_class(cls: Type[BaseModel]):
             numerical = True
 
         data_dict[field] = Component(np.array([])) if numerical else CategoricalComponent(np.array([]))
+    if label:
+        data_dict["label"] = label
     return Data(**data_dict)
 
 
