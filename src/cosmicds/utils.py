@@ -1,4 +1,5 @@
 from collections import Counter
+from datetime import datetime
 import json
 from numbers import Number
 import os
@@ -60,6 +61,8 @@ class CDSJSONEncoder(json.JSONEncoder):
             return obj.tolist()
         if isinstance(obj, State):
             return obj.as_dict()
+        if isinstance(obj, datetime):
+            return f"{obj}"
         return super(CDSJSONEncoder, self).default(obj)
 
 
