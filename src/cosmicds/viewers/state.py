@@ -4,6 +4,7 @@ from echo import add_callback, callback_property, delay_callback, CallbackProper
 from glue.core import Subset
 from glue.viewers.histogram.state import HistogramViewerState
 from glue.viewers.scatter.state import ScatterViewerState
+from glue_plotly.viewers.histogram.state import PlotlyHistogramViewerState
 from numpy import linspace, inf, isfinite, isnan, spacing
 
 from cosmicds.utils import frexp10
@@ -172,7 +173,7 @@ class CDSScatterViewerState(ScatterViewerState):
 
 
 
-class CDSHistogramViewerState(HistogramViewerState):
+class CDSHistogramViewerState(PlotlyHistogramViewerState):
 
     def _reset_x_limits(self):
         bounds = []

@@ -40,6 +40,7 @@ class GlobalState(BaseState):
     show_team_interface: bool = False
     allow_advancing: bool = True
     speech: Speech = Speech()
+    piggybank_total: int = 0
 
     @cached_property
     def _glue_app(self) -> JupyterApplication:
