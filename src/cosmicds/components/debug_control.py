@@ -1,15 +1,17 @@
 import solara
-from solara import Reactive, TypeVar
+from solara import Reactive
 from solara.toestand import Ref
 import reacton.ipyvuetify as rv
 
-from pydantic import BaseModel
+from cosmicds.remote import BaseAPI
 
-from ..state import GLOBAL_STATE, BaseState
+from .refresh_button import RefreshButton
+from ..state import GLOBAL_STATE, BaseLocalState, BaseState
 
 from enum import Enum
 from functools import partial
 from typing import Type
+
 
 @solara.component
 def MarkerSelector(marker_cls: Type[Enum], component_state: Reactive[BaseState]):
@@ -72,7 +74,10 @@ def FieldList(component_state: Reactive[BaseState]):
 
 
 @solara.component
-def StateEditor(marker_cls: Type[Enum], component_state: Reactive[BaseState]):
+def StateEditor(marker_cls: Type[Enum],
+                component_state: Reactive[BaseState],
+                local_state: Reactive[BaseLocalState],
+                api: BaseAPI):
     show_dialog, set_show_dialog = solara.use_state(False)
     with solara.Card(style="border-radius: 5px; border: 2px solid #EC407A; max-width: 400px"):
         with solara.Row():
@@ -104,3 +109,7 @@ def StateEditor(marker_cls: Type[Enum], component_state: Reactive[BaseState]):
             solara.Markdown(
                 "End of Stage"
             )
+        
+        with solara.Row():
+            RefreshButton(event_before_refresh=lambda _: api.delete_stage_state(GLOBAL_STATE, local_state, component_state),
+                          button_text="Reset Stage State")

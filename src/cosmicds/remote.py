@@ -3,7 +3,8 @@ import hashlib
 import os
 from requests import Session
 from functools import cached_property
-from .state import GlobalState
+
+from .state import BaseLocalState, BaseState, GlobalState
 from solara import Reactive
 from solara.lab import Ref
 from cosmicds.logger import setup_logger
@@ -102,6 +103,111 @@ class BaseAPI:
         )
 
         self.load_user_info(story_name, state)
+
+    def put_stage_state(
+        self,
+        global_state: Reactive[GlobalState],
+        local_state: Reactive[BaseLocalState],
+        component_state: Reactive[BaseState],
+    ):
+        raise NotImplementedError()
+
+    def get_stage_state(
+        self,
+        global_state: Reactive[GlobalState],
+        local_state: Reactive[BaseLocalState],
+        component_state: Reactive[BaseState],
+    ) -> BaseState | None:
+        stage_json = (
+            self.request_session.get(
+                f"{self.API_URL}/stage-state/{global_state.value.student.id}/"
+                f"{local_state.value.story_id}/{component_state.value.stage_id}"
+            )
+            .json()
+            .get("state", None)
+        )
+
+        if stage_json is None:
+            logger.error(
+                "Failed to retrieve stage state for story `%s` for user `%s`.",
+                local_state.value.story_id,
+                global_state.value.student.id,
+            )
+            return
+
+        component_state.set(component_state.value.__class__(**stage_json))
+
+        logger.info("Updated component state from database.")
+
+        return component_state.value
+
+    def delete_stage_state(
+        self,
+        global_state: Reactive[GlobalState],
+        local_state: Reactive[BaseLocalState],
+        component_state: Reactive[BaseState],
+    ):
+        r = self.request_session.delete(
+            f"{self.API_URL}/stage-state/{global_state.value.student.id}/"
+            f"{local_state.value.story_id}/{component_state.value.stage_id}"
+        )
+
+        if r.status_code != 200:
+            logger.error(
+                "Stage state for stage `%s`, story `%s` user `%s` did not exist in database.",
+                component_state.value.stage_id,
+                local_state.value.story_id,
+                global_state.value.student.id,
+            )
+            return
+
+        result = r.json()
+        if not result.get("success", False):
+            logger.error(
+                "Error deleting stage state for stage `%s`, story `%s` user `%s`.",
+                component_state.value.stage_id,
+                local_state.value.story_id,
+                global_state.value.student.id,
+            )
+            return
+
+    def get_story_state(
+        self, global_state: Reactive[GlobalState], local_state: Reactive[BaseLocalState]
+    ) -> BaseLocalState | None:
+        story_json = (
+            self.request_session.get(
+                f"{self.API_URL}/story-state/{global_state.value.student.id}/"
+                f"{local_state.value.story_id}"
+            )
+            .json()
+            .get("state", None)
+        )
+
+        if story_json is None:
+            logger.error(
+                "Failed to retrieve state for story `%s` for user `%s`.",
+                local_state.value.story_id,
+                global_state.value.student.id,
+            )
+            return
+
+        # global_state_json = story_json.get("app", {})
+        # global_state_json.pop("student")
+        # global_state.set(global_state.value.__class__(**global_state_json))
+
+        local_state_json = story_json.get("story", {})
+        local_state.set(local_state.value.__class__(**local_state_json))
+
+        logger.info("Updated local state from database.")
+
+        return local_state.value
+
+    def put_story_state(
+        self,
+        global_state: Reactive[GlobalState],
+        local_state: Reactive[BaseLocalState],
+    ):
+       raise NotImplementedError() 
 
     @staticmethod
     def clear_user(state: Reactive[GlobalState]):

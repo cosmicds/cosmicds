@@ -29,6 +29,12 @@ class Speech(BaseModel):
     voice: str = ""
 
 
+class BaseLocalState(BaseState):
+    debug_mode: bool = False
+    title: str
+    story_id: str
+
+
 class GlobalState(BaseState):
     drawer: bool = True
     speed_menu: bool = False
