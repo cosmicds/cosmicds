@@ -3,9 +3,9 @@ from solara import Reactive
 from solara.toestand import Ref
 import reacton.ipyvuetify as rv
 
-
 from cosmicds.remote import BaseAPI
 
+from .refresh_button import RefreshButton
 from ..state import GLOBAL_STATE, BaseLocalState, BaseState
 
 from enum import Enum
@@ -111,11 +111,5 @@ def StateEditor(marker_cls: Type[Enum],
             )
         
         with solara.Row():
-            def _reset_stage_state():
-                api.delete_stage_state(GLOBAL_STATE, local_state, component_state)
-                router = solara.use_router()
-                router.push(router.path)
-            solara.Button(
-                children="Reset Stage State",
-                on_click=lambda: _reset_stage_state()
-            )
+            RefreshButton(event_before_refresh=lambda _: api.delete_stage_state(GLOBAL_STATE, local_state, component_state),
+                          button_text="Reset Stage State")

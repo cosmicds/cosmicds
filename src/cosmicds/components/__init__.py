@@ -6,3 +6,4 @@ from .debug_control import StateEditor
 from .layer_toggle import LayerToggle
 from .statistics_selector import StatisticsSelector
 from .percentage_selector import PercentageSelector
+from .refresh_button import RefreshButton
