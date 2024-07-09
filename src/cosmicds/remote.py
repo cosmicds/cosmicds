@@ -207,22 +207,7 @@ class BaseAPI:
         global_state: Reactive[GlobalState],
         local_state: Reactive[BaseLocalState],
     ):
-        logger.info("Serializing state into DB.")
-
-        state = {
-            "app": global_state.value.dict(),
-            "story": local_state.value.dict(
-                exclude={"measurements", "example_measurements"}
-            ),
-        }
-
-        r = self.request_session.put(
-            f"{self.API_URL}/story-state/{global_state.value.student.id}/{local_state.value.story_id}",
-            json=state,
-        )
-
-        if r.status_code != 200:
-            logger.error("Failed to write story state to database.")
+       raise NotImplementedError() 
 
     @staticmethod
     def clear_user(state: Reactive[GlobalState]):
