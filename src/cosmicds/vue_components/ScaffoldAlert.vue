@@ -129,6 +129,12 @@
 <script>
 module.exports = {
   mounted() {
+
+    this.$el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+
     this.frElements = this.$el.getElementsByClassName("cds-free-response");
 
     this.updateFreeResponseList();
