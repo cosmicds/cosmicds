@@ -55,13 +55,13 @@ class BaseAPI:
         student_json = self.request_session.get(
             f"{self.API_URL}/student/{self.hashed_user}"
         ).json()["student"]
+        sid = student_json["id"]
 
         class_json = self.request_session.get(
-            f"{self.API_URL}/class-for-student-story/{state.value.student.id}/{story_name}"
+            f"{self.API_URL}/class-for-student-story/{sid}/{story_name}"
         ).json()
 
-        student_id = Ref(state.fields.student.id)
-        student_id.set(student_json["id"])
+        Ref(state.fields.student.id).set(sid)
         Ref(state.fields.classroom.class_info).set(class_json["class"])
         Ref(state.fields.classroom.size).set(class_json["size"])
 
