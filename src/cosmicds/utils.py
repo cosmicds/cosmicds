@@ -1,9 +1,17 @@
 from collections import Counter
+from datetime import datetime
 import json
+from numbers import Number
 import os
-from math import ceil, floor, log10
-from requests import Session, adapters
+from math import log10
+from types import UnionType
+from glue.core import Component, Data
+from glue.core.roi import CategoricalComponent
+from pydantic import BaseModel
+from pydantic.fields import FieldInfo
+from requests import adapters
 import random
+from typing import Type, Union, get_args, get_origin
 
 from IPython.display import Javascript, display
 
@@ -54,6 +62,8 @@ class CDSJSONEncoder(json.JSONEncoder):
             return obj.tolist()
         if isinstance(obj, State):
             return obj.as_dict()
+        if isinstance(obj, datetime):
+            return f"{obj}"
         return super(CDSJSONEncoder, self).default(obj)
 
 
@@ -404,6 +414,32 @@ def mode(data, component_id, bins=None, range=None):
         counter = Counter(values)
         max_count = counter.most_common(1)[0][1]
         return [k for k, v in counter.items() if v == max_count]
+
+
+def component_type_for_field(info: FieldInfo) -> Type[Component]:
+    if info.annotation is None:
+        return Component  # TODO: What is the right result here?
+    numerical = False
+    if get_origin(info.annotation) in (Union, UnionType):
+        types = get_args(info.annotation)
+        numerical = all(t is None or issubclass(t, Number) for t in types)
+    elif issubclass(info.annotation, Number):
+        numerical = True
+
+    return Component if numerical else CategoricalComponent
+
+
+def empty_data_from_model_class(cls: Type[BaseModel], label: str | None=None):
+    data_dict = {}
+    for field, info in cls.model_fields.items():
+        if info.annotation is None:
+            continue
+
+        component_type = component_type_for_field(info)
+        data_dict[field] = component_type(np.array([]))
+    if label:
+        data_dict["label"] = label
+    return Data(**data_dict)
 
 
 def make_figure_autoresize(figure, height=400):

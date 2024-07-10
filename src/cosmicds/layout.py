@@ -5,7 +5,7 @@ from importlib.metadata import version
 
 import solara
 from solara.alias import rv
-from solara.lab import theme as theme, Ref
+from solara.lab import theme, Ref
 from solara.server import settings
 from solara_enterprise import auth
 from solara import Reactive
@@ -81,6 +81,11 @@ def BaseLayout(
         login_dialog = Login(active, class_code, update_db, debug_mode)
         active.set(True)
         return
+
+    # Just for testing
+    # Ref(GLOBAL_STATE.fields.student.id).set(0)
+    # Ref(GLOBAL_STATE.fields.classroom.class_info).set({"id": 0})
+    # Ref(GLOBAL_STATE.fields.classroom.size).set(0)
 
     @solara.lab.computed
     def display_info():

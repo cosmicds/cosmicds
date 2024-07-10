@@ -17,7 +17,6 @@ CDSScatterView = cds_viewer(
     viewer_tools=[
         'plotly:home',
         'plotly:zoom',
-        'plotly:rectangle'
     ],
     label='2D scatter'
 )
@@ -29,7 +28,6 @@ CDSHistogramView = cds_viewer(
     viewer_tools=[
         'plotly:home',
         'plotly:hzoom',
-        'plotly:xrange'
     ],
     label='Histogram'
 )
