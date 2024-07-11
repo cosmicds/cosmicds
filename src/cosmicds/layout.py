@@ -133,7 +133,7 @@ def BaseLayout(
                         )
                         rv.TextField(
                             value=f"{version('hubbleds')}",
-                            label="HubbeDS Version",
+                            label="HubbleDS Version",
                             readonly=True,
                             outlined=True,
                             dense=True,
