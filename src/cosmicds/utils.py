@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from requests import adapters
 import random
+from types import NoneType
 from typing import Type, Union, get_args, get_origin
 
 from IPython.display import Javascript, display
@@ -422,7 +423,7 @@ def component_type_for_field(info: FieldInfo) -> Type[Component]:
     numerical = False
     if get_origin(info.annotation) in (Union, UnionType):
         types = get_args(info.annotation)
-        numerical = all(t is None or issubclass(t, Number) for t in types)
+        numerical = all(t is NoneType or issubclass(t, Number) for t in types)
     elif issubclass(info.annotation, Number):
         numerical = True
 
