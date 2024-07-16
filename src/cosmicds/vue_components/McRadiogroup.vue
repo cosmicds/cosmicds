@@ -11,7 +11,7 @@
       <v-radio
         v-for="[index, option] of radioOptions.entries()"
         :key="index"
-        :color="`${color(index)} lighten-1`"
+        :color="`${color(index)}`"
         @change="selectChoice(index)"
       >
         <template v-slot:label>
@@ -52,7 +52,7 @@
 <style scoped>
 
 .feedback{
-  color: white;
+  color: #EEEEEE;
 }
 
 </style>
@@ -114,7 +114,7 @@ module.exports = {
   data: function () {
     return {
       column: null,
-      colorRight: 'green',
+      colorRight: '#00E676',
       colorNeutral: 'orange',
       colorWrong: 'red',
       iconRight: 'mdi-check-circle-outline',

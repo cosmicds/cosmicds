@@ -174,8 +174,3 @@ module.exports = {
 }
 </script>
 
-<style scoped>
-.v-input__slot {
-  background-color: #FFAB4040!important;
-}
-</style>
