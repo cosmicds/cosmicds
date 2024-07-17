@@ -54,6 +54,9 @@
 .feedback{
   color: #EEEEEE;
 }
+.v-alert {
+  background-color: #000D!important;
+}
 
 </style>
 
