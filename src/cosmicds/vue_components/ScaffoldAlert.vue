@@ -24,11 +24,9 @@
           v-if="allowBack"
           class="shrink"
         >
-          <div
-            style="font-size: 16px;"
-          >
+          <div>
             <v-btn
-              class="black--text"
+              class="black--text guideline-button"
               color="accent"
               elevation="2"
               ref="back"
@@ -57,9 +55,9 @@
           class="shrink"
         >
           <div
-            style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px;"
+            style="border-left: solid 3px #FFD740; padding-left: 10px;"
           >
-            <slot name="back-content"></slot>
+            <slot name="back-content" class="guideline-button"></slot>
           </div>
         </v-col>
 
@@ -69,12 +67,10 @@
           v-if="advance"
           class="shrink"
         >
-          <div
-            style="font-size: 16px;"
-          >
+          <div>
             <v-btn
               v-if="!hideNext"
-              class="black--text"
+              class="black--text guideline-button"
               color="accent"
               elevation="2"
               ref="next"
@@ -91,10 +87,11 @@
           class="shrink"
         >
           <div
-            style="font-size: 16px; border-left: solid 3px #FFD740; padding-left: 10px;"
+            style="border-left: solid 3px #FFD740; padding-left: 10px;"
           >
             <slot
               name="before-next"
+              class="guideline-button"
             >
             </slot>
           </div>
@@ -120,8 +117,12 @@
   background-color: #000D!important;
 }
 
-.v-textarea .v-input__slot {
+.theme--dark .v-textarea .v-input__slot {
   background-color: #0001!important;
+}
+
+.theme--light .v-textarea .v-input__slot {
+  background-color: #FFF3!important;
 }
 
 </style>
