@@ -1,4 +1,5 @@
 from cosmicds.utils import vertical_line_mark
+
 from itertools import chain
 import solara
 from solara import Reactive
@@ -128,16 +129,7 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
     def _model_factory(stat: str):
         return solara.lab.computed(lambda stat=stat: selected.value == stat)
 
-    @component_vue("InfoDialog.vue")
-    def StatsDialog(
-        dialog: bool = False,
-        title: str = "",
-        content: str = "",
-        hasImage: bool = True,
-        image: str = "",
-        altText: str = "",
-    ):
-        pass
+    from cosmicds.components import InfoDialog
 
     with rv.Card(class_="switch-panel", outlined=True):
         with rv.Container():
@@ -147,7 +139,7 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
                     solara.Switch(value=model,
                                   label=stat.capitalize(),
                                   on_value=lambda value, stat=stat: _update_selected(stat, value))
-                    StatsDialog(
+                    InfoDialog(
                         dialog=False,
                         title=stat,
                         content=help_text[stat],

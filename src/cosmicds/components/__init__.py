@@ -7,3 +7,4 @@ from .layer_toggle import LayerToggle
 from .statistics_selector import StatisticsSelector
 from .percentage_selector import PercentageSelector
 from .refresh_button import RefreshButton
+from .info_dialog.info_dialog import InfoDialog

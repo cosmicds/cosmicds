@@ -199,17 +199,8 @@ def PercentageSelector(viewers: List[Viewer],
 
     def _model_factory(option):
         return solara.lab.computed(lambda option=option: selected.value == option)
-    
-    @component_vue("InfoDialog.vue")
-    def PercentDialog(
-        dialog: bool = False,
-        title: str = "",
-        content: str = "",
-        hasImage: bool = False,
-        image: str = "",
-        altText: str = "",
-    ):
-        pass
+
+    from cosmicds.components import InfoDialog
 
     with rv.Card(class_="switch-panel", outlined=True):
         with rv.Container():
@@ -219,7 +210,7 @@ def PercentageSelector(viewers: List[Viewer],
                     solara.Switch(value=model,
                                   label=f"{option}%",
                                   on_value=lambda value, option=option: _update_selected(option, value))
-                    PercentDialog(
+                    InfoDialog(
                         dialog=False,
                         title=f"Inner {option}% of the data",
                         content=f"""
