@@ -16,10 +16,10 @@ from typing import Iterable, List
 @solara.component
 def PercentageSelector(viewers: List[Viewer],
                        glue_data: List[Data],
-                       selected: Reactive[str | None],
                        bins: None | List[None | Iterable[None | Number]]=None,
                        **kwargs):
     
+    selected = solara.use_reactive(None)
     radio_color = "#1e90ff"
     options = [50, 68, 95]
     last_updated = selected.value 
