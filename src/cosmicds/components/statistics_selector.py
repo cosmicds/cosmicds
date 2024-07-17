@@ -139,11 +139,11 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
     ):
         pass
 
-    with rv.Card():
+    with rv.Card(class_="switch-panel", outlined=True):
         with rv.Container():
             for stat in statistics:
                 model = _model_factory(stat)
-                with solara.Row(style={"align-items": "center"}):
+                with solara.Row(style={"align-items": "center"}, classes=["switch-panel"]):
                     solara.Switch(value=model,
                                   label=stat.capitalize(),
                                   on_value=lambda value, stat=stat: _update_selected(stat, value))

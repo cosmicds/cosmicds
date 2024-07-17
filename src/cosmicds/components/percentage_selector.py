@@ -211,11 +211,11 @@ def PercentageSelector(viewers: List[Viewer],
     ):
         pass
 
-    with rv.Card():
+    with rv.Card(class_="switch-panel", outlined=True):
         with rv.Container():
             for option in options:
                 model = _model_factory(option)
-                with solara.Row(style={"align-items": "center"}):
+                with solara.Row(style={"align-items": "center"}, classes=["switch-panel"]):
                     solara.Switch(value=model,
                                   label=f"{option}%",
                                   on_value=lambda value, option=option: _update_selected(option, value))
