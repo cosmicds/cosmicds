@@ -1,6 +1,7 @@
 from numpy import argsort, array
 import solara
 from solara import Reactive
+from solara import component_vue
 import reacton.ipyvuetify as rv
 
 from glue.core.subset import ElementSubsetState, SubsetState
@@ -199,34 +200,24 @@ def PercentageSelector(viewers: List[Viewer],
     def _model_factory(option):
         return solara.lab.computed(lambda option=option: selected.value == option)
 
-    with rv.Card():
+    from cosmicds.components import InfoDialog
+
+    with rv.Card(class_="switch-panel", outlined=True):
         with rv.Container():
             for option in options:
                 model = _model_factory(option)
-                with solara.Row(style={"align-items": "center"}):
+                with solara.Row(style={"align-items": "center"}, classes=["switch-panel"]):
                     solara.Switch(value=model,
                                   label=f"{option}%",
                                   on_value=lambda value, option=option: _update_selected(option, value))
-                    rv.Dialog(
-                        class_="percentage-help-dialog",
-                        v_slots=[{"name": "activator",
-                                  "variable": "x",
-                                  "children": [solara.IconButton(v_on="x.on",
-                                                                 icon_name="mdi-help-circle-outline")]
-                                }],
-                        children=[
-                            rv.Card(children=[
-                                rv.Toolbar(children=[
-                                    rv.ToolbarTitle(children=[f"Inner {option}% of the data"]),
-                                    rv.Spacer(),
-                                ]),
-                                solara.Text(f"""
-                                            The range of values shown are the inner {option}% of data points.
-                                            This means that the {(100-option)/2}% of the data points in the distribution
-                                            have values less than this range, and {(100-option)/2}% of the data points
-                                            have values greater than this range
-                                            """)
-                                              
-                            ])
-                        ]
+                    InfoDialog(
+                        dialog=False,
+                        title=f"Inner {option}% of the data",
+                        content=f"""
+                                    The range of values shown are the inner {option}% of data points.
+                                    This means that the {(100-option)/2}% of the data points in the distribution
+                                    have values less than this range, and {(100-option)/2}% of the data points
+                                    have values greater than this range
+                                """,
+                        hasImage=False,                        
                     )

@@ -1,7 +1,9 @@
 from cosmicds.utils import vertical_line_mark
+
 from itertools import chain
 import solara
 from solara import Reactive
+from solara import component_vue
 import reacton.ipyvuetify as rv
 from uuid import uuid4
 
@@ -12,8 +14,9 @@ from plotly.graph_objects import Scatter
 from numbers import Number
 from typing import Callable, Iterable, List 
 
-from ..utils import mode
+from ..utils import mode, CDS_IMAGE_BASE_URL
 
+image_location=f"{CDS_IMAGE_BASE_URL}"
 
 # glue doesn't implement a mode statistic, so we roll our own
 # Since there can be multiple modes, mode can be a list
@@ -39,14 +42,21 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
     bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
 
     help_text = {
-        "mode": "Description of the mode",
-        "mean": "Description of the mean",
-        "median": "Description of the median",
+        "mean": "The mean is the average of all values in the dataset. The average is calculated by adding all the values together and dividing by the number of values. In this example, the mean of the distribution is 14.",
+        "median": "The median is the middle of the dataset. Fifty percent of the data has values greater than the median and fifty percent has values less than or equal to the median. In this example, the median of the distribution is 15.",
+        "mode": "The mode is the most commonly measured value or range of values in a set of data and appears as the tallest bar in a histogram. In this example, the mode of the distribution is 16.",
+
     }
     help_images = {
-        "mode": "path to mode image",
-        "mean": "path to mean image",
-        "median": "path to median image"
+        "mean": f"{image_location}/mean.png",
+        "median": f"{image_location}/median.png",
+        "mode": f"{image_location}/mode.png",
+    }
+
+    alt_text = {
+        "mean": "A histogram with a range of 9 through 18, with counts from 0 through 8. The mean is highlighted in red.",
+        "median": "A histogram with a range of 9 through 18, with counts from 0 through 8. The median is highlighted in red. Because the distribution is skewed to the right, the median is slightly to the right of center.",
+        "mode": "A histogram with a range of 9 through 18, with counts from 0 through 8. The mode has the highest count and is highlighted in red.",
     }
 
     last_updated = selected.value 
@@ -119,28 +129,21 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
     def _model_factory(stat: str):
         return solara.lab.computed(lambda stat=stat: selected.value == stat)
 
-    with rv.Card():
+    from cosmicds.components import InfoDialog
+
+    with rv.Card(class_="switch-panel", outlined=True):
         with rv.Container():
             for stat in statistics:
                 model = _model_factory(stat)
-                with solara.Row(style={"align-items": "center"}):
+                with solara.Row(style={"align-items": "center"}, classes=["switch-panel"]):
                     solara.Switch(value=model,
                                   label=stat.capitalize(),
                                   on_value=lambda value, stat=stat: _update_selected(stat, value))
-                    rv.Dialog(
-                            class_="statistics-help-dialog",
-                            v_slots=[{"name": "activator",
-                                      "variable": "x",
-                                      "children": [solara.IconButton(v_on="x.on",
-                                                                     icon_name="mdi-help-circle-outline")]
-                                    }],
-                            children=[
-                                rv.Card(children=[
-                                    rv.Toolbar(children=[
-                                        rv.ToolbarTitle(children=[stat.capitalize()]),
-                                        rv.Spacer(),
-                                    ]),
-                                    solara.Text(help_text[stat])
-                                ])
-                            ]
-                        )
+                    InfoDialog(
+                        dialog=False,
+                        title=stat,
+                        content=help_text[stat],
+                        hasImage=True,
+                        image=help_images[stat],
+                        altText=alt_text[stat],
+                    )
