@@ -29,12 +29,12 @@ def find_statistic(stat: str, viewer: Viewer, data: Data, bins: Iterable[int | f
 def StatisticsSelector(viewers: List[PlotlyBaseView],
                        glue_data: List[Data],
                        units: List[str],
-                       selected: Reactive[str | None],
                        bins: None | List[None | Iterable[Number]]=None,
                        statistics: List[str]=["mean", "median", "mode"],
                        transform: Callable[[Number], Number] | None=None,
                        **kwargs):
 
+    selected = solara.use_reactive(None)
     color = kwargs.get("color", "#000000")
     bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
 
