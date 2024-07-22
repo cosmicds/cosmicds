@@ -2,13 +2,14 @@ import datetime
 import os
 from warnings import filterwarnings
 from importlib.metadata import version
+from typing import Callable, Optional
 
 import solara
 from solara.alias import rv
 from solara.lab import theme, Ref
 from solara.server import settings
 from solara_enterprise import auth
-from solara import Reactive
+from solara import Callable, Reactive
 
 from .state import GLOBAL_STATE
 from .remote import BASE_API
@@ -30,6 +31,7 @@ def BaseLayout(
     children: list = [],
     story_name: str = "",
     story_title: str = "Cosmic Data Story",
+    on_student_info_loaded: Optional[Callable] = None,
 ):
     route_current, routes_current_level = solara.use_route()
     route_index = routes_current_level.index(route_current)
@@ -81,6 +83,9 @@ def BaseLayout(
         login_dialog = Login(active, class_code, update_db, debug_mode)
         active.set(True)
         return
+
+    if on_student_info_loaded is not None:
+        on_student_info_loaded()
 
     # Just for testing
     # Ref(GLOBAL_STATE.fields.student.id).set(0)
