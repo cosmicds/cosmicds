@@ -192,6 +192,7 @@ class BaseAPI:
             return
 
         global_state_json = story_json.get("app", {})
+        global_state_json.pop("student")
         global_state.set(global_state.value.__class__(**global_state_json))
 
         local_state_json = story_json.get("story", {})
