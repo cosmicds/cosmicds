@@ -171,7 +171,7 @@ def BaseLayout(
 
             with rv.Chip(class_="ma-2 piggy-chip"):                    
                     # check that this doesn't make solara render the whole app. if it does, move the chip into its own component.
-                solara.Text("6 Points")
+                solara.Text(f"{GLOBAL_STATE.value.piggybank_total} Points")
 
                 rv.Icon(class_="ml-2",
                     children=["mdi-piggy-bank"],
