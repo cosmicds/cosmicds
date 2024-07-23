@@ -10,7 +10,7 @@ from solara.server import settings
 from solara_enterprise import auth
 from solara import Reactive
 
-from .state import GLOBAL_STATE
+from .state import GLOBAL_STATE, BaseLocalState
 from .remote import BASE_API
 from cosmicds import load_custom_vue_components
 from cosmicds.utils import get_session_id
@@ -27,6 +27,7 @@ logger = setup_logger("LAYOUT")
 
 @solara.component
 def BaseLayout(
+    local_state: Reactive[BaseLocalState],
     children: list = [],
     story_name: str = "",
     story_title: str = "Cosmic Data Story",
@@ -165,8 +166,8 @@ def BaseLayout(
             )
 
             with rv.Chip(class_="ma-2 piggy-chip"):                    
-                    # check that this doesn't make solara render the whole app. if it does, move the chip into its own component.
-                solara.Text(f"{GLOBAL_STATE.value.piggybank_total} Points")
+                # check that this doesn't make solara render the whole app. if it does, move the chip into its own component.
+                solara.Text(f"{local_state.value.piggybank_total} Points")
 
                 rv.Icon(class_="ml-2",
                     children=["mdi-piggy-bank"],
