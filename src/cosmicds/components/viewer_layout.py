@@ -24,7 +24,7 @@ def ToolBar(viewer):
 
 @solara.component
 def ViewerLayout(viewer):
-    make_figure_autoresize(viewer.figure_widget, 400)
+    make_figure_autoresize(viewer.figure_widget)
     # viewer.figure_widget.layout.height = 600
     layout = solara.Column(
         children=[

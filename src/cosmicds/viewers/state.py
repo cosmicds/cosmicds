@@ -7,7 +7,7 @@ from glue.viewers.scatter.state import ScatterViewerState
 from glue_plotly.viewers.histogram.state import PlotlyHistogramViewerState
 from numpy import linspace, inf, isfinite, isnan, spacing
 
-from cosmicds.utils import frexp10
+from cosmicds.utils import frexp10, DEFAULT_VIEWER_HEIGHT
 
 
 def cds_viewer_state(state_class):
@@ -19,7 +19,7 @@ def cds_viewer_state(state_class):
         xtick_values = CallbackProperty([])
         ytick_values = CallbackProperty([])
 
-        viewer_height = CallbackProperty(400)
+        viewer_height = CallbackProperty(DEFAULT_VIEWER_HEIGHT)
         viewer_width = CallbackProperty(400)
 
         @staticmethod
