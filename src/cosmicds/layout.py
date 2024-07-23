@@ -2,6 +2,7 @@ import datetime
 import os
 from warnings import filterwarnings
 from importlib.metadata import version
+from typing import Optional
 
 import solara
 from solara.alias import rv
@@ -27,7 +28,7 @@ logger = setup_logger("LAYOUT")
 
 @solara.component
 def BaseLayout(
-    local_state: Reactive[BaseLocalState],
+    local_state: Optional[Reactive[BaseLocalState]] = None,
     children: list = [],
     story_name: str = "",
     story_title: str = "Cosmic Data Story",
@@ -166,8 +167,9 @@ def BaseLayout(
             )
 
             with rv.Chip(class_="ma-2 piggy-chip"):                    
-                # check that this doesn't make solara render the whole app. if it does, move the chip into its own component.
-                solara.Text(f"{local_state.value.piggybank_total} Points")
+                if local_state:
+                    # check that this doesn't make solara render the whole app. if it does, move the chip into its own component.
+                    solara.Text(f"{local_state.value.piggybank_total} Points")
 
                 rv.Icon(class_="ml-2",
                     children=["mdi-piggy-bank"],
