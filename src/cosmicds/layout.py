@@ -2,16 +2,16 @@ import datetime
 import os
 from warnings import filterwarnings
 from importlib.metadata import version
-from typing import Callable, Optional
+from typing import Optional
 
 import solara
 from solara.alias import rv
 from solara.lab import theme, Ref
 from solara.server import settings
 from solara_enterprise import auth
-from solara import Callable, Reactive
+from solara import Reactive
 
-from .state import GLOBAL_STATE
+from .state import GLOBAL_STATE, BaseLocalState
 from .remote import BASE_API
 from cosmicds import load_custom_vue_components
 from cosmicds.utils import get_session_id
@@ -28,10 +28,10 @@ logger = setup_logger("LAYOUT")
 
 @solara.component
 def BaseLayout(
+    local_state: Optional[Reactive[BaseLocalState]] = None,
     children: list = [],
     story_name: str = "",
     story_title: str = "Cosmic Data Story",
-    on_student_info_loaded: Optional[Callable] = None,
 ):
     route_current, routes_current_level = solara.use_route()
     route_index = routes_current_level.index(route_current)
@@ -83,9 +83,6 @@ def BaseLayout(
         login_dialog = Login(active, class_code, update_db, debug_mode)
         active.set(True)
         return
-
-    if on_student_info_loaded is not None:
-        on_student_info_loaded()
 
     # Just for testing
     # Ref(GLOBAL_STATE.fields.student.id).set(0)
@@ -170,8 +167,9 @@ def BaseLayout(
             )
 
             with rv.Chip(class_="ma-2 piggy-chip"):                    
+                if local_state:
                     # check that this doesn't make solara render the whole app. if it does, move the chip into its own component.
-                solara.Text(f"{GLOBAL_STATE.value.piggybank_total} Points")
+                    solara.Text(f"{local_state.value.piggybank_total} Points")
 
                 rv.Icon(class_="ml-2",
                     children=["mdi-piggy-bank"],
