@@ -7,12 +7,13 @@ from math import log10
 from types import UnionType
 from glue.core import Component, Data
 from glue.core.roi import CategoricalComponent
+from glue_plotly.viewers import PlotlyBaseView
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from requests import adapters
 import random
 from types import NoneType
-from typing import Type, Union, get_args, get_origin
+from typing import Dict, Type, Union, get_args, get_origin
 
 from IPython.display import Javascript, display
 
@@ -527,3 +528,22 @@ class LoggingAdapter(adapters.HTTPAdapter):
     def on_response(response):
         # needs to be given an implementation
         pass
+
+
+def show_legend(viewer: PlotlyBaseView, show: bool = True):
+    layout_update: Dict = {"showlegend": show}
+    if show:
+        layout_update["legend"] = {
+            'yanchor': 'top',
+            'xanchor': 'left',
+            "y": 0.99,
+            "x": 0.01
+        }
+    viewer.figure.update_layout(**layout_update)
+    return
+
+
+def show_layer_traces_in_legend(viewer: PlotlyBaseView, show: bool = False):
+    for layer in viewer.layers:
+        for trace in layer.traces():
+            trace.update(showlegend=show)
