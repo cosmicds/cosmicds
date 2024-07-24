@@ -1,7 +1,5 @@
 from numpy import argsort, array
 import solara
-from solara import Reactive
-from solara import component_vue
 import reacton.ipyvuetify as rv
 
 from glue.core.subset import ElementSubsetState, SubsetState
