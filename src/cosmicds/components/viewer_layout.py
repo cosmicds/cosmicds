@@ -1,4 +1,4 @@
-from cosmicds.utils import make_figure_autoresize
+from cosmicds.utils import make_figure_autoresize, DEFAULT_VIEWER_HEIGHT
 import solara
 import reacton.ipyvuetify as rv
 
@@ -23,8 +23,8 @@ def ToolBar(viewer):
     )
 
 @solara.component
-def ViewerLayout(viewer):
-    make_figure_autoresize(viewer.figure_widget, 400)
+def ViewerLayout(viewer, viewer_height=DEFAULT_VIEWER_HEIGHT):
+    make_figure_autoresize(viewer.figure_widget, viewer_height)
     # viewer.figure_widget.layout.height = 600
     layout = solara.Column(
         children=[

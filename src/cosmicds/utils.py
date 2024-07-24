@@ -45,6 +45,7 @@ API_URL = "https://api.cosmicds.cfa.harvard.edu"
 
 CDS_IMAGE_BASE_URL = "https://cosmicds.github.io/cds-website/cosmicds_images/mean_median_mode"
 
+DEFAULT_VIEWER_HEIGHT = 300
 
 def get_session_id() -> str:
     """Returns the session id, which is stored using a browser cookie."""
@@ -445,7 +446,7 @@ def empty_data_from_model_class(cls: Type[BaseModel], label: str | None=None):
     return Data(**data_dict)
 
 
-def make_figure_autoresize(figure, height=400):
+def make_figure_autoresize(figure, height=DEFAULT_VIEWER_HEIGHT):
     # The auto-sizing in the Plotly widget only works if the height
     # and width are undefined. First, unset the height and width,
     # then enable auto-sizing.
