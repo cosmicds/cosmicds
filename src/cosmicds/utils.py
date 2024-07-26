@@ -5,7 +5,7 @@ from numbers import Number
 import os
 from math import log10
 from types import UnionType
-from glue.core import Component, Data
+from glue.core import Component, ComponentID, Data, DataCollection
 from glue.core.roi import CategoricalComponent
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
@@ -444,6 +444,12 @@ def empty_data_from_model_class(cls: Type[BaseModel], label: str | None=None):
     if label:
         data_dict["label"] = label
     return Data(**data_dict)
+
+
+def basic_link_exists(data_collection: DataCollection, id1: ComponentID, id2: ComponentID):
+    """NB: This only works for simple identity links."""
+    ids = {id1, id2}
+    return any({link.get_from_ids()[0], link.get_to_id()} == ids for link in data_collection.links)
 
 
 def make_figure_autoresize(figure, height=DEFAULT_VIEWER_HEIGHT):
