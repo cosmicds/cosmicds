@@ -7,7 +7,7 @@ from glue.core.message import (DataCollectionDeleteMessage, DataUpdateMessage,
                                SubsetMessage, SubsetUpdateMessage)
 from glue.core.exceptions import IncompatibleAttribute
 from glue_jupyter.bqplot.common.tools import Tool
-from numpy import isnan
+from numpy import isfinite, isnan
 from numpy.linalg import LinAlgError
 from traitlets import Unicode, HasTraits
 
@@ -205,8 +205,9 @@ class LineFitTool(Tool, HubListener, HasTraits):
 
     def _fit_line(self, state):
         data = state.layer
-        x = data[self.viewer.state.x_att]
-        y = data[self.viewer.state.y_att]
+        mask = isfinite(data[self.viewer.state.x_att]) & isfinite(data[self.viewer.state.y_att])
+        x = data[self.viewer.state.x_att][mask]
+        y = data[self.viewer.state.y_att][mask]
         return fit_line(x, y)
 
     def _create_fit_line(self, state):
