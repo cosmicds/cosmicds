@@ -446,7 +446,7 @@ def empty_data_from_model_class(cls: Type[BaseModel], label: str | None=None):
     return Data(**data_dict)
 
 
-def basic_link_exists(data_collection: DataCollection, id1: ComponentID, id2: ComponentID):
+def basic_link_exists(data_collection: DataCollection, id1: ComponentID, id2: ComponentID) -> bool:
     """NB: This only works for simple identity links."""
     ids = {id1, id2}
     return any({link.get_from_ids()[0], link.get_to_id()} == ids for link in data_collection.links)
