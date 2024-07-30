@@ -175,6 +175,9 @@ class CDSScatterViewerState(ScatterViewerState):
 
 class CDSHistogramViewerState(PlotlyHistogramViewerState):
 
+    gaps = CallbackProperty(True)
+    gap_fraction = CallbackProperty(0.15)
+
     def _reset_x_limits(self):
         bounds = []
         for layer in filter(lambda layer: layer.visible, self.layers):
