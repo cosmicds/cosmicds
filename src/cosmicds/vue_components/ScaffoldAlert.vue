@@ -131,10 +131,12 @@
 module.exports = {
   mounted() {
 
-    this.$el.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    });
+    if (this.scrollOnMount) {
+      this.$el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
 
     this.frElements = this.$el.getElementsByClassName("cds-free-response");
 
@@ -185,7 +187,10 @@ module.exports = {
       type: Boolean,
       default: false
     },
-
+    scrollOnMount: {
+      type: Boolean,
+      default: true
+    },
   },
   data() {
     return {
