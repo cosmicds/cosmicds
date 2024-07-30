@@ -10,6 +10,7 @@ def ScaffoldAlert(
     event_next_callback: Callable = lambda *args: True,
     show: bool = False,
     can_advance: bool = False,
+    scroll_on_mount: bool = True,
     fr_observer=None,
     free_responses: list = None,
     disable_next: bool = False,
@@ -51,6 +52,9 @@ def ScaffoldAlert(
         the button in "nextText" instead of "next.")
         - If you don't want to display a next button at all, you can set this
         to False and leave the before-next template blank.
+    scroll_on_mount: bool, optional
+        Flag to determine whether or not the browser view will scroll to
+        the guideline when it is mounted. Defaults to True.
     fr_observer : object, optional
         An observer for free response events. TBD depending on how we connect
         this to the state. (The original usage of this in the Voila version
@@ -94,6 +98,7 @@ def ScaffoldAlert(
         event_back_callback,
         event_next_callback,
         can_advance,
+        scroll_on_mount,
         frObserver,
         freeResponses,
         disableNext,
@@ -119,6 +124,7 @@ def ScaffoldAlert(
         event_back_callback=event_back_callback,
         event_next_callback=event_next_callback,
         can_advance=can_advance,
+        scroll_on_mount=scroll_on_mount,
         frObserver=fr_observer,
         freeResponses=free_responses,
         disableNext=disable_next,
