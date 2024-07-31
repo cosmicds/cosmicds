@@ -38,7 +38,7 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
                        **kwargs):
 
     selected = solara.use_reactive(None)
-    color = kwargs.get("color", "#000000")
+    color = kwargs.get("color", "#f00")
     bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
 
     help_text = {
