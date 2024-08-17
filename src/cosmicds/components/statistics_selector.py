@@ -60,7 +60,6 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
         "mean": "The mean is the average of all values in the dataset. The average is calculated by adding all the values together and dividing by the number of values. In this example, the mean of the distribution is 14.",
         "median": "The median is the middle of the dataset. Fifty percent of the data has values greater than the median and fifty percent has values less than or equal to the median. In this example, the median of the distribution is 15.",
         "mode": "The mode is the most commonly measured value or range of values in a set of data and appears as the tallest bar in a histogram. In this example, the mode of the distribution is 16.",
-
     }
     help_images = {
         "mean": f"{image_location}/mean.png",
@@ -132,7 +131,6 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
             line_ids.append(viewer_line_ids)
 
         return stat
-
 
     def _update_selected(stat: str | None, value: bool):
         nonlocal last_updated

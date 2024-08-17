@@ -28,6 +28,7 @@ def PercentageSelector(viewers: List[Viewer],
     bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
     units = kwargs.get("units", [])
     deselected_color = "#a9a9a9"
+    annotations = []
 
     # When this component is 
     subsets = []
@@ -111,6 +112,7 @@ def PercentageSelector(viewers: List[Viewer],
         if option is None:
             states = []
             for (index, viewer) in enumerate(viewers):
+                viewer.figure.layout.annotations = []
                 if layers[index] is not None:
                     layers[index].state.color = original_colors[index]
                     # viewer_layouts[index].set_subtitle(None)
@@ -121,6 +123,7 @@ def PercentageSelector(viewers: List[Viewer],
 
         states = []
         for index, (viewer, viewer_bins) in enumerate(zip(viewers, bins)):
+            viewer.figure.layout.annotations = []
             component_id = viewer.state.x_att
             data = glue_data[index][component_id]
             layer = layers[index]
@@ -181,7 +184,9 @@ def PercentageSelector(viewers: List[Viewer],
             else:
                 unit_str = ""
             label_text = f"{option}% range: {bottom_str} \u2013 {top_str}{unit_str}"
-            # self.viewer_layouts[index].set_subtitle(label_text)
+            viewer.figure.add_annotation(text=label_text, xref="paper", yref="paper",
+                                         x=0.5, y=1.2, showarrow=False)
+            
 
         _update_subsets(states)
 
