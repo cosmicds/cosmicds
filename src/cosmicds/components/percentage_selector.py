@@ -28,7 +28,6 @@ def PercentageSelector(viewers: List[Viewer],
     bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
     units = kwargs.get("units", [])
     deselected_color = "#a9a9a9"
-    annotations = []
 
     # When this component is 
     subsets = []
