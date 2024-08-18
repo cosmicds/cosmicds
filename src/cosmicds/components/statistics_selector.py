@@ -38,8 +38,8 @@ def labeled_vertical_line(x: float, y_min: float, y_max: float, color: str, labe
         mode="text+lines",
         line=dict(color=color),
         name=label,
-        text=['', text, ''],
-        textposition="top right"
+        text=['', f'  {text}', ''],
+        textposition="top right",
     )
 
 
