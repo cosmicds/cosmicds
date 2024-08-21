@@ -101,12 +101,15 @@ def StateEditor(marker_cls: Type[Enum],
                         children="Edit State",
                         on_click=lambda: set_show_dialog(not show_dialog)
                     )
-                    RefreshButton(event_before_refresh=lambda _: api.delete_stage_state(GLOBAL_STATE, local_state, component_state),
-                                button_text="Reset Stage State")
             with solara.Column():
                 with rv.Dialog(v_model=show_dialog, on_v_model=set_show_dialog, max_width="500px"):
                     with solara.Card():
                         with solara.Column():
                             FieldList(component_state)      
+            
+        if show_all:
+            with solara.Row():
+                RefreshButton(event_before_refresh=lambda _: api.delete_stage_state(GLOBAL_STATE, local_state, component_state),
+                                button_text="Reset Stage State")
                
         
