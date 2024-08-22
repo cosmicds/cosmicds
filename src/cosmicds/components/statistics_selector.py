@@ -12,9 +12,9 @@ from glue.viewers.common.viewer import Viewer
 from glue_plotly.viewers.common import PlotlyBaseView
 from plotly.graph_objects import Scatter
 from numbers import Number
-from typing import Callable, Iterable, List 
+from typing import Callable, Iterable, List, Optional
 
-from ..utils import mode, CDS_IMAGE_BASE_URL
+from ..utils import line_mark, mode, CDS_IMAGE_BASE_URL
 
 image_location=f"{CDS_IMAGE_BASE_URL}"
 
@@ -26,6 +26,21 @@ def find_statistic(stat: str, viewer: Viewer, data: Data, bins: Iterable[int | f
         return mode(data, viewer.state.x_att, bins=bins, range=[viewer.state.hist_x_min, viewer.state.hist_x_max])
     else:
         return [data.compute_statistic(stat, viewer.state.x_att)]
+
+
+# TODO: How can we make this more general to put into the utilities?
+def labeled_vertical_line(x: float, y_min: float, y_max: float, color: str, label: str, unit: Optional[str] = None, label_position: Optional[float] = None):
+    label_position = label_position or 0.85
+    text = f"{label} {unit}" if unit else label
+    return Scatter(
+        x=[x, x, x],
+        y=[y_min, label_position * (y_max - y_min), y_max],
+        mode="text+lines",
+        line=dict(color=color),
+        name=label,
+        text=['', f'  {text}', ''],
+        textposition="top right",
+    )
 
 
 @solara.component
@@ -45,7 +60,6 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
         "mean": "The mean is the average of all values in the dataset. The average is calculated by adding all the values together and dividing by the number of values. In this example, the mean of the distribution is 14.",
         "median": "The median is the middle of the dataset. Fifty percent of the data has values greater than the median and fifty percent has values less than or equal to the median. In this example, the median of the distribution is 15.",
         "mode": "The mode is the most commonly measured value or range of values in a set of data and appears as the tallest bar in a histogram. In this example, the mode of the distribution is 16.",
-
     }
     help_images = {
         "mean": f"{image_location}/mean.png",
@@ -101,13 +115,14 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
                     label = f"{capitalized}: {value}"
                     if unit:
                         label += f" {unit}"
+                    line = labeled_vertical_line(value, viewer.state.y_min, viewer.state.y_max,
+                                                 color, label=label, unit=None)
                     line_id = str(uuid4())
-                    line = vertical_line_mark(viewer.layers[0], value, color, label=label)
                     line["meta"] = line_id
                     viewer_lines.append(line)
                     viewer_line_ids.append(line_id)
-            except ValueError:
-                pass
+            except ValueError as e:
+                print(e)
 
             # The Scatter traces that get added aren't the same instances
             # as those we pass in. So we need to grab references to them
@@ -116,7 +131,6 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
             line_ids.append(viewer_line_ids)
 
         return stat
-
 
     def _update_selected(stat: str | None, value: bool):
         nonlocal last_updated
