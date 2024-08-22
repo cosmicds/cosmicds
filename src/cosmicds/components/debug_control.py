@@ -77,39 +77,39 @@ def FieldList(component_state: Reactive[BaseState]):
 def StateEditor(marker_cls: Type[Enum],
                 component_state: Reactive[BaseState],
                 local_state: Reactive[BaseLocalState],
-                api: BaseAPI):
+                api: BaseAPI,
+                show_all: bool = True):
     show_dialog, set_show_dialog = solara.use_state(False)
     with solara.Card(style="border-radius: 5px; border: 2px solid #EC407A; max-width: 400px"):
-        with solara.Row():
-            solara.Markdown(f"**User id:** {GLOBAL_STATE.value.student.id}")
+        if show_all:
+            with solara.Row():
+                with solara.Column():
+                    solara.Markdown(f"**User id:** {GLOBAL_STATE.value.student.id}")
+                with solara.Column():
+                    next_marker = marker_cls(component_state.value.current_step.value + 1) if component_state.value.current_step is not marker_cls.last() else None
+                    current = f"**Current**: {component_state.value.current_step.name} ( {component_state.value.current_step.value})"
+                    if next_marker:
+                        solara.Markdown(current + '\n' + f" **Next**: {next_marker.name} ( {next_marker.value})")
+                    else:
+                        solara.Markdown(current)
+                    
         with solara.Row():
             MarkerSelector(marker_cls, component_state)
-            solara.Button(
-                children="Edit State",
-                on_click=lambda: set_show_dialog(not show_dialog)
-            )
-            with rv.Dialog(v_model=show_dialog, on_v_model=set_show_dialog, max_width="500px"):
-                with solara.Card():
-                    with solara.Column():
-                        FieldList(component_state)
-        with solara.Row():
-            solara.Markdown(
-                f"**Current step:** {component_state.value.current_step.name}. {component_state.value.current_step.value}"
-        )
-
-        if (component_state.value.current_step is not marker_cls.last()):
-            solara.Markdown(
-                f"**Next step:** {component_state.value.current_step.value + 1}. {marker_cls(component_state.value.current_step.value + 1)}"
-            )
-            solara.Markdown(
-                f"**Can advance:** {component_state.value.can_transition(next=True)}"
-            )
-
-        else:
-            solara.Markdown(
-                "End of Stage"
-            )
+            if show_all:
+                with solara.Column():
+                    solara.Button(
+                        children="Edit State",
+                        on_click=lambda: set_show_dialog(not show_dialog)
+                    )
+            with solara.Column():
+                with rv.Dialog(v_model=show_dialog, on_v_model=set_show_dialog, max_width="500px"):
+                    with solara.Card():
+                        with solara.Column():
+                            FieldList(component_state)      
+            
+        if show_all:
+            with solara.Row():
+                RefreshButton(event_before_refresh=lambda _: api.delete_stage_state(GLOBAL_STATE, local_state, component_state),
+                                button_text="Reset Stage State")
+               
         
-        with solara.Row():
-            RefreshButton(event_before_refresh=lambda _: api.delete_stage_state(GLOBAL_STATE, local_state, component_state),
-                          button_text="Reset Stage State")
