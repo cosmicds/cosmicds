@@ -51,6 +51,13 @@ class BaseAPI:
         r = self.request_session.get(f"{self.API_URL}/student/{self.hashed_user}")
         return r.json()["student"] is not None
 
+    def update_class_size(self, state: Reactive[GlobalState]):
+        class_id = state.value.classroom.class_info["id"]
+        size_json = self.request_session.get(
+            f"{self.API_URL}/classes/size/{class_id}"
+        ).json()
+        Ref(state.fields.classroom.size).set(size_json["size"])
+
     def load_user_info(self, story_name: str, state: Reactive[GlobalState]):
         student_json = self.request_session.get(
             f"{self.API_URL}/student/{self.hashed_user}"
