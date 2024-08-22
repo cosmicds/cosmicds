@@ -110,55 +110,55 @@ def BaseLayout(
 
             rv.Spacer()
 
-            with rv.Menu(
-                v_model=debug_menu.value,
-                offset_y=True,
-                close_on_content_click=False,
-                v_slots=[
-                    {
-                        "name": "activator",
-                        "variable": "menu",
-                        "children": rv.Btn(
-                            v_on="menu.on",
-                            icon=True,
-                            children=[rv.Icon(children=["mdi-bug"])],
-                        ),
-                    }
-                ],
-            ):
-                with rv.Card(width=250):
-                    with rv.CardText():
-                        rv.TextField(
-                            value=f"{version('cosmicds')}",
-                            label="CosmicDS Version",
-                            readonly=True,
-                            outlined=True,
-                            dense=True,
-                        )
-                        rv.TextField(
-                            value=f"{version('hubbleds')}",
-                            label="HubbleDS Version",
-                            readonly=True,
-                            outlined=True,
-                            dense=True,
-                        )
-                        rv.TextField(
-                            value=f"{GLOBAL_STATE.value.student.id}",
-                            label="Student ID",
-                            readonly=True,
-                            outlined=True,
-                            dense=True,
-                        )
-                        rv.TextField(
-                            value=f"{BASE_API.hashed_user}",
-                            label="Student Hash",
-                            readonly=True,
-                            outlined=True,
-                            dense=True,
-                        )
+            # with rv.Menu(
+            #     v_model=debug_menu.value,
+            #     offset_y=True,
+            #     close_on_content_click=False,
+            #     v_slots=[
+            #         {
+            #             "name": "activator",
+            #             "variable": "menu",
+            #             "children": rv.Btn(
+            #                 v_on="menu.on",
+            #                 icon=True,
+            #                 children=[rv.Icon(children=["mdi-bug"])],
+            #             ),
+            #         }
+            #     ],
+            # ):
+            #     with rv.Card(width=250):
+            #         with rv.CardText():
+            #             rv.TextField(
+            #                 value=f"{version('cosmicds')}",
+            #                 label="CosmicDS Version",
+            #                 readonly=True,
+            #                 outlined=True,
+            #                 dense=True,
+            #             )
+            #             rv.TextField(
+            #                 value=f"{version('hubbleds')}",
+            #                 label="HubbleDS Version",
+            #                 readonly=True,
+            #                 outlined=True,
+            #                 dense=True,
+            #             )
+            #             rv.TextField(
+            #                 value=f"{GLOBAL_STATE.value.student.id}",
+            #                 label="Student ID",
+            #                 readonly=True,
+            #                 outlined=True,
+            #                 dense=True,
+            #             )
+            #             rv.TextField(
+            #                 value=f"{BASE_API.hashed_user}",
+            #                 label="Student Hash",
+            #                 readonly=True,
+            #                 outlined=True,
+            #                 dense=True,
+            #             )
 
-            with rv.Btn(icon=True):
-                rv.Icon(children=["mdi-tune-vertical"])
+            # with rv.Btn(icon=True):
+            #     rv.Icon(children=["mdi-tune-vertical"])
 
             solara.lab.ThemeToggle(
                 on_icon="mdi-brightness-4",
