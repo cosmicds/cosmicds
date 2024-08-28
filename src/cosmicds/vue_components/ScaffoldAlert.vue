@@ -40,13 +40,23 @@
           v-else
           class="mx-2 shrink"
         >
-<!--          <speech-synthesizer/>-->
+          <speech-synthesizer
+            :pitch="speech?.pitch ?? 1"
+            :rate="speech?.rate ?? 1"
+            :autoread="speech?.autoread ?? false"
+            :voice="speech?.voice"
+          />
         </v-col>
         <v-col
           v-if="allowBack"
           class="mx-2 shrink"
         >
-<!--          <speech-synthesizer/>-->
+          <speech-synthesizer
+            :pitch="speech?.pitch ?? 1"
+            :rate="speech?.rate ?? 1"
+            :autoread="speech?.autoread ?? false"
+            :voice="speech?.voice"
+          />
         </v-col>
         <v-col
           v-else
@@ -191,6 +201,10 @@ module.exports = {
       type: Boolean,
       default: true
     },
+    speech: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {
