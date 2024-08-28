@@ -41,10 +41,7 @@
           class="mx-2 shrink"
         >
           <speech-synthesizer
-            :pitch="speech?.pitch ?? 1"
-            :rate="speech?.rate ?? 1"
-            :autoread="speech?.autoread ?? false"
-            :voice="speech?.voice"
+            :options="speech"
           />
         </v-col>
         <v-col
@@ -52,10 +49,7 @@
           class="mx-2 shrink"
         >
           <speech-synthesizer
-            :pitch="speech?.pitch ?? 1"
-            :rate="speech?.rate ?? 1"
-            :autoread="speech?.autoread ?? false"
-            :voice="speech?.voice"
+            :options="speech"
           />
         </v-col>
         <v-col
@@ -141,6 +135,8 @@
 module.exports = {
   mounted() {
 
+    console.log(this.speech);
+
     if (this.scrollOnMount) {
       this.$el.scrollIntoView({
         behavior: 'smooth',
@@ -211,7 +207,7 @@ module.exports = {
       frObserver: null,
       freeResponses: [],
       disableNext: false,
-      frListener: null
+      frListener: null,
     }
   },
   computed: {

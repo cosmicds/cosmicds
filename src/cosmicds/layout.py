@@ -6,16 +6,19 @@ from typing import Optional
 
 import solara
 from solara.alias import rv
-from solara.lab import theme, Ref
+from solara.lab import theme
 from solara.server import settings
+from solara.toestand import Ref
 from solara_enterprise import auth
 from solara import Reactive
 
-from .state import GLOBAL_STATE, BaseLocalState
+
+from .state import GLOBAL_STATE, BaseLocalState, Speech
 from .remote import BASE_API
 from cosmicds import load_custom_vue_components
 from cosmicds.utils import get_session_id
 from cosmicds.components.login import Login
+from cosmicds.components.speech_settings import SpeechSettings
 from cosmicds.logger import setup_logger
 
 filterwarnings(action="ignore", category=UserWarning)
@@ -44,6 +47,7 @@ def BaseLayout(
     debug_mode = solara.use_reactive(True)
 
     debug_menu = solara.use_reactive(False)
+    speech_menu = solara.use_reactive(False)
 
     def _component_setup():
         # Custom vue-only components have to be registered in the Page element
@@ -88,6 +92,8 @@ def BaseLayout(
     # Ref(GLOBAL_STATE.fields.student.id).set(0)
     # Ref(GLOBAL_STATE.fields.classroom.class_info).set({"id": 0})
     # Ref(GLOBAL_STATE.fields.classroom.size).set(0)
+    
+    speech = Ref(GLOBAL_STATE.fields.speech)
 
     @solara.lab.computed
     def display_info():
@@ -157,8 +163,34 @@ def BaseLayout(
             #                 dense=True,
             #             )
 
-            # with rv.Btn(icon=True):
-            #     rv.Icon(children=["mdi-tune-vertical"])
+            with rv.Menu(
+                v_model=speech_menu.value,
+                offset_y=True,
+                close_on_content_click=False,
+                v_slots=[
+                    {
+                        "name": "activator",
+                        "variable": "menu",
+                        "children": rv.Btn(
+                            v_on="menu.on",
+                            icon=True,
+                            children=[rv.Icon(children=["mdi-tune-vertical"])]
+                        ),
+                    }
+                ]
+            ):
+                initial_settings = GLOBAL_STATE.value.speech.model_dump()
+                def update_speech_property(prop, value):
+                    settings = speech.value.model_copy()
+                    setattr(settings, prop, value)
+                    speech.set(settings)
+                SpeechSettings(
+                    initial_state=initial_settings,
+                    event_autoread_changed=lambda read: update_speech_property("read", read),
+                    event_pitch_changed=lambda pitch: update_speech_property("pitch", pitch),
+                    event_rate_changed=lambda rate: update_speech_property("rate", rate),
+                    event_voice_changed=lambda voice: update_speech_property("voice", voice),
+                )
 
             solara.lab.ThemeToggle(
                 on_icon="mdi-brightness-4",

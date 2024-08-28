@@ -18,7 +18,7 @@ def ScaffoldAlert(
     fr_listener=None,
     state_view: dict = None,
     event_force_transition: Callable = lambda *args: None,
-    speech_options: Optional[Speech] = None,
+    speech: Optional[Speech] = None,
     **kwargs
 ):
     """
@@ -123,7 +123,7 @@ def ScaffoldAlert(
 
     _ScaffoldAlert = solara.component_vue(vue_path)(_ScaffoldAlert)
 
-    speech = speech_options.model_dump() if speech_options is not None else None
+    speech_dict = speech.model_dump() if speech is not None else None
     return _ScaffoldAlert(
         event_back_callback=event_back_callback,
         event_next_callback=event_next_callback,
@@ -135,6 +135,6 @@ def ScaffoldAlert(
         frListener=fr_listener,
         state_view=state_view,
         event_force_transition=event_force_transition,
-        speech=speech,
+        speech=speech_dict,
         **kwargs
     )

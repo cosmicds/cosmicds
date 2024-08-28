@@ -17,21 +17,9 @@
 <script>
 module.exports = {
   props: {
-    autoread: {
-      type: Boolean,
-      default: true,
-    },
-    voice: {
-      type: String,
-      default: null,
-    },
-    pitch: {
-      type: Number,
-      default: 1,
-    },
-    rate: {
-      type: Number,
-      default: 1,
+    options: {
+      type: Object,
+      default: null
     },
     selectors: {
       type: Array,
@@ -42,7 +30,7 @@ module.exports = {
       default: true
     },
     root: {
-      type: [Object, Function],
+      type: [Object, Function, HTMLElement],
       default: null
     },
     elementFilter: {
@@ -209,16 +197,14 @@ module.exports = {
       }
     },
     getSpeechOptions() {
-      const voiceName = this.voice;
+      const voiceName = this.options?.voice;
       this.defaultVoice = this.defaultVoice || window.speechSynthesis.getVoices().find(voice => this.defaultVoicesURIs.includes(voice.voiceURI));
+      const options = { ...this.options };
       const voice = window.speechSynthesis.getVoices().find(voice => voice.name == voiceName) || this.defaultVoice;
-      const options = {
-        autoread: this.autoread,
-        pitch: this.pitch,
-        rate: this.rate,
-      };
       if (voice) {
         options.voice = voice;
+      } else {
+        delete options.voice;
       }
       return options;
     },
