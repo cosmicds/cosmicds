@@ -200,6 +200,12 @@ module.exports = {
       const voiceName = this.options?.voice;
       this.defaultVoice = this.defaultVoice || window.speechSynthesis.getVoices().find(voice => this.defaultVoicesURIs.includes(voice.voiceURI));
       const options = { ...this.options };
+      if (options.rate === 0) {
+        options.rate = 1;
+      }
+      if (options.pitch === 0) {
+        options.pitch = 1;
+      }
       const voice = window.speechSynthesis.getVoices().find(voice => voice.name == voiceName) || this.defaultVoice;
       if (voice) {
         options.voice = voice;
