@@ -40,13 +40,17 @@
           v-else
           class="mx-2 shrink"
         >
-<!--          <speech-synthesizer/>-->
+          <speech-synthesizer
+            :options="speech"
+          />
         </v-col>
         <v-col
           v-if="allowBack"
           class="mx-2 shrink"
         >
-<!--          <speech-synthesizer/>-->
+          <speech-synthesizer
+            :options="speech"
+          />
         </v-col>
         <v-col
           v-else
@@ -131,6 +135,8 @@
 module.exports = {
   mounted() {
 
+    console.log(this.speech);
+
     if (this.scrollOnMount) {
       this.$el.scrollIntoView({
         behavior: 'smooth',
@@ -191,13 +197,17 @@ module.exports = {
       type: Boolean,
       default: true
     },
+    speech: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {
       frObserver: null,
       freeResponses: [],
       disableNext: false,
-      frListener: null
+      frListener: null,
     }
   },
   computed: {
