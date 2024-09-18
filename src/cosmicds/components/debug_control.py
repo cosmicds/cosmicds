@@ -10,11 +10,14 @@ from ..state import GLOBAL_STATE, BaseLocalState, BaseState
 
 from enum import Enum
 from functools import partial
-from typing import Type
+from typing import Type, TypeVar
 
+
+BS = TypeVar("BS", bound=BaseState, covariant=True)
+BLS = TypeVar("BLS", bound=BaseLocalState, covariant=True)
 
 @solara.component
-def MarkerSelector(marker_cls: Type[Enum], component_state: Reactive[BaseState]):
+def MarkerSelector(marker_cls: Type[Enum], component_state: Reactive[BS]):
     
     markers_list = [marker.name for marker in marker_cls]
 
@@ -29,7 +32,7 @@ def MarkerSelector(marker_cls: Type[Enum], component_state: Reactive[BaseState])
 
 
 @solara.component
-def FieldList(component_state: Reactive[BaseState]):
+def FieldList(component_state: Reactive[BS]):
 
     def _reactive_set_field(field, value):
         Ref(getattr(component_state.fields, field)).set(value)
@@ -73,10 +76,11 @@ def FieldList(component_state: Reactive[BaseState]):
              solara.Markdown(f"{field_name}: {field_value}")
 
 
+
 @solara.component
 def StateEditor(marker_cls: Type[Enum],
-                component_state: Reactive[BaseState],
-                local_state: Reactive[BaseLocalState],
+                component_state: Reactive[BS],
+                local_state: Reactive[BLS],
                 api: BaseAPI,
                 show_all: bool = True):
     show_dialog, set_show_dialog = solara.use_state(False)
