@@ -87,7 +87,7 @@ class BaseAPI:
             return
 
         r = self.request_session.post(
-            f"{self.API_URL}/student-sign-up",
+            f"{self.API_URL}/students/create",
             json={
                 "username": self.hashed_user,
                 "password": "",
@@ -95,7 +95,7 @@ class BaseAPI:
                 "email": f"{self.hashed_user}",
                 "age": 0,
                 "gender": "undefined",
-                "classroomCode": class_code,
+                "classroom_code": class_code,
             },
         )
 
