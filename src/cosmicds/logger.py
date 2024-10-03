@@ -25,4 +25,5 @@ def setup_logger(name, level=logging.DEBUG):
     if not logger.hasHandlers():
         logger.addHandler(ch)
 
+    logger.propagate = False
     return logger
