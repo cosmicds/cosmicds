@@ -3,7 +3,7 @@ import logging
 
 class CustomFormatter(logging.Formatter):
     # Define the custom format for log messages
-    FORMAT = "[%(asctime)s][%(levelname)8s][%(name)8s]:%(message)s"
+    FORMAT = "[%(asctime)s][%(levelname)8s][%(name)8s][%(filename)s:%(lineno)s]:%(message)s"
 
     def __init__(self):
         super().__init__(self.FORMAT, datefmt="%Y-%m-%d %H:%M:%S")
