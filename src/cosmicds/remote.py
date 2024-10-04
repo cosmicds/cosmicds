@@ -1,10 +1,11 @@
+from pydantic import BaseModel
 from solara_enterprise import auth
 import hashlib
 import os
 from requests import Session
 from functools import cached_property
 
-from .state import BaseLocalState, BaseState, GlobalState
+from .state import GLOBAL_STATE, BaseLocalState, BaseState, GlobalState
 from solara import Reactive
 from solara.lab import Ref
 from cosmicds.logger import setup_logger
@@ -199,11 +200,11 @@ class BaseAPI:
             return
 
         global_state_json = story_json.get("app", {})
-        global_state.set(global_state.value.__class__(**global_state_json))
+        BaseAPI._update_state(global_state, global_state_json)
 
         local_state_json = story_json.get("story", {})
         logger.info(local_state_json)
-        local_state.set(local_state.value.__class__(**local_state_json))
+        BaseAPI._update_state(local_state, local_state_json)
 
         logger.info("Updated local state from database.")
 
@@ -221,6 +222,17 @@ class BaseAPI:
         Ref(state.fields.student.id).set(0)
         Ref(state.fields.classroom.class_info).set({})
         Ref(state.fields.classroom.size).set(0)
+
+    @staticmethod
+    def _update_state(state: Reactive[BaseState], data: dict):
+        for key, value in data.items():
+            field = getattr(state.fields, key, None)
+            if field is None:
+                continue
+            state_value = getattr(state.value, key)
+            if isinstance(state_value, BaseModel):
+                value = state_value.__class__(**value)
+            Ref(field).set(value)
 
 
 BASE_API = BaseAPI()
