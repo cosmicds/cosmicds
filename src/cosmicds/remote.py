@@ -5,7 +5,7 @@ import os
 from requests import Session
 from functools import cached_property
 
-from .state import GLOBAL_STATE, BaseLocalState, BaseState, GlobalState
+from .state import BaseLocalState, BaseState, GlobalState
 from solara import Reactive
 from solara.lab import Ref
 from cosmicds.logger import setup_logger
