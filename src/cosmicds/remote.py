@@ -99,7 +99,7 @@ class BaseAPI:
             },
         )
 
-        if r.status_code != 200:
+        if r.status_code != 201:
             logger.error("Failed to create new user.")
             return
 
