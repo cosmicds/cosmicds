@@ -44,15 +44,15 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
         def ignore(self, condition):
             self.ignore_conditions.append(condition)
 
-        def add_data(self, data):
+        def add_data(self, data, **kwargs):
             if any(condition(data) for condition in self.ignore_conditions):
                 return False
-            return super().add_data(data)
+            return super().add_data(data, **kwargs)
 
-        def add_subset(self, subset):
+        def add_subset(self, subset, **kwargs):
             if any(condition(subset) for condition in self.ignore_conditions):
                 return False
-            return super().add_subset(subset)
+            return super().add_subset(subset, **kwargs)
 
         # The argument here can be either a Data or Subset object
         def layer_artist_for_data(self, data):
