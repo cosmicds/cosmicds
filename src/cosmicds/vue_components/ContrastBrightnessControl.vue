@@ -119,9 +119,13 @@ module.exports = {
   methods: {
     resetContrast() {
       this.contrast = 0;
+      this.$emit('change-contrast', this.contrast2Per(0))
+      this.updateStyle();
     },
     resetBrightness() {
       this.brightness = 1;
+      this.$emit('change-brightness', this.brightness2Per(1))
+      this.updateStyle();
     },
     resetStyle() {
       console.log('resetting style from contrast_brightness_control');
