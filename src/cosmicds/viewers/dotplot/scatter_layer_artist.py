@@ -59,9 +59,8 @@ class DotplotScatterLayerArtist(LayerArtist):
         super().__init__(
             viewer_state,
             layer_state=layer_state,
-            layer=layer
+            layer=layer,
         )
-        print("Called superclass init")
 
         self.view = view
 
