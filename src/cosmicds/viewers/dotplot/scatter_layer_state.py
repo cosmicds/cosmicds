@@ -74,9 +74,6 @@ class ScatterLayerState(MatplotlibLayerState, StretchStateMixin):
         self.size_att_helper = ComponentIDComboHelper(self, 'size_att',
                                                       numeric=True, datetime=False, categorical=False)
 
-        self.add_callback('points_mode', self._update_density_map_mode)
-        self.add_callback('density_map', self._on_density_map_change, priority=10000)
-
         ScatterLayerState.cmap_mode.set_choices(self, ['Fixed', 'Linear'])
         ScatterLayerState.size_mode.set_choices(self, ['Fixed', 'Linear'])
 
@@ -91,8 +88,6 @@ class ScatterLayerState(MatplotlibLayerState, StretchStateMixin):
         self.setup_stretch_callback()
         self.stretch = 'log'
 
-        if self.viewer_state is not None:
-            self._update_points_mode()
 
         self.add_callback('layer', self._on_layer_change)
         if layer is not None:

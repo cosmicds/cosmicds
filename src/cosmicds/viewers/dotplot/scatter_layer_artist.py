@@ -7,9 +7,10 @@ from glue.core import BaseData
 from glue.core.exceptions import IncompatibleAttribute
 from glue.utils import ensure_numerical
 from glue.viewers.common.layer_artist import LayerArtist
-from glue.viewers.scatter.state import ScatterLayerState
 
 from plotly.graph_objs import Scatter
+
+from cosmicds.viewers.dotplot.scatter_layer_state import ScatterLayerState
 
 
 __all__ = ["DotplotScatterLayerArtist"]

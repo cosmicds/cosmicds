@@ -39,6 +39,6 @@ class PlotlyDotPlotView(PlotlyHistogramView):
 
     # For now, subsets have the same layer type as their parent
     def get_subset_layer_artist(self, layer=None, layer_state=None):
-        if layer is not None and layer.parent.uuid in self._scatter_layers:
+        if layer is not None and layer.data.uuid in self._scatter_layers:
             return DotplotScatterLayerArtist(self, self.state, layer_state=layer_state, layer=layer)
         return super().get_subset_layer_artist(layer, layer_state)
