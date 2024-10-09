@@ -133,7 +133,7 @@ class DotplotScatterLayerArtist(LayerArtist):
             self.enable()
 
         scatter = self._get_scatter()
-        scatter.update(x=x, y=[1 for _ in x])
+        scatter.update(x=x, y=[self.state.height for _ in x])
 
     def _create_scatter(self):
         if isinstance(self.layer, BaseData):

@@ -21,6 +21,10 @@ class ScatterLayerState(MatplotlibLayerState, StretchStateMixin):
     A state class that includes all the attributes for layers in a scatter plot.
     """
 
+    # Height
+
+    height = DDCProperty(1, docstring="The y-value at which to display scatter points")
+
     # Color
 
     cmap_mode = DDSCProperty(docstring="Whether to use color to encode an attribute")
