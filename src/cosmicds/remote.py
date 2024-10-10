@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from solara_enterprise import auth
 import hashlib
 import os
@@ -225,14 +224,8 @@ class BaseAPI:
 
     @staticmethod
     def _update_state(state: Reactive[BaseState], data: dict):
-        for key, value in data.items():
-            field = getattr(state.fields, key, None)
-            if field is None:
-                continue
-            state_value = getattr(state.value, key)
-            if isinstance(state_value, BaseModel):
-                value = state_value.__class__(**value)
-            Ref(field).set(value)
+        new_state = state.value.__class__(**data)
+        state.value.__dict__.update(new_state.__dict__)
 
 
 BASE_API = BaseAPI()
