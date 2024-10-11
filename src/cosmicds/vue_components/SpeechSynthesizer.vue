@@ -115,7 +115,7 @@ module.exports = {
   methods: {
 
     triggerAutospeak(forceSpeak=true) {
-      if (this.autospeak) {
+      if (this.getSpeechOptions().autoread) {
         this.$nextTick(() => this.speak(forceSpeak));
       }
     },
@@ -341,6 +341,9 @@ module.exports = {
     // didn't seem to be enough - the DOM changes hadn't finished propagating yet.
     // But this does the trick, and I don't notice it at all
     autospeakOnChange(_item) {
+      if (this.speaking) {
+        this.stopThisSpeaking();
+      }
       setTimeout(() => {{
         this.triggerAutospeak();
       }}, 100);
