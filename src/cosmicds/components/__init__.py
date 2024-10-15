@@ -8,3 +8,4 @@ from .statistics_selector import StatisticsSelector
 from .percentage_selector import PercentageSelector
 from .refresh_button import RefreshButton
 from .info_dialog.info_dialog import InfoDialog
+from .google_analytics_support.google_analytics_support import GoogleAnalyticsSupport
