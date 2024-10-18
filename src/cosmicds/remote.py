@@ -125,6 +125,11 @@ class BaseAPI:
         local_state: Reactive[BaseLocalState],
         component_state: Reactive[BaseState],
     ) -> BaseState | None:
+        
+        if not global_state.value.update_db:
+            logger.info("Skipping retrieval of Component state.")
+            return component_state.value
+        
         stage_json = (
             self.request_session.get(
                 f"{self.API_URL}/stage-state/{global_state.value.student.id}/"
@@ -154,6 +159,10 @@ class BaseAPI:
         local_state: Reactive[BaseLocalState],
         component_state: Reactive[BaseState],
     ):
+        if not global_state.value.update_db:
+            logger.info("Skipping deletion of stage state.")
+            return
+        
         r = self.request_session.delete(
             f"{self.API_URL}/stage-state/{global_state.value.student.id}/"
             f"{local_state.value.story_id}/{component_state.value.stage_id}"
@@ -181,6 +190,10 @@ class BaseAPI:
     def get_app_story_states(
         self, global_state: Reactive[GlobalState], local_state: Reactive[BaseLocalState]
     ) -> BaseLocalState | None:
+        if not global_state.value.update_db:
+            logger.info("Skipping retrieval of Global and Local states.")
+            return local_state.value
+        
         story_json = (
             self.request_session.get(
                 f"{self.API_URL}/story-state/{global_state.value.student.id}/"

@@ -106,7 +106,7 @@ def BaseLayout(
         with rv.AppBar(elevate_on_scroll=False, app=True, flat=True, class_="cosmicds-appbar"):
             
             rv.Html(tag="h2", children=[f"{story_title}"])
-            rv.Html(tag="h3", children=['Cosmic Data Stories'], class_="ml-4")
+            rv.Html(tag="h3", children=['Cosmic Data Stories'], class_="ml-4 app-title")
 
             rv.Spacer()
 
