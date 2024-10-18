@@ -128,6 +128,7 @@ def BaseLayout(
                             v_on="menu.on",
                             icon=True,
                             children=[rv.Icon(children=["mdi-bug"])],
+                            class_="hide-in-demo"
                         ),
                     }
                 ],
