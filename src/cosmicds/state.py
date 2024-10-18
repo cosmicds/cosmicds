@@ -35,6 +35,7 @@ class BaseLocalState(BaseState):
     title: str
     story_id: str
     piggybank_total: int = 0
+    max_route_index: int | None = None
 
 
 class GlobalState(BaseState):
