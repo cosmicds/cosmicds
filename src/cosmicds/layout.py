@@ -231,7 +231,7 @@ def BaseLayout(
                         with solara.Link(solara.resolve_path(route)):
                             with rv.ListItem():
                                 with rv.ListItemIcon():
-                                    rv.Icon(children="mdi-view-dashboard")
+                                    rv.Icon(children=f"mdi-numeric-{i}-circle")
 
                                 with rv.ListItemContent():
                                     rv.ListItemTitle(
