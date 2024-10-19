@@ -37,28 +37,16 @@ def Login(
                     class_="d-flex align-center flex-column justify-center"
                 ):
                     solara.Image(
-                        "/static/public/cosmicds_logo_transparent_for_dark_backgrounds.png"
+                        "/static/public/cosmicds_logo_transparent_for_dark_backgrounds.png",
+                        classes=["mt-12"],
                     )
                     solara.Text(
                         "Hubble's Law Data Story", classes=["display-1", "py-12"]
                     )
 
                     solara.InputText(
-                        label="Class Code", value=class_code, continuous_update=True
+                        label="Enter Class Code", value=class_code, continuous_update=True,
                     )
-
-                    def _toggle_debug_mode(state):
-                        team_interface.set(state)
-                        debug_mode.set(state)
-
-                    # TODO: hide these in production
-                    with solara.Row():
-                        solara.Checkbox(label="Update DB", value=update_db)
-                        solara.Checkbox(
-                            label="Debug Mode",
-                            value=debug_mode.value,
-                            on_value=_toggle_debug_mode,
-                        )
 
                     solara.Button(
                         "Sign in",
@@ -70,6 +58,7 @@ def Login(
                         on_click=lambda: _save_to_cache(
                             class_code.value, update_db.value, debug_mode.value
                         ),
+                        class_="mt-12",
                     )
 
     return login
