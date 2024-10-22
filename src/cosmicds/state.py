@@ -6,8 +6,9 @@ from glue.core import DataCollection, Session
 import solara
 from glue.core import Data, DataCollection
 
-# it must exist, and have the value 'true' to disable the database
+
 update_db_init = True
+# CDS_DISABLE_DB must exist, and have the value 'true' to disable writing to the database
 if 'CDS_DISABLE_DB' in os.environ:
     # check if it has a value and if it True
     cds_disable_db = os.getenv("CDS_DISABLE_DB")
