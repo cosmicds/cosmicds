@@ -87,7 +87,7 @@ class BaseAPI:
             return
 
         r = self.request_session.post(
-            f"{self.API_URL}/student-sign-up",
+            f"{self.API_URL}/students/create",
             json={
                 "username": self.hashed_user,
                 "password": "",
@@ -95,11 +95,11 @@ class BaseAPI:
                 "email": f"{self.hashed_user}",
                 "age": 0,
                 "gender": "undefined",
-                "classroomCode": class_code,
+                "classroom_code": class_code,
             },
         )
 
-        if r.status_code != 200:
+        if r.status_code != 201:
             logger.error("Failed to create new user.")
             return
 
@@ -212,11 +212,11 @@ class BaseAPI:
             return
 
         global_state_json = story_json.get("app", {})
-        global_state.set(global_state.value.__class__(**global_state_json))
+        BaseAPI._update_state(global_state, global_state_json)
 
         local_state_json = story_json.get("story", {})
         logger.info(local_state_json)
-        local_state.set(local_state.value.__class__(**local_state_json))
+        BaseAPI._update_state(local_state, local_state_json)
 
         logger.info("Updated local state from database.")
 
@@ -234,6 +234,11 @@ class BaseAPI:
         Ref(state.fields.student.id).set(0)
         Ref(state.fields.classroom.class_info).set({})
         Ref(state.fields.classroom.size).set(0)
+
+    @staticmethod
+    def _update_state(state: Reactive[BaseState], data: dict):
+        new_state = state.value.__class__(**data)
+        state.value.__dict__.update(new_state.__dict__)
 
 
 BASE_API = BaseAPI()

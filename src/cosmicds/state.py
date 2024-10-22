@@ -24,14 +24,14 @@ class Classroom(BaseModel):
 
 
 class Speech(BaseModel):
-    pitch: int = 0
-    rate: int = 0
+    pitch: float = 1.0
+    rate: float = 1.0
     autoread: bool = False
-    voice: str = ""
+    voice: str | None = None
 
 
 class BaseLocalState(BaseState):
-    debug_mode: bool = False
+    debug_mode: bool = True
     title: str
     story_id: str
     piggybank_total: int = 0
