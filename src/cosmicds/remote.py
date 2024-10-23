@@ -125,6 +125,11 @@ class BaseAPI:
         local_state: Reactive[BaseLocalState],
         component_state: Reactive[BaseState],
     ) -> BaseState | None:
+        
+        if not global_state.value.update_db:
+            logger.info("Skipping retrieval of Component state.")
+            return component_state.value
+        
         stage_json = (
             self.request_session.get(
                 f"{self.API_URL}/stage-state/{global_state.value.student.id}/"
@@ -154,6 +159,10 @@ class BaseAPI:
         local_state: Reactive[BaseLocalState],
         component_state: Reactive[BaseState],
     ):
+        if not global_state.value.update_db:
+            logger.info("Skipping deletion of stage state.")
+            return
+        
         r = self.request_session.delete(
             f"{self.API_URL}/stage-state/{global_state.value.student.id}/"
             f"{local_state.value.story_id}/{component_state.value.stage_id}"
@@ -181,6 +190,10 @@ class BaseAPI:
     def get_app_story_states(
         self, global_state: Reactive[GlobalState], local_state: Reactive[BaseLocalState]
     ) -> BaseLocalState | None:
+        if not global_state.value.update_db:
+            logger.info("Skipping retrieval of Global and Local states.")
+            return local_state.value
+        
         story_json = (
             self.request_session.get(
                 f"{self.API_URL}/story-state/{global_state.value.student.id}/"
@@ -199,11 +212,11 @@ class BaseAPI:
             return
 
         global_state_json = story_json.get("app", {})
-        global_state.set(global_state.value.__class__(**global_state_json))
+        BaseAPI._update_state(global_state, global_state_json)
 
         local_state_json = story_json.get("story", {})
         logger.info(local_state_json)
-        local_state.set(local_state.value.__class__(**local_state_json))
+        BaseAPI._update_state(local_state, local_state_json)
 
         logger.info("Updated local state from database.")
 
@@ -221,6 +234,11 @@ class BaseAPI:
         Ref(state.fields.student.id).set(0)
         Ref(state.fields.classroom.class_info).set({})
         Ref(state.fields.classroom.size).set(0)
+
+    @staticmethod
+    def _update_state(state: Reactive[BaseState], data: dict):
+        new_state = state.value.__class__(**data)
+        state.value.__dict__.update(new_state.__dict__)
 
 
 BASE_API = BaseAPI()
