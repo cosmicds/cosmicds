@@ -79,21 +79,13 @@
 
 <script>
 module.exports = {
-  props: {
-    initialState: {
-      type: Object,
-      default: null,
-    }
-  },
   created() {
     window.speechSynthesis.onvoiceschanged = (_event) => {
       this.updateVoiceList();
     };
     this.updateVoiceList();
 
-    this.autoread = this.initialState?.autoread ?? false;
-    this.pitch = this.initialState?.pitch ?? 1;
-    this.rate = this.initialState?.rate ?? 1;
+    this.updateAttributes(this.initialState);
   },
   data() {
     return {
@@ -120,7 +112,12 @@ module.exports = {
   methods: {
     updateVoiceList() {
       this.voices = window.speechSynthesis.getVoices().filter(voice => this.voiceURIs.includes(voice.voiceURI));
-    }
+    },
+    updateAttributes(state) {
+      this.autoread = state?.autoread ?? false;
+      this.pitch = state?.pitch ?? 1;
+      this.rate = state?.rate ?? 1;
+    },
   },
   watch: {
     autoread(read) {
@@ -134,6 +131,9 @@ module.exports = {
     },
     voice(newVoice) {
       this.voice_changed(newVoice.voiceURI);
+    },
+    initialState(state) {
+      this.updateAttributes(state);
     }
   }
 }
