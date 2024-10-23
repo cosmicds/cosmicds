@@ -41,6 +41,9 @@ def BaseLayout(
     route_index = routes_current_level.index(route_current)
 
     selected_link = solara.use_reactive(route_index)
+    def on_selected_link_change(new, old):
+        logger.info(f"Selected link changed from {old} to {new}")
+    selected_link.subscribe_change(on_selected_link_change)
 
     active = solara.use_reactive(False)
     class_code = solara.use_reactive("")
@@ -236,12 +239,7 @@ def BaseLayout(
                                 local_state.value.max_route_index is not None 
                                 and i > local_state.value.max_route_index
                                 )
-                        if not disabled:
-                            link_component = solara.Link(solara.resolve_path(route))
-                        else:
-                            link_component = Html.element(tag="a")
-
-                        with link_component:
+                        with solara.Link(solara.resolve_path(route) if not disabled else solara.resolve_path(route_current.path)):
                             with rv.ListItem(disabled=disabled, inactive=disabled):
                                 with rv.ListItemIcon():
                                     rv.Icon(children=f"mdi-numeric-{i}-circle")
