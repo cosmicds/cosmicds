@@ -6,6 +6,7 @@ from typing import Optional
 
 import solara
 from solara.alias import rv
+from ipyvue import Html
 from solara.lab import theme
 from solara.server import settings
 from solara.toestand import Ref
@@ -40,6 +41,9 @@ def BaseLayout(
     route_index = routes_current_level.index(route_current)
 
     selected_link = solara.use_reactive(route_index)
+    def on_selected_link_change(new, old):
+        logger.info(f"Selected link changed from {old} to {new}")
+    selected_link.subscribe_change(on_selected_link_change)
 
     active = solara.use_reactive(False)
     class_code = solara.use_reactive("")
@@ -229,8 +233,14 @@ def BaseLayout(
                     v_model=selected_link.value,
                 ):
                     for i, route in enumerate(routes_current_level):
-                        with solara.Link(solara.resolve_path(route)):
-                            with rv.ListItem():
+                        disabled = False
+                        if (local_state is not None):
+                            disabled = (
+                                local_state.value.max_route_index is not None 
+                                and i > local_state.value.max_route_index
+                                )
+                        with solara.Link(solara.resolve_path(route) if not disabled else solara.resolve_path(route_current.path)):
+                            with rv.ListItem(disabled=disabled, inactive=disabled):
                                 with rv.ListItemIcon():
                                     rv.Icon(children=f"mdi-numeric-{i}-circle")
 
