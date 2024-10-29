@@ -70,7 +70,7 @@ class BaseAPI:
 
         Ref(state.fields.student.id).set(sid)
         Ref(state.fields.classroom.class_info).set(class_json["class"])
-        # Ref(state.fields.classroom.size).set(class_json["expected_size"])
+        Ref(state.fields.classroom.size).set(class_json["class"]["expected_size"])
 
         logger.info("Loaded user info for user `%s`.", state.value.student.id)
 
