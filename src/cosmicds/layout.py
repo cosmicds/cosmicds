@@ -1,7 +1,7 @@
 import datetime
 import os
 from warnings import filterwarnings
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 from typing import Optional
 
 import solara
@@ -146,13 +146,16 @@ def BaseLayout(
                             outlined=True,
                             dense=True,
                         )
-                        rv.TextField(
-                            value=f"{version('hubbleds')}",
-                            label="HubbleDS Version",
-                            readonly=True,
-                            outlined=True,
-                            dense=True,
-                        )
+                        try:
+                            rv.TextField(
+                                value=f"{version('hubbleds')}",
+                                label="HubbleDS Version",
+                                readonly=True,
+                                outlined=True,
+                                dense=True,
+                            )
+                        except PackageNotFoundError:
+                            pass
                         rv.TextField(
                             value=f"{GLOBAL_STATE.value.student.id}",
                             label="Student ID",
