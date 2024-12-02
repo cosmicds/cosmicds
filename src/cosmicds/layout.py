@@ -194,7 +194,7 @@ def BaseLayout(
                     speech.set(settings)
                 SpeechSettings(
                     initial_state=initial_settings,
-                    event_autoread_changed=lambda read: update_speech_property("read", read),
+                    event_autoread_changed=lambda read: update_speech_property("autoread", read),
                     event_pitch_changed=lambda pitch: update_speech_property("pitch", pitch),
                     event_rate_changed=lambda rate: update_speech_property("rate", rate),
                     event_voice_changed=lambda voice: update_speech_property("voice", voice),
