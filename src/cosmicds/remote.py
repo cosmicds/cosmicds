@@ -215,7 +215,7 @@ class BaseAPI:
         BaseAPI._update_state(global_state, global_state_json)
 
         local_state_json = story_json.get("story", {})
-        logger.info(local_state_json)
+        logger.debug(local_state_json)
         BaseAPI._update_state(local_state, local_state_json)
 
         logger.info("Updated local state from database.")
