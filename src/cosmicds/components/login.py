@@ -22,6 +22,8 @@ def Login(
     update_db: Reactive[bool],
     debug_mode: Reactive[bool],
 ):
+    router = solara.use_router()
+
     with rv.Dialog(
         v_model=active.value,
         max_width=600,
@@ -37,7 +39,7 @@ def Login(
                     class_="d-flex align-center flex-column justify-center"
                 ):
                     solara.Image(
-                        "/static/public/cosmicds_logo_transparent_for_dark_backgrounds.png",
+                        f"{router.root_path}/static/public/cosmicds_logo_transparent_for_dark_backgrounds.png",
                         classes=["mt-12"],
                     )
                     solara.Text(
