@@ -124,12 +124,12 @@ export default {
     console.log("Attempting load of mathjax.")
     await new Promise((resolve, reject) => {
       const mathJaxScript = document.createElement('script');
-      mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
       mathJaxScript.async = true;
-      mathJaxScript.onload = () => {
-        console.log("MathJax appended to document.");
-      };
+      mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
       document.head.appendChild(mathJaxScript);
+      mathJaxScript.onload = (_e) => resolve();
+      mathJaxScript.onerror = (_e) => reject();
+      console.log("MathJax start up finished.")
     });
     await MathJax.startup.promise;
 
