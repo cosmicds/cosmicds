@@ -9,13 +9,14 @@ from ..utils import percent_around_center_indices
 from glue.core import Data, Session
 from glue.viewers.common.viewer import Viewer
 from numbers import Number
-from typing import Iterable, List
+from typing import Callable, Iterable, List, Optional
 
 
 @solara.component
 def PercentageSelector(viewers: List[Viewer],
                        glue_data: List[Data],
                        bins: None | List[None | Iterable[None | Number]]=None,
+                       on_selected_changed: Optional[Callable[[int,bool],None]]=None,
                        **kwargs):
     
     selected = solara.use_reactive(None)
@@ -198,6 +199,9 @@ def PercentageSelector(viewers: List[Viewer],
         elif selected.value == option:
             selected.set(None)
         last_updated = _update()
+
+        if on_selected_changed:
+            on_selected_changed(option, value)
 
     def _model_factory(option):
         return solara.lab.computed(lambda option=option: selected.value == option)
