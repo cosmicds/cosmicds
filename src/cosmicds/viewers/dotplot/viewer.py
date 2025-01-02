@@ -25,7 +25,7 @@ class PlotlyDotPlotView(PlotlyHistogramView):
         if layer_type == "scatter":
             self._scatter_layers.add(data.uuid)
 
-        super().add_data(data)
+        return super().add_data(data)
 
     # def add_subset(self, data: Data, layer_type: Literal["dotplot"] | Literal["scatter"] = "dotplot"):
     #     if layer_type == "scatter":
