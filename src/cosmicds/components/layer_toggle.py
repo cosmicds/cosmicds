@@ -1,4 +1,4 @@
-from echo import delay_callback, ignore_callback
+from echo import delay_callback
 from echo.callback_container import CallbackContainer
 from glue.core.message import LayerArtistVisibilityMessage
 from glue.viewers.common.layer_artist import LayerArtist
@@ -27,7 +27,6 @@ class _LayerToggle(VuetifyTemplate):
         self.viewer.session.hub.subscribe(self.viewer.session.data_collection,
                                           LayerArtistVisibilityMessage,
                                           handler=self._update_layer_visibility)
-
 
     def _ignore_layer(self, layer):
         for cb in self._ignore_conditions:
