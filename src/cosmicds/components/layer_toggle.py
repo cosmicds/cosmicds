@@ -12,13 +12,16 @@ class _LayerToggle(VuetifyTemplate):
     layers = List().tag(sync=True)
     selected = List().tag(sync=True)
 
-    def __init__(self, viewer, names=None, sort=None, *args, **kwargs):
+    def __init__(self, viewer, names=None, sort=None, ignore_conditions=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.viewer = viewer
         self.name_transform = self._create_name_transform(names)
         self.sort = sort or (lambda state: state.zorder)
 
         self._ignore_conditions = CallbackContainer()
+        if ignore_conditions:
+            for condition in ignore_conditions:
+                self._ignore_conditions.append(condition)
 
         self._update_from_viewer()
         self.viewer._layer_artist_container.on_changed(self._update_from_viewer)
@@ -101,5 +104,5 @@ class _LayerToggle(VuetifyTemplate):
 
 
 @solara.component
-def LayerToggle(viewer, names=None, sort=None, *args, **kwargs):
-    return _LayerToggle.element(viewer=viewer, names=names, sort=sort)
+def LayerToggle(viewer, names=None, sort=None, ignore_conditions=None, *args, **kwargs):
+    return _LayerToggle.element(viewer=viewer, names=names, sort=sort, ignore_conditions=ignore_conditions)
