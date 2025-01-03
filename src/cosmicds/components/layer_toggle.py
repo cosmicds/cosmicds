@@ -1,5 +1,6 @@
 from echo import delay_callback, ignore_callback
 from echo.callback_container import CallbackContainer
+from glue.core.message import LayerArtistVisibilityMessage
 from glue.viewers.common.layer_artist import LayerArtist
 from ipyvuetify import VuetifyTemplate
 from traitlets import List, observe
@@ -22,6 +23,9 @@ class _LayerToggle(VuetifyTemplate):
 
         self._update_from_viewer()
         self.viewer._layer_artist_container.on_changed(self._update_from_viewer)
+        self.viewer.session.hub.subscribe(self.viewer.session.data_collection,
+                                          LayerArtistVisibilityMessage,
+                                          handler=self._update_layer_visibility)
 
 
     def _ignore_layer(self, layer):
@@ -45,6 +49,16 @@ class _LayerToggle(VuetifyTemplate):
             return index
         except ValueError:
             return len(layers) + 1
+
+    def _update_layer_visibility(self, layer):
+        layers = self.viewer.layers
+        index = self._layer_index(layers, layer)
+        if index < len(layers):
+            layer_visible = layer.state.visible
+            if layer_visible and index not in self.selected:
+                self.selected = self.selected + [index]
+            elif not layer_visible and index in self.selected:
+               self.selected = [idx for idx in self.selected if idx != index]
 
     def set_layer_order(self, layers):
         layers = [layer.state if isinstance(layer, LayerArtist) else layer for layer in layers]
