@@ -7,6 +7,7 @@ from traitlets import List, observe
 import solara
 import os
 
+
 class _LayerToggle(VuetifyTemplate):
     # absolute path for __file__ /.. / .. / "vue_components" / "layer_toggle.vue"
     template_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "layer_toggle.vue"))
@@ -50,7 +51,8 @@ class _LayerToggle(VuetifyTemplate):
         except ValueError:
             return len(layers) + 1
 
-    def _update_layer_visibility(self, layer):
+    def _update_layer_visibility(self, msg: LayerArtistVisibilityMessage):
+        layer = msg.layer_artist
         layers = self.viewer.layers
         index = self._layer_index(layers, layer)
         if index < len(layers):
