@@ -1,5 +1,8 @@
+from uuid import uuid4
+
 from echo import add_callback
 from glue.config import viewer_tool
+from glue_plotly.viewers import PlotlyBaseView
 
 from cosmicds.widgets.toolbar import Toolbar
 
@@ -25,6 +28,21 @@ def cds_viewer(viewer_class, name, viewer_tools=[], label=None, state_cls=None):
             self.ignore_conditions = []
             add_callback(self.state, "xtick_values", self._update_xtick_values)
             add_callback(self.state, "ytick_values", self._update_ytick_values)
+
+            if issubclass(viewer_class, PlotlyBaseView):
+                add_callback(self.state, "subtitle", self._update_plotly_subtitle)
+                self._create_plotly_subtitle(self.state.subtitle)
+
+        def _create_plotly_subtitle(self, text=None):
+            self.figure.add_annotation(text=text,
+                                       xref="paper", yref="paper",
+                                       x=0.5, y=1.2,
+                                       showarrow=False)
+
+        def _update_plotly_subtitle(self, text=None):
+            subtitle = next(self.figure.select_annotations(), None)
+            if subtitle is not None:
+                subtitle.update(text=text)
 
         def initialize_toolbar(self):
 
