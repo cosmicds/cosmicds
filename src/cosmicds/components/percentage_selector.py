@@ -193,8 +193,7 @@ def PercentageSelector(viewers: List[Viewer],
             else:
                 unit_str = ""
             label_text = f"{option}% range: {bottom_str} \u2013 {top_str}{unit_str}"
-            subtitle = viewer.state.subtitle
-            if subtitle:
+            if viewer.state.subtitle:
                 label_text = (" " * 10) + label_text
             labels.append(label_text)
             viewer.state.subtitle += label_text
