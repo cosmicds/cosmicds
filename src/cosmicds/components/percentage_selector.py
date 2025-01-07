@@ -20,6 +20,7 @@ def PercentageSelector(viewers: List[Viewer],
                        **kwargs):
     
     selected = solara.use_reactive(None)
+    viewer_labels, set_viewer_labels = solara.use_state([])
     radio_color = "#1e90ff"
     options = [50, 68, 95]
     last_updated = selected.value 
@@ -102,6 +103,13 @@ def PercentageSelector(viewers: List[Viewer],
             rounded_bound += res 
         return rounded_bound
 
+    def _clear_viewer_label(index):
+        viewer = viewers[index]
+        try:
+            viewer.state.subtitle = viewer.state.subtitle.replace(viewer_labels[index], "")
+        except IndexError:
+            pass
+
     def _update():
         nonlocal last_updated
 
@@ -112,18 +120,19 @@ def PercentageSelector(viewers: List[Viewer],
         if option is None:
             states = []
             for (index, viewer) in enumerate(viewers):
-                viewer.figure.layout.annotations = []
+                _clear_viewer_label(index)
                 if layers[index] is not None:
                     layers[index].state.color = original_colors[index]
-                    # viewer_layouts[index].set_subtitle(None)
                 state = array([False for _ in range(glue_data[index].size)])
                 states.append(state)
             _update_subsets(states)
+            set_viewer_labels([])
             return option
 
         states = []
+        labels = []
         for index, (viewer, viewer_bins) in enumerate(zip(viewers, bins)):
-            viewer.figure.layout.annotations = []
+            _clear_viewer_label(index)
             component_id = viewer.state.x_att
             data = glue_data[index][component_id]
             layer = layers[index]
@@ -184,11 +193,13 @@ def PercentageSelector(viewers: List[Viewer],
             else:
                 unit_str = ""
             label_text = f"{option}% range: {bottom_str} \u2013 {top_str}{unit_str}"
-            viewer.figure.add_annotation(text=label_text, xref="paper", yref="paper",
-                                         x=0.5, y=1.2, showarrow=False)
-            
+            if viewer.state.subtitle:
+                label_text = (" " * 10) + label_text
+            labels.append(label_text)
+            viewer.state.subtitle += label_text
 
         _update_subsets(states)
+        set_viewer_labels(labels)
 
         return option
 

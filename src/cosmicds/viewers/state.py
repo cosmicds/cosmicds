@@ -22,6 +22,8 @@ def cds_viewer_state(state_class):
         viewer_height = CallbackProperty(DEFAULT_VIEWER_HEIGHT)
         viewer_width = CallbackProperty(400)
 
+        subtitle = CallbackProperty("")
+
         @staticmethod
         def tick_spacing(naive_spacing):
             mantissa, exp = frexp10(naive_spacing)

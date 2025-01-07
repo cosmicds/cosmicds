@@ -29,7 +29,7 @@ def find_statistic(stat: str, viewer: Viewer, data: Data, bins: Iterable[int | f
 
 
 # TODO: How can we make this more general to put into the utilities?
-def labeled_vertical_line(x: float, y_min: float, y_max: float, color: str, label: str, unit: Optional[str] = None, label_position: Optional[float] = None):
+def labeled_vertical_line(x: float, y_min: float, y_max: float, color: str, label: str | None, unit: Optional[str] = None, label_position: Optional[float] = None):
     label_position = label_position or 0.85
     text = f"{label} {unit}" if unit else label
     return Scatter(
@@ -53,6 +53,7 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
                        **kwargs):
 
     selected = solara.use_reactive(None)
+    viewer_labels, set_viewer_labels = solara.use_state([])
     color = kwargs.get("color", "#f00")
     bins = bins or [getattr(viewer.state, "bins", None) for viewer in viewers]
 
@@ -90,7 +91,14 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
         for (viewer, viewer_line_ids) in zip(viewers, line_ids):
             lines = list(viewer.figure.select_traces(lambda t: t.meta in viewer_line_ids))
             viewer.figure.data = [t for t in viewer.figure.data if t not in lines]
-            
+
+    def _clear_viewer_label(index):
+        viewer = viewers[index]
+        try:
+            viewer.state.subtitle = viewer.state.subtitle.replace(viewer_labels[index], "")
+        except IndexError:
+            pass
+
     def _update_lines():
         stat = selected.value
         if last_updated == stat:
@@ -100,10 +108,15 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
             _remove_lines()
 
         if stat is None:
+            for index, viewer in enumerate(viewers):
+                _clear_viewer_label(index)
+            set_viewer_labels([])
             return None
 
         line_ids.clear()
-        for viewer, d, bin, unit in zip(viewers, glue_data, bins, units):
+        labels = []
+        for index, (viewer, d, bin, unit) in enumerate(zip(viewers, glue_data, bins, units)):
+            _clear_viewer_label(index)
             viewer_lines = []
             viewer_line_ids = []
             try:
@@ -111,10 +124,25 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
                 values = find_statistic(stat, viewer, d, bin)
                 if transform is not None:
                     values = [transform(v) for v in values]
-                for value in values:
-                    label = f"{capitalized}: {value}"
+                multiple_values = len(values) > 1
+                if multiple_values:
+                    # NB: If we at some point have a non-trivial (i.e. not just "add an s")
+                    # plural, we will need to update this - maybe using e.g. the inflect package
+                    viewer_label = f"{capitalized}s: {', '.join(str(v) for v in values)}"
                     if unit:
-                        label += f" {unit}"
+                        viewer_label += f" {unit}"
+                    if viewer.state.subtitle:
+                        viewer_label = viewer_label + (" " * 10)
+                    viewer.state.subtitle = viewer_label + viewer.state.subtitle
+                    labels.append(viewer_label)
+
+                for value in values:
+                    if not multiple_values:
+                        label = f"{capitalized}: {value}"
+                        if unit:
+                            label += f" {unit}"
+                    else:
+                        label = ""
                     line = labeled_vertical_line(value, viewer.state.y_min, viewer.state.y_max,
                                                  color, label=label, unit=None)
                     line_id = str(uuid4())
@@ -129,6 +157,8 @@ def StatisticsSelector(viewers: List[PlotlyBaseView],
             # AFTER they've been added
             viewer.figure.add_traces(viewer_lines)
             line_ids.append(viewer_line_ids)
+
+        set_viewer_labels(labels)
 
         return stat
 
