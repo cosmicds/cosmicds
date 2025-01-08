@@ -4,7 +4,7 @@ import os
 from requests import Session
 from functools import cached_property
 
-from .state import BaseLocalState, BaseState, GlobalState
+from .state import GLOBAL_STATE, BaseLocalState, BaseState, GlobalState, Student
 from solara import Reactive
 from solara.lab import Ref
 from cosmicds.logger import setup_logger
@@ -212,8 +212,8 @@ class BaseAPI:
         else:
             logger.info("Skipping retrieval of Global and Local states.")
             story_json = {
-                "app": GlobalState().model_dump(),
-                "story": local_state.value.as_dict(),
+                "app": GlobalState(student=GLOBAL_STATE.value.student).model_dump(),
+                "story": type(local_state.value)(title=local_state.value.title, story_id=local_state.value.story_id).as_dict(),
             }
 
         global_state_json = story_json.get("app", {})
