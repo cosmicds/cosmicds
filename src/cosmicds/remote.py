@@ -4,7 +4,7 @@ import os
 from requests import Session
 from functools import cached_property
 
-from .state import BaseLocalState, BaseState, GlobalState
+from .state import GLOBAL_STATE, BaseLocalState, BaseState, GlobalState, Student
 from solara import Reactive
 from solara.lab import Ref
 from cosmicds.logger import setup_logger
@@ -190,26 +190,31 @@ class BaseAPI:
     def get_app_story_states(
         self, global_state: Reactive[GlobalState], local_state: Reactive[BaseLocalState]
     ) -> BaseLocalState | None:
-        if not global_state.value.update_db:
-            logger.info("Skipping retrieval of Global and Local states.")
-            return local_state.value
+        if global_state.value.update_db:
         
-        story_json = (
-            self.request_session.get(
-                f"{self.API_URL}/story-state/{global_state.value.student.id}/"
-                f"{local_state.value.story_id}"
+            story_json = (
+                self.request_session.get(
+                    f"{self.API_URL}/story-state/{global_state.value.student.id}/"
+                    f"{local_state.value.story_id}"
+                )
+                .json()
+                .get("state", None)
             )
-            .json()
-            .get("state", None)
-        )
 
-        if story_json is None:
-            logger.error(
-                "Failed to retrieve state for story `%s` for user `%s`.",
-                local_state.value.story_id,
-                global_state.value.student.id,
-            )
-            return
+            if story_json is None:
+                logger.error(
+                    "Failed to retrieve state for story `%s` for user `%s`.",
+                    local_state.value.story_id,
+                    global_state.value.student.id,
+                )
+                return
+
+        else:
+            logger.info("Skipping retrieval of Global and Local states.")
+            story_json = {
+                "app": GlobalState(student=GLOBAL_STATE.value.student).model_dump(),
+                "story": type(local_state.value)(title=local_state.value.title, story_id=local_state.value.story_id).as_dict(),
+            }
 
         global_state_json = story_json.get("app", {})
         BaseAPI._update_state(global_state, global_state_json)
