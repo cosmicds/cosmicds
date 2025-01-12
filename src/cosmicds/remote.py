@@ -34,11 +34,11 @@ class BaseAPI:
 
         userinfo = auth.user.value.get("userinfo")
 
-        if not ("email" in userinfo or "name" in userinfo):
+        if not ("cds/email" in userinfo or "cds/name" in userinfo):
             logger.error("Failed to create hash: not authentication information.")
             return
 
-        user_ref = userinfo.get("email", userinfo["name"])
+        user_ref = userinfo.get("cds/email", userinfo["cds/name"])
 
         hashed = hashlib.sha1(
             (user_ref + os.environ["SOLARA_SESSION_SECRET_KEY"]).encode()
