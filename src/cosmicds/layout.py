@@ -224,9 +224,9 @@ def BaseLayout(
                     #  does not exist, we fall back to the default parameters 
                     #  returned by the `display_info` property
                     rv.ListItemTitle(
-                        class_="text-h6", children=[f"{display_info.value['cds/name'}"]
+                        class_="text-h6", children=[f"{display_info.value['cds/name']}"]
                     )
-                    rv.ListItemSubtitle(children=[f"{display_info.value['cds/email'}"])
+                    rv.ListItemSubtitle(children=[f"{display_info.value['cds/email']}"])
 
                 with rv.ListItemAction():
                     with rv.Btn(href=auth.get_logout_url(), icon=True):
