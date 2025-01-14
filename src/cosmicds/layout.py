@@ -103,12 +103,12 @@ def BaseLayout(
     def display_info():
         info = (auth.user.value or {}).get("userinfo")
 
-        if info is not None:
+        if info is not None and 'cds/name' in info and 'cds/email' in info:
             return {**info, "id": GLOBAL_STATE.value.student.id}
 
         return {
-            "name": "Undefined",
-            "email": "ERROR: No user",
+            "cds/name": "Undefined",
+            "cds/email": "ERROR: No user",
             "id": "",
         }
 
@@ -220,10 +220,13 @@ def BaseLayout(
         ):
             with rv.ListItem():
                 with rv.ListItemContent():
+                    # We access the modified token information first, if that 
+                    #  does not exist, we fall back to the default parameters 
+                    #  returned by the `display_info` property
                     rv.ListItemTitle(
-                        class_="text-h6", children=[f"{display_info.value['name']}"]
+                        class_="text-h6", children=[f"{display_info.value['cds/name']}"]
                     )
-                    rv.ListItemSubtitle(children=[f"{display_info.value['email']}"])
+                    rv.ListItemSubtitle(children=[f"{display_info.value['cds/email']}"])
 
                 with rv.ListItemAction():
                     with rv.Btn(href=auth.get_logout_url(), icon=True):
