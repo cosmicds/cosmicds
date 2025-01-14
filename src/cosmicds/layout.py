@@ -220,10 +220,13 @@ def BaseLayout(
         ):
             with rv.ListItem():
                 with rv.ListItemContent():
+                    # 'name' or 'cds/name'  as the key else use demo
+                    _name = display_info.value.get('name', display_info.value.get('cds/name', 'Demo'))
                     rv.ListItemTitle(
-                        class_="text-h6", children=[f"{display_info.value['name']}"]
+                        class_="text-h6", children=[f"{_name}"]
                     )
-                    rv.ListItemSubtitle(children=[f"{display_info.value['email']}"])
+                    _email = display_info.value.get('email', display_info.value.get('cds/email', 'demo email'))
+                    rv.ListItemSubtitle(children=[f"{_email}"])
 
                 with rv.ListItemAction():
                     with rv.Btn(href=auth.get_logout_url(), icon=True):
