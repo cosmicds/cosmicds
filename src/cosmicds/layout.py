@@ -207,7 +207,7 @@ def BaseLayout(
             )
 
             with rv.Chip(class_="ma-2 piggy-chip"):                    
-                if local_state:
+                if local_state is not None:
                     # check that this doesn't make solara render the whole app. if it does, move the chip into its own component.
                     solara.Text(f"{local_state.value.piggybank_total} Points")
 
