@@ -138,7 +138,7 @@ module.exports = {
     },
 
     onBlur(_event) {
-      if (this.tag !== undefined) {
+      if (this.tag !== undefined && this.isValid(this.response)==true) {
         this.dispatchUpdateEvent();
       }
     },
