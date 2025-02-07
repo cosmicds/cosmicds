@@ -36,13 +36,16 @@ def BaseLayout(
     children: list = [],
     story_name: str = "",
     story_title: str = "Cosmic Data Story",
+    force_demo: bool = False,
 ):
     route_current, routes_current_level = solara.use_route()
     route_index = routes_current_level.index(route_current)
 
     selected_link = solara.use_reactive(route_index)
+
     def on_selected_link_change(new, old):
         logger.info(f"Selected link changed from {old} to {new}")
+
     selected_link.subscribe_change(on_selected_link_change)
 
     active = solara.use_reactive(False)
@@ -76,6 +79,25 @@ def BaseLayout(
 
     solara.use_memo(_load_from_cache)
 
+    if force_demo:
+        logger.info("Loading app in demo mode.")
+        auth.user.set(
+            {
+                "userinfo": {
+                    "cds/name": "Demo User",
+                    "cds/email": "cosmicds@cfa.harvard.edu",
+                    "cds/picture": "https://s.gravatar.com/avatar/d49c4a758d6e45538cd0fb4cd09e91eb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fco.png",
+                    "nickname": "cosmicds",
+                    "name": "Demo User",
+                    "picture": "https://s.gravatar.com/avatar/d49c4a758d6e45538cd0fb4cd09e91eb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fco.png",
+                    "updated_at": "2025-02-06T17:47:34.507Z",
+                    "email": "cosmicds@cfa.harvard.edu",
+                    "email_verified": True,
+                }
+            }
+        )
+        class_code.set("215")
+
     if bool(auth.user.value):
         if BASE_API.user_exists:
             BASE_API.load_user_info(story_name, GLOBAL_STATE)
@@ -96,14 +118,14 @@ def BaseLayout(
     # Ref(GLOBAL_STATE.fields.student.id).set(0)
     # Ref(GLOBAL_STATE.fields.classroom.class_info).set({"id": 0})
     # Ref(GLOBAL_STATE.fields.classroom.size).set(0)
-    
+
     speech = Ref(GLOBAL_STATE.fields.speech)
 
     @solara.lab.computed
     def display_info():
         info = (auth.user.value or {}).get("userinfo")
 
-        if info is not None and 'cds/name' in info and 'cds/email' in info:
+        if info is not None and "cds/name" in info and "cds/email" in info:
             return {**info, "id": GLOBAL_STATE.value.student.id}
 
         return {
@@ -113,10 +135,12 @@ def BaseLayout(
         }
 
     with solara.Column(style={"height": "100vh"}) as main:
-        with rv.AppBar(elevate_on_scroll=False, app=True, flat=True, class_="cosmicds-appbar"):
-            
+        with rv.AppBar(
+            elevate_on_scroll=False, app=True, flat=True, class_="cosmicds-appbar"
+        ):
+
             rv.Html(tag="h2", children=[f"{story_title}"])
-            rv.Html(tag="h3", children=['Cosmic Data Stories'], class_="ml-4 app-title")
+            rv.Html(tag="h3", children=["Cosmic Data Stories"], class_="ml-4 app-title")
 
             rv.Spacer()
 
@@ -132,7 +156,7 @@ def BaseLayout(
                             v_on="menu.on",
                             icon=True,
                             children=[rv.Icon(children=["mdi-bug"])],
-                            class_="hide-in-demo"
+                            class_="hide-in-demo",
                         ),
                     }
                 ],
@@ -182,22 +206,32 @@ def BaseLayout(
                         "children": rv.Btn(
                             v_on="menu.on",
                             icon=True,
-                            children=[rv.Icon(children=["mdi-tune-vertical"])]
+                            children=[rv.Icon(children=["mdi-tune-vertical"])],
                         ),
                     }
-                ]
+                ],
             ):
                 initial_settings = GLOBAL_STATE.value.speech.model_dump()
+
                 def update_speech_property(prop, value):
                     settings = speech.value.model_copy()
                     setattr(settings, prop, value)
                     speech.set(settings)
+
                 SpeechSettings(
                     initial_state=initial_settings,
-                    event_autoread_changed=lambda read: update_speech_property("autoread", read),
-                    event_pitch_changed=lambda pitch: update_speech_property("pitch", pitch),
-                    event_rate_changed=lambda rate: update_speech_property("rate", rate),
-                    event_voice_changed=lambda voice: update_speech_property("voice", voice),
+                    event_autoread_changed=lambda read: update_speech_property(
+                        "autoread", read
+                    ),
+                    event_pitch_changed=lambda pitch: update_speech_property(
+                        "pitch", pitch
+                    ),
+                    event_rate_changed=lambda rate: update_speech_property(
+                        "rate", rate
+                    ),
+                    event_voice_changed=lambda voice: update_speech_property(
+                        "voice", voice
+                    ),
                 )
 
             solara.lab.ThemeToggle(
@@ -206,31 +240,34 @@ def BaseLayout(
                 enable_auto=False,
             )
 
-            with rv.Chip(class_="ma-2 piggy-chip"):                    
+            with rv.Chip(class_="ma-2 piggy-chip"):
                 if local_state is not None:
                     # check that this doesn't make solara render the whole app. if it does, move the chip into its own component.
                     solara.Text(f"{local_state.value.piggybank_total} Points")
 
-                rv.Icon(class_="ml-2",
+                rv.Icon(
+                    class_="ml-2",
                     children=["mdi-piggy-bank"],
-                    color="var(--success-dark)")
+                    color="var(--success-dark)",
+                )
 
         with rv.NavigationDrawer(
             app=True,
         ):
             with rv.ListItem():
                 with rv.ListItemContent():
-                    # We access the modified token information first, if that 
-                    #  does not exist, we fall back to the default parameters 
+                    # We access the modified token information first, if that
+                    #  does not exist, we fall back to the default parameters
                     #  returned by the `display_info` property
                     rv.ListItemTitle(
                         class_="text-h6", children=[f"{display_info.value['cds/name']}"]
                     )
                     rv.ListItemSubtitle(children=[f"{display_info.value['cds/email']}"])
 
-                with rv.ListItemAction():
-                    with rv.Btn(href=auth.get_logout_url(), icon=True):
-                        rv.Icon(children=["mdi-logout"])
+                if not force_demo:
+                    with rv.ListItemAction():
+                        with rv.Btn(href=auth.get_logout_url(), icon=True):
+                            rv.Icon(children=["mdi-logout"])
 
             rv.Divider()
 
@@ -240,12 +277,16 @@ def BaseLayout(
                 ):
                     for i, route in enumerate(routes_current_level):
                         disabled = False
-                        if (local_state is not None):
+                        if local_state is not None:
                             disabled = (
-                                local_state.value.max_route_index is not None 
+                                local_state.value.max_route_index is not None
                                 and i > local_state.value.max_route_index
-                                )
-                        with solara.Link(solara.resolve_path(route) if not disabled else solara.resolve_path(route_current.path)):
+                            )
+                        with solara.Link(
+                            solara.resolve_path(route)
+                            if not disabled
+                            else solara.resolve_path(route_current.path)
+                        ):
                             with rv.ListItem(disabled=disabled, inactive=disabled):
                                 with rv.ListItemIcon():
                                     rv.Icon(children=f"mdi-numeric-{i}-circle")
