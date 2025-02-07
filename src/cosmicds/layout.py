@@ -79,23 +79,7 @@ def BaseLayout(
 
     solara.use_memo(_load_from_cache)
 
-    if not force_demo:
-        if bool(auth.user.value):
-            if BASE_API.user_exists:
-                BASE_API.load_user_info(story_name, GLOBAL_STATE)
-            elif bool(class_code.value):
-                BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
-            else:
-                logger.error("User is authenticated, but does not exist.")
-                solara.use_router().push(auth.get_logout_url())
-        else:
-            logger.info("User has not authenticated.")
-            BASE_API.clear_user(GLOBAL_STATE)
-
-            login_dialog = Login(active, class_code, update_db, debug_mode)
-            active.set(True)
-            return
-    else:
+    if force_demo:
         auth.user.set(
             {
                 "userinfo": {
@@ -112,6 +96,22 @@ def BaseLayout(
             }
         )
         class_code.set("215")
+
+    if bool(auth.user.value):
+        if BASE_API.user_exists:
+            BASE_API.load_user_info(story_name, GLOBAL_STATE)
+        elif bool(class_code.value):
+            BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
+        else:
+            logger.error("User is authenticated, but does not exist.")
+            solara.use_router().push(auth.get_logout_url())
+    else:
+        logger.info("User has not authenticated.")
+        BASE_API.clear_user(GLOBAL_STATE)
+
+        login_dialog = Login(active, class_code, update_db, debug_mode)
+        active.set(True)
+        return
 
     # Just for testing
     # Ref(GLOBAL_STATE.fields.student.id).set(0)
