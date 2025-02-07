@@ -80,6 +80,7 @@ def BaseLayout(
     solara.use_memo(_load_from_cache)
 
     if force_demo:
+        logger.info("Loading app in demo mode.")
         auth.user.set(
             {
                 "userinfo": {
