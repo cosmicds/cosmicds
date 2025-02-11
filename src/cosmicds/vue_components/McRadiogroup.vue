@@ -118,7 +118,7 @@ module.exports = {
     return {
       column: null,
       colorRight: '#00E676',
-      colorNeutral: 'orange',
+      colorNeutral: 'yellow',
       colorWrong: 'red',
       iconRight: 'mdi-check-circle-outline',
       iconNeutral: 'mdi-lightbulb-on-outline',
