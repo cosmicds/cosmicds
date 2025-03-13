@@ -29,7 +29,6 @@ if "AWS_EBS_URL" in os.environ:
 
 logger = setup_logger("LAYOUT")
 
-
 @solara.component
 def BaseLayout(
     local_state: Optional[Reactive[BaseLocalState]] = None,
@@ -233,6 +232,8 @@ def BaseLayout(
                         "voice", voice
                     ),
                 )
+
+            solara.lab.theme.dark = True
 
             solara.lab.ThemeToggle(
                 on_icon="mdi-brightness-4",
