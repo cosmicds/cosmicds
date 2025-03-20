@@ -21,6 +21,7 @@ def ToolBar(viewer):
         ],
         margin=0,
         style= {"background-color": "var(--primary)", "border-bottom-left-radius": "0px", "border-bottom-right-radius": "0px", "color": "white"},
+        classes=["toolbar"],
     )
 
 @solara.component
