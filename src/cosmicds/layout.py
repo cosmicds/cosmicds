@@ -233,8 +233,6 @@ def BaseLayout(
                     ),
                 )
 
-            solara.lab.theme.dark = True
-
             solara.lab.ThemeToggle(
                 on_icon="mdi-brightness-4",
                 off_icon="mdi-brightness-4",
