@@ -54,12 +54,11 @@
         </v-col>
         <v-col
           v-else
-          xl="8"
-          sm="6"
+          cols="5"
           class="shrink"
         >
           <div
-            style="border-left: solid 3px #FFD740; padding-left: 10px;"
+            style="border-right: solid 3px #FFD740; padding-right: 10px;"
           >
             <slot name="back-content" class="guideline-button"></slot>
           </div>
@@ -87,7 +86,7 @@
         </v-col>
         <v-col
           v-else
-          cols="6"
+          cols="5"
           class="shrink"
         >
           <div
