@@ -20,6 +20,7 @@ from cosmicds import load_custom_vue_components
 from cosmicds.utils import get_session_id
 from cosmicds.components.login import Login
 from cosmicds.components.speech_settings import SpeechSettings
+from .components.theme_toggle import ThemeToggle
 from cosmicds.logger import setup_logger
 
 filterwarnings(action="ignore", category=UserWarning)
@@ -233,9 +234,9 @@ def BaseLayout(
                     ),
                 )
 
-            solara.lab.ThemeToggle(
-                on_icon="mdi-brightness-4",
-                off_icon="mdi-brightness-4",
+            ThemeToggle(
+                on_icon="mdi-weather-night", # dark mode icon
+                off_icon="mdi-brightness-7", # light mode icon
                 enable_auto=False,
             )
 
