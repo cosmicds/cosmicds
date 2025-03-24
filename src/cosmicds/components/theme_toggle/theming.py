@@ -1,50 +1,13 @@
-from typing import Callable, Dict, Union, cast
+from typing import Callable, Optional, Literal
+import warnings
 
-import ipyvuetify.Themes
-from ipyvuetify.Themes import Theme
 
 import solara
+from solara.lab import theme
+from solara.server import settings
 from solara.components.component_vue import component_vue
-from solara.tasks import Proxy
 
-theme = Proxy(Theme)
-ipyvuetify.Themes.theme = cast(ipyvuetify.Themes.Theme, theme)
-
-
-def use_dark_effective():
-    """Return True if the frontend is using a dark theme.
-
-    Equivalent of
-
-    ```python
-    solara.use_trait_observe(solara.lab.theme, "dark_effective")
-    ```
-
-    See [use_trait_observe](/api/use_trait_observe).
-    """
-    return solara.use_trait_observe(theme, "dark_effective")
-
-
-def _set_theme(themes: Union[Dict[str, Dict[str, str]], None]):
-    if themes is None:
-        return
-
-    for theme_type in themes.keys():
-        widget = getattr(theme.themes, theme_type)
-        with widget.hold_trait_notifications():
-            for k, v in themes[theme_type].items():
-                setattr(widget, k, v)
-
-
-def _get_theme(theme: Theme) -> Dict[str, Dict[str, str]]:
-    theme_dict: Dict[str, Dict[str, str]] = cast(Dict[str, Dict[str, str]], {})
-    for theme_type, theme_value in theme.themes.__dict__.items():
-        theme_traits = theme_value.keys
-        theme_dict[theme_type] = {}
-        for trait in theme_traits:
-            if not trait.startswith("_"):
-                theme_dict[theme_type][trait] = getattr(theme_value, trait)
-    return theme_dict
+# warnings.simplefilter('always', UserWarning) # warnings usually only show once. uncomment to show all warnings
 
 
 @component_vue("theming.vue")
