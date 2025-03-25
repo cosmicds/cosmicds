@@ -237,7 +237,9 @@ def BaseLayout(
             ThemeToggle(
                 on_icon="mdi-weather-night", # dark mode icon
                 off_icon="mdi-brightness-7", # light mode icon
-                enable_auto=False,
+                enable_auto=True,
+                default_theme="dark",
+                enforce_default=True,
             )
 
             with rv.Chip(class_="ma-2 piggy-chip"):
