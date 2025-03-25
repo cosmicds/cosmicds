@@ -69,6 +69,9 @@ module.exports = {
             return theme_bool === true ? 1 : theme_bool === false ? 2 : 3;
         },
         default_theme_bool() {
+            if (!this.enable_auto && this.default_theme === 'auto' || this.default_theme === null) {
+                return this.prefersDarkScheme();
+            }
             return this.default_theme === 'dark' ? true : this.default_theme === 'light' ? false : null;
         },
         countClicks() {
