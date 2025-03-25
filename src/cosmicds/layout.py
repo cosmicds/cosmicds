@@ -235,9 +235,9 @@ def BaseLayout(
                 )
 
             ThemeToggle(
-                on_icon="mdi-weather-night", # dark mode icon
-                off_icon="mdi-brightness-7", # light mode icon
-                enable_auto=True,
+                on_icon="mdi-brightness-4", # dark mode icon
+                off_icon="mdi-brightness-4", # light mode icon
+                enable_auto=False,
                 default_theme="dark",
                 enforce_default=True,
             )
