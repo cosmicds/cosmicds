@@ -133,12 +133,19 @@ def BaseLayout(
             "cds/email": "ERROR: No user",
             "id": "",
         }
+    
+    drawer = solara.use_reactive(None)
 
     with solara.Column(style={"height": "100vh"}) as main:
         with rv.AppBar(
             elevate_on_scroll=False, app=True, flat=True, class_="cosmicds-appbar"
         ):
-
+            # create a hamburger menu to show nav
+            solara.IconButton(
+                icon_name="mdi-menu",
+                on_click=lambda: drawer.set(not drawer.value),
+            )
+            
             rv.Html(tag="h2", children=[f"{story_title}"])
             rv.Html(tag="h3", children=["Cosmic Data Stories"], class_="ml-4 app-title")
 
@@ -254,6 +261,8 @@ def BaseLayout(
                 )
 
         with rv.NavigationDrawer(
+            v_model=drawer.value,
+            on_v_model=drawer.set,
             app=True,
         ):
             with rv.ListItem():
