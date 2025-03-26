@@ -162,24 +162,6 @@ def BaseLayout(
 
             rv.Spacer()
 
-            # with rv.Menu(
-            #     v_model=debug_menu.value,
-            #     tooltip="Debug Menu",
-            #     offset_y=True,
-            #     close_on_content_click=False,
-            #     v_slots=[
-            #         {
-            #             "name": "activator",
-            #             "variable": "menu",
-            #             "children": rv.Btn(
-            #                 v_on="menu.on",
-            #                 icon=True,
-            #                 children=[rv.Icon(children=["mdi-bug"])],
-            #                 class_="hide-in-demo",
-            #             ),
-            #         }
-            #     ],
-            # )
             with TooltipMenu(
                 v_model=debug_menu.value,
                 icon="mdi-bug",
