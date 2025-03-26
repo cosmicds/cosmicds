@@ -141,9 +141,20 @@ def BaseLayout(
             elevate_on_scroll=False, app=True, flat=True, class_="cosmicds-appbar"
         ):
             # create a hamburger menu to show nav
-            solara.IconButton(
-                icon_name="mdi-menu",
-                on_click=lambda: drawer.set(not drawer.value),
+            rv.Tooltip(
+                bottom=True,
+                v_slots=[{
+                    "name": "activator",
+                    "variable": "tooltip",
+                    "children": [
+                        solara.IconButton(
+                            v_on="tooltip.on",
+                            icon_name="mdi-menu",
+                            on_click=lambda: drawer.set(not drawer.value),
+                        )
+                    ]
+                }],
+                children=["Toggle Menu"]
             )
             
             rv.Html(tag="h2", children=[f"{story_title}"])
