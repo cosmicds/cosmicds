@@ -154,7 +154,7 @@ def BaseLayout(
                         )
                     ]
                 }],
-                children=["Toggle Menu"]
+                children=["Close Menu" if drawer.value else "Open Menu"]
             )
             
             rv.Html(tag="h2", children=[f"{story_title}"])
