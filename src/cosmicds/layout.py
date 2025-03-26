@@ -149,7 +149,7 @@ def BaseLayout(
                     "children": [
                         solara.IconButton(
                             v_on="tooltip.on",
-                            icon_name="mdi-menu",
+                            icon_name="mdi-menu-open" if drawer.value else "mdi-menu",
                             on_click=lambda: drawer.set(not drawer.value),
                         )
                     ]
