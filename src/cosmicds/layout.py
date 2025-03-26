@@ -21,6 +21,7 @@ from cosmicds.utils import get_session_id
 from cosmicds.components.login import Login
 from cosmicds.components.speech_settings import SpeechSettings
 from .components.theme_toggle import ThemeToggle
+from cosmicds.components.tooltip_menu import TooltipMenu
 from cosmicds.logger import setup_logger
 
 filterwarnings(action="ignore", category=UserWarning)
@@ -133,33 +134,42 @@ def BaseLayout(
             "cds/email": "ERROR: No user",
             "id": "",
         }
+    
+    drawer = solara.use_reactive(None)
 
     with solara.Column(style={"height": "100vh"}) as main:
         with rv.AppBar(
             elevate_on_scroll=False, app=True, flat=True, class_="cosmicds-appbar"
         ):
-
+            # create a hamburger menu to show nav
+            rv.Tooltip(
+                bottom=True,
+                v_slots=[{
+                    "name": "activator",
+                    "variable": "tooltip",
+                    "children": [
+                        solara.IconButton(
+                            v_on="tooltip.on",
+                            icon_name="mdi-menu-open" if drawer.value else "mdi-menu",
+                            on_click=lambda: drawer.set(not drawer.value),
+                        )
+                    ]
+                }],
+                children=["Close Menu" if drawer.value else "Open Menu"]
+            )
+            
             rv.Html(tag="h2", children=[f"{story_title}"])
             rv.Html(tag="h3", children=["Cosmic Data Stories"], class_="ml-4 app-title")
 
             rv.Spacer()
 
-            with rv.Menu(
+            with TooltipMenu(
                 v_model=debug_menu.value,
+                icon="mdi-bug",
+                tooltip="Debug Menu",
+                bottom=True,
                 offset_y=True,
                 close_on_content_click=False,
-                v_slots=[
-                    {
-                        "name": "activator",
-                        "variable": "menu",
-                        "children": rv.Btn(
-                            v_on="menu.on",
-                            icon=True,
-                            children=[rv.Icon(children=["mdi-bug"])],
-                            class_="hide-in-demo",
-                        ),
-                    }
-                ],
             ):
                 with rv.Card(width=250):
                     with rv.CardText():
@@ -195,21 +205,13 @@ def BaseLayout(
                             dense=True,
                         )
 
-            with rv.Menu(
+            with TooltipMenu(
                 v_model=speech_menu.value,
+                icon="mdi-tune-vertical",
+                tooltip="Speech Settings",
+                bottom=True,
                 offset_y=True,
                 close_on_content_click=False,
-                v_slots=[
-                    {
-                        "name": "activator",
-                        "variable": "menu",
-                        "children": rv.Btn(
-                            v_on="menu.on",
-                            icon=True,
-                            children=[rv.Icon(children=["mdi-tune-vertical"])],
-                        ),
-                    }
-                ],
             ):
                 initial_settings = GLOBAL_STATE.value.speech.model_dump()
 
@@ -254,6 +256,8 @@ def BaseLayout(
                 )
 
         with rv.NavigationDrawer(
+            v_model=drawer.value,
+            on_v_model=drawer.set,
             app=True,
         ):
             with rv.ListItem():
@@ -268,8 +272,22 @@ def BaseLayout(
 
                 if not force_demo:
                     with rv.ListItemAction():
-                        with rv.Btn(href=auth.get_logout_url(), icon=True):
-                            rv.Icon(children=["mdi-logout"])
+                        logout_button = rv.Btn(
+                            v_on="tooltip.on",
+                            href=auth.get_logout_url(), icon=True,
+                            children=[rv.Icon(children=["mdi-logout"])]
+                            )
+                        
+                        rv.Tooltip(
+                            right=True, 
+                            v_slots = [{
+                                "name": "activator", 
+                                "variable": "tooltip",
+                                "children":[logout_button]
+                                }],
+                                children=["Logout"]
+                                )
+                            
 
             rv.Divider()
 
