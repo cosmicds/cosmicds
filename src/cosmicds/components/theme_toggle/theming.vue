@@ -1,13 +1,20 @@
 <template>
-    <v-btn
-        icon
-        :disabled="disable"
-        @click="countClicks"
-        >
-        <v-icon>
-            {{ this.clicks === 1 ? this.on_icon : this.clicks === 2 ? this.off_icon : this.auto_icon }}
-        </v-icon>
-    </v-btn>
+    <v-tooltip bottom>
+        Switch to {{ clicks === 1 ? 'light' : clicks === 2 ? (enable_auto ? 'auto' : 'dark') : 'dark' }} mode
+        <template v-slot:activator="{on, attrs}">
+            <v-btn
+                v-bind="attrs"
+                v-on="on"
+                icon
+                :disabled="disable"
+                @click="countClicks"
+                >
+                <v-icon>
+                    {{ clicks === 1 ? on_icon : clicks === 2 ? off_icon : auto_icon }}
+                </v-icon>
+            </v-btn>
+        </template>
+    </v-tooltip>
 </template>
 <script>
 module.exports = {
