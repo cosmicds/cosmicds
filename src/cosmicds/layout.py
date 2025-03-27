@@ -248,8 +248,9 @@ def BaseLayout(
             v_model=drawer.value,
             on_v_model=drawer.set,
             app=True,
+            class_="px-0 mx-0"
         ):
-            with rv.Col(class_="d-flex flex-column", style_="height:100%; align-items: stretch; justify-content: flex-start;"):
+            with rv.Col(class_="d-flex flex-column px-0 mx-0", style_="height:100%; align-items: stretch; justify-content: flex-start;"):
                 with rv.ListItem(class_="nav-top justify-space-between align-center", style_="flex: 0 0 auto; text-align: right"):
                     # with rv.ListItemContent():
                     #     # We access the modified token information first, if that
@@ -281,9 +282,10 @@ def BaseLayout(
 
                 rv.Divider()
             
-                with rv.List(nav=True):
+                with rv.List(nav=True, class_="px-0"):
                     with rv.ListItemGroup(
                         v_model=selected_link.value,
+                        
                     ):
                         for i, route in enumerate(routes_current_level):
                             disabled = False
@@ -297,11 +299,11 @@ def BaseLayout(
                                 if not disabled
                                 else solara.resolve_path(route_current.path)
                             ):
-                                with rv.ListItem(disabled=disabled, inactive=disabled):
-                                    with rv.ListItemIcon():
+                                with rv.ListItem(disabled=disabled, inactive=disabled, class_="px-0 mx-0"):
+                                    with rv.ListItemIcon(class_="px-0 mx-4"):
                                         rv.Icon(children=f"mdi-numeric-{i}-circle")
 
-                                    with rv.ListItemContent():
+                                    with rv.ListItemContent(style_="white-space: normal; overflow: visible; text-overflow: clip;", class_="px-0 mx-0"):
                                         rv.ListItemTitle(
                                             children=f"{route.label if route.path != '/' else 'Introduction'}"
                                         )
