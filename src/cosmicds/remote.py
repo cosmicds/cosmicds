@@ -125,11 +125,11 @@ class BaseAPI:
         local_state: Reactive[BaseLocalState],
         component_state: Reactive[BaseState],
     ) -> BaseState | None:
-        
+
         if not global_state.value.update_db:
             logger.info("Skipping retrieval of Component state.")
             return component_state.value
-        
+
         stage_json = (
             self.request_session.get(
                 f"{self.API_URL}/stage-state/{global_state.value.student.id}/"
@@ -162,7 +162,7 @@ class BaseAPI:
         if not global_state.value.update_db:
             logger.info("Skipping deletion of stage state.")
             return
-        
+
         r = self.request_session.delete(
             f"{self.API_URL}/stage-state/{global_state.value.student.id}/"
             f"{local_state.value.story_id}/{component_state.value.stage_id}"
@@ -191,7 +191,7 @@ class BaseAPI:
         self, global_state: Reactive[GlobalState], local_state: Reactive[BaseLocalState]
     ) -> BaseLocalState | None:
         if global_state.value.update_db:
-        
+
             story_json = (
                 self.request_session.get(
                     f"{self.API_URL}/story-state/{global_state.value.student.id}/"
@@ -213,14 +213,15 @@ class BaseAPI:
             logger.info("Skipping retrieval of Global and Local states.")
             story_json = {
                 "app": GlobalState(student=GLOBAL_STATE.value.student).model_dump(),
-                "story": type(local_state.value)(title=local_state.value.title, story_id=local_state.value.story_id).as_dict(),
+                "story": type(local_state.value)(
+                    title=local_state.value.title, story_id=local_state.value.story_id
+                ).as_dict(),
             }
 
         global_state_json = story_json.get("app", {})
         BaseAPI._update_state(global_state, global_state_json)
 
         local_state_json = story_json.get("story", {})
-        logger.debug(local_state_json)
         BaseAPI._update_state(local_state, local_state_json)
 
         logger.info("Updated local state from database.")
@@ -232,7 +233,7 @@ class BaseAPI:
         global_state: Reactive[GlobalState],
         local_state: Reactive[BaseLocalState],
     ):
-       raise NotImplementedError() 
+        raise NotImplementedError()
 
     @staticmethod
     def clear_user(state: Reactive[GlobalState]):

@@ -81,34 +81,41 @@ def BaseLayout(
 
     solara.use_memo(_load_from_cache)
 
-    if force_demo:
-        logger.info("Loading app in demo mode.")
-        auth.user.set(
-            {
-                "userinfo": {
-                    "cds/name": "Demo User",
-                    "cds/email": "cosmicds@cfa.harvard.edu",
-                    "cds/picture": "https://s.gravatar.com/avatar/d49c4a758d6e45538cd0fb4cd09e91eb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fco.png",
-                    "nickname": "cosmicds",
-                    "name": "Demo User",
-                    "picture": "https://s.gravatar.com/avatar/d49c4a758d6e45538cd0fb4cd09e91eb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fco.png",
-                    "updated_at": "2025-02-06T17:47:34.507Z",
-                    "email": "cosmicds@cfa.harvard.edu",
-                    "email_verified": True,
+    def _check_demo_mode():
+        if force_demo:
+            logger.info("Loading app in demo mode.")
+            auth.user.set(
+                {
+                    "userinfo": {
+                        "cds/name": "Demo User",
+                        "cds/email": "cosmicds@cfa.harvard.edu",
+                        "cds/picture": "https://s.gravatar.com/avatar/d49c4a758d6e45538cd0fb4cd09e91eb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fco.png",
+                        "nickname": "cosmicds",
+                        "name": "Demo User",
+                        "picture": "https://s.gravatar.com/avatar/d49c4a758d6e45538cd0fb4cd09e91eb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fco.png",
+                        "updated_at": "2025-02-06T17:47:34.507Z",
+                        "email": "cosmicds@cfa.harvard.edu",
+                        "email_verified": True,
+                    }
                 }
-            }
-        )
-        class_code.set("215")
+            )
+            class_code.set("215")
 
-    if bool(auth.user.value):
-        if BASE_API.user_exists:
-            BASE_API.load_user_info(story_name, GLOBAL_STATE)
-        elif bool(class_code.value):
-            BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
-        else:
-            logger.error("User is authenticated, but does not exist.")
-            solara.use_router().push(auth.get_logout_url())
-    else:
+    solara.use_memo(_check_demo_mode, dependencies=[])
+
+    def _query_user_info():
+        if bool(auth.user.value):
+            if BASE_API.user_exists:
+                BASE_API.load_user_info(story_name, GLOBAL_STATE)
+            elif bool(class_code.value):
+                BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
+            else:
+                logger.error("User is authenticated, but does not exist.")
+                solara.use_router().push(auth.get_logout_url())
+
+    solara.use_memo(_query_user_info, dependencies=[auth.user.value])
+
+    if not bool(auth.user.value):
         logger.info("User has not authenticated.")
         BASE_API.clear_user(GLOBAL_STATE)
 
