@@ -158,7 +158,7 @@ def BaseLayout(
                             )
                         ]
                     }],
-                    children=["Close Menu" if drawer.value else "Open Menu"]
+                    children=["Close Navigation" if drawer.value else "Open Navigation"]
                 )
             
             rv.Html(tag="h2", children=[f"{story_title}"])
@@ -230,14 +230,14 @@ def BaseLayout(
                     with rv.CardText():
                         rv.TextField(
                             value=f"{GLOBAL_STATE.value.student.id}",
-                            label="Student ID",
+                            label="Student ID No.",
                             readonly=True,
                             outlined=True,
                             dense=True,
                         )
                         rv.TextField(
                             value=f"{BASE_API.hashed_user}",
-                            label="Student Hash",
+                            label="Anonymized ID",
                             readonly=True,
                             outlined=True,
                             dense=True,
@@ -260,7 +260,7 @@ def BaseLayout(
                     #     )
                     #     rv.ListItemSubtitle(children=[f"{display_info.value['cds/email']}"])
                     
-                    solara.Text("Stages", style={"font-size": "20px", "font-weight": "bold"});
+                    solara.Text("Stage Navigation", style={"font-size": "20px", "font-weight": "bold"});
                     rv.Tooltip(
                         bottom=True,
                         v_slots=[{
@@ -274,7 +274,7 @@ def BaseLayout(
                                 )
                             ]
                         }],
-                        children=["Close Menu" if drawer.value else "Open Menu"]
+                        children=["Close Navigation" if drawer.value else "Open Navigation"]
                     )
 
                                 
