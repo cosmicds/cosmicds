@@ -78,7 +78,7 @@ class GlobalState(BaseState):
     loading_status_message: str = ""
     student: Student = Student()
     classroom: Classroom = Classroom()
-    update_db: bool = update_db_init
+    update_db: bool = Field(update_db_init, exclude=True)
     show_team_interface: bool = Field(show_team_interface_init, exclude=True)
     allow_advancing: bool = True
     speech: Speech = Speech()
