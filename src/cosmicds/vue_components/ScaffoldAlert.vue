@@ -32,7 +32,7 @@
               ref="back"
               @click="() => { $emit('back'); }"
             >
-              back
+              {{ backText }} 
             </v-btn>
           </div>
         </v-col>
@@ -86,7 +86,7 @@
         </v-col>
         <v-col
           v-else
-          cols="5"
+          cols="6"
           class="shrink"
         >
           <div
@@ -176,6 +176,10 @@ module.exports = {
     headerText: {
       type: [String, Function],
       default: null
+    },
+    backText: {
+      type: String,
+      default: "back"
     },
     nextText: {
       type: String,
