@@ -7,7 +7,7 @@ from solara.lab import theme
 from solara.server import settings
 from solara.components.component_vue import component_vue
 
-warnings.simplefilter('always', UserWarning)
+# warnings.simplefilter('always', UserWarning)
 
 
 @component_vue("theming.vue")

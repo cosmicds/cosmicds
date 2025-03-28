@@ -21,6 +21,7 @@ from cosmicds.utils import get_session_id
 from cosmicds.components.login import Login
 from cosmicds.components.speech_settings import SpeechSettings
 from .components.theme_toggle import ThemeToggle
+from cosmicds.components.tooltip_menu import TooltipMenu
 from cosmicds.logger import setup_logger
 
 filterwarnings(action="ignore", category=UserWarning)
@@ -29,6 +30,7 @@ if "AWS_EBS_URL" in os.environ:
     settings.main.base_url = os.environ["AWS_EBS_URL"]
 
 logger = setup_logger("LAYOUT")
+
 
 @solara.component
 def BaseLayout(
@@ -140,83 +142,38 @@ def BaseLayout(
         with rv.AppBar(
             elevate_on_scroll=False, app=True, flat=True, class_="cosmicds-appbar"
         ):
-            # create a hamburger menu to show nav
-            solara.IconButton(
-                icon_name="mdi-menu",
-                on_click=lambda: drawer.set(not drawer.value),
-            )
+            
+            if not drawer.value:
+                # create a hamburger menu to show nav
+                rv.Tooltip(
+                    bottom=True,
+                    v_slots=[{
+                        "name": "activator",
+                        "variable": "tooltip",
+                        "children": [
+                            solara.IconButton(
+                                v_on="tooltip.on",
+                                icon_name="mdi-close" if drawer.value else "mdi-menu",
+                                on_click=lambda: drawer.set(not drawer.value),
+                            )
+                        ]
+                    }],
+                    children=["Close Navigation" if drawer.value else "Open Navigation"]
+                )
             
             rv.Html(tag="h2", children=[f"{story_title}"])
             rv.Html(tag="h3", children=["Cosmic Data Stories"], class_="ml-4 app-title")
 
             rv.Spacer()
 
-            with rv.Menu(
-                v_model=debug_menu.value,
-                offset_y=True,
-                close_on_content_click=False,
-                v_slots=[
-                    {
-                        "name": "activator",
-                        "variable": "menu",
-                        "children": rv.Btn(
-                            v_on="menu.on",
-                            icon=True,
-                            children=[rv.Icon(children=["mdi-bug"])],
-                            class_="hide-in-demo",
-                        ),
-                    }
-                ],
-            ):
-                with rv.Card(width=250):
-                    with rv.CardText():
-                        rv.TextField(
-                            value=f"{version('cosmicds')}",
-                            label="CosmicDS Version",
-                            readonly=True,
-                            outlined=True,
-                            dense=True,
-                        )
-                        try:
-                            rv.TextField(
-                                value=f"{version('hubbleds')}",
-                                label="HubbleDS Version",
-                                readonly=True,
-                                outlined=True,
-                                dense=True,
-                            )
-                        except PackageNotFoundError:
-                            pass
-                        rv.TextField(
-                            value=f"{GLOBAL_STATE.value.student.id}",
-                            label="Student ID",
-                            readonly=True,
-                            outlined=True,
-                            dense=True,
-                        )
-                        rv.TextField(
-                            value=f"{BASE_API.hashed_user}",
-                            label="Student Hash",
-                            readonly=True,
-                            outlined=True,
-                            dense=True,
-                        )
 
-            with rv.Menu(
+            with TooltipMenu(
                 v_model=speech_menu.value,
+                icon="mdi-tune-vertical",
+                tooltip="Speech Settings",
+                bottom=True,
                 offset_y=True,
                 close_on_content_click=False,
-                v_slots=[
-                    {
-                        "name": "activator",
-                        "variable": "menu",
-                        "children": rv.Btn(
-                            v_on="menu.on",
-                            icon=True,
-                            children=[rv.Icon(children=["mdi-tune-vertical"])],
-                        ),
-                    }
-                ],
             ):
                 initial_settings = GLOBAL_STATE.value.speech.model_dump()
 
@@ -250,6 +207,7 @@ def BaseLayout(
             )
 
             with rv.Chip(class_="ma-2 piggy-chip"):
+                
                 if local_state is not None:
                     # check that this doesn't make solara render the whole app. if it does, move the chip into its own component.
                     solara.Text(f"{local_state.value.piggybank_total} Points")
@@ -259,53 +217,124 @@ def BaseLayout(
                     children=["mdi-piggy-bank"],
                     color="var(--success-dark)",
                 )
+            
+            with TooltipMenu(
+                v_model=debug_menu.value,
+                icon="mdi-account",
+                tooltip="Student Info",
+                bottom=True,
+                offset_y=True,
+                close_on_content_click=False,
+            ):
+                with rv.Card(width=250):
+                    with rv.CardText():
+                        rv.TextField(
+                            value=f"{GLOBAL_STATE.value.student.id}",
+                            label="Student ID No.",
+                            readonly=True,
+                            outlined=True,
+                            dense=True,
+                        )
+                        rv.TextField(
+                            value=f"{BASE_API.hashed_user}",
+                            label="Anonymized ID",
+                            readonly=True,
+                            outlined=True,
+                            dense=True,
+                        )
 
         with rv.NavigationDrawer(
+            
             v_model=drawer.value,
             on_v_model=drawer.set,
             app=True,
+            class_="px-0 mx-0"
         ):
-            with rv.ListItem():
-                with rv.ListItemContent():
-                    # We access the modified token information first, if that
-                    #  does not exist, we fall back to the default parameters
-                    #  returned by the `display_info` property
-                    rv.ListItemTitle(
-                        class_="text-h6", children=[f"{display_info.value['cds/name']}"]
+            with rv.Col(class_="d-flex flex-column px-0 mx-0", style_="height:100%; align-items: stretch; justify-content: flex-start;"):
+                with rv.ListItem(class_="nav-top justify-space-between align-center", style_="flex: 0 0 auto; text-align: right"):
+                    # with rv.ListItemContent():
+                    #     # We access the modified token information first, if that
+                    #     #  does not exist, we fall back to the default parameters
+                    #     #  returned by the `display_info` property
+                    #     rv.ListItemTitle(
+                    #         class_="text-h6", children=[f"{display_info.value['cds/name']}"]
+                    #     )
+                    #     rv.ListItemSubtitle(children=[f"{display_info.value['cds/email']}"])
+                    
+                    solara.Text("Stage Navigation", style={"font-size": "20px", "font-weight": "bold"});
+                    rv.Tooltip(
+                        bottom=True,
+                        v_slots=[{
+                            "name": "activator",
+                            "variable": "tooltip",
+                            "children": [
+                                solara.IconButton(
+                                    v_on="tooltip.on",
+                                    icon_name="mdi-close",
+                                    on_click=lambda: drawer.set(not drawer.value),
+                                )
+                            ]
+                        }],
+                        children=["Close Navigation" if drawer.value else "Open Navigation"]
                     )
-                    rv.ListItemSubtitle(children=[f"{display_info.value['cds/email']}"])
 
-                if not force_demo:
-                    with rv.ListItemAction():
-                        with rv.Btn(href=auth.get_logout_url(), icon=True):
-                            rv.Icon(children=["mdi-logout"])
+                                
 
-            rv.Divider()
+                rv.Divider()
+            
+                with rv.List(nav=True, class_="px-0"):
+                    with rv.ListItemGroup(
+                        v_model=selected_link.value,
+                        
+                    ):
+                        for i, route in enumerate(routes_current_level):
+                            disabled = False
+                            if local_state is not None:
+                                disabled = (
+                                    local_state.value.max_route_index is not None
+                                    and i > local_state.value.max_route_index
+                                )
+                            with solara.Link(
+                                solara.resolve_path(route)
+                                if not disabled
+                                else solara.resolve_path(route_current.path)
+                            ):
+                                with rv.ListItem(disabled=disabled, inactive=disabled, class_="px-0 mx-0"):
+                                    with rv.ListItemIcon(class_="px-0 mx-4"):
+                                        rv.Icon(children=f"mdi-numeric-{i}-circle")
 
-            with rv.List(nav=True):
-                with rv.ListItemGroup(
-                    v_model=selected_link.value,
-                ):
-                    for i, route in enumerate(routes_current_level):
-                        disabled = False
-                        if local_state is not None:
-                            disabled = (
-                                local_state.value.max_route_index is not None
-                                and i > local_state.value.max_route_index
+                                    with rv.ListItemContent(style_="white-space: normal; overflow: visible; text-overflow: clip;", class_="px-0 mx-0"):
+                                        rv.ListItemTitle(
+                                            children=f"{route.label if route.path != '/' else 'Introduction'}"
+                                        )
+                
+                rv.Spacer()
+                rv.Divider()
+                with rv.Row(class_="px-0 ma-2", style_="flex-grow: 1; flex: 0 0 auto; justify-content: space-evenly; align-items: center;"):
+                    rv.Icon(
+                        class_="mx-2",
+                        children=["mdi-account-circle"],
+                        color="var(--success-dark)",
+                    )
+                    solara.Text(f"ID: {GLOBAL_STATE.value.student.id}", style={"padding-right": "10px"})
+                    rv.Divider(vertical=True, class_="mx-2")
+                    logout_button = rv.Btn(
+                        v_on="tooltip.on",
+                        href=auth.get_logout_url(), icon=True,
+                        children=[rv.Icon(children=["mdi-logout"])]
+                        )
+                    
+                    rv.Tooltip(
+                        right=True, 
+                        v_slots = [{
+                            "name": "activator", 
+                            "variable": "tooltip",
+                            "children":[logout_button]
+                            }],
+                            children=["Logout"]
                             )
-                        with solara.Link(
-                            solara.resolve_path(route)
-                            if not disabled
-                            else solara.resolve_path(route_current.path)
-                        ):
-                            with rv.ListItem(disabled=disabled, inactive=disabled):
-                                with rv.ListItemIcon():
-                                    rv.Icon(children=f"mdi-numeric-{i}-circle")
-
-                                with rv.ListItemContent():
-                                    rv.ListItemTitle(
-                                        children=f"{route.label if route.path != '/' else 'Introduction'}"
-                                    )
+                
+                # 
 
         with rv.Content(class_="solara-content-main", style_="height: 100%"):
             with rv.Container(

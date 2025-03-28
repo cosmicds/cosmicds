@@ -45,19 +45,19 @@ module.exports = {
     methods: {
         logThemeVariables(where) {
             // debugging only
-            const fmt = 'color: #0ff;font-size:16px;';
-            // localStorage
-            console.log(`%c[theming] [${where}] localStorage:solara:theme.variant: ${localStorage.getItem(':solara:theme.variant')}`, fmt);
-            // theme.variant
-            console.log(`%c[theming] [${where}] theme.variant: ${theme.variant}`, fmt);
-            // theme_dark
-            console.log(`%c[theming] [${where}] theme_dark: ${this.theme_dark}`, fmt);
-            // default_theme
-            console.log(`%c[theming] [${where}] default_theme: ${this.default_theme}`, fmt);
-            // clicks
-            console.log(`%c[theming] [${where}] clicks: ${this.clicks}`, fmt);
-            // stringifyTheme
-            console.log(`%c[theming] [${where}] stringifyTheme: ${this.stringifyTheme()}`, fmt);
+            // const fmt = 'color: #0ff;font-size:16px;';
+            // // localStorage
+            // console.log(`%c[theming] [${where}] localStorage:solara:theme.variant: ${localStorage.getItem(':solara:theme.variant')}`, fmt);
+            // // theme.variant
+            // console.log(`%c[theming] [${where}] theme.variant: ${theme.variant}`, fmt);
+            // // theme_dark
+            // console.log(`%c[theming] [${where}] theme_dark: ${this.theme_dark}`, fmt);
+            // // default_theme
+            // console.log(`%c[theming] [${where}] default_theme: ${this.default_theme}`, fmt);
+            // // clicks
+            // console.log(`%c[theming] [${where}] clicks: ${this.clicks}`, fmt);
+            // // stringifyTheme
+            // console.log(`%c[theming] [${where}] stringifyTheme: ${this.stringifyTheme()}`, fmt);
             return;
         },
         to_theme_bool(theme_str) {
