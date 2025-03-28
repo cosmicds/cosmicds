@@ -19,28 +19,26 @@ else:
     print("Database updates enabled.")
 
 debug_mode_init = False
-print("****Checking for debug mode...")
 # CDS_DEBUG_MODE must exist, and have the value 'true' to enable debug mode
 if 'CDS_DEBUG_MODE' in os.environ:
     # check if it has a value and if it True
     cds_debug_mode = os.getenv("CDS_DEBUG_MODE")
     if cds_debug_mode.lower() == 'true':
-        print("****Debug mode enabled.")
+        print("Debug mode enabled.")
         debug_mode_init = True
 else:
-    print("****Debug mode disabled.")
+    print("Debug mode disabled.")
 
 show_team_interface_init = False
 # CDS_SHOW_TEAM_INTERFACE must exist, and have the value 'true' to enable team interface
-print("****Checking for team interface...")
 if 'CDS_SHOW_TEAM_INTERFACE' in os.environ:
     # check if it has a value and if it True
     cds_show_team_interface = os.getenv("CDS_SHOW_TEAM_INTERFACE")
     if cds_show_team_interface.lower() == 'true':
-        print("****Team interface enabled.")
+        print("Team interface enabled.")
         show_team_interface_init = True
 else:
-    print("****Team interface disabled.")
+    print("Team interface disabled.")
 
 class BaseState(BaseModel):
     def as_dict(self):
