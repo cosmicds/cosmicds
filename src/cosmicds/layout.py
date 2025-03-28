@@ -316,7 +316,7 @@ def BaseLayout(
                         children=["mdi-account-circle"],
                         color="var(--success-dark)",
                     )
-                    solara.Text(f"ID: {GLOBAL_STATE.value.student.id}", style={"padding-right": "10px"})
+                    solara.Text(f"Student ID: {GLOBAL_STATE.value.student.id}", style={"padding-right": "10px"})
                     rv.Divider(vertical=True, class_="mx-2")
                     logout_button = rv.Btn(
                         v_on="tooltip.on",
