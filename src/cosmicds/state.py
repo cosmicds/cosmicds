@@ -1,5 +1,5 @@
 import os
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from functools import cached_property
 from glue_jupyter import JupyterApplication
 from glue.core import DataCollection, Session
@@ -18,6 +18,27 @@ if 'CDS_DISABLE_DB' in os.environ:
 else:
     print("Database updates enabled.")
 
+debug_mode_init = False
+# CDS_DEBUG_MODE must exist, and have the value 'true' to enable debug mode
+if 'CDS_DEBUG_MODE' in os.environ:
+    # check if it has a value and if it True
+    cds_debug_mode = os.getenv("CDS_DEBUG_MODE")
+    if cds_debug_mode.lower() == 'true':
+        print("Debug mode enabled.")
+        debug_mode_init = True
+else:
+    print("Debug mode disabled.")
+
+show_team_interface_init = False
+# CDS_SHOW_TEAM_INTERFACE must exist, and have the value 'true' to enable team interface
+if 'CDS_SHOW_TEAM_INTERFACE' in os.environ:
+    # check if it has a value and if it True
+    cds_show_team_interface = os.getenv("CDS_SHOW_TEAM_INTERFACE")
+    if cds_show_team_interface.lower() == 'true':
+        print("Team interface enabled.")
+        show_team_interface_init = True
+else:
+    print("Team interface disabled.")
 
 class BaseState(BaseModel):
     def as_dict(self):
@@ -44,7 +65,7 @@ class Speech(BaseModel):
 
 
 class BaseLocalState(BaseState):
-    debug_mode: bool = True
+    debug_mode: bool = Field(debug_mode_init, exclude=True)
     title: str
     story_id: str
     piggybank_total: int = 0
@@ -57,8 +78,8 @@ class GlobalState(BaseState):
     loading_status_message: str = ""
     student: Student = Student()
     classroom: Classroom = Classroom()
-    update_db: bool = update_db_init
-    show_team_interface: bool = False
+    update_db: bool = Field(update_db_init, exclude=True)
+    show_team_interface: bool = Field(show_team_interface_init, exclude=True)
     allow_advancing: bool = True
     speech: Speech = Speech()
 
