@@ -316,23 +316,23 @@ def BaseLayout(
                         children=["mdi-account-circle"],
                         color="var(--success-dark)",
                     )
-                    solara.Text(f"ID: {GLOBAL_STATE.value.student.id}", style={"padding-right": "10px"})
-                    rv.Divider(vertical=True, class_="mx-2")
-                    logout_button = rv.Btn(
-                        v_on="tooltip.on",
-                        href=auth.get_logout_url(), icon=True,
-                        children=[rv.Icon(children=["mdi-logout"])]
-                        )
+                    solara.Text(f"Student ID: {GLOBAL_STATE.value.student.id}", style={"padding-right": "10px"})
+                    # rv.Divider(vertical=True, class_="mx-2")
+                    # logout_button = rv.Btn(
+                    #     v_on="tooltip.on",
+                    #     href=auth.get_logout_url(), icon=True,
+                    #     children=[rv.Icon(children=["mdi-logout"])]
+                    #     )
                     
-                    rv.Tooltip(
-                        right=True, 
-                        v_slots = [{
-                            "name": "activator", 
-                            "variable": "tooltip",
-                            "children":[logout_button]
-                            }],
-                            children=["Logout"]
-                            )
+                    # rv.Tooltip(
+                    #     right=True, 
+                    #     v_slots = [{
+                    #         "name": "activator", 
+                    #         "variable": "tooltip",
+                    #         "children":[logout_button]
+                    #         }],
+                    #         children=["Logout"]
+                    #         )
                 
                 # 
 
