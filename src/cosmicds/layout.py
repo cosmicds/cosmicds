@@ -336,49 +336,51 @@ def BaseLayout(
                 
                 # 
 
-        with rv.Content(class_="solara-content-main", style_="height: 100%"):
+        with rv.Content(class_="solara-content-main", style_=""):
             with rv.Container(
                 # children=children,
                 class_="solara-container-main",
-                style_="height: 100%; width: 100%; overflow: auto;",
+                style_="width: 100%; overflow: auto;",
                 fluid=True,
             ):
                 rv.Container(
-                    children=children, style_="height: 100%; width: 100%", fluid=False
+                    class_="solara-container-children",
+                    children=children, style_="width: 100%", fluid=False
                 )
 
-        with rv.Footer(
-            class_="text-center align-items",
-            padless=True,
-            app=True,
-            inset=True,
-        ):
-            with rv.Card(
-                flat=True, tile=True, class_="cosmicds-footer", style_="width: 100%;"
+            with rv.Html(
+                tag="footer",
+                class_="footer text-center align-items",
+                # padless=True,
+                # app=True,
+                # inset=True,
             ):
-                rv.Divider()
+                with rv.Card(
+                    flat=True, tile=True, class_="cosmicds-footer", style_="width: 100%;"
+                ):
+                    rv.Divider()
 
-                with solara.Columns([2, 10]):
-                    with solara.Column(classes=["cosmicds-footer"]):
-                        with rv.CardText():
-                            solara.HTML(
-                                unsafe_innerHTML=rf"""
-                                {datetime.date.today().year} - <b>CosmicDS</b>
+                    with solara.Columns([2, 10]):
+                        with solara.Column(classes=["cosmicds-footer"]):
+                            with rv.CardText():
+                                solara.HTML(
+                                    unsafe_innerHTML=rf"""
+                                    {datetime.date.today().year} - <b>CosmicDS</b>
+                                    """,
+                                    style="font-size: 18px;",
+                                )
+
+                        with solara.Column(classes=["cosmicds-footer"]):
+                            with rv.CardText():
+                                solara.HTML(
+                                    tag="span",
+                                    unsafe_innerHTML="""
+                                The material contained on this website is based upon 
+                                work supported by NASA under award No. 80NSSC21M0002. 
+                                Any opinions, findings, and conclusions or 
+                                recommendations expressed in this material are those of 
+                                the author(s) and do not necessarily reflect the views 
+                                of the National Aeronautics and Space Administration.
                                 """,
-                                style="font-size: 18px;",
-                            )
-
-                    with solara.Column(classes=["cosmicds-footer"]):
-                        with rv.CardText():
-                            solara.HTML(
-                                tag="span",
-                                unsafe_innerHTML="""
-                            The material contained on this website is based upon 
-                            work supported by NASA under award No. 80NSSC21M0002. 
-                            Any opinions, findings, and conclusions or 
-                            recommendations expressed in this material are those of 
-                            the author(s) and do not necessarily reflect the views 
-                            of the National Aeronautics and Space Administration.
-                            """,
-                                style="font-size: 12px; line-height: 12px",
-                            )
+                                    style="font-size: 12px; line-height: 12px",
+                                )
