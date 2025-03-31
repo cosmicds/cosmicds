@@ -39,7 +39,8 @@ def BaseLayout(
     story_name: str = "",
     story_title: str = "Cosmic Data Story",
     force_demo: bool = False,
-):
+):  
+    router = solara.use_router()
     route_current, routes_current_level = solara.use_route()
     route_index = routes_current_level.index(route_current)
 
@@ -295,7 +296,7 @@ def BaseLayout(
                                     and i > local_state.value.max_route_index
                                 )
                             with solara.Link(
-                                solara.resolve_path(route)
+                                solara.resolve_path(f"{router.root_path}/{route.path.lstrip('/')}")
                                 if not disabled
                                 else solara.resolve_path(route_current.path)
                             ):
