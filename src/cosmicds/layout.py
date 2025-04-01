@@ -157,25 +157,30 @@ def BaseLayout(
                 # create a hamburger menu to show nav
                 rv.Tooltip(
                     bottom=True,
-                    v_slots=[{
-                        "name": "activator",
-                        "variable": "tooltip",
-                        "children": [
-                            solara.IconButton(
-                                v_on="tooltip.on",
-                                icon_name="mdi-close" if drawer.value else "mdi-menu",
-                                on_click=lambda: drawer.set(not drawer.value),
-                            )
-                        ]
-                    }],
-                    children=["Close Navigation" if drawer.value else "Open Navigation"]
+                    v_slots=[
+                        {
+                            "name": "activator",
+                            "variable": "tooltip",
+                            "children": [
+                                solara.IconButton(
+                                    v_on="tooltip.on",
+                                    icon_name=(
+                                        "mdi-close" if drawer.value else "mdi-menu"
+                                    ),
+                                    on_click=lambda: drawer.set(not drawer.value),
+                                )
+                            ],
+                        }
+                    ],
+                    children=[
+                        "Close Navigation" if drawer.value else "Open Navigation"
+                    ],
                 )
-            
+
             rv.Html(tag="h2", children=[f"{story_title}"])
             rv.Html(tag="h3", children=["Cosmic Data Stories"], class_="ml-4 app-title")
 
             rv.Spacer()
-
 
             with TooltipMenu(
                 v_model=speech_menu.value,
@@ -209,8 +214,8 @@ def BaseLayout(
                 )
 
             ThemeToggle(
-                on_icon="mdi-brightness-4", # dark mode icon
-                off_icon="mdi-brightness-4", # light mode icon
+                on_icon="mdi-brightness-4",  # dark mode icon
+                off_icon="mdi-brightness-4",  # light mode icon
                 enable_auto=False,
                 default_theme="dark",
                 enforce_default=True,
@@ -254,14 +259,16 @@ def BaseLayout(
                         )
 
         with rv.NavigationDrawer(
-
-            v_model=drawer.value,
-            on_v_model=drawer.set,
-            app=True,
-            class_="px-0 mx-0"
+            v_model=drawer.value, on_v_model=drawer.set, app=True, class_="px-0 mx-0"
         ):
-            with rv.Col(class_="d-flex flex-column px-0 mx-0", style_="height:100%; align-items: stretch; justify-content: flex-start;"):
-                with rv.ListItem(class_="nav-top justify-space-between align-center", style_="flex: 0 0 auto; text-align: right"):
+            with rv.Col(
+                class_="d-flex flex-column px-0 mx-0",
+                style_="height:100%; align-items: stretch; justify-content: flex-start;",
+            ):
+                with rv.ListItem(
+                    class_="nav-top justify-space-between align-center",
+                    style_="flex: 0 0 auto; text-align: right",
+                ):
                     # with rv.ListItemContent():
                     #     # We access the modified token information first, if that
                     #     #  does not exist, we fall back to the default parameters
@@ -271,31 +278,35 @@ def BaseLayout(
                     #     )
                     #     rv.ListItemSubtitle(children=[f"{display_info.value['cds/email']}"])
 
-                    solara.Text("Stage Navigation", style={"font-size": "20px", "font-weight": "bold"});
+                    solara.Text(
+                        "Stage Navigation",
+                        style={"font-size": "20px", "font-weight": "bold"},
+                    )
                     rv.Tooltip(
                         bottom=True,
-                        v_slots=[{
-                            "name": "activator",
-                            "variable": "tooltip",
-                            "children": [
-                                solara.IconButton(
-                                    v_on="tooltip.on",
-                                    icon_name="mdi-close",
-                                    on_click=lambda: drawer.set(not drawer.value),
-                                )
-                            ]
-                        }],
-                        children=["Close Navigation" if drawer.value else "Open Navigation"]
+                        v_slots=[
+                            {
+                                "name": "activator",
+                                "variable": "tooltip",
+                                "children": [
+                                    solara.IconButton(
+                                        v_on="tooltip.on",
+                                        icon_name="mdi-close",
+                                        on_click=lambda: drawer.set(not drawer.value),
+                                    )
+                                ],
+                            }
+                        ],
+                        children=[
+                            "Close Navigation" if drawer.value else "Open Navigation"
+                        ],
                     )
-
-
 
                 rv.Divider()
 
                 with rv.List(nav=True, class_="px-0"):
                     with rv.ListItemGroup(
                         v_model=selected_link.value,
-
                     ):
 
                         def _change_local_url(path, location):
@@ -311,11 +322,19 @@ def BaseLayout(
                                     local_state.value.max_route_index is not None
                                     and i > local_state.value.max_route_index
                                 )
-                            with rv.ListItem(disabled=disabled, inactive=disabled, link=True, class_="px-0 mx-0") as list_item::
+                            with rv.ListItem(
+                                disabled=disabled,
+                                inactive=disabled,
+                                link=True,
+                                class_="px-0 mx-0",
+                            ) as list_item:
                                 with rv.ListItemIcon(class_="px-0 mx-4"):
                                     rv.Icon(children=f"mdi-numeric-{i}-circle")
 
-                                with rv.ListItemContent(style_="white-space: normal; overflow: visible; text-overflow: clip;", class_="px-0 mx-0"):
+                                with rv.ListItemContent(
+                                    style_="white-space: normal; overflow: visible; text-overflow: clip;",
+                                    class_="px-0 mx-0",
+                                ):
                                     rv.ListItemTitle(
                                         children=f"{route.label if route.path != '/' else 'Introduction'}"
                                     )
@@ -323,22 +342,30 @@ def BaseLayout(
                             solara.v.use_event(
                                 list_item,
                                 "click",
-                                lambda *args,
-                                path=solara.resolve_path(route),
-                                location=solara.use_context(
+                                lambda *args, path=solara.resolve_path(
+                                    route
+                                ), location=solara.use_context(
                                     solara.routing._location_context
-                                ): _change_local_url(path, location),
+                                ): _change_local_url(
+                                    path, location
+                                ),
                             )
 
                 rv.Spacer()
                 rv.Divider()
-                with rv.Row(class_="px-0 ma-2", style_="flex-grow: 1; flex: 0 0 auto; justify-content: space-evenly; align-items: center;"):
+                with rv.Row(
+                    class_="px-0 ma-2",
+                    style_="flex-grow: 1; flex: 0 0 auto; justify-content: space-evenly; align-items: center;",
+                ):
                     rv.Icon(
                         class_="mx-2",
                         children=["mdi-account-circle"],
                         color="var(--success-dark)",
                     )
-                    solara.Text(f"Student ID: {GLOBAL_STATE.value.student.id}", style={"padding-right": "10px"})
+                    solara.Text(
+                        f"Student ID: {GLOBAL_STATE.value.student.id}",
+                        style={"padding-right": "10px"},
+                    )
                     # rv.Divider(vertical=True, class_="mx-2")
                     # logout_button = rv.Btn(
                     #     v_on="tooltip.on",
@@ -357,7 +384,6 @@ def BaseLayout(
                     #         )
 
                 #
-                                    )
 
         with rv.Content(class_="solara-content-main", style_="height: 100%"):
             with rv.Container(
