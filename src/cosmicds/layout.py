@@ -265,7 +265,7 @@ def BaseLayout(
                                                     ),
                                                     rv.Html(
                                                         tag="h4",
-                                                        children="Student Info",
+                                                        children=f"{GLOBAL_STATE.value.student.id}",
                                                     ),
                                                 ],
                                             )
@@ -273,20 +273,6 @@ def BaseLayout(
                                     ),
                                     rv.ExpansionPanelContent(
                                         children=[
-                                            rv.TextField(
-                                                value=f"{display_info.value['cds/email']}",
-                                                label="Email",
-                                                readonly=True,
-                                                outlined=True,
-                                                dense=True,
-                                            ),
-                                            rv.TextField(
-                                                value=f"{GLOBAL_STATE.value.student.id}",
-                                                label="Student ID No.",
-                                                readonly=True,
-                                                outlined=True,
-                                                dense=True,
-                                            ),
                                             rv.TextField(
                                                 value=f"{BASE_API.hashed_user}",
                                                 label="Anonymized ID",
