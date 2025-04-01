@@ -181,21 +181,6 @@ def BaseLayout(
 
         rv.Spacer()
 
-        with rv.Chip(class_="ma-2 piggy-chip"):
-
-            if local_state is not None:
-                # TODO: Check that this doesn't make solara render the whole
-                #  app. if it does, move the chip into its own component.
-                solara.Text(f"{local_state.value.piggybank_total} Points")
-
-            rv.Icon(
-                class_="ml-2",
-                children=["mdi-piggy-bank"],
-                color="var(--success-dark)",
-            )
-
-        rv.Divider(vertical=True, class_="mx-2")
-
         with TooltipMenu(
             v_model=speech_menu.value,
             icon="mdi-tune-vertical",
@@ -233,6 +218,21 @@ def BaseLayout(
             enforce_default=True,
         )
 
+        rv.Divider(vertical=True, class_="mx-2")
+
+        with rv.Chip(class_="ma-2 piggy-chip"):
+
+            if local_state is not None:
+                # TODO: Check that this doesn't make solara render the whole
+                #  app. if it does, move the chip into its own component.
+                solara.Text(f"{local_state.value.piggybank_total} Points")
+
+            rv.Icon(
+                class_="ml-2",
+                children=["mdi-piggy-bank"],
+                color="var(--success-dark)",
+            )
+
     with rv.NavigationDrawer(
         v_model=drawer.value,
         on_v_model=drawer.set,
@@ -265,7 +265,7 @@ def BaseLayout(
                                                     ),
                                                     rv.Html(
                                                         tag="h4",
-                                                        children=f"{GLOBAL_STATE.value.student.id}",
+                                                        children=f"Student ID: {GLOBAL_STATE.value.student.id}",
                                                     ),
                                                 ],
                                             )
