@@ -1,30 +1,27 @@
 import datetime
 import os
-from warnings import filterwarnings
-from importlib.metadata import PackageNotFoundError, version
 from typing import Optional
+from warnings import filterwarnings
 
 import solara
+from reacton import ipyvue
+from solara import Reactive
 from solara.alias import rv
-from ipyvue import Html
 from solara.lab import theme
 from solara.server import settings
 from solara.toestand import Ref
 from solara_enterprise import auth
-from solara import Reactive
-from reacton import ipyvue
 
-
-from .state import GLOBAL_STATE, BaseLocalState, Speech
-from .remote import BASE_API
-from .components.breakpoint_watcher.breakpoint_watcher import BreakpointWatcher
 from cosmicds import load_custom_vue_components
-from cosmicds.utils import get_session_id
 from cosmicds.components.login import Login
 from cosmicds.components.speech_settings import SpeechSettings
-from .components.theme_toggle import ThemeToggle
 from cosmicds.components.tooltip_menu import TooltipMenu
 from cosmicds.logger import setup_logger
+from cosmicds.utils import get_session_id
+from .components.breakpoint_watcher.breakpoint_watcher import BreakpointWatcher
+from .components.theme_toggle import ThemeToggle
+from .remote import BASE_API
+from .state import GLOBAL_STATE, BaseLocalState
 
 filterwarnings(action="ignore", category=UserWarning)
 
@@ -34,39 +31,16 @@ if "AWS_EBS_URL" in os.environ:
 logger = setup_logger("LAYOUT")
 
 
-@solara.component
-def BaseLayout(
-    local_state: Optional[Reactive[BaseLocalState]] = None,
-    children: list = [],
+def BaseSetup(
+    force_demo: bool = False,
     story_name: str = "",
     story_title: str = "Cosmic Data Story",
-    force_demo: bool = False,
 ):
-    router = solara.use_router()
-    route_current, routes_current_level = solara.use_route(peek=True)
-    route_index = routes_current_level.index(route_current)
-
-    selected_link = solara.use_reactive(route_index)
-    stu_info_panel = solara.use_reactive([0])
-
-    def on_selected_link_change(new, old):
-        logger.info(f"Selected link changed from {old} to {new}")
-
-    selected_link.subscribe_change(on_selected_link_change)
-
     active = solara.use_reactive(False)
     class_code = solara.use_reactive("")
     update_db = solara.use_reactive(False)
     debug_mode = solara.use_reactive(True)
-
-    debug_menu = solara.use_reactive(False)
-    speech_menu = solara.use_reactive(False)
-
-    # Set up a watcher for vue break_point events
-    break_point = solara.use_reactive("")
-    BreakpointWatcher(
-        event_set_breakpoint_info=lambda event: break_point.set(event["breakpoint"])
-    )
+    router = solara.use_router()
 
     def _component_setup():
         # Custom vue-only components have to be registered in the Page element
@@ -78,6 +52,7 @@ def BaseLayout(
 
     # Attempt to load saved setup state
     def _load_from_cache():
+        logger.info(f"Loading from cache.")
         cache = solara.cache.storage.get(f"cds-login-options-{get_session_id()}")
 
         if cache is not None:
@@ -117,6 +92,7 @@ def BaseLayout(
             BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
         else:
             logger.error("User is authenticated, but does not exist.")
+            router.push(auth.get_logout_url())
             location = solara.use_context(solara.routing._location_context)
             location.pathname = auth.get_logout_url()
     else:
@@ -125,14 +101,36 @@ def BaseLayout(
 
         login_dialog = Login(active, class_code, update_db, debug_mode)
         active.set(True)
-        return
 
-    # Just for testing
-    # Ref(GLOBAL_STATE.fields.student.id).set(0)
-    # Ref(GLOBAL_STATE.fields.classroom.class_info).set({"id": 0})
-    # Ref(GLOBAL_STATE.fields.classroom.size).set(0)
+
+def BaseLayout(
+    local_state: Optional[Reactive[BaseLocalState]] = None,
+    children: list = [],
+    story_name: str = "",
+    story_title: str = "Cosmic Data Story",
+):
+    debug_menu = solara.use_reactive(False)
+    speech_menu = solara.use_reactive(False)
+    stu_info_panel = solara.use_reactive([0])
 
     speech = Ref(GLOBAL_STATE.fields.speech)
+
+    router = solara.use_router()
+    route_current, routes_current_level = solara.use_route(peek=True)
+    route_index = routes_current_level.index(route_current)
+
+    selected_link = solara.use_reactive(route_index)
+
+    def on_selected_link_change(new, old):
+        logger.info(f"Selected link changed from {old} to {new}")
+
+    selected_link.subscribe_change(on_selected_link_change)
+
+    # Set up a watcher for vue break_point events
+    break_point = solara.use_reactive("")
+    BreakpointWatcher(
+        event_set_breakpoint_info=lambda event: break_point.set(event["breakpoint"])
+    )
 
     @solara.lab.computed
     def display_info():
