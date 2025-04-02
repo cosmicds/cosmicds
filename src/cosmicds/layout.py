@@ -74,7 +74,7 @@ def BaseLayout(
         logger.info("Loaded custom vue files.")
         load_custom_vue_components()
 
-    solara.use_memo(_component_setup)
+    solara.use_memo(_component_setup, dependencies=[])
 
     # Attempt to load saved setup state
     def _load_from_cache():
@@ -89,7 +89,7 @@ def BaseLayout(
                 if key in cache:
                     state.set(cache[key])
 
-    solara.use_memo(_load_from_cache)
+    solara.use_memo(_load_from_cache, dependencies=[])
 
     if force_demo:
         logger.info("Loading app in demo mode.")
@@ -117,7 +117,8 @@ def BaseLayout(
             BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
         else:
             logger.error("User is authenticated, but does not exist.")
-            solara.use_router().push(auth.get_logout_url())
+            location = solara.use_context(solara.routing._location_context)
+            location.pathname = auth.get_logout_url()
     else:
         logger.info("User has not authenticated.")
         BASE_API.clear_user(GLOBAL_STATE)
