@@ -51,6 +51,15 @@ class BaseAPI:
         r = self.request_session.get(f"{self.API_URL}/student/{self.hashed_user}")
         return r.json()["student"] is not None
 
+    
+    @property
+    def is_educator(self):
+        r = self.request_session.get(
+            f"{self.API_URL}/educators/{self.hashed_user}"
+        )
+        return r.json()["educator"] is not None
+    
+
     def update_class_size(self, state: Reactive[GlobalState]):
         class_id = state.value.classroom.class_info["id"]
         size_json = self.request_session.get(
@@ -126,7 +135,7 @@ class BaseAPI:
         component_state: Reactive[BaseState],
     ) -> BaseState | None:
 
-        if not global_state.value.update_db:
+        if not global_state.value.update_db or self.is_educator:
             logger.info("Skipping retrieval of Component state.")
             return component_state.value
 
@@ -159,7 +168,7 @@ class BaseAPI:
         local_state: Reactive[BaseLocalState],
         component_state: Reactive[BaseState],
     ):
-        if not global_state.value.update_db:
+        if not global_state.value.update_db or self.is_educator:
             logger.info("Skipping deletion of stage state.")
             return
 
@@ -190,7 +199,7 @@ class BaseAPI:
     def get_app_story_states(
         self, global_state: Reactive[GlobalState], local_state: Reactive[BaseLocalState]
     ) -> BaseLocalState | None:
-        if global_state.value.update_db:
+        if global_state.value.update_db and not self.is_educator:
 
             story_json = (
                 self.request_session.get(

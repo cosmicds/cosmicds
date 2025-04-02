@@ -82,6 +82,11 @@ class GlobalState(BaseState):
     show_team_interface: bool = Field(show_team_interface_init, exclude=True)
     allow_advancing: bool = True
     speech: Speech = Speech()
+    educator: bool = False
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        print("====== GlobalState ======")
 
     @cached_property
     def _glue_app(self) -> JupyterApplication:
