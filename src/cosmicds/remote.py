@@ -211,20 +211,22 @@ class BaseAPI:
             )
 
             if story_json is None:
-                logger.error(
-                    "Failed to retrieve state for story `%s` for user `%s`.",
-                    local_state.value.story_id,
-                    global_state.value.student.id,
-                )
+                logger.error(f"Failed to retrieve state for story {local_state.value.story_id} for user {global_state.value.student.id}.")
                 return
 
         else:
             logger.info("Skipping retrieval of Global and Local states.")
             story_json = {
-                "app": GlobalState(student=GLOBAL_STATE.value.student).model_dump(),
+                "app": GlobalState(
+                    student=GLOBAL_STATE.value.student, 
+                    show_team_interface = GLOBAL_STATE.value.show_team_interface, 
+                    classroom = GLOBAL_STATE.value.classroom,
+                    educator = GLOBAL_STATE.value.educator,
+                    update_db = GLOBAL_STATE.value.update_db,
+                    ).model_dump(),
                 "story": type(local_state.value)(
                     title=local_state.value.title, story_id=local_state.value.story_id
-                ).as_dict(),
+                ).as_dict(), # type: ignore
             }
 
         global_state_json = story_json.get("app", {})
