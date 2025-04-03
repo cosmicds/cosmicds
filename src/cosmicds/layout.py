@@ -124,11 +124,6 @@ def BaseLayout(
 
     selected_link = solara.use_reactive(route_index)
 
-    def on_selected_link_change(new, old):
-        logger.info(f"Selected link changed from {old} to {new}")
-
-    selected_link.subscribe_change(on_selected_link_change)
-
     # Set up a watcher for vue break_point events
     break_point = solara.use_reactive("")
     BreakpointWatcher(
