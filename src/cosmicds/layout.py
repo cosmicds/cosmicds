@@ -69,6 +69,7 @@ def BaseSetup(
     educator_mode = False
     if bool(auth.user.value):
         if BASE_API.is_educator:
+            force_demo = True
             educator_mode = True
             GLOBAL_STATE.value.update_db = False
             GLOBAL_STATE.value.show_team_interface = True
