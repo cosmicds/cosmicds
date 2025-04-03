@@ -310,14 +310,14 @@ def BaseLayout(
                                                 dense=True,
                                                 hide_details=True,
                                             ),
-                                            rv.Divider(),
-                                            rv.Btn(
-                                                href=auth.get_logout_url(), icon=False, 
-                                                block=True, outlined=True,
-                                                class_="mt-2",
-                                                # children=[rv.Icon(children=["mdi-logout"])]
-                                                children=["Logout"],
-                                            ), 
+                                            # rv.Divider(),
+                                            # rv.Btn(
+                                            #     href=auth.get_logout_url(), icon=False, 
+                                            #     block=True, outlined=True,
+                                            #     class_="mt-2",
+                                            #     # children=[rv.Icon(children=["mdi-logout"])]
+                                            #     children=["Logout"],
+                                            # ), 
                                         ]
                                     ),
                                 ],
