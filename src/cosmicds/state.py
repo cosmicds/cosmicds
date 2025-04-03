@@ -83,10 +83,6 @@ class GlobalState(BaseState):
     allow_advancing: bool = True
     speech: Speech = Speech()
     educator: bool = False
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        print("====== GlobalState ======")
 
     @cached_property
     def _glue_app(self) -> JupyterApplication:
