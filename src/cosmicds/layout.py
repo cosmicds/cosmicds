@@ -85,22 +85,25 @@ def BaseSetup(
         )
         class_code.set("215")
 
-    if bool(auth.user.value):
-        if BASE_API.user_exists:
-            BASE_API.load_user_info(story_name, GLOBAL_STATE)
-        elif bool(class_code.value):
-            BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
+    def _get_user_info():
+        if bool(auth.user.value):
+            if BASE_API.user_exists:
+                BASE_API.load_user_info(story_name, GLOBAL_STATE)
+            elif bool(class_code.value):
+                BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
+            else:
+                logger.error("User is authenticated, but does not exist.")
+                router.push(auth.get_logout_url())
+                location = solara.use_context(solara.routing._location_context)
+                location.pathname = auth.get_logout_url()
         else:
-            logger.error("User is authenticated, but does not exist.")
-            router.push(auth.get_logout_url())
-            location = solara.use_context(solara.routing._location_context)
-            location.pathname = auth.get_logout_url()
-    else:
-        logger.info("User has not authenticated.")
-        BASE_API.clear_user(GLOBAL_STATE)
+            logger.info("User has not authenticated.")
+            BASE_API.clear_user(GLOBAL_STATE)
 
-        login_dialog = Login(active, class_code, update_db, debug_mode)
-        active.set(True)
+            login_dialog = Login(active, class_code, update_db, debug_mode)
+            active.set(True)
+
+    solara.use_memo(_get_user_info, dependencies=[auth.user.value])
 
 
 def BaseLayout(
@@ -303,7 +306,7 @@ def BaseLayout(
                     )
 
             with rv.ListItemGroup(
-                v_model=selected_link.value,
+                value=selected_link.value,
             ):
 
                 def _change_local_url(path, location):
@@ -323,7 +326,6 @@ def BaseLayout(
                     with rv.ListItem(
                         disabled=disabled,
                         inactive=disabled,
-                        link=True,
                     ) as list_item:
                         with rv.ListItemIcon(class_="mr-4"):
                             rv.Icon(children=f"mdi-numeric-{i}-circle")
