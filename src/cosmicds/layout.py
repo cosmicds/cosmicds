@@ -65,24 +65,50 @@ def BaseSetup(
                     state.set(cache[key])
 
     solara.use_memo(_load_from_cache, dependencies=[])
+    
+    educator_mode = False
+    if bool(auth.user.value):
+        if BASE_API.is_educator:
+            force_demo = True
+            educator_mode = True
+            GLOBAL_STATE.value.update_db = False
+            GLOBAL_STATE.value.show_team_interface = True
+            GLOBAL_STATE.value.educator = True
 
     if force_demo:
         logger.info("Loading app in demo mode.")
-        auth.user.set(
+        if educator_mode:
+            auth.user.set(
             {
                 "userinfo": {
-                    "cds/name": "Demo User",
-                    "cds/email": "cosmicds@cfa.harvard.edu",
+                    "cds/name": "Demo Teacher",
+                    "cds/email": "demo_teacher@some.email",
                     "cds/picture": "https://s.gravatar.com/avatar/d49c4a758d6e45538cd0fb4cd09e91eb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fco.png",
                     "nickname": "cosmicds",
-                    "name": "Demo User",
+                    "name": "Demo Teacher",
                     "picture": "https://s.gravatar.com/avatar/d49c4a758d6e45538cd0fb4cd09e91eb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fco.png",
                     "updated_at": "2025-02-06T17:47:34.507Z",
-                    "email": "cosmicds@cfa.harvard.edu",
+                    "email": "demo_teacher@some.email",
                     "email_verified": True,
                 }
             }
         )
+        else:   
+            auth.user.set(
+                {
+                    "userinfo": {
+                        "cds/name": "Demo User",
+                        "cds/email": "cosmicds@cfa.harvard.edu",
+                        "cds/picture": "https://s.gravatar.com/avatar/d49c4a758d6e45538cd0fb4cd09e91eb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fco.png",
+                        "nickname": "cosmicds",
+                        "name": "Demo User",
+                        "picture": "https://s.gravatar.com/avatar/d49c4a758d6e45538cd0fb4cd09e91eb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fco.png",
+                        "updated_at": "2025-02-06T17:47:34.507Z",
+                        "email": "cosmicds@cfa.harvard.edu",
+                        "email_verified": True,
+                    }
+                }
+            )
         class_code.set("215")
 
     def _get_user_info():
@@ -175,7 +201,13 @@ def BaseLayout(
         #     children=["Cosmic Data Story"],
         #     class_="ml-8 app-title",
         # )
-
+        if GLOBAL_STATE.value.educator:
+            rv.Html(
+                tag="h3",
+                class_="ml-8 app-title",
+                children=["Educator Mode"],
+                style_="color: #8e8e8e; font-size: 1.5em; font-weight: bold;",
+            )
         rv.Spacer()
 
         with TooltipMenu(
@@ -278,6 +310,14 @@ def BaseLayout(
                                                 dense=True,
                                                 hide_details=True,
                                             ),
+                                            # rv.Divider(),
+                                            # rv.Btn(
+                                            #     href=auth.get_logout_url(), icon=False, 
+                                            #     block=True, outlined=True,
+                                            #     class_="mt-2",
+                                            #     # children=[rv.Icon(children=["mdi-logout"])]
+                                            #     children=["Logout"],
+                                            # ), 
                                         ]
                                     ),
                                 ],

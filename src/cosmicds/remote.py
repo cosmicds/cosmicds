@@ -51,6 +51,15 @@ class BaseAPI:
         r = self.request_session.get(f"{self.API_URL}/student/{self.hashed_user}")
         return r.json()["student"] is not None
 
+    
+    @property
+    def is_educator(self):
+        r = self.request_session.get(
+            f"{self.API_URL}/educators/{self.hashed_user}"
+        )
+        return r.json()["educator"] is not None
+    
+
     def update_class_size(self, state: Reactive[GlobalState]):
         class_id = state.value.classroom.class_info["id"]
         size_json = self.request_session.get(
@@ -126,7 +135,7 @@ class BaseAPI:
         component_state: Reactive[BaseState],
     ) -> BaseState | None:
 
-        if not global_state.value.update_db:
+        if not global_state.value.update_db or self.is_educator:
             logger.info("Skipping retrieval of Component state.")
             return component_state.value
 
@@ -159,7 +168,7 @@ class BaseAPI:
         local_state: Reactive[BaseLocalState],
         component_state: Reactive[BaseState],
     ):
-        if not global_state.value.update_db:
+        if not global_state.value.update_db or self.is_educator:
             logger.info("Skipping deletion of stage state.")
             return
 
@@ -190,7 +199,7 @@ class BaseAPI:
     def get_app_story_states(
         self, global_state: Reactive[GlobalState], local_state: Reactive[BaseLocalState]
     ) -> BaseLocalState | None:
-        if global_state.value.update_db:
+        if global_state.value.update_db and not self.is_educator:
 
             story_json = (
                 self.request_session.get(
@@ -202,20 +211,22 @@ class BaseAPI:
             )
 
             if story_json is None:
-                logger.error(
-                    "Failed to retrieve state for story `%s` for user `%s`.",
-                    local_state.value.story_id,
-                    global_state.value.student.id,
-                )
+                logger.error(f"Failed to retrieve state for story {local_state.value.story_id} for user {global_state.value.student.id}.")
                 return
 
         else:
             logger.info("Skipping retrieval of Global and Local states.")
             story_json = {
-                "app": GlobalState(student=GLOBAL_STATE.value.student).model_dump(),
+                "app": GlobalState(
+                    student=GLOBAL_STATE.value.student, 
+                    show_team_interface = GLOBAL_STATE.value.show_team_interface, 
+                    classroom = GLOBAL_STATE.value.classroom,
+                    educator = GLOBAL_STATE.value.educator,
+                    update_db = GLOBAL_STATE.value.update_db,
+                    ).model_dump(),
                 "story": type(local_state.value)(
                     title=local_state.value.title, story_id=local_state.value.story_id
-                ).as_dict(),
+                ).as_dict(), # type: ignore
             }
 
         global_state_json = story_json.get("app", {})
