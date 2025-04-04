@@ -1,6 +1,7 @@
 from glue.core import Data
 from glue_plotly.viewers.histogram import PlotlyHistogramView
-from glue_plotly.viewers.histogram.dotplot_layer_artist import PlotlyDotplotLayerArtist
+# from glue_plotly.viewers.histogram.dotplot_layer_artist import PlotlyDotplotLayerArtist
+from cosmicds.viewers.dotplot.CDSPlotlyDotplotLayerArtist import CDSPlotlyDotplotLayerArtist
 
 from cosmicds.viewers.dotplot.state import DotPlotViewerState
 from cosmicds.viewers.dotplot.scatter_layer_artist import DotplotScatterLayerArtist 
@@ -15,8 +16,8 @@ class PlotlyDotPlotView(PlotlyHistogramView):
     LABEL = "Dot Plot Viewer"
 
     _state_cls = DotPlotViewerState
-    _data_artist_cls = PlotlyDotplotLayerArtist
-    _subset_artist_cls = PlotlyDotplotLayerArtist
+    _data_artist_cls = CDSPlotlyDotplotLayerArtist
+    _subset_artist_cls = CDSPlotlyDotplotLayerArtist
 
     _scatter_layers = set()
 
