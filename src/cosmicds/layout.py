@@ -71,9 +71,9 @@ def BaseSetup(
         if BASE_API.is_educator:
             force_demo = True
             educator_mode = True
-            GLOBAL_STATE.value.update_db = False
-            GLOBAL_STATE.value.show_team_interface = True
-            GLOBAL_STATE.value.educator = True
+            Ref(GLOBAL_STATE.fields.update_db).set(False)
+            Ref(GLOBAL_STATE.fields.show_team_interface).set(True)
+            Ref(GLOBAL_STATE.fields.educator).set(True)
 
     if force_demo:
         logger.info("Loading app in demo mode.")
