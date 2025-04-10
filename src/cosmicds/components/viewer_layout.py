@@ -44,6 +44,7 @@ def ViewerLayout(viewer, viewer_height=DEFAULT_VIEWER_HEIGHT):
         classes=["elevation-2 mb-4"],
     )
     with rv.Card(
-        children=[layout]
+        children=[layout],
+        width="100%",
     ):
         pass
