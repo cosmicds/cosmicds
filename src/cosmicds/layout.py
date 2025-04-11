@@ -19,6 +19,7 @@ from cosmicds.components.tooltip_menu import TooltipMenu
 from cosmicds.logger import setup_logger
 from cosmicds.utils import get_session_id
 from .components.breakpoint_watcher.breakpoint_watcher import BreakpointWatcher
+from .components.location_helper.location_helper import LocationHelper
 from .components.theme_toggle import ThemeToggle
 from .remote import BASE_API
 from .state import GLOBAL_STATE, BaseLocalState
@@ -111,25 +112,32 @@ def BaseSetup(
             )
         class_code.set("215")
 
-    def _get_user_info():
-        if bool(auth.user.value):
-            if BASE_API.user_exists:
-                BASE_API.load_user_info(story_name, GLOBAL_STATE)
-            elif bool(class_code.value):
-                BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
-            else:
-                logger.error("User is authenticated, but does not exist.")
-                router.push(auth.get_logout_url())
-                location = solara.use_context(solara.routing._location_context)
-                location.pathname = auth.get_logout_url()
+    if bool(auth.user.value):
+        logger.debug("User is authenticated.")
+        if BASE_API.user_exists:
+            BASE_API.load_user_info(story_name, GLOBAL_STATE)
+        elif bool(class_code.value):
+            BASE_API.create_new_user(story_name, class_code.value, GLOBAL_STATE)
         else:
-            logger.info("User has not authenticated.")
-            BASE_API.clear_user(GLOBAL_STATE)
-
-            login_dialog = Login(active, class_code, update_db, debug_mode)
-            active.set(True)
-
-    solara.use_memo(_get_user_info, dependencies=[auth.user.value])
+            logger.error("User is authenticated, but does not exist.")
+            router.push(auth.get_logout_url())
+    elif not bool(auth.user.value):
+        logger.debug("User has not authenticated.")
+        BASE_API.clear_user(GLOBAL_STATE)
+        origin_split = settings.main.base_url.split("//")
+        root_url = "//".join(
+            [
+                origin_split[0],
+                "/".join(
+                    [
+                        x
+                        for x in origin_split[1].split("/")
+                        if x not in router.root_path.split("/")
+                    ]
+                ),
+            ]
+        )
+        LocationHelper(url=root_url)
 
 
 def BaseLayout(
