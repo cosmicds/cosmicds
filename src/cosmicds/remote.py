@@ -2,6 +2,7 @@ from solara_enterprise import auth
 import hashlib
 import os
 from requests import Session
+from typing import Optional
 from functools import cached_property
 
 from .state import GLOBAL_STATE, BaseLocalState, BaseState, GlobalState, Student
@@ -245,6 +246,28 @@ class BaseAPI:
         local_state: Reactive[BaseLocalState],
     ):
         raise NotImplementedError()
+
+    def ignore_student_for_story(
+        self,
+        story_name: str,
+        student_id: Optional[int] = None,
+        ignore: bool = True,
+    ):
+        stu_id = student_id or self.hashed_user
+
+        r = self.request_session.put(
+            f"{self.API_URL}/students/ignore/{stu_id}/{story_name}",
+            json={
+                "ignore": ignore,
+            }
+        )
+
+        if r.status_code != 200:
+            logger.error(f"Failed to update ignored status for student {stu_id} for story {story_name}")
+            return
+
+        logger.info(f"Set student {stu_id}'s ignored status to {ignore} for story {story_name}")
+
 
     @staticmethod
     def clear_user(state: Reactive[GlobalState]):
