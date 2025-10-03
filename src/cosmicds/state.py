@@ -40,6 +40,10 @@ if 'CDS_SHOW_TEAM_INTERFACE' in os.environ:
 else:
     print("Team interface disabled.")
 
+
+if "CDS_FORCE_DEMO" in os.environ:
+    force_demo = os.getenv("CDS_FORCE_DEMO", "false").strip().lower() == "true"
+
 class BaseState(BaseModel):
     def as_dict(self):
         return self.model_dump()
@@ -80,6 +84,7 @@ class GlobalState(BaseState):
     classroom: Classroom = Classroom()
     update_db: bool = Field(update_db_init, exclude=True)
     show_team_interface: bool = Field(show_team_interface_init, exclude=True)
+    force_demo: bool = Field(force_demo, exclude=True)
     allow_advancing: bool = True
     speech: Speech = Speech()
     educator: bool = False

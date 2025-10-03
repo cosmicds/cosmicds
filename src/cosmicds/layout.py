@@ -33,10 +33,12 @@ logger = setup_logger("LAYOUT")
 
 
 def BaseSetup(
-    force_demo: bool = False,
     story_name: str = "",
     story_title: str = "Cosmic Data Story",
 ):
+    # Retrieve whether to force demo mode
+    force_demo_ref = Ref(GLOBAL_STATE.fields.force_demo)
+
     active = solara.use_reactive(False)
     class_code = solara.use_reactive("")
     update_db = solara.use_reactive(False)
@@ -70,13 +72,13 @@ def BaseSetup(
     educator_mode = False
     if bool(auth.user.value):
         if BASE_API.is_educator:
-            force_demo = True
             educator_mode = True
+            force_demo_ref.set(True)
             Ref(GLOBAL_STATE.fields.update_db).set(False)
             Ref(GLOBAL_STATE.fields.show_team_interface).set(True)
             Ref(GLOBAL_STATE.fields.educator).set(True)
 
-    if force_demo:
+    if force_demo_ref.value:
         logger.info("Loading app in demo mode.")
         if educator_mode:
             auth.user.set(
@@ -95,6 +97,8 @@ def BaseSetup(
                 }
             )
         else:
+            Ref(GLOBAL_STATE.fields.update_db).set(False)
+
             auth.user.set(
                 {
                     "userinfo": {
@@ -218,16 +222,19 @@ def BaseLayout(
         )
 
         rv.Html(tag="h2", children=["Hubble's Law"], class_="pl-5")
-        # rv.Html(
-        #     tag="h4",
-        #     children=["Cosmic Data Story"],
-        #     class_="ml-8 app-title",
-        # )
+
         if GLOBAL_STATE.value.educator:
             rv.Html(
                 tag="h3",
                 class_="ml-8 app-title",
                 children=["Educator Mode"],
+                style_="color: #8e8e8e; font-size: 1.5em; font-weight: bold;",
+            )
+        if GLOBAL_STATE.value.force_demo:
+            rv.Html(
+                tag="h3",
+                class_="ml-8 app-title",
+                children=["Demo Mode"],
                 style_="color: #8e8e8e; font-size: 1.5em; font-weight: bold;",
             )
         rv.Spacer()
