@@ -41,8 +41,7 @@ else:
     print("Team interface disabled.")
 
 
-if "CDS_FORCE_DEMO" in os.environ:
-    force_demo = os.getenv("CDS_FORCE_DEMO", "false").strip().lower() == "true"
+force_demo = os.getenv("CDS_FORCE_DEMO", "false").strip().lower() == "true"
 
 class BaseState(BaseModel):
     def as_dict(self):
